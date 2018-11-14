@@ -1,0 +1,546 @@
+/*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */
+html {
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+    font-size: 50px;
+}
+body {
+    font-size: .28rem;
+    font-family:-apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Microsoft YaHei,Source Han Sans SC,Noto Sans CJK SC,WenQuanYi Micro Hei,sans-serif;
+}
+
+body,
+ul,
+ol,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+dl,
+dd,
+form,
+input,
+textarea,
+td,
+th,
+button,
+strong,
+em,
+select,
+video,
+canvas,
+div,
+li {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+ul,li,ol{
+    list-style: none;
+}
+h1 {
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+hr {
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+}
+pre {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+a {
+    background-color: transparent;
+}
+abbr[title] {
+    border-bottom: none;
+    text-decoration: underline;
+    text-decoration: underline dotted;
+}
+b, strong {
+    font-weight: bolder;
+}
+code, kbd, samp {
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+small {
+    font-size: 80%;
+}
+sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+img {
+    border-style: none;
+    border: none;
+    display: block;
+}
+button, input, optgroup, select, textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0;
+}
+button, input {
+    overflow: visible;
+}
+button, select {
+    text-transform: none;
+}
+button, [type="button"], [type="reset"], [type="submit"] {
+    -webkit-appearance: button;
+}
+button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+    border-style: none;
+    padding: 0;
+}
+button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring {
+    outline: 1px dotted ButtonText;
+}
+fieldset {
+    padding: 0.35em 0.75em 0.625em;
+}
+legend {
+    box-sizing: border-box;
+    color: inherit;
+    display: table;
+    max-width: 100%;
+    padding: 0;
+    white-space: normal;
+}
+progress {
+    vertical-align: baseline;
+}
+
+table {
+    border-collapse: collapse;
+}
+textarea {
+    resize: none;
+    overflow: auto;
+}
+a,
+input,
+button,
+textarea {
+    /*屏蔽阴影*/
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    /*ios android去除自带阴影的样式*/
+    outline: none;
+    border: 0;
+}
+[type="checkbox"], [type="radio"] {
+    box-sizing: border-box;
+    padding: 0;
+}
+[type="number"]::-webkit-inner-spin-button, [type="number"]::-webkit-outer-spin-button {
+    height: auto;
+}
+[type="search"] {
+    -webkit-appearance: textfield;
+    outline-offset: -2px;
+}
+input::-webkit-search-cancel-button {
+    display: none;
+}
+[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+::-webkit-file-upload-button {
+    -webkit-appearance: button;
+    font: inherit;
+}
+details {
+    display: block;
+}
+summary {
+    display: list-item;
+}
+template {
+    display: none;
+}
+
+input:focus{
+    outline:none;
+}
+input[type="text"]::-webkit-input-placeholder,
+input[type="password"]::-webkit-input-placeholder,
+input[type="number"]::-webkit-input-placeholder{
+    color:#cccccc;
+}
+input[type="text"]:-moz-input-placeholder,
+input[type="password"]:-moz-input-placeholder,
+input[type="number"]:-moz-input-placeholder{
+    color:#cccccc;
+}
+input[type="text"]::-ms-input-placeholder,
+input[type="password"]::-ms-input-placeholder,
+input[type="number"]::-ms-input-placeholder{
+    color:#cccccc;
+}
+input[type="text"]:input-placeholder,
+input[type="password"]:input-placeholder,
+input[type="number"]:input-placeholder{
+    color:#cccccc;
+}
+
+textarea:focus{
+    outline:none;
+}
+textarea::-webkit-input-placeholder{
+    color:#a1a5aa;
+}
+textarea:-moz-input-placeholder{
+    color:#a1a5aa;
+}
+textarea::-ms-input-placeholder{
+    color:#a1a5aa;
+}
+textarea:input-placeholder{
+    color:#a1a5aa;
+}
+[hidden] {
+    display: none;
+}
+[v-cloak]{
+    display: none;
+}
+/*浮动*/
+.fl {
+    float: left;
+}
+.fr {
+    float: right;
+}
+.clear:after {
+    content: "";
+    clear: both;
+    display: block;
+    visibility: hidden;
+    overflow: hidden;
+}
+.clearp{
+    clear: both;
+}
+/*行内块 清除间距*/
+.w-inline-block{
+    display: inline-table;
+    word-spacing: -8px;
+    letter-spacing: -8px;
+}
+.w-inline-block > *{
+    display: inline-block;
+    letter-spacing: normal;
+    word-spacing: normal;
+}
+
+/* 一像素边框 */
+
+.bor-1px,
+.bor-1px-t,
+.bor-1px-b,
+.bor-1px-tb,
+.bor-1px-l,
+.bor-1px-r {
+    position: relative;
+}
+.bor-1px:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    width: 200%;
+    height: 200%;
+    border: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+}
+.bor-1px-t:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 9;
+    height: 1px;
+    border-top: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+}
+.bor-1px-b:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 9;
+    height: 1px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+}
+.bor-1px-tb:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: 9;
+    height: 1px;
+    border-top: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+}
+.bor-1px-tb:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 9;
+    height: 1px;
+    border-bottom: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 0 100%;
+    transform-origin: 0 100%;
+    -webkit-transform: scaleY(0.5);
+    transform: scaleY(0.5);
+}
+.bor-1px-l:before {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    width: 1px;
+    bottom: 0;
+    border-left: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: scaleX(0.5);
+    transform: scaleX(0.5);
+}
+.bor-1px-r:after {
+    content: " ";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+    bottom: 0;
+    z-index: 9;
+    border-right: 1px solid #e9e9e9;
+    color: #e9e9e9;
+    -webkit-transform-origin: 100% 0;
+    transform-origin: 100% 0;
+    -webkit-transform: scaleX(0.5);
+    transform: scaleX(0.5);
+}
+/*图片自适应*/
+.w-fill-img > img{
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+.w-fill-img > img[mode="aspectFit"]{
+	object-fit: contain;
+}
+.w-fill-img > img[mode="aspectFill"]{
+	object-fit: cover;
+}
+.w-fill-img > img[mode="scaleToFill"]{
+	object-fit: fill;
+}
+/*弹性盒子布局*/
+.flex-wrap {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+}
+.flex-con {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+}
+.flex-vertical {
+    -webkit-box-orient: vertical;
+    -webkit-flex-flow: column;
+    flex-flow: column;
+}
+.flex-center{
+	justify-content: center;
+}
+.flex-between{
+	justify-content: space-between;
+}
+.flex-align-center{
+	align-content: center;
+}
+.flex-align-between{
+	align-content: space-between;
+}
+/* css 禁止事件*/
+.w-event-none{
+    pointer-events: none !important;
+}
+/* 多行省略 */
+.w-elli{
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.w-elli-2{
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+.w-elli-3{
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+.w-elli-4{
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 4;
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+.w-elli-5{
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+	overflow: hidden;
+	text-overflow:ellipsis;
+}
+/* div模拟table */
+.w-table{
+	position: relative;
+}
+.w-tr{
+	display: table;
+}
+.w-td{
+	display: table-cell;
+	vertical-align: middle;
+}
+/*下拉刷新*/
+.pullToRefresh {
+    position:absolute;
+    left:0;
+    right:0;
+    margin:auto;
+    width: 50px;
+    height: 50px;
+    z-index: 10;
+    opacity: 1;
+    transform:translateY(-55px) translateZ(0) rotateZ(0deg);
+    -ms-transform:translateY(-55px) translateZ(0) rotateZ(0deg);  /* IE 9 */
+    -moz-transform:translateY(-55px) translateZ(0) rotateZ(0deg);   /* Firefox */
+    -webkit-transform:translateY(-55px) translateZ(0) rotateZ(0deg); /* Safari 和 Chrome */
+    -o-transform:translateY(-55px) translateZ(0) rotateZ(0deg);   /* Opera */
+}
+.backTranTop
+{
+    transition: transform 0.8s ease, opacity 0.8s ease;
+    -moz-transition: transform 0.8s ease, opacity 0.8s ease; /* Firefox 4 */
+    -webkit-transition: transform 0.8s ease, opacity 0.8s ease; /* Safari 和 Chrome */
+    -o-transition: transform 0.8s ease, opacity 0.8s ease; /* Opera */
+}
+.pullContainer {
+    position:relative;
+}
+.pullToRefresh img {
+    display:block;
+    width: 40px;
+    height: 40px;
+
+    /* 让img居中在.pullToRefresh中 */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left:0;
+    right:0;
+    margin:auto;
+}
+/* loading旋转动画 */
+.loadingAnimation
+{
+    animation: loadingFrame .8s infinite;
+    -moz-animation: loadingFrame .8s infinite; /* Firefox */
+    -webkit-animation: loadingFrame .8s infinite;  /* Safari 和 Chrome */
+    -o-animation: loadingFrame .8s infinite; /* Opera */
+}
+@keyframes loadingFrame
+{
+    from {
+        transform: rotateZ(360deg);
+    }
+    to {
+        transform: rotateZ(0deg);
+    }
+}
+
+@-moz-keyframes loadingFrame /* Firefox */
+{
+    from {
+        transform: rotateZ(360deg);
+    }
+    to {
+        transform: rotateZ(0deg);
+    }
+}
+
+@-webkit-keyframes loadingFrame /* Safari 和 Chrome */
+{
+    from {
+        transform: rotateZ(360deg);
+    }
+    to {
+        transform: rotateZ(0deg);
+    }
+}
+
+@-o-keyframes loadingFrame /* Opera */
+{
+    from {
+        transform: rotateZ(360deg);
+    }
+    to {
+        transform: rotateZ(0deg);
+    }
+}
