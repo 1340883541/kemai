@@ -3,12 +3,12 @@
 //     error: '../../wgt/img_loadx@2x.jpg',
 //     loading: '../../wgt/img_loadx@2x.jpg'
 // });
-// // 清除 移动端点击的300ms 延迟，点透事件
-// if ('addEventListener' in document) {
-//     document.addEventListener('DOMContentLoaded', function() {
-//         FastClick.attach(document.body);
-//     }, false);
-// };
+// 清除 移动端点击的300ms 延迟，点透事件
+if ('addEventListener' in document) {
+    document.addEventListener('DOMContentLoaded', function() {
+        FastClick.attach(document.body);
+    }, false);
+};
 
 // 判断是否登录
 function checkLogin() {
@@ -635,87 +635,87 @@ function uploadImageDialog(par) {
  *  上传图片
  **/
 var wUploadPicture = {
-        camera: function(par) {
-            par = par || {};
-            api.getPicture({
-                sourceType: 'camera',
-                encodingType: 'jpg',
-                mediaValue: 'pic',
-                destinationType: par.type || 'url',
-                allowEdit: par.allowEdit || true,
-                quality: par.quality || 60,
-                targetWidth: par.targetWidth || '',
-                targetHeight: par.targetHeight || '',
-                saveToPhotoAlbum: par.saveToPhote || true
-            }, function(ret, err) {
-                // alert(JSON.stringify(ret));
-                console.log(JSON.stringify(ret));
-                if (ret.data || ret.base64Data) {
-                    par.cb && typeof par.cb === 'function' && par.cb(ret);
-                } else {
-                    console.log('未拍照')
-                }
-            });
+    camera: function(par) {
+        par = par || {};
+        api.getPicture({
+            sourceType: 'camera',
+            encodingType: 'jpg',
+            mediaValue: 'pic',
+            destinationType: par.type || 'url',
+            allowEdit: par.allowEdit || true,
+            quality: par.quality || 60,
+            targetWidth: par.targetWidth || '',
+            targetHeight: par.targetHeight || '',
+            saveToPhotoAlbum: par.saveToPhote || true
+        }, function(ret, err) {
+            // alert(JSON.stringify(ret));
+            console.log(JSON.stringify(ret));
+            if (ret.data || ret.base64Data) {
+                par.cb && typeof par.cb === 'function' && par.cb(ret);
+            } else {
+                console.log('未拍照')
+            }
+        });
 
-        },
-        album: function(par) {
-            var UIAlbumBrowser = api.require("UIAlbumBrowser");
-            var _this = this;
-            UIAlbumBrowser.open({
-                max: par.max || 9,
-                type: par.type || 'image',
-                isOpenPreview: true,
-                classify: true,
-                selectedAll: true,
-                styles: {
-                    bg: '#000000',
-                    mark: {
-                        icon: '',
-                        position: 'top_right',
-                        size: 20
-                    },
-                    nav: {
-                        bg: '#000',
-                        titleColor: '#ffffff',
-                        titleSize: 18,
-                        cancelColor: '#00ff00',
-                        cancelSize: 16,
-                        finishColor: '#00ff00',
-                        finishSize: 16
-                    }
+    },
+    album: function(par) {
+        var UIAlbumBrowser = api.require("UIAlbumBrowser");
+        var _this = this;
+        UIAlbumBrowser.open({
+            max: par.max || 9,
+            type: par.type || 'image',
+            isOpenPreview: true,
+            classify: true,
+            selectedAll: true,
+            styles: {
+                bg: '#000000',
+                mark: {
+                    icon: '',
+                    position: 'top_right',
+                    size: 20
                 },
-                rotation: false
-            }, function(ret, err) {
-                // alert(JSON.stringify(ret))
-                console.log(JSON.stringify(ret));
-                // console.log(JSON.stringify(err));
-                if (ret.eventType == 'confirm' && ret.list.length) {
-                    _this.transPath(ret.list, par);
+                nav: {
+                    bg: '#000',
+                    titleColor: '#ffffff',
+                    titleSize: 18,
+                    cancelColor: '#00ff00',
+                    cancelSize: 16,
+                    finishColor: '#00ff00',
+                    finishSize: 16
                 }
-            })
-        },
-        // 转换图片路径城绝对路径
-        transPath: function(pathLis, par) {
-            var UIAlbumBrowser = api.require("UIAlbumBrowser");
-            var arr = [];
-            pathLis.forEach(function(v) {
-                    UIAlbumBrowser.transPath({
-                        path: v.path
-                    }, function(res) {
-                        if (res) {
-                            arr.push(res.path)
-                        }
-                    })
+            },
+            rotation: false
+        }, function(ret, err) {
+            // alert(JSON.stringify(ret))
+            console.log(JSON.stringify(ret));
+            // console.log(JSON.stringify(err));
+            if (ret.eventType == 'confirm' && ret.list.length) {
+                _this.transPath(ret.list, par);
+            }
+        })
+    },
+    // 转换图片路径城绝对路径
+    transPath: function(pathLis, par) {
+        var UIAlbumBrowser = api.require("UIAlbumBrowser");
+        var arr = [];
+        pathLis.forEach(function(v) {
+                UIAlbumBrowser.transPath({
+                    path: v.path
+                }, function(res) {
+                    if (res) {
+                        arr.push(res.path)
+                    }
                 })
-                // console.log(JSON.stringify(arr))
-            par.cb && typeof par.cb === 'function' && setTimeout(function() {
-                par.cb(arr)
-            }, 300);
-        }
+            })
+            // console.log(JSON.stringify(arr))
+        par.cb && typeof par.cb === 'function' && setTimeout(function() {
+            par.cb(arr)
+        }, 300);
     }
-    /**
-     *  预览图片 photoBrowser
-     */
+};
+/**
+ *  预览图片 photoBrowser
+ */
 var wPhotoBrowser = {
     photoBrowser: '',
     init: function() {
@@ -743,112 +743,3 @@ var wPhotoBrowser = {
         this.photoBrowser.close()
     }
 };
-/**
- * 支付宝支付
- */
-var wAliPay = {
-    aliPay:null,
-    payFn:function(par){
-        par = par || {};
-        var _this = this;
-        this.init();
-        setTimeout(function(){
-            _this.payOrder(par);
-        })
-        // this.config(par)
-    },
-    init:function(){
-        this.aliPay = api.require('aliPayPlus');
-    },
-    // 方案一
-    payOrder:function(par){
-        // console.log(JSON.stringify(par))
-        this.aliPay.payOrder({
-            orderInfo: par.info
-        }, function(ret, err) {
-            // alert(JSON.stringify(ret))
-            // console.log(JSON.stringify(ret))
-            // alert(JSON.stringify(err))
-            // console.log(JSON.stringify(err))
-            if(ret.code == 9000){
-                par.cb && typeof par.cb === 'function' && par.cb();
-            }
-            else if(ret.code == 6001){
-                wDialog.toast({
-                    msg:'支付已取消'
-                })
-            }
-            else{
-                wDialog.toast({
-                    msg:'请求出错，请重试！'
-                })
-            }
-        });
-    }
-};
-
-/**
- * 微信支付
- */
-var wWxPay = {
-    isInstalled: false,
-    wxPay: null,
-    payFn: function(par) {
-        par = par || {};
-        var _this = this;
-        this.init();
-        this.isInstall();
-        setTimeout(function() {
-            console.log(_this.isInstalled)
-            if (_this.isInstalled) {
-                _this.payOrder(par);
-            }
-        },10)
-    },
-    init: function() {
-        this.wxPay = api.require('wxPay');
-    },
-    isInstall: function() {
-        var wx = api.require('wx');
-        var _this = this;
-        wx.isInstalled(function(ret, err) {
-            if (ret.installed) {
-                _this.isInstalled = ret.installed;
-            } else {
-                wDialog.toast({
-                    msg: '当前设备未安装微信客户端'
-                });
-            }
-        });
-    },
-    // 支付
-    payOrder: function(par) {
-        this.wxPay.payOrder({
-            apiKey: par.info.appid,
-            orderId: par.info.prepayid,
-            mchId: par.info.partnerid,
-            nonceStr: par.info.noncestr,
-            timeStamp: par.info.timestamp,
-            package: 'Sign=WXPay',
-            sign: par.info.sign
-        }, function(ret, err) {
-            console.log(JSON.stringify(ret))
-            console.log(JSON.stringify(err))
-            if (ret.status) {
-                par.cb && typeof par.cb === 'function' && par.cb();
-            } else {
-                if(err.code == -1){
-                    wDialog.toast({
-                        msg:'支付失败'
-                    })
-                }
-                else if(err.code == -2){
-                    wDialog.toast({
-                        msg:'支付取消'
-                    })
-                }
-            }
-        });
-
-    }
-}

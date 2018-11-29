@@ -3,87 +3,96 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,initial-scale=1.0,width=device-width" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>Hello APP</title>
+    <title>root-index</title>
+    <script src="./script/lib/rem.js"></script>
+    <script src="./script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="./css/lib/swiper.css" />
     <style type="text/css">
         html,
         body {
             height: 100%;
         }
-
-        .wrap {
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-flex-flow: column;
+        .wrap,.swiper-container{
+            height: 100%;
+            position: relative;
         }
-
-        header {
-            height: 44px;
-            width: 100%;
+        .swiper-container{
+            display: none;
+        }
+        .now-skip{
+            position: fixed;
+            left: 25%;
+            bottom: 20px;
+            width: 50%;
+            height:40px;
+            line-height: 40px;
+            -webkit-border-radius:8px;
+            -moz-border-radius:8px;
+            -ms-border-radius:8px;
+            -o-border-radius:8px;
+            border-radius:8px;
+            background-color: rgba(0,0,0,.5);
+            color:#fff;
             text-align: center;
-            background-color: #81a9c3;
-            color: #fff;
-            line-height: 44px;
-            font-size: 20px;
-        }
-
-        .flex-1 {
-            -webkit-box-flex: 1;
-            -webkit-flex: 1;
-        }
-
-        footer {
-            height: 30px;
-            width: 100%;
-            background-color: #81a9c3;
-            color: white;
-            line-height: 30px;
-            text-align: center;
+            font-size: 18px;
+            z-index: 9;
         }
     </style>
 </head>
-
 <body class="wrap">
-    <header>APICloud</header>
-    <section class="flex-1">
-
-    </section>
-    <footer>Copyright &copy;<span id="year"></span></footer>
+    <div class="swiper-container" id="qd-swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="w-fill-img"><img src="image/qd1.jpg" mode="aspectFill" alt=""></div>
+            </div>
+            <div class="swiper-slide">
+                <div class="w-fill-img"><img src="image/qd2.jpg" mode="aspectFill" alt=""></div>
+            </div>
+        </div>
+    </div>
+    <div class="now-skip" onclick="goToMain()">跳过</div>
 </body>
 <script type="text/javascript" src="./script/lib/api.js"></script>
+<script type="text/javascript" src="./script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="./script/lib/fastclick.js"></script>
+<script type="text/javascript" src="./script/lib/md5.js"></script>
+<script type="text/javascript" src="./script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="./script/lib/vue.min.js"></script>
+<script type="text/javascript" src="./script/lib/vue_lazyload.js"></script>
+<script type="text/javascript" src="./script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
-        //输出Log，Log将显示在APICloud Studio控制台
-        console.log("Hello World! Hello APICloud!");
-
-        var header = $api.dom('header'); // 获取 header 标签元素
-        var footer = $api.dom('footer'); // 获取 footer 标签元素
-
-        // 1.修复开启沉浸式效果带来的顶部Header与手机状态栏重合的问题，最新api.js方法已支持适配iPhoneX；
-        // 2.默认已开启了沉浸式效果 config.xml中 <preference name="statusBarAppearance" value="true"/>
-        // 3.沉浸式效果适配支持iOS7+，Android4.4+以上版本
-        var headerH = $api.fixStatusBar(header);
-        // 最新api.js为了适配iPhoneX增加的方法，修复底部Footer部分与iPhoneX的底部虚拟横条键重叠的问题；
-        var footerH = $api.fixTabBar(footer);
-
-        api.openFrame({
-            name: 'main',
-            url: 'html/main.html',
-            bounces: true,
-            rect: { // 推荐使用Margin布局，用于适配屏幕的动态变化
-                marginTop: headerH, // main页面距离win顶部的高度
-                marginBottom: footerH, // main页面距离win底部的高度
-                w: 'auto' // main页面的宽度 自适应屏幕宽度
-            }
+        if (checkLogin()) {
+            // 打开main
+            wHrefJs.openWin({
+                name:'main',
+                path:'./html/main.html'
+            });
+        }else{
+            $('#qd-swiper').show();
+            new Swiper({
+                el:'#qd-swiper'
+            })
+        }
+        // 设置沉浸式效果
+        api.setStatusBarStyle({
+            style: 'dark'
         });
 
-        // 获取当前年份时间，并加载显示到页面
-        var year = $api.byId('year');
-        year.innerHTML = new Date().getFullYear();
     };
-
+    // 跳转到main
+    function goToMain(){
+        wHrefJs.openWin({
+            name:'login',
+            path:'./html/login/login.html'
+        });
+    }
 </script>
 
 </html>
