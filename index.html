@@ -63,23 +63,23 @@
 <script type="text/javascript" src="./script/lib/md5.js"></script>
 <script type="text/javascript" src="./script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="./script/lib/vue.min.js"></script>
-<script type="text/javascript" src="./script/lib/vue_lazyload.js"></script>
+<script type="text/javascript" src="./script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="./script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
-        if (checkLogin()) {
+        // if (checkLogin()) {
             // 打开main
             wHrefJs.openWin({
                 name:'main',
                 path:'./html/main.html'
             });
-        }else{
-            $('#qd-swiper').show();
-            new Swiper({
-                el:'#qd-swiper'
-            })
-        }
+        // }else{
+        //     $('#qd-swiper').show();
+        //     new Swiper({
+        //         el:'#qd-swiper'
+        //     })
+        // }
         // 设置沉浸式效果
         api.setStatusBarStyle({
             style: 'dark'

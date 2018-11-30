@@ -7,36 +7,71 @@
     <meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
     <title>引导页</title>
     <script src="../script/lib/rem.js"></script>
+    <script src="../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../css/lib/swiper.css" />
     <style>
-
+        .footer{
+            position: fixed;
+            left: 0;
+            bottom:0;
+            z-index: 9;
+            height: 1rem;
+            width: 100%;
+            text-align: center;
+            padding-top: .11rem;
+        }
+        .footer li .f-img{
+            width: .48rem;
+            height: .48rem;
+            margin:0 auto;
+        }
+        .footer li .f-img .default,
+        .footer li.curr .f-img .checked{
+            display: block;
+        }
+        .footer li.curr .f-img .default,
+        .footer li .f-img .checked{
+            display: none;
+        }
+        .footer li .f-txt{
+            line-height: 1em;
+            margin-top: .1rem;
+            color:#ccc;
+            font-size: 11px;
+        }
+        .footer li.curr .f-txt{
+            color:#5494f2;
+        }
     </style>
 </head>
 
 <body>
     <footer>
         <div class="footer">
-            <ul class="flex-wrap">
-                <li class="curr flex-con">
+            <ul class="flex-wrap bor-1px-t">
+                <li class="curr flex-con" onclick="setFootBar(this,0)">
                     <div class="f-img w-fill-img">
-                        <img src="" mode="scaleToFill" alt="">
+                        <img class="default" src="../image/icon-1-d.png" mode="scaleToFill" alt="">
+                        <img class="checked" src="../image/icon-1-p.png" mode="scaleToFill" alt="">
                     </div>
                     <div class="f-txt">
                         工作台
                     </div>
                 </li>
-                <li class="curr flex-con">
+                <li class="flex-con" onclick="setFootBar(this,1)">
                     <div class="f-img w-fill-img">
-                        <img src="" mode="scaleToFill" alt="">
+                        <img class="default" src="../image/icon-2-d.png" mode="scaleToFill" alt="">
+                        <img class="checked" src="../image/icon-2-p.png" mode="scaleToFill" alt="">
                     </div>
                     <div class="f-txt">
                         客户
                     </div>
                 </li>
-                <li class="curr flex-con">
+                <li class="flex-con" onclick="setFootBar(this,2)">
                     <div class="f-img w-fill-img">
-                        <img src="" mode="scaleToFill" alt="">
+                        <img class="default" src="../image/icon-3-d.png" mode="scaleToFill" alt="">
+                        <img class="checked" src="../image/icon-3-p.png" mode="scaleToFill" alt="">
                     </div>
                     <div class="f-txt">
                         我的
@@ -52,7 +87,7 @@
 <script type="text/javascript" src="../script/lib/md5.js"></script>
 <script type="text/javascript" src="../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../script/lib/vue.min.js"></script>
-<script type="text/javascript" src="../script/lib/vue_lazyload.js"></script>
+<script type="text/javascript" src="../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../script/common.js"></script>
 <script type="text/javascript">
@@ -74,8 +109,60 @@
                 path: './login/login.html'
             });
         }
-
+        openFrameGroup(0);
     };
+    // 底部按钮切换
+    function setFootBar(_this,i){
+        if(!$(_this).hasClass('curr')){
+            $(_this).addClass('curr').siblings().removeClass('curr');
+            setFrameGroup(i);
+        }
+    }
+    var frameList = [
+        {
+            name: 'index',
+            url: './index/index.html',
+            bgColor: '#fff'
+        },
+        {
+            name: 'customer',
+            url: './customer/index.html',
+            bgColor: '#fff'
+        },
+        {
+            name: 'person',
+            url: './person/index.html',
+            bgColor: '#fff'
+        }
+    ];
+    var h = $(window).height() - $('.footer').outerHeight();
+    // 打开frame组
+    function openFrameGroup(i){
+        api.openFrameGroup ({
+            name: 'mainFrameGroup',
+            background: '#fff',
+            scrollEnabled: false,
+            rect: {
+                 x: 0,
+                 y: 0,
+                 w: 'auto',
+                 h: h
+            },
+            index: i,
+            preload:2,
+            frames:frameList
+        }, function(ret, err){});
+    }
+
+    // 设置frameGroup的index
+    function setFrameGroup(index){
+        api.setFrameGroupIndex({
+            name: 'mainFrameGroup',
+            index: index,
+            scroll: true,
+            reload:false
+        });
+    }
 </script>
 
 </html>
