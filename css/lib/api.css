@@ -392,6 +392,13 @@ textarea:input-placeholder{
     -webkit-flex: 1;
     flex: 1;
 }
+.flex-hh{
+    -webkit-flex-wrap:wrap;
+    -moz-flex-wrap:wrap;
+    -ms-flex-wrap:wrap;
+    -o-flex-wrap:wrap;
+    flex-wrap:wrap;
+}
 .flex-vertical {
     -webkit-box-orient: vertical;
     -webkit-flex-flow: column;

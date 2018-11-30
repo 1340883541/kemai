@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,23 +9,219 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/lib/customer/customer.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
 </head>
+
 <body>
-    <h1>工作台</h1>
+    <div id="wrap">
+        <div class="header">
+            <div class="i-title">工作台</div>
+        </div>
+        <!-- 客户 -->
+        <div class="kh-box">
+            <div class="kh-binner">
+                <div class="kh-add" @click="skipNewCustomer">今日新增</div>
+                <div class="kh-nav">
+                    <ul class="clear">
+                        <li class="fl bor-r">
+                            <p class="kh-t">网络客户</p>
+                            <p class="kh-c">15</p>
+                        </li>
+                        <li class="fl">
+                            <p class="kh-t">渠道客户</p>
+                            <p class="kh-c">88</p>
+                        </li>
+                        <li class="fl bor-r">
+                            <p class="kh-t">网络池客户</p>
+                            <p class="kh-c">26</p>
+                        </li>
+                        <li class="fl">
+                            <p class="kh-t">销售客户</p>
+                            <p class="kh-c">988</p>
+                        </li>
+                    </ul>
+                    <div class="kh-hline"></div>
+                    <div class="kh-vline"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 消息提醒 -->
+        <div class="msg-title">
+            <div class="i-title">消息提醒</div>
+        </div>
+        <div class="msg-box">
+            <div class="msg-binner clear">
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-1">
+                            <div class="read-msg">
+                                <span>9</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">负责人变更</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-2">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">跟进提醒</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-3">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">回收提醒</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-4">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">资源回收</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-5">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">认购提醒</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-6">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">签约提醒</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-7">
+                            <div class="read-msg">
+                                <span>99</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">缴费提醒</div>
+                </div>
+                <div class="fl msg-lis">
+                    <div class="msg-icon-box">
+                        <div class="msg-icon msg-icon-8">
+                            <div class="read-msg">
+                                <span>99+</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg-txt">认购书提醒</div>
+                </div>
+            </div>
+        </div>
+        <!-- 今日统计 -->
+
+        <div class="tj-title">
+            <div class="i-title">消息提醒</div>
+        </div>
+        <div class="tj-box">
+            <div class="tj-binner clear">
+                <div class="tj-lis fl">
+                    <div class="tj-icon tj-icon-1"></div>
+                    <div class="tj-txt">
+                        <p class="p-t">27</p>
+                        <p class="p-d">客户通话(个)</p>
+                    </div>
+                </div>
+                <div class="tj-lis fr">
+                    <div class="tj-icon tj-icon-2"></div>
+                    <div class="tj-txt">
+                        <p class="p-t">7</p>
+                        <p class="p-d">未接听(个)</p>
+                    </div>
+                </div>
+                <div class="tj-lis fl">
+                    <div class="tj-icon tj-icon-3"></div>
+                    <div class="tj-txt">
+                        <p class="p-t">6</p>
+                        <p class="p-d">短信跟进(个)</p>
+                    </div>
+                </div>
+                <div class="tj-lis fr">
+                    <div class="tj-icon tj-icon-4"></div>
+                    <div class="tj-txt">
+                        <p class="p-t">24</p>
+                        <p class="p-d">查看微信(个)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
-<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
-<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
-        console.log('index')
+    var indexV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.header')[0]);
+        api.addEventListener({
+            name: 'online'
+        }, function(ret, err){
+            if( ret ){
+                 alert( JSON.stringify( ret ) );
+            }else{
+                 alert( JSON.stringify( err ) );
+            }
+        });
+        api.addEventListener({
+            name: 'offline'
+        }, function(ret, err){
+            if( ret ){
+                 alert( JSON.stringify( ret ) );
+            }else{
+                 alert( JSON.stringify( err ) );
+            }
+        });
+        new Vue({
+            el:'#wrap',
+            mounted:function(){
+                listenOnline.offline();
+                listenOnline.online();
+            },
+            methods:{
+                // 跳转新增
+                skipNewCustomer:function(){
+                    console.log('in')
+                    wHrefJs.openWin({
+                        name:'newCustomerHeader',
+                        path:'./new_customer_header.html',
+                        param:{
+                            index:1
+                        }
+                    })
+                }
+            }
+        })
     }
 </script>
+
 </html>

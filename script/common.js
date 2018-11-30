@@ -262,11 +262,35 @@ var wHrefJs = {
 
     }
 };
-
 // 只是关闭当前页面
 function wBackThisFunc() {
     wHrefJs.backWin();
 }
+// 监听网络状态
+var listenOnline = {
+    online:function(cb){
+        api.addEventListener({
+            name: 'online'
+        }, function(ret, err){
+            console.log( JSON.stringify( ret ) );
+            console.log( JSON.stringify( err ) );
+            if( ret ){
+                 cb && typeof cb === 'function' && cb.call(this);
+            }
+        });
+    },
+    offline:function(cb){
+        api.addEventListener({
+            name: 'offline'
+        }, function(ret, err){
+            console.log( JSON.stringify( ret ) );
+            console.log( JSON.stringify( err ) );
+            if( ret ){
+                 cb && typeof cb === 'function' && cb.call(this);
+            }
+        });
+    }
+};
 // 错误状态码   0 表示为空   101 表示验证失败   1表示验证成功  102表示长度过短   103表示长度过长  104表示对比验证两个值不相等
 var wValidate = {
     flag: {},
