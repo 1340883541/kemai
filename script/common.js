@@ -6,7 +6,7 @@
 // 清除 移动端点击的300ms 延迟，点透事件
 if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {
-        FastClick.attach(document.body);
+        // FastClick.attach(document.body);
     }, false);
 };
 

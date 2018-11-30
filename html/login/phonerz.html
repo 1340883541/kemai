@@ -6,11 +6,33 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>手机认证</title>
     <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/lib/login/login.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/login/phonerz.css" />
 </head>
 <body>
-    <h1>手机认证</h1>
+    <div id="wrap">
+        <div id="header" class="header">
+           <div class="back"><a href="login.html"><img src="../../image/icon-dh-guanbi.png"></a></div>
+        </div>
+        <div id="main" class="flex-con">
+            <div class="phone_authentication">手机认证</div>
+             <div class="form-div">
+                 <div class="row flex-wrap flex-align">
+                     <div class="input-box flex-con">
+                         <input type="tel" maxlength="13" placeholder="请输入手机号" v-model="phone">\
+                         <div v-html="obtain"></div>
+                     </div>
+                 </div>
+                 <div class="row flex-wrap flex-align">
+                     <div class="input-box flex-con"><input type="password" maxlength="16" placeholder="请输入验证码" v-model="pwd"></div>
+                 </div>
+                 <div class="submit-btn space-between">
+                     <span class="text-align" @click="login">认证</span>
+                 </div>
+            <div>
+        </div>
+    </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
@@ -22,8 +44,23 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
-        console.log('手机认证')
-    }
+    // apiready = function(){
+    //     console.log('手机认证')
+    // }
+
+    new Vue({
+        el: '#wrap',
+        data: {
+            phone: '',
+            pwd: '',
+            obtain:''
+
+
+        },
+        methods:{
+
+       }
+
+    })
 </script>
 </html>

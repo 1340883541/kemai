@@ -1,20 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>登录</title>
-    <script src="../../script/lib/rem.js"></script>
-    <script src="../../script/lib/fastclick.js"></script>
+    <script type="text/javascript" src="../../script/lib/rem.js"></script>
+    <script type="text/javascript" src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
-    <link rel="stylesheet" type="text/css" href="../../css/lib/login/login.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/login/login.css" />
 </head>
+<style media="screen">
+    .test {
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        -webkit-animation: van-rotate 0.8s linear infinite;
+        animation: van-rotate 0.8s linear infinite;
+        color: blue;
+    }
+
+    .test {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        -webkit-animation-duration: 2s;
+        animation-duration: 2s;
+    }
+
+    @keyframes van-rotate {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+
+    .test circle {
+        stroke: currentColor;
+        stroke-width: 3;
+        stroke-linecap: round;
+        -webkit-animation: van-circular 1.5s ease-in-out infinite;
+        animation: van-circular 1.5s ease-in-out infinite;
+    }
+
+    @keyframes van-circular {
+        0% {
+            stroke-dasharray: 1, 200;
+            stroke-dashoffset: 0;
+        }
+        50% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -40;
+        }
+        100% {
+            stroke-dasharray: 90, 150;
+            stroke-dashoffset: -120;
+        }
+    }
+</style>
+
 <body>
-    <h1>login</h1>
+    <div id="wrap">
+        <!-- logo -->
+        <div class="logo" id="logo">
+            <img src="../../image/logo-200.png">
+        </div>
+        <div id="main" class="flex-con">
+            <div class="form-div">
+                <div class="row flex-wrap flex-align">
+                    <div class="input-box flex-con">
+                        <input type="tel" maxlength="11" placeholder="请输入个人账号" v-model="phone" v-on:input="tel_focus">
+                        <div class="tips_img" v-show="defult_hide"><img src="../../image/icon-qingkong-w.png" @click="empty_tel"></div>
+                    </div>
+                </div>
+                <div class="row flex-wrap flex-align">
+                    <div class="input-box flex-con input_pasd"><input type="password" maxlength="16" placeholder="请输入密码" v-model="pwd" v-on:input="pwd_focus">
+                        <div class="tips_img" v-show="defult_hideImg"><img src="../../image/icon-qingkong-w.png" @click="empty_pwd"></div>
+                    </div>
+                </div>
+                <div class="submit-btn space-between">
+                    <div class="text-align" @click="login">
+                    <span class="test">
+                        <svg viewBox="25 25 50 50" style="width: 100%;height: 100%;">
+                            <circle cx="50" cy="50" r="20" fill="none"></circle>
+                        </svg>
+                    </span><img src="../../image/icon-loading40-2.png" v-show="login_hide"><span v-html="sign"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
-<script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/fastclick.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
@@ -23,8 +108,71 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
-        console.log('index')
-    }
+    // apiready = function(){
+    // console.log('index')
+    new Vue({
+            el: '#wrap',
+            data: {
+                phone: '',
+                pwd: '',
+                sign: '登录',
+                defult_hide: false,
+                defult_hideImg: false,
+                login_hide: false,
+            },
+            methods: {
+                pwd_focus() {
+                    var _this = this;
+                    pwdExp = /^[a-zA-Z0-9]+$/;
+                    if (!pwdExp.test(_this.pwd)) {};
+                    _this.defult_hideImg = true;
+                },
+                tel_focus() {
+                    var _this = this,
+                        phoneExp = /^1[3456789]\d{9}$/;
+                    if (!phoneExp.test(_this.phone)) {
+                        _this.defult_hide = true;
+                    };
+                },
+                empty_pwd() {
+                    var _this = this;
+                    _this.pwd = "";
+                    _this.defult_hideImg = false;
+                },
+                empty_tel() {
+                    var _this = this;
+                    _this.phone = "";
+                    _this.defult_hide = false;
+                },
+
+                login: function() {
+                    var self = this;
+                    var phoneExp = /^1[3456789]\d{9}$/;
+                    if (self.phone == "" || self.phone == null || self.phone == undefined) {
+                        alert("请输入账号")
+                    } else if (!phoneExp.test(self.phone)) {
+                        alert("请输入账号2222")
+                    };
+                    var pwdExp = /^[\w]{6,16}$/;
+                    if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
+                        alert("请输入密码")
+                    } else if (!pwdExp.test(self.pwd)) {
+                        alert("请输入密码33333")
+                    };
+                    if (self.phone != "" || self.phone != null || self.phone != undefined || self.pwd != "" || self.pwd != null || self.pwd != undefined) {
+                        if ((!phoneExp.test(self.phone)) || (!pwdExp.test(self.pwd))) {
+                            self.sign = "登录"
+                            self.login_hide = false
+                        } else {
+                            self.sign = "登录中"
+                            self.login_hide = true
+                        }
+                    }
+                }
+            }
+
+        })
+        // }
 </script>
+
 </html>
