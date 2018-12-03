@@ -10,11 +10,109 @@
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+    </style>
 </head>
 
 <body>
     <div id="wrap">
-        <h1>今日新增头部</h1>
+        <div class="filter-lists">
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">唐鹏</span>
+                        <span class="n-state state fl w-elli">未联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">姜华胤</span>
+                        <span class="n-state state fl w-elli">未联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">杜毅</span>
+                        <span class="r-state state fl w-elli">已联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">黄朵 </span>
+                        <span class="r-state state fl w-elli">已联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">杜毅</span>
+                        <span class="r-state state fl w-elli">已联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">汤见</span>
+                        <span class="n-state state fl w-elli">未联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <div class="filter-lis clear">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli">魏国国</span>
+                        <span class="r-state state fl w-elli">已联系</span>
+                    </div>
+                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                </div>
+                <div class="fr right">
+                    <div class="filter-call"></div>
+                </div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="true" txt="暂无你搜索的资源客户"></empty-con>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -25,7 +123,33 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+new Vue({
+    el:'#wrap'
+})
     apiready = function() {
+
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: true,
+            image: {
+                pull: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png'
+                ],
+                load: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png',
+                    'widget://image/loading_more.gif',
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            // alert('开始加载刷新数据，摇一摇停止加载状态');
+            setTimeout(function(){
+                api.refreshHeaderLoadDone()
+            },2000)
+        });
     }
 </script>
 

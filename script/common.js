@@ -24,10 +24,10 @@ function checkLogin() {
 // txt => 内容
 Vue.component('empty-con', {
     template: '<div class="w-empty" v-if="isShow" @touchstart="touchstart(event)">' +
-        '<div class="w-em-img w-fill-img">' +
-        '<slot></slot>' +
+        '<div class="w-empty-img">' +
+        '<slot><img src="../../image/img-wushuju.png" alt=""></slot>' +
         '</div>' +
-        '<div class="w-em-p" v-text="txt"></div>' +
+        '<div class="w-empey-txt" v-text="txt"></div>' +
         '</div>',
     props: {
         isShow: {
@@ -186,11 +186,13 @@ var wHrefJs = {
         par.bounces = par.bounces === undefined || par.bounces == false ? false : par.bounces;
         par.allowEdit = par.allowEdit === undefined || par.allowEdit == false ? false : par.allowEdit;
         par.reload = par.reload === undefined || par.reload == false ? false : par.reload;
+        par.bgColor = par.bgColor === undefined || par.bgColor == false ? '#fff' : par.bgColor;
         api.openWin({
             name: par.name,
             url: par.path,
             pageParam: par.param,
             bounces: par.bounces,
+            bgColor:par.bgColor,
             progress: {
                 type: 'page',
                 title: '正在加载中...',
@@ -211,10 +213,10 @@ var wHrefJs = {
         par.bounces = par.bounces === undefined || par.bounces == false ? false : par.bounces;
         par.allowEdit = par.allowEdit === undefined || par.allowEdit == false ? true : par.allowEdit;
         par.reload = par.reload === undefined || par.reload == false ? false : par.reload;
-        par.x = typeof x === 'undefined' || par.x == false ? 0 : par.x;
-        par.y = typeof y === 'undefined' || par.y == false ? 0 : par.y;
-        par.w = typeof w === 'undefined' || par.w == false ? 'auto' : par.w;
-        par.h = typeof h === 'undefined' || par.h == false ? 'auto' : par.h;
+        par.x = typeof par.x === 'undefined' || par.x == false ? 0 : par.x;
+        par.y = typeof par.y === 'undefined' || par.y == false ? 0 : par.y;
+        par.w = typeof par.w === 'undefined' || par.w == false ? 'auto' : par.w;
+        par.h = typeof par.h === 'undefined' || par.h == false ? 'auto' : par.h;
         par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.5)' : par.bgColor;
         par.animation = typeof par.animation === 'undefined' || par.animation == false ? {} : par.animation;
         par.animation['type'] = par.animation['type'] || 'movein';
@@ -272,8 +274,6 @@ var listenOnline = {
         api.addEventListener({
             name: 'online'
         }, function(ret, err){
-            console.log( JSON.stringify( ret ) );
-            console.log( JSON.stringify( err ) );
             if( ret ){
                  cb && typeof cb === 'function' && cb.call(this);
             }
@@ -283,12 +283,13 @@ var listenOnline = {
         api.addEventListener({
             name: 'offline'
         }, function(ret, err){
-            console.log( JSON.stringify( ret ) );
-            console.log( JSON.stringify( err ) );
             if( ret ){
                  cb && typeof cb === 'function' && cb.call(this);
             }
         });
+    },
+    lineStatus:function(){
+        return api.connectionType;
     }
 };
 // 错误状态码   0 表示为空   101 表示验证失败   1表示验证成功  102表示长度过短   103表示长度过长  104表示对比验证两个值不相等

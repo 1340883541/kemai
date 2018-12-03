@@ -9,12 +9,43 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style media="screen">
+        html,body,#wrap{
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+    </style>
 </head>
 
 <body>
     <div id="wrap">
-        <h1>今日新增头部</h1>
+        <div class="w-header">
+            <div class="search-box" id="header-search-box">
+                <div class="back"></div>
+                <div class="search-inp">
+                    <form action="#" onsubmit="return false;">
+                        <i class="search" @click="submitSeach"></i>
+                        <i class="close" @click="clearSearchVal"></i>
+                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                    </form>
+                    <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名</span></div>
+                </div>
+                <div class="cancel-box" @click="cancelSearch">取消</div>
+            </div>
+            <div class="filter-box flex-wrap">
+                <div class="flex-con filter-lis kh" data-kh="0">
+                    <span>网络客户</span><i></i>
+                </div>
+                <div class="flex-con filter-lis fil" data-fil="0">
+                    <span>联系状态</span><i></i>
+                </div>
+                <div class="flex-con filter-lis fil" data-fil="0">
+                    <span>分配时间</span><i></i>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -25,7 +56,50 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+    var ncusHeaderV = null;
     apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+        ncusHeaderV = new Vue({
+            el:"#wrap",
+            data:{
+                searchVal:''
+            },
+            methods:{
+                // 获取焦点
+                onFoucsInp:function(){
+                    $('#header-search-box').addClass('curr');
+                    setTimeout(function(){
+                        $('#search-inp').focus();
+                    },200);
+                },
+                // 取消搜索
+                cancelSearch:function(){
+                    $('#search-inp').blur();
+                    $('#header-search-box').removeClass('curr');
+                    this.clearSearchVal();
+                },
+                submitSeach:function(){
+                },
+                clearSearchVal:function(){
+                    this.searchVal = '';
+                }
+            }
+        });
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        wHrefJs.openFrame({
+            name:'newCustomerFrame',
+            path:'./new_customer_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'#f7f7f7',
+            animation:{
+                type:'none'
+            }
+        })
     }
 </script>
 

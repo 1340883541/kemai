@@ -16,6 +16,12 @@
     <div id="wrap">
         <div class="header">
             <div class="i-title">工作台</div>
+            <div class="offline-box clear" id="offline-box">
+                <div class="fl left">
+                    <i></i>网络不给力，请检查您的网络设置
+                </div>
+                <div class="fr right"></div>
+            </div>
         </div>
         <!-- 客户 -->
         <div class="kh-box">
@@ -183,40 +189,36 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
-        api.addEventListener({
-            name: 'online'
-        }, function(ret, err){
-            if( ret ){
-                 alert( JSON.stringify( ret ) );
-            }else{
-                 alert( JSON.stringify( err ) );
-            }
-        });
-        api.addEventListener({
-            name: 'offline'
-        }, function(ret, err){
-            if( ret ){
-                 alert( JSON.stringify( ret ) );
-            }else{
-                 alert( JSON.stringify( err ) );
-            }
-        });
         new Vue({
             el:'#wrap',
             mounted:function(){
-                listenOnline.offline();
-                listenOnline.online();
+                this.netWorkStatus();
             },
             methods:{
+                // 判断网络状态
+                netWorkStatus:function(){
+                    listenOnline.offline(function(){
+                        $('#offline-box').show();
+                    });
+                    listenOnline.online(function(){
+                        $('#offline-box').hide();
+                    });
+                    var lineStatus = listenOnline.lineStatus();
+                    if(lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g'){
+                        $('#offline-box').show();
+                    }else{
+                        $('#offline-box').hide();
+                    }
+                },
                 // 跳转新增
                 skipNewCustomer:function(){
-                    console.log('in')
                     wHrefJs.openWin({
                         name:'newCustomerHeader',
                         path:'./new_customer_header.html',
                         param:{
                             index:1
-                        }
+                        },
+                        bgColor:'#f7f7f7'
                     })
                 }
             }
