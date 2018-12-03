@@ -1,8 +1,9 @@
 var __CONFIG__ = {
     // baseUrl:'http://192.168.0.235/',
-    baseUrl:'http://global.jindingtimes.com/',
+    baseUrl:'http://192.168.0.214:9000/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
+var beUrl='http://192.168.0.214:9000/';
 
 function wApiAjax(par){
     par.data = par.data || '';

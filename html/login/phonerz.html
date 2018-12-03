@@ -20,15 +20,18 @@
              <div class="form-div">
                  <div class="row flex-wrap flex-align">
                      <div class="input-box flex-con">
-                         <input type="tel" maxlength="13" placeholder="请输入手机号" v-model="phone">\
-                         <div v-html="obtain"></div>
+                         <input type="tel" maxlength="13" placeholder="请输入手机号" v-model="phone">
+                         <div class="code">
+                             <span  v-html="obtain"  v-show="default_obtain" @click="obtainClick"></span>
+                             <span  v-show="!default_obtain">{{count}}秒后重新发送</span>
+                         </div>
                      </div>
                  </div>
                  <div class="row flex-wrap flex-align">
-                     <div class="input-box flex-con"><input type="password" maxlength="16" placeholder="请输入验证码" v-model="pwd"></div>
+                     <div class="input-box flex-con"><input type="text" maxlength="16" placeholder="请输入验证码" v-model="code"></div>
                  </div>
-                 <div class="submit-btn space-between">
-                     <span class="text-align" @click="login">认证</span>
+                 <div class="submit-btn space-between" @click="authentication">
+                     <span class="text-align">认证</span>
                  </div>
             <div>
         </div>
@@ -52,13 +55,42 @@
         el: '#wrap',
         data: {
             phone: '',
-            pwd: '',
-            obtain:''
-
-
+            code: '',
+            obtain:'获取验证码',
+            default_obtain:true,
+            count:'',
+            timer: null,
         },
         methods:{
-
+            obtainClick:function(){
+                var _this = this;
+                const TIME_COUNT = 60;
+                     if (!_this.timer) {
+                       _this.count = TIME_COUNT;
+                       _this.default_obtain = false;
+                       _this.timer = setInterval(() => {
+                       if (_this.count > 0 && _this.count <= TIME_COUNT) {
+                         _this.count--;
+                        } else {
+                         _this.default_obtain = true;
+                         clearInterval(this.timer);
+                         _this.timer = null;
+                        }
+                       }, 1000)
+            }
+        },
+        authentication:function(){
+            var self = this;
+            var phoneExp = /^1[3456789]\d{9}$/;
+            if (self.phone == "" || self.phone == null || self.phone == undefined) {
+                alert("请输入账号")
+            } else if (!phoneExp.test(self.phone)) {
+                alert("请输入账号2222")
+            };
+            if (self.code == "" || self.code == null || self.code == undefined) {
+                alert("请输入验证码")
+            }
+        }
        }
 
     })
