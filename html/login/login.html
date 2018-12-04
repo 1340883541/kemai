@@ -31,9 +31,6 @@
             transform: rotate(360deg);
         }
     }
-
-
-
 </style>
 
 <body>
@@ -46,7 +43,7 @@
             <div class="form-div">
                 <div class="row flex-wrap flex-align">
                     <div class="input-box flex-con">
-                        <input type="tel" maxlength="11" placeholder="请输入个人账号" v-model="phone" v-on:input="tel_focus">
+                        <input type="text" maxlength="11" placeholder="请输入个人账号" v-model="phone" v-on:input="tel_focus">
                         <div class="tips_img" v-show="defult_hide"><img src="../../image/icon-qingkong-w.png" @click="empty_tel"></div>
                     </div>
                 </div>
@@ -62,7 +59,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
@@ -91,16 +87,17 @@
             methods: {
                 pwd_focus() {
                     var _this = this;
-                    pwdExp = /^[a-zA-Z0-9]+$/;
+                    var pwdExp = /^[a-zA-Z0-9]+$/;
                     if (!pwdExp.test(_this.pwd)) {};
                     _this.defult_hideImg = true;
                 },
                 tel_focus() {
-                    var _this = this,
-                        phoneExp = /^1[3456789]\d{9}$/;
-                    if (!phoneExp.test(_this.phone)) {
-                        _this.defult_hide = true;
-                    };
+                    var _this = this;
+                    //     phoneExp = /^1[3456789]\d{9}$/;
+                    // if (!phoneExp.test(_this.phone)) {
+                    //     _this.defult_hide = true;
+                    // };
+                     _this.defult_hide = true;
                 },
                 empty_pwd() {
                     var _this = this;
@@ -115,12 +112,13 @@
 
                 login: function() {
                     var self = this;
-                    var phoneExp = /^1[3456789]\d{9}$/;
+                    // var phoneExp = /^1[3456789]\d{9}$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
                         alert("请输入账号")
-                    } else if (!phoneExp.test(self.phone)) {
-                        alert("请输入账号2222")
                     };
+                    // } else if (!phoneExp.test(self.phone)) {
+                    //     alert("请输入账号2222")
+                    // };
                     var pwdExp = /^[\w]{6,16}$/;
                     if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                         alert("请输入密码")
@@ -140,23 +138,36 @@
                     // })
 
                     if (self.phone != "" || self.phone != null || self.phone != undefined || self.pwd != "" || self.pwd != null || self.pwd != undefined) {
-                        if ((!phoneExp.test(self.phone)) || (!pwdExp.test(self.pwd))) {
+                        // if ((!phoneExp.test(self.phone)) || (!pwdExp.test(self.pwd))) {
+                         if ((!pwdExp.test(self.pwd))) {
+
                             self.sign = "登录"
                             self.login_hide = false
 
                         } else {
-                            self.sign = "登录中"
-                            self.login_hide = true
                             $.ajax({
                                 method:"post",
-                                url:beUrl+'loginapp/verifyLogin',
-                                headers:"application/x-www-form-urlencoded;charset=UTF-8",
+                                 url:beUrl+'loginapp/verifyLogin',
+                                // headers:"application/x-www-form-urlencoded;charset=UTF-8",
                                 data:{
                                     account:self.phone,
                                     pwd: hex_md5(self.pwd)
                                 },
                                 success:function(res){
-                                    console.log(JSON.stringify(res))
+                                    sessionStorage.setItem('searchData', JSON.stringify(res.accountInfo))
+                                    searchArr = JSON.parse(sessionStorage.getItem('searchData'))
+                                    console.log(searchArr)
+                                    if(res.code==6){
+                                        alert("账号不存在")
+                                    }
+                                    if(res.code==3){
+                                        alert("该员工账号未进行授权")
+                                    }
+                                    if(res.code==4){
+                                        alert("正在登录")
+                                    }
+                                    self.sign = "登录中"
+                                    self.login_hide = true
 
                                 }
                             })

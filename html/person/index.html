@@ -11,7 +11,93 @@
     <link rel="stylesheet" type="text/css" href="../../css/person/person.css" />
 </head>
 <body>
-    <h1>个人中心</h1>
+    <!-- 头部 -->
+      <div id="wrap">
+          <div v-show="personal_center">
+              <div class="header">
+                   <div class=header_title>个人中心</div>
+                   <div class="header_main">
+                       <div class="header_text">
+                           <div class="flex_con">
+                               <div class="name">{{name}}</div>
+                               <div class="post">{{post_pos}}</div>
+                           </div>
+                           <div class="flex_con contact_number">
+                                <div class="cont_tel">
+                                    <span>拨打号:</span>
+                                    <span>{{tel}}</span>
+                                </div>
+                                <div class="Authentication_tel">
+                                    <img src="../../image/icon-rz.png">
+                                </div>
+                           </div>
+                           <div class="flex_con contact_set">
+                                <div class="cont_tel">
+                                    <span>接听号:</span>
+                                    <span class="not_set">未设置</span>
+                                </div>
+                                <div class="Authentication_edit" @click="setting_tel">
+                                    <img src="../../image/icon-bianji.png">
+                                </div>
+                          </div>
+                   </div>
+              </div>
+          </div>
+          <div id="main" class="main">
+              <div class="main_box">
+                  <div class="person_center account_security">
+                      <div class="account_left">
+                          <div><img src="../../image/icon-gr-zh.png"></div>
+                      </div>
+                      <div class="account_rig">
+                          <span>账号安全</span>
+                         <div><img src="../../image/icon-gr-jiantou.png"></div>
+                      </div>
+                  </div>
+                  <div class="person_center account_security">
+                      <div class="account_left">
+                          <div><img src="../../image/icon-gr-xx.png"></div>
+
+                      </div>
+                      <div class="account_rig">
+                           <span>消息通知</span>
+                        <div><img src="../../image/icon-gr-jiantou.png"></div>
+                      </div>
+                  </div>
+                  <div class="person_center account_security">
+                      <div class="account_left">
+                          <div><img src="../../image/icon-gr-gy.png"></div>
+
+                      </div>
+                      <div class="account_rig underline_rig">
+                           <span>关于客脉</span>
+                         <div><img src="../../image/icon-gr-jiantou.png"></div>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="submit-btn space-between">
+                  <div class="text-align" >认证</div>
+              </div>
+          </div>
+      </div>
+      <!-- 接听号设置 -->
+       <div v-show="answer_settings">
+           <div class="settings">
+               <div class="back" @click="back_per"><img src="../../image/icon-dh-fanhui.png"></div>
+               <div class="title"> 接听号设置</div>
+               <div class="preservation" @click="preservation"> 保存</div>
+           </div>
+           <div class="settings_tel">
+               <div class="settings_number">
+                   <div class="answer">接听号</div>
+                   <div class="input-box flex-con input_pasd"><input type="tel" maxlength="11" placeholder="请输入手机号" v-model="phone"></div>
+               </div>
+                <div class="be_careful">注意：请设置经常使用的号码，一经填写后将不能更改</div>
+           </div>
+
+       </div>
+  </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
@@ -23,8 +109,41 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
-        console.log('index')
-    }
+    // apiready = function(){
+    //     console.log('index')
+    // }
+    new Vue({
+            el: '#wrap',
+            data: {
+                name: '刘超',
+                post_pos:'销售专员',
+                tel:"15208244673",
+                personal_center:true,
+                answer_settings:false,
+                phone:'',
+            },
+            methods: {
+                back_per:function(){
+                    var _this = this;
+                    _this.personal_center = true;
+                    _this.answer_settings = false
+                },
+                setting_tel:function(){
+                    var _this = this;
+                    _this.personal_center = false;
+                    _this.answer_settings = true
+                },
+                preservation:function(){
+                    var self = this;
+                    var phoneExp = /^1[3456789]\d{9}$/;
+                    if (self.phone == "" || self.phone == null || self.phone == undefined) {
+                        alert("请输入账号")
+                    } else if (!phoneExp.test(self.phone)) {
+                        alert("请输入账号2222")
+                    };
+                }
+
+            }
+        })
 </script>
 </html>

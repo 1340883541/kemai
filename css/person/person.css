@@ -1,0 +1,235 @@
+#wrap{
+    width:100%;
+    height:100%;
+}
+.header{
+    background:url(../../image/img-sy-bg.png)  no-repeat center center;
+   background-size:cover;
+   background-attachment:fixed;
+   height:3.59rem;
+   position: relative;
+}
+.header_title{
+    height:0.8rem;
+    line-height: 0.8rem;
+    text-align: center;
+    font-family: PingFangSC-Medium;
+	font-size: 0.34rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: white;
+}
+.header_main{
+    margin-top: 0.41rem;
+    width:100%;
+    padding:0 0.3rem;
+}
+.header_text{
+    background-color: white;
+    padding-left: 0.4rem;
+    padding-top: 0.63rem;
+}
+.flex_con{
+    display: flex;
+}
+.name{
+    ont-family: PingFangSC-Medium;
+	font-size: 0.56rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0.2px;
+	color: #333333;
+}
+.post{
+    margin-left: 0.37rem;
+    margin-top: 0.17rem;
+    padding:0.07rem 0.04rem;
+    background-color: #f3a134;
+	border-radius: 2px;
+    color: white;
+    font-size: 0.26rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0.1px;
+}
+.contact_number{
+    padding-top: 0.49rem;
+}
+.contact_number span{
+    font-family: PingFangSC-Regular;
+	font-size: 0.28rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0.1px;
+	color: #333333;
+}
+.Authentication_tel{
+    width: 1.06rem;
+	height: .036rem;
+    margin-left: 0.14rem;
+}
+.Authentication_tel>img{
+    width:100%;
+}
+.contact_set{
+    padding-top:0.33rem;
+}
+.contact_set span{
+    font-family: PingFangSC-Regular;
+	font-size: 0.28rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0.1px;
+	color: #333333;
+}
+
+.not_set{
+	color: #666666!important;
+}
+.Authentication_edit{
+    width: 0.24rem;
+	height: 0.26rem;
+    margin-left: 0.2rem;
+}
+.Authentication_edit>img{
+    width:100%
+}
+.main{
+    margin-top: 0.99rem;
+}
+.main_box{
+    padding:0 0.4rem;
+}
+.person_center{
+    display: flex;
+    /*justify-content: space-between;*/
+    height: 1.12rem;
+    align-items: center;
+    line-height: 1.12rem;
+}
+.account_left>div{
+    width: 0.48rem;
+	height: 0.48rem;
+	background-color: #1bc030;
+	border-radius: 8px;
+}
+.account_left>div img{
+  width:100%;
+}
+.account_rig span{
+    font-family: PingFangSC-Regular;
+	font-size: 0.32rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #333333;
+}
+.account_rig{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 0.3rem;
+    width: 100%;
+}
+.underline_rig{
+        box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
+}
+.account_rig>div img{
+    width:0.16rem;
+    height:0.26rem;
+}
+.account_rig img{
+    width:100%;
+}
+.submit-btn{
+  margin-top: 0.6rem;
+  padding: 0 0.3rem;
+}
+.submit-btn>div{
+    width: 100%;
+	height: 0.96rem;
+	background-image: linear-gradient(90deg,
+		rgba(84, 203, 248, 0.95) 0%,
+		rgba(13, 100, 250, 0.95) 100%);
+	border-radius: 8px;
+    text-align: center;
+    line-height: 0.96rem;
+    font-size: 0.34rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: white;
+}
+
+/*接听号设置*/
+.settings{
+    height:0.84rem;
+    line-height: 0.84rem;
+    padding: 0 0.3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.settings .back{
+    width: 0.48rem;
+	height: 0.48rem;
+}
+.settings .back img{
+    width:100%;
+}
+.settings .title{
+    font-family: PingFangSC-Medium;
+	font-size: 0.36rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #333333;
+}
+.settings .preservation{
+    font-family: PingFangSC-Medium;
+  	font-size: 0.3rem;
+  	font-weight: normal;
+  	font-stretch: normal;
+  	letter-spacing: 0px;
+  	color: #4c9ff8;
+}
+.settings_tel{
+    margin-top: 0.6rem;
+    padding:0.3rem;
+}
+.settings_number{
+    height: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+.answer{
+    font-family: PingFangSC-Regular;
+	font-size: 0.32rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #333333;
+    border-right: 1px solid #ccc;
+    line-height: 0.32rem;
+    padding: 0 0.27rem 0 0;
+}
+.input-box>input{
+    padding-left: 0.3rem;
+    font-family: PingFangSC-Regular;
+	font-size: 0.32rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #333333;
+}
+.be_careful{
+    padding-top: 0.3rem;
+    font-family: PingFangSC-Regular;
+	font-size: 0.26rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #999999;
+}

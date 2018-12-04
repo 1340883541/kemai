@@ -3,7 +3,7 @@ var __CONFIG__ = {
     baseUrl:'http://192.168.0.214:9000/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
-var beUrl='http://192.168.0.214:9000/';
+var beUrl='http://192.168.0.157:9000/';
 
 function wApiAjax(par){
     par.data = par.data || '';
