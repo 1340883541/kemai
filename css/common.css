@@ -41,7 +41,10 @@
     -o-transition: all .3s ease-in;
     transition: all .3s ease-in;
 }
-
+.w-header .search-box .customer-search{
+    left:.3rem;
+    width: 6.9rem;
+}
 .w-header .search-box.curr .search-inp {
     left: .3rem;
     width: 6rem;
@@ -165,7 +168,7 @@
     font-size: .28rem;
 }
 
-.w-header .filter-box .kh>i {
+.w-header .filter-box .kh>i,.w-header .filter-box .lx>i {
     display: inline-block;
     width: .2rem;
     height: .2rem;
@@ -174,10 +177,10 @@
     vertical-align: middle;
 }
 
-.w-header .filter-box .kh.curr{
+.w-header .filter-box .kh.curr,.w-header .filter-box .lx.curr{
     font-weight: bold;
 }
-.w-header .filter-box .kh.curr>i {
+.w-header .filter-box .kh.curr>i,.w-header .filter-box .lx.curr>i {
     background-image: url('../image/icon-jiantou-sx1.png');
 }
 

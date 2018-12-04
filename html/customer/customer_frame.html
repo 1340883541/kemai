@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增客户-主页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="filter-lists">
+            <div class="filter-lis cfil-lis">
+                <div class="cfil-t flex-wrap flex-between">
+                    <div class="cname"></div>
+                    <div class="cphone"></div>
+                </div>
+                <div class="cfil-b">
+
+                </div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="true" txt="暂无资源客户"></empty-con>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+new Vue({
+    el:'#wrap'
+})
+    apiready = function() {
+
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: true,
+            image: {
+                pull: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png'
+                ],
+                load: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png',
+                    'widget://image/loading_more.gif',
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            // alert('开始加载刷新数据，摇一摇停止加载状态');
+            setTimeout(function(){
+                api.refreshHeaderLoadDone()
+            },2000)
+        });
+    }
+</script>
+
+</html>

@@ -19,6 +19,8 @@
             height: 1rem;
             width: 100%;
             text-align: center;
+        }
+        .footer > ul{
             padding-top: .11rem;
         }
         .footer li .f-img{
@@ -116,6 +118,16 @@
         if(!$(_this).hasClass('curr')){
             $(_this).addClass('curr').siblings().removeClass('curr');
             setFrameGroup(i);
+            if(i == 1){
+                // 打开frame
+                api.sendEvent({
+                    name: 'openCustomerFrame'
+                });
+            }else{
+                api.sendEvent({
+                    name: 'closeCustomerFrame'
+                });
+            }
         }
     }
     var frameList = [
@@ -126,7 +138,7 @@
         },
         {
             name: 'customer',
-            url: './customer/index.html',
+            url: './customer/customer_header.html',
             bgColor: '#fff'
         },
         {
@@ -135,9 +147,9 @@
             bgColor: '#fff'
         }
     ];
-    var h = $(window).height() - $('.footer').outerHeight();
     // 打开frame组
     function openFrameGroup(i){
+        var h = $(window).height() - $('.footer').height();
         api.openFrameGroup ({
             name: 'mainFrameGroup',
             background: '#fff',
@@ -150,7 +162,8 @@
             },
             index: i,
             preload:2,
-            frames:frameList
+            frames:frameList,
+            reload:true
         }, function(ret, err){});
     }
 
