@@ -307,6 +307,162 @@
     height: 1px;
     background-color: #dddddd;
 }
+/*客户列表*/
+.filter-lists .cfil-lis{
+    height: 2.84rem;
+    padding:0 .34rem;
+}
+.filter-lists .cfil-lis .cfil-t{
+    position: relative;
+    height: .96rem;
+    line-height: .96rem;
+}
+.filter-lists .cfil-lis .cfil-t:after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #ececec;
+    -webkit-transform:scaleY(0.5);
+    -moz-transform:scaleY(0.5);
+    -ms-transform:scaleY(0.5);
+    -o-transform:scaleY(0.5);
+    transform:scaleY(0.5);
+}
+.filter-lists .cfil-lis .cfil-t .cname{
+    color:#333;
+    font-size: .36rem;
+}
+.filter-lists .cfil-lis .cfil-t .cphone{
+    width: .8rem;
+    height: .56rem;
+    background:#469fff url('../image/icon-dianhua.png') no-repeat center;
+    background-size: .32rem;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+    margin-top: .2rem;
+}
+.filter-lists .cfil-lis .cfil-b{
+    color:#666;
+    font-size: .28rem;
+}
+.filter-lists .cfil-lis .cfil-b .lis{
+    position: relative;
+    padding-left: .36rem;
+}
+.filter-lists .cfil-lis .cfil-b .lis > span{
+    color:#333;
+}
+.filter-lists .cfil-lis .cfil-b .cfil-bt{
+    margin-top: .28rem;
+    line-height: 1em;
+    margin-bottom: .26rem;
+}
+.filter-lists .cfil-lis .cfil-b .cfil-bt > i{
+    position: absolute;
+    left: 0;
+    top:50%;
+    width: .24rem;
+    height: .24rem;
+    margin-top: -.12rem;
+    background: url('../image/icon-leixing.png') no-repeat center;
+    background-size: .24rem;
+}
+.filter-lists .cfil-lis .cfil-b .time > i{
+    position: absolute;
+    left: .06rem;
+    top:50%;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    -ms-border-radius:100%;
+    -o-border-radius:100%;
+    border-radius:100%;
+}
+.filter-lists .cfil-lis .cfil-b .cfil-gj{
+    margin-bottom: .12rem;
+}
+.filter-lists .cfil-lis .cfil-b .cfil-gj > i{
+    background-color: #00bf6d;
+}
+.filter-lists .cfil-lis .cfil-b .cfil-jh > i{
+    background-color: #f5a623;
+}
+/*筛选弹窗*/
+.filter-popup{
+    position: fixed;
+    left: 0;
+    top:0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+.filter-popup .filter-popbg{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.3);
+}
+.filter-popup .filter-popbox{
+    position: absolute;
+    left: 0;
+    top:0;
+    width: 100%;
+    max-height: 5.4rem;
+    padding:0 .3rem;
+    background-color: #fff;
+}
+.filter-popup .filter-popbox li{
+    position: relative;
+    height: .9rem;
+    line-height: .9rem;
+    text-align: center;
+    color:#333;
+    font-size: .3rem;
+}
+.filter-popup .filter-popbox li > i{
+    position: absolute;
+    right: 0;
+    top:0;
+    z-index: 1;
+    width: .9rem;
+    height: .9rem;
+    background: url('../image/icon-gou.png') no-repeat right center;
+    background-size: .4rem;
+    display: none;
+}
+.filter-popup .filter-popbox li.curr{
+    color:#1b6efb;
+}
+.filter-popup .filter-popbox li.curr > i{
+    display: block;
+}
+.filter-popup .filter-popbox li:after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 100%;
+    height: 1px;
+    -webkit-transform:scaleY(.5);
+    -moz-transform:scaleY(.5);
+    -ms-transform:scaleY(.5);
+    -o-transform:scaleY(.5);
+    transform:scaleY(.5);
+    background-color: #ededed;
+}
+.filter-popup .filter-popbox li:last-child:after{
+    display: none;
+}
+/*空页面*/
 .w-empty{
     width: 100%;
     padding-top:1.8rem;

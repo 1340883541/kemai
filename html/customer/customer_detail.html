@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客户-详情</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="cd-header" id="cd-header">
+            <div class="back-box" id="back-box">
+                <div class="back"></div>
+                <div class="header-txt">
+                    <span>跟进信息</span>
+                    <span>意向资料</span>
+                </div>
+            </div>
+            <div class="hname">张先生</div>
+            <div class="horigin">客户来源：<span>销售客户</span></div>
+        </div>
+        <section>
+            <div class="cd-caption">
+                <div class="cd-ct w-inline-block">
+                    <span>微信号：</span><span>********</span><span class="look">查看微信</span>
+                </div>
+                <div class="cd-cb w-inline-block">
+                    <span>销售负责人：</span><span>张晓丽</span><span class="line">|</span><span>渠道负责人：</span><span>王丽</span>
+                </div>
+            </div>
+            <div class="cd-contain">
+                <div class="cd-nav">
+                    <div class="cd-nav-ab flex-wrap">
+                        <div class="flex-con cd-n curr">跟进信息(<span>325</span>) <i></i></div>
+                        <div class="flex-con cd-n">意向资料<i></i></div>
+                    </div>
+                    <div class="cd-nav-place"></div>
+                </div>
+                <div class="cd-box cd-box0" style="display:none;">
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon1"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p">销售专员：<span>王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                            <div class="gj-addr gj"><i></i>跟进地址: <span>四川省成都市奥克斯星巴克店</span></div>
+                        </div>
+                    </div>
+                        <div class="cd-flow">
+                            <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                            <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                            <!-- <div class="cd-flow-all">全文</div> -->
+                            <div class="cd-flow-audio disabled">
+                                <div class="audio"></div>
+                                <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                            </div>
+                            <div class="cd-flow-p">销售专员：<span>王丽</span></div>
+                            <div class="cd-flow-timebox">
+                                <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                            </div>
+                        </div>
+                </div>
+                <div class="cd-box cd-box1">
+                    <div class="cd-info">
+                        <div class="cd-info-lis clear">
+                            <div class="fl left">意向城市</div>
+                            <div class="fl right">墨尔本</div>
+                        </div>
+                        <div class="cd-info-lis clear">
+                            <div class="fl left">意向楼盘</div>
+                            <div class="fl right">公寓</div>
+                        </div>
+                        <div class="cd-info-lis clear">
+                            <div class="fl left">意向房型</div>
+                            <div class="fl right">120m²三房</div>
+                        </div>
+                        <div class="cd-info-lis clear">
+                            <div class="fl left">购房用途</div>
+                            <div class="fl right">自住</div>
+                        </div>
+                        <div class="cd-info-lis clear">
+                            <div class="fl left">客户备注</div>
+                            <div class="fl right">张先生想在墨尔本购买一套自住房屋。现阶段正在与家人商量是否购买，房屋地段问题待回复。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    apiready = function(){
+        $api.fixStatusBar($('#cd-header')[0]);
+        $api.fixStatusBar($('#back-box')[0]);
+
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
+    }
+</script>
+
+</html>
