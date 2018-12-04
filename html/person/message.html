@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-消息通知</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/message.css" />
+</head>
+<body>
+    <!-- 头部 -->
+  <div id="wrap">
+          <div class="header" id="header">
+              <div class="back"><img src="../../image/icon-dh-fanhui.png"></div>
+              <div class="title">消息通知</div>
+          </div>
+          <div v-show="defult_show">
+              <div id="main" class="flex-con">
+                  <div class="main_switch">
+                      <div class="notice">通知</div>
+                      <div class="weui-div" @click.stop="toggle">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="be_careful">注意：开启后可以单独设置接受消息类型</div>
+             </div>
+         </div>
+
+          <!-- 列表 -->
+          <div v-show="defult_hide">
+              <div id="main" class="flex-con">
+                  <div class="mainSwitch">
+                      <div class="notice">全部通知</div>
+                      <div class="weui-div" @click.stop="toggleShow">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="main_switch main_top">
+                      <div class="notice">负责人变更</div>
+                      <div class="weui-div" @click.stop="toggleShow(1)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="mainSwitch">
+                      <div class="notice">更近提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(2)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="main_switch">
+                      <div class="notice">回收提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(3)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="mainSwitch">
+                      <div class="notice">资源回收</div>
+                      <div class="weui-div" @click.stop="toggleShow(4)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="main_switch">
+                      <div class="notice">认购提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(5)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="main_switch">
+                      <div class="notice">签约提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(6)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="mainSwitch">
+                      <div class="notice">缴费提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(7)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+                  <div class="main_switch">
+                      <div class="notice">认购书提醒</div>
+                      <div class="weui-div" @click.stop="toggleShow(8)">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+     </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    // apiready = function(){
+    //     console.log('index')
+    // }
+    new Vue({
+            el: '#wrap',
+            data: {
+              me_checked: this.value,
+              defult_show:true,
+              defult_hide:false
+            },
+            props: {
+              value: {
+                type: Boolean,
+                // default: true,
+                array:[1,2,3,4,5,6,7,8]
+              },
+              FId: {
+                type: String,
+                default: '',
+              },
+              index: {
+                type: Number,
+                default:11090,
+              },
+              handle: {
+                type: Boolean,
+                default: true
+              },
+            },
+            watch: {
+              value(){
+                this.me_checked = this.value[0];
+              }
+            },
+            methods: {
+                toggle() {
+                       // 是否可点击
+                       if(this.handle === true){
+                         this.me_checked = !this.me_checked;
+                        //  this.$emit('changeSwitch', this.me_checked,this.FId,this.index);
+                         setTimeout(() => {
+                          this.defult_hide = true;
+                          this.defult_show=false
+                      },100);
+                       }
+                   },
+                     toggleShow(){
+                         if(this.handle === true){
+                           this.me_checked = !this.me_checked;
+                        //    this.$emit('changeSwitch', this.me_checked,this.FId,this.index);
+                         }
+                     }
+
+            }
+        })
+</script>
+</html>

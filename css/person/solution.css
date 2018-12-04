@@ -1,0 +1,38 @@
+#wrap{
+    width:100%;
+    height:100%;
+}
+.header{
+    height:0.84rem;
+    line-height: 0.84rem;
+    padding: 0 0.29rem;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;
+}
+.header .back{
+    width: 0.48rem;
+	height: 0.48rem;
+}
+.header .back img{
+    width:100%;
+}
+.header .title{
+    font-family: PingFangSC-Medium;
+	font-size: 0.36rem;
+	font-weight: normal;
+	font-stretch: normal;
+	letter-spacing: 0px;
+	color: #333333;
+    margin:auto;
+}
+#main{
+    margin-top: 0.6rem;
+    padding:0 0.6rem;
+}
+.equipment{
+    font-family: PingFangSC-Medium;
+	font-size: 0.32rem;
+	color: #333333;
+}
