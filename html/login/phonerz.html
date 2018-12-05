@@ -12,9 +12,9 @@
 </head>
 <body>
     <div id="wrap">
-        <div id="header" class="header">
+       <div class="header" id="header">
            <div class="back"><a href="login.html"><img src="../../image/icon-dh-guanbi.png"></a></div>
-        </div>
+       </div>
         <div id="main" class="flex-con">
             <div class="phone_authentication">手机认证</div>
              <div class="form-div">
@@ -23,7 +23,7 @@
                          <input type="tel" maxlength="13" placeholder="请输入手机号" v-model="phone">
                          <div class="code">
                              <span  v-html="obtain"  v-show="default_obtain" @click="obtainClick"></span>
-                             <span  v-show="!default_obtain">{{count}}秒后重新发送</span>
+                             <span  v-show="!default_obtain"><i>{{count}}</i>秒后重新发送</span>
                          </div>
                      </div>
                  </div>
@@ -60,24 +60,57 @@
             default_obtain:true,
             count:'',
             timer: null,
+            emp:'',
+            ount:'',
+            verification:''
         },
         methods:{
+            getUserInfo:function () {
+                var _this = this
+                let searchArr = JSON.parse(sessionStorage.getItem('searchData'))
+                _this.emp = searchArr.employeeid;
+                _this.ount = searchArr.account;
+            },
             obtainClick:function(){
                 var _this = this;
-                const TIME_COUNT = 60;
-                     if (!_this.timer) {
-                       _this.count = TIME_COUNT;
-                       _this.default_obtain = false;
-                       _this.timer = setInterval(() => {
-                       if (_this.count > 0 && _this.count <= TIME_COUNT) {
-                         _this.count--;
-                        } else {
-                         _this.default_obtain = true;
-                         clearInterval(this.timer);
-                         _this.timer = null;
-                        }
-                       }, 1000)
-            }
+                console.log( _this.emp)
+                console.log( _this.ount)
+                console.log(_this.phone)
+                const phoneExp = /^1[3456789]\d{9}$/;
+                if ((!phoneExp.test(_this.phone))||_this.phone == "") {
+                    alert("请输入正确号码")
+                }else{
+                    const TIME_COUNT = 60;
+                         if (!_this.timer) {
+                           _this.count = TIME_COUNT;
+                           _this.default_obtain = false;
+                           _this.timer = setInterval(() => {
+                           if (_this.count > 0 && _this.count <= TIME_COUNT) {
+                             _this.count--;
+                            } else {
+                             _this.default_obtain = true;
+                             clearInterval(this.timer);
+                             _this.timer = null;
+                            }
+                           }, 1000)
+                      };
+                      $.ajax({
+                          method:"post",
+                           url:beUrl+'phoneauth/authen',
+                          data:{
+                              account:_this.ount,
+                              employeeid:_this.emp,
+                              phone:_this.phone
+                          },
+                          success:function(res){
+                            console.log(res)
+                            _this.verification = res.code;
+                            console.log(_this.verification)
+
+                          }
+                      })
+
+                }
         },
         authentication:function(){
             var self = this;
@@ -91,7 +124,10 @@
                 alert("请输入验证码")
             }
         }
-       }
+    },
+    mounted () {
+       this.getUserInfo();
+     }
 
     })
 </script>

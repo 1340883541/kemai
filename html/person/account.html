@@ -8,13 +8,15 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/vant.css" />
     <link rel="stylesheet" type="text/css" href="../../css/person/assount.css" />
+
 </head>
 <body>
     <!-- 头部 -->
   <div id="wrap">
       <div class="header" id="header">
-          <div class="back"><img src="../../image/icon-dh-fanhui.png"></div>
+          <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
           <div class="title"> 账号安全</div>
       </div>
       <div id="main" class="flex-con">
@@ -34,6 +36,34 @@
           </div>
       </div>
 
+      <!-- 短信验证码 -->
+      <div class="verification_code">
+         <div class="shade"></div>
+         <div class="content">
+             <div class="content_code">
+                 <div class="close right"><img src="../../image/icon-dh-guanbi.png"></div>
+                 <div class="short_message">短信验证</div>
+                 <div class="text_tel">
+                     查看微信需要短信确认，验证码已发送至您的手机<span>152****0654</span> <span class="timer_r">60s</span>
+                 </div>
+                 <div class="tel_num">
+                     <label for="code">
+                       <ul class="security-code-container">
+                           <li class="field-wrap" v-for="(item, index) in number" :key="index">
+                            <i class="char-field">{{value[index]}}</i>
+                           </li>
+                       </ul>
+                      </label>
+                      <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
+                        id="code" name="code" type="tel" :maxlength="number"
+                        autocorrect="off" autocomplete="off" autocapitalize="off">
+                  </div>
+                  <div class="submit space-between">
+                      <div class="text-align" :class="{'submitClick' : isActive}">立即验证</div>
+                  </div>
+             </div>
+         </div>
+      </div>
   </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -42,6 +72,7 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vant.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
@@ -54,7 +85,16 @@
             data: {
                 newPwd:'',
                 pwd:'',
+                show: true,
+                value: '',
+                isActive :false,
             },
+            props: {
+              number: {
+              type: Number,
+              default: 6
+              },
+             },
             methods: {
                 confirm:function(){
                      var self = this;
@@ -77,6 +117,32 @@
                           alert("确认")
                       }
 
+                },
+                back:function(){
+                    history.back(-1)
+                },
+                // hideKeyboard() {
+                //   // 输入完成隐藏键盘
+                //   document.activeElement.blur() // ios隐藏键盘
+                //   this.$refs.input.blur() // android隐藏键盘
+                //   },
+                  handleSubmit() {
+                  this.$emit('input', this.value)
+                  },
+                  handleInput(e) {
+                  this.$refs.input.value = this.value
+                  if (this.value.length >= this.number) {
+                //    this.hideKeyboard()
+                  this.isActive = true;
+                  }else{
+                      this.isActive = false;
+                  }
+                  this.handleSubmit()
+                  }
+            },
+            filters: {
+                hideMiddle(val) {
+                    return `${val.substring(0,3)}****${val.substring(val.length-3)}`
                 }
             }
         })

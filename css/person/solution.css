@@ -14,6 +14,7 @@
 .header .back{
     width: 0.48rem;
 	height: 0.48rem;
+    position: absolute;
 }
 .header .back img{
     width:100%;
@@ -35,4 +36,24 @@
     font-family: PingFangSC-Medium;
 	font-size: 0.32rem;
 	color: #333333;
+        margin-bottom: 0.32rem;
+}
+.listText{
+    /*margin-top: 0.32rem;*/
+}
+.text_info span{
+    width:0.07rem;
+    height:0.07rem;
+    border-radius: 50%;
+    display: inline-block;
+    background-color: #ccc;
+    margin-right: 0.1rem;
+    float: left;
+    margin-top: 0.15rem;
+}
+.text_info{
+    color: #ccc;
+    margin-bottom: 0.48rem;
+    font-size: 0.32rem;
+    line-height: 0.4rem;
 }

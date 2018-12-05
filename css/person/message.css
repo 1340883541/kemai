@@ -14,6 +14,7 @@
 .header .back{
     width: 0.48rem;
 	height: 0.48rem;
+    position: absolute;
 }
 .header .back img{
     width:100%;
@@ -114,7 +115,7 @@
      transition: background-color 0.1s, border 0.1s;
      cursor: pointer;
    }
-   .weui-switch:before {
+   /*.weui-switch::before {
      content: " ";
      position: absolute;
      top: 0;
@@ -124,8 +125,8 @@
      border-radius: 15px;
      background-color: #E6E6E6;
      transition: transform 0.35s cubic-bezier(0.45, 1, 0.4, 1);
-   }
-   .weui-switch:after {
+   }*/
+   .weui-switch::after {
      content: " ";
      position: absolute;
      top: -6px;
@@ -133,8 +134,8 @@
      width: 0.48rem;
      height: 0.48rem;
      border-radius: 50%;
-     background-color: #4c9ff8;
-     box-shadow: 0 1px 3px #4c9ff8;
+     background-color: #ccc;
+     box-shadow: 0 1px 3px #ccc;
      transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
    }
  .weui-switch-on {
@@ -147,4 +148,6 @@
  }
  .weui-switch-on:after {
    transform: translateX(0.5rem);
+   background-color: #4c9ff8;
+   box-shadow: 0 1px 3px #4c9ff8;
  }
