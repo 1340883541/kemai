@@ -150,6 +150,8 @@
     // 打开frame组
     function openFrameGroup(i){
         var h = $(window).height() - $('.footer').height();
+        console.log($(window).height())
+        console.log(h)
         api.openFrameGroup ({
             name: 'mainFrameGroup',
             background: '#fff',

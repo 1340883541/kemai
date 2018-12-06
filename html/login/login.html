@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../css/login/login.css" />
 </head>
 <style media="screen">
-.loading{
+    .loading {
         /*固定loading*/
         width: 0.4rem;
         height: 0.4rem;
@@ -23,11 +23,12 @@
         /*动画时间1s，线性变化，无限循环*/
         animation: loading 1s linear infinite;
     }
-    @keyframes loading{
-        0%{
+
+    @keyframes loading {
+        0% {
             transform: rotate(0deg);
         }
-        100%{
+        100% {
             transform: rotate(360deg);
         }
     }
@@ -54,8 +55,8 @@
                 </div>
                 <div class="submit-btn space-between">
                     <div class="text-align" @click="login">
-                     <span class="loading"  v-show="login_hide"></span>
-                    <span v-html="sign"></span></div>
+                        <span class="loading" v-show="login_hide"></span>
+                        <span v-html="sign"></span></div>
                 </div>
             </div>
         </div>
@@ -71,9 +72,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function(){
-    // console.log('index')
-    new Vue({
+    apiready = function() {
+        console.log('index')
+        new Vue({
             el: '#wrap',
             data: {
                 phone: '',
@@ -97,7 +98,7 @@
                     // if (!phoneExp.test(_this.phone)) {
                     //     _this.defult_hide = true;
                     // };
-                     _this.defult_hide = true;
+                    _this.defult_hide = true;
                 },
                 empty_pwd() {
                     var _this = this;
@@ -115,6 +116,7 @@
                     // var phoneExp = /^1[3456789]\d{9}$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
                         alert("请输入账号")
+                        return false
                     };
                     // } else if (!phoneExp.test(self.phone)) {
                     //     alert("请输入账号2222")
@@ -122,8 +124,10 @@
                     var pwdExp = /^[\w]{6,16}$/;
                     if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                         alert("请输入密码")
+                        return false
                     } else if (!pwdExp.test(self.pwd)) {
                         alert("请输入密码33333")
+                        return false
                     };
 
                     // wApiAjax({
@@ -136,49 +140,55 @@
                     //         console.log(JSON.stringify(res))
                     //     }
                     // })
+                    wHrefJs.openWin({
+                        name: 'main',
+                        path: '../main.html'
+                    })
 
                     if (self.phone != "" || self.phone != null || self.phone != undefined || self.pwd != "" || self.pwd != null || self.pwd != undefined) {
                         // if ((!phoneExp.test(self.phone)) || (!pwdExp.test(self.pwd))) {
-                         if ((!pwdExp.test(self.pwd))) {
-
+                        if ((!pwdExp.test(self.pwd))) {
                             self.sign = "登录"
                             self.login_hide = false
 
                         } else {
                             $.ajax({
-                                method:"post",
-                                 url:beUrl+'loginapp/verifyLogin',
+                                method: "post",
+                                url: beUrl + 'loginapp/verifyLogin',
                                 // headers:"application/x-www-form-urlencoded;charset=UTF-8",
-                                data:{
-                                    account:self.phone,
+                                data: {
+                                    account: self.phone,
                                     pwd: hex_md5(self.pwd)
                                 },
-                                success:function(res){
-                                    sessionStorage.setItem('searchData', JSON.stringify(res.accountInfo))
-                                    searchArr = JSON.parse(sessionStorage.getItem('searchData'))
+                                success: function(res) {
+                                    window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
+                                    searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                                     console.log(searchArr)
-                                    if(res.code==6){
+                                    if (res.code == 6) {
                                         alert("账号不存在")
                                     }
-                                    if(res.code==3){
+                                    if (res.code == 3) {
                                         alert("该员工账号未进行授权")
                                     }
-                                    if(res.code==4){
+                                    if (res.code == 4) {
                                         alert("正在登录")
+                                        self.sign = "登录中"
+                                        self.login_hide = true
+                                            // window.location.href="../index/index.html"
+
                                     }
-                                    self.sign = "登录中"
-                                    self.login_hide = true
 
                                 }
                             })
 
                         }
+                        // }
                     }
                 }
             }
 
         })
-        // }
+    }
 </script>
 
 </html>

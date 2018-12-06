@@ -101,17 +101,22 @@
                       var pwdExp = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$");
                       if (self.newPwd == "" || self.newPwd == null || self.newPwd == undefined) {
                           alert("请输入新密码1111111")
+                           return fasle
                       } else if (!pwdExp.test(self.newPwd)) {
                           alert("请输入密码55555")
+                           return fasle
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                           alert("请确认新密码")
+                           return fasle
                       } else if (!pwdExp.test(self.pwd)) {
                           alert("请输入密码33333")
+                           return fasle
                       };
                       if(self.newPwd == ""||self.pwd == "" ||(!pwdExp.test(self.pwd))){
                           if(self.newPwd!=self.pwd){
                               alert("密码不一致")
+                               return fasle
                           }
                       }else {
                           alert("确认")
