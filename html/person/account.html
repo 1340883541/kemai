@@ -37,7 +37,7 @@
       </div>
 
       <!-- 短信验证码 -->
-      <div class="verification_code">
+      <div class="verification_code" v-show="default_hide">
          <div class="shade"></div>
          <div class="content">
              <div class="content_code">
@@ -77,9 +77,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function(){
-    //     console.log('index')
-    // }
+var indexV = null;
+apiready = function() {
+    $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
@@ -88,6 +88,7 @@
                 show: true,
                 value: '',
                 isActive :false,
+                default_hide:false
             },
             props: {
               number: {
@@ -101,22 +102,22 @@
                       var pwdExp = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$");
                       if (self.newPwd == "" || self.newPwd == null || self.newPwd == undefined) {
                           alert("请输入新密码1111111")
-                           return fasle
+                           return
                       } else if (!pwdExp.test(self.newPwd)) {
                           alert("请输入密码55555")
-                           return fasle
+                           return
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                           alert("请确认新密码")
-                           return fasle
+                           return 
                       } else if (!pwdExp.test(self.pwd)) {
                           alert("请输入密码33333")
-                           return fasle
+                           return
                       };
                       if(self.newPwd == ""||self.pwd == "" ||(!pwdExp.test(self.pwd))){
                           if(self.newPwd!=self.pwd){
                               alert("密码不一致")
-                               return fasle
+                               return
                           }
                       }else {
                           alert("确认")
@@ -124,7 +125,10 @@
 
                 },
                 back:function(){
-                    history.back(-1)
+                    wHrefJs.openWin({
+                        name:'index',
+                        path:'./index.html',
+                    })
                 },
                 // hideKeyboard() {
                 //   // 输入完成隐藏键盘
@@ -145,11 +149,7 @@
                   this.handleSubmit()
                   }
             },
-            filters: {
-                hideMiddle(val) {
-                    return `${val.substring(0,3)}****${val.substring(val.length-3)}`
-                }
-            }
         })
+    }
 </script>
 </html>

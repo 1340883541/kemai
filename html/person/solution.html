@@ -51,9 +51,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function(){
-    //     console.log('index')
-    // }
+var indexV = null;
+apiready = function() {
+    $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
@@ -63,5 +63,6 @@
 
             }
         })
+    }
 </script>
 </html>

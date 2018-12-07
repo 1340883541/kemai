@@ -15,6 +15,7 @@
     width: 0.48rem;
 	height: 0.48rem;
     position: absolute;
+    margin-top: 0.15rem;
 }
 .header .back img{
     width:100%;
@@ -75,6 +76,10 @@
    border: 1px solid #DFDFDF;
    outline: 0;
    border-radius: 0.4rem;
+   -webkit-border-radius: 0.4rem;
+   -moz-border-radius: 0.4rem;
+   -ms-border-radius: 0.4rem;
+   -o-border-radius: 0.4rem;
    box-sizing: border-box;
    background-color: #DFDFDF;
    transition: background-color 0.1s, border 0.1s;
@@ -110,6 +115,10 @@
      border: 1px solid #DFDFDF;
      outline: 0;
      border-radius: 0.4rem;
+     -webkit-border-radius: 0.4rem;
+     -moz-border-radius: 0.4rem;
+     -ms-border-radius: 0.4rem;
+     -o-border-radius: 0.4rem;
      box-sizing: border-box;
      background-color: #DFDFDF;
      transition: background-color 0.1s, border 0.1s;
@@ -134,17 +143,23 @@
      width: 0.48rem;
      height: 0.48rem;
      border-radius: 50%;
+     -webkit-border-radius: 50%;
+     -moz-border-radius:50%;
+     -ms-border-radius: 50%;
+     -o-border-radius: 50%;
      background-color: #ccc;
      box-shadow: 0 1px 3px #ccc;
      transition: transform 0.35s cubic-bezier(0.4, 0.4, 0.25, 1.35);
    }
  .weui-switch-on {
-   border-color: #cbf8f2;
-   background-color: #cbf8f2;
+   border-color:rgba(76, 159, 248, 0.5);
+   /*background-color: #4c9ff8;*/
+   background-color:rgba(76, 159, 248, 0.5);
+   /*opacity: 0.5;*/
  }
  .weui-switch-on:before {
-   border-color: #cbf8f2;
-   background-color: #cbf8f2;
+   border-color: #4c9ff8;
+   background-color: #4c9ff8;
  }
  .weui-switch-on:after {
    transform: translateX(0.5rem);

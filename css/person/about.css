@@ -15,6 +15,7 @@
     width: 0.48rem;
 	height: 0.48rem;
     position: absolute;
+    margin-top: 0.15rem;
 }
 .header .back img{
     width:100%;

@@ -14,7 +14,7 @@
     <!-- 头部 -->
       <div id="wrap">
           <div v-show="personal_center">
-              <div class="header">
+              <div class="header_pel">
                    <div class=header_title>个人中心</div>
                    <div class="header_main">
                        <div class="header_text">
@@ -83,7 +83,7 @@
       </div>
       <!-- 接听号设置 -->
        <div v-show="answer_settings">
-           <div class="settings">
+           <div class="settings header">
                <div class="back" @click="back_per"><img src="../../image/icon-dh-fanhui.png"></div>
                <div class="title"> 接听号设置</div>
                <div class="preservation" @click="preservation"> 保存</div>
@@ -95,7 +95,6 @@
                </div>
                 <div class="be_careful">注意：请设置经常使用的号码，一经填写后将不能更改</div>
            </div>
-
        </div>
   </div>
 </body>
@@ -109,9 +108,10 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function(){
-    //     console.log('index')
-    // }
+var indexV = null;
+apiready = function() {
+    $api.fixStatusBar($('.header')[0]);
+    $api.fixStatusBar($('.header_pel')[0]);
     new Vue({
             el: '#wrap',
             data: {
@@ -124,13 +124,23 @@
             },
             methods: {
                 account:function(){
-                    window.location.href="account.html"
+                    wHrefJs.openWin({
+                        name:'account',
+                        path:'./account.html',
+                    })
+                    // window.location.href="account.html"
                 },
                 message:function(){
-                    window.location.href="message.html"
+                    wHrefJs.openWin({
+                        name:'message',
+                        path:'./message.html',
+                    })
                 },
                 about:function(){
-                    window.location.href="about.html"
+                    wHrefJs.openWin({
+                        name:'about',
+                        path:'./about.html',
+                    })
                 },
                 back_per:function(){
                     var _this = this;
@@ -154,5 +164,6 @@
 
             }
         })
+    }
 </script>
 </html>

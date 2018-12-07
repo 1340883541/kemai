@@ -25,7 +25,7 @@
     <div id="wrap">
         <div class="filter-lists">
             <div class="filter-lis clear">
-                <div class="fl left">
+                <div class="fl left" @click="details">
                     <div class="filter-t clear">
                         <span class="name fl w-elli">唐鹏</span>
                         <span class="n-state state fl w-elli">未联系</span>
@@ -123,11 +123,8 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-new Vue({
-    el:'#wrap'
-})
-    apiready = function() {
 
+    apiready = function() {
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
             isScale: true,
@@ -150,6 +147,23 @@ new Vue({
                 api.refreshHeaderLoadDone()
             },2000)
         });
+
+        new Vue({
+            el:'#wrap',
+            data: {
+
+            },
+            methods: {
+                details:function(){
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html'
+                    })
+
+                }
+            }
+
+        })
     }
 </script>
 

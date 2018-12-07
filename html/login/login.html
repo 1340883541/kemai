@@ -68,12 +68,14 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/speed-toast.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function() {
-        console.log('index')
+    //  var indexV = null;
+    // apiready = function() {
+        // console.log('index')
         new Vue({
             el: '#wrap',
             data: {
@@ -83,7 +85,6 @@
                 defult_hide: false,
                 defult_hideImg: false,
                 login_hide: false,
-
             },
             methods: {
                 pwd_focus() {
@@ -93,11 +94,7 @@
                     _this.defult_hideImg = true;
                 },
                 tel_focus() {
-                    var _this = this;
-                    //     phoneExp = /^1[3456789]\d{9}$/;
-                    // if (!phoneExp.test(_this.phone)) {
-                    //     _this.defult_hide = true;
-                    // };
+                    var _this = this;;
                     _this.defult_hide = true;
                 },
                 empty_pwd() {
@@ -113,23 +110,18 @@
 
                 login: function() {
                     var self = this;
-                    // var phoneExp = /^1[3456789]\d{9}$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
                         alert("请输入账号")
-                        return false
-                    };
-                    // } else if (!phoneExp.test(self.phone)) {
-                    //     alert("请输入账号2222")
-                    // };
+                        return
+                    }
                     var pwdExp = /^[\w]{6,16}$/;
                     if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                         alert("请输入密码")
-                        return false
+                        return
                     } else if (!pwdExp.test(self.pwd)) {
                         alert("请输入密码33333")
-                        return false
-                    };
-
+                        return
+                    }
                     // wApiAjax({
                     //     url:'loginapp/verifyLogin',
                     //     data:{
@@ -140,18 +132,55 @@
                     //         console.log(JSON.stringify(res))
                     //     }
                     // })
-                    wHrefJs.openWin({
-                        name: 'main',
-                        path: '../main.html'
-                    })
+                    // wHrefJs.openWin({
+                    //     name: 'phonerz',
+                    //     path: './phonerz.html'
+                    // })
 
                     if (self.phone != "" || self.phone != null || self.phone != undefined || self.pwd != "" || self.pwd != null || self.pwd != undefined) {
-                        // if ((!phoneExp.test(self.phone)) || (!pwdExp.test(self.pwd))) {
                         if ((!pwdExp.test(self.pwd))) {
                             self.sign = "登录"
                             self.login_hide = false
-
                         } else {
+                            // wApiAjax({
+                            //     method: "post",
+                            //     url: 'loginapp/verifyLogin',
+                            //     data: {
+                            //         account: self.phone,
+                            //         pwd: hex_md5(self.pwd)
+                            //     },
+                            //     success: function(res) {
+                            //         console.log(JSON.stringify(res))
+                            //         window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
+                            //         searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                            //         console.log(searchArr)
+                            //         // 6--账号不存在 4--登录成功  3--该员工账号未进行授权
+                            //         if (res.code == 6) {
+                            //             // alert("账号不存在")
+                            //             self.$modal.toast({
+                            //                 template: res.msg
+                            //             });
+                            //         }
+                            //         if (res.code == 3) {
+                            //             // alert("该员工账号未进行授权")
+                            //             self.$modal.toast({
+                            //                 template: res.msg
+                            //             });
+                            //         }
+                            //         if (res.code == 4) {
+                            //             self.$modal.toast({
+                            //                 template: res.msg
+                            //             });
+                            //             self.sign = "登录中"
+                            //             self.login_hide = true
+                            //             wHrefJs.openWin({
+                            //                 name: 'phonerz',
+                            //                 path: './phonerz.html'
+                            //             })
+                            //
+                            //         }
+                            //     }
+                            // })
                             $.ajax({
                                 method: "post",
                                 url: beUrl + 'loginapp/verifyLogin',
@@ -174,21 +203,19 @@
                                         alert("正在登录")
                                         self.sign = "登录中"
                                         self.login_hide = true
-                                            // window.location.href="../index/index.html"
+                                        window.location.href = "phonerz.html"
 
                                     }
 
                                 }
                             })
-
                         }
-                        // }
                     }
                 }
             }
 
         })
-    }
+    // }
 </script>
 
 </html>

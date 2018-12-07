@@ -38,19 +38,24 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function(){
-    //     console.log('index')
-    // }
-    new Vue({
-            el: '#wrap',
-            data: {
+    var indexV = null;
+    apiready = function(){
+        $api.fixStatusBar($('.header')[0]);
+        console.log('index')
+        new Vue({
+                el: '#wrap',
+                data: {
 
-            },
-            methods: {
-               back:function(){
-                   history.back(-1)
-               }
-            }
-        })
+                },
+                methods: {
+                   back:function(){
+                       wHrefJs.openWin({
+                           name:'index',
+                           path:'./index.html',
+                       })
+                   }
+                }
+            })
+    }
 </script>
 </html>
