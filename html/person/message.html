@@ -126,9 +126,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-// var indexV = null;
-// apiready = function() {
-//     $api.fixStatusBar($('.header')[0]);
+var indexV = null;
+apiready = function() {
+    $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
@@ -208,14 +208,13 @@
                 //     this.defult_show= true
                 // },
                 back:function(){
-                    // wHrefJs.openWin({
-                    //     name:'index',
-                    //     path:'./index.html',
-                    // })
+                    api.closeWin({
+                        name: 'message'
+                    });
                 }
             },
 
         })
-    // }
+    }
 </script>
 </html>

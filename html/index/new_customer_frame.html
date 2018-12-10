@@ -123,7 +123,6 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-
     apiready = function() {
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
@@ -143,24 +142,26 @@
             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             // alert('开始加载刷新数据，摇一摇停止加载状态');
-            setTimeout(function(){
+            setTimeout(function() {
                 api.refreshHeaderLoadDone()
-            },2000)
+            }, 2000)
         });
 
         new Vue({
-            el:'#wrap',
+            el: '#wrap',
             data: {
 
             },
             methods: {
-                details:function(){
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: '../customer/customer_detail.html'
-                    })
+                details: function() {
+                        wHrefJs.openWin({
+                            name: 'customerDetail',
+                            path: '../customer/customer_detail.html'
+                        })
+                    }
+                    
 
-                }
+
             }
 
         })

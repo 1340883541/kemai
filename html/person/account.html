@@ -109,7 +109,7 @@ apiready = function() {
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                           alert("请确认新密码")
-                           return 
+                           return
                       } else if (!pwdExp.test(self.pwd)) {
                           alert("请输入密码33333")
                            return
@@ -125,10 +125,9 @@ apiready = function() {
 
                 },
                 back:function(){
-                    wHrefJs.openWin({
-                        name:'index',
-                        path:'./index.html',
-                    })
+                    api.closeWin({
+                        name: 'account'
+                    });
                 },
                 // hideKeyboard() {
                 //   // 输入完成隐藏键盘

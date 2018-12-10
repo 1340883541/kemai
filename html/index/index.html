@@ -26,22 +26,22 @@
         <!-- 客户 -->
         <div class="kh-box">
             <div class="kh-binner">
-                <div class="kh-add" @click="skipNewCustomer">今日新增</div>
+                <div class="kh-add" @click="skipNewCustomer(0)">今日新增</div>
                 <div class="kh-nav">
                     <ul class="clear">
-                        <li class="fl bor-r">
+                        <li class="fl bor-r" @click="skipNewCustomer(2)">
                             <p class="kh-t">网络客户</p>
                             <p class="kh-c">15</p>
                         </li>
-                        <li class="fl">
+                        <li class="fl" @click="skipNewCustomer(3)">
                             <p class="kh-t">渠道客户</p>
                             <p class="kh-c">88</p>
                         </li>
-                        <li class="fl bor-r">
-                            <p class="kh-t">网络池客户</p>
+                        <li class="fl bor-r" @click="skipNewCustomer(1)">
+                            <p class="kh-t">资源池客户</p>
                             <p class="kh-c">26</p>
                         </li>
-                        <li class="fl">
+                        <li class="fl" @click="skipNewCustomer(5)">
                             <p class="kh-t">销售客户</p>
                             <p class="kh-c">988</p>
                         </li>
@@ -186,48 +186,114 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var indexV = null;
-    apiready = function() {
-        $api.fixStatusBar($('.header')[0]);
+    // var indexV = null;
+    // apiready = function() {
+    //     $api.fixStatusBar($('.header')[0]);
         new Vue({
-            el:'#wrap',
-            mounted:function(){
-                this.netWorkStatus();
+            el: '#wrap',
+            data: {
+                employeeid: '',
+                account: '',
+                pageNo: 1,
+                pageSize: 10,
             },
-            methods:{
+            mounted: function() {
+                // this.netWorkStatus();
+                this.getUserInfo();
+            },
+            methods: {
                 // 判断网络状态
-                netWorkStatus:function(){
-                    listenOnline.offline(function(){
-                        $('#offline-box').show();
-                    });
-                    listenOnline.online(function(){
-                        $('#offline-box').hide();
-                    });
-                    var lineStatus = listenOnline.lineStatus();
-                    if(lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g'){
-                        $('#offline-box').show();
-                    }else{
-                        $('#offline-box').hide();
-                    }
+                // netWorkStatus:function(){
+                //     listenOnline.offline(function(){
+                //         $('#offline-box').show();
+                //     });
+                //     listenOnline.online(function(){
+                //         $('#offline-box').hide();
+                //     });
+                //     var lineStatus = listenOnline.lineStatus();
+                //     if(lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g'){
+                //         $('#offline-box').show();
+                //     }else{
+                //         $('#offline-box').hide();
+                //     }
+                // },
+                getUserInfo: function() {
+                    var _this = this
+                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                    console.log(searchArr)
+                    _this.employeeid = searchArr.employeeid;
+                    _this.account = searchArr.account;
                 },
                 // 跳转新增
-                skipNewCustomer:function(){
-                    wHrefJs.openWin({
-                        name:'newCustomerHeader',
-                        path:'./new_customer_header.html',
-                        param:{
-                            index:1
+                // skipNewCustomer: function(val) {
+                //     var self = this;
+                //     wApiAjax({
+                //         method: "post",
+                //         url: '/workbench/datalist',
+                //         data: {
+                //             employeeid: self.employeeid,
+                //             pageNo: self.pageNo,
+                //             pageSize: self.pageSize,
+                //             search_status: 0,
+                //             search_cusName: '',
+                //             search_source:val
+                //         },
+                //         console.log(data)
+                //         success: function(res) {
+                //             console.log(JSON.stringify(res))
+                //             wHrefJs.openWin({
+                //                 name: 'newCustomerHeader',
+                //                 path: './new_customer_header.html',
+                //                 param: {
+                //                     index: 1
+                //                 },
+                //                 bgColor: '#f7f7f7'
+                //             })
+                //
+                //         }
+                //     })
+                //
+                // },
+                // 客户来源：2--网络 3--渠道 5--销售 1--资源客户 0--全部
+                // 联系状态：2--未联系，1--已联系  0--查全部
+                // * @Param employeeid 员工id
+                // * @Param search_cusName 客户姓名
+                // * @Param search_source 客户来源
+                // * @Param search_status 联系状态
+                // * @Param pageNo 当前页
+                // * @Param pageSize 每页条数
+                skipNewCustomer:function(val){
+                    var self = this;
+                    $.ajax({
+                        method: "post",
+                        url: beUrl + '/workbench/datalist',
+                        crossDomain:true,
+                        // header:("Access-Control-Allow-Origin：http://192.168.0.157:9000"),
+                        // headers:"application/x-www-form-urlencoded;charset=UTF-8",
+                        data: {
+                            employeeid:self.employeeid,
+                            pageNo:self.pageNo,
+                            pageSize:self.pageSize,
+                            search_status:0,
+                            search_cusName:'',
+                            search_source:val
                         },
-                        bgColor:'#f7f7f7'
+                        // console.log(data);
+                        success: function(res) {
+                             console.log(JSON.stringify(res))
+                            // window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
+                            // searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                            // console.log(searchArr)
+
+                        }
                     })
-                },
-                // homepage:function(){
-                //     window.location.href="/new_customer_header.html"
-                // }
+
+                }
+
 
             }
         })
-    }
+    // }
 </script>
 
 </html>

@@ -23,7 +23,7 @@
     <div id="wrap">
         <div class="w-header">
             <div class="search-box" id="header-search-box">
-                <div class="back"></div>
+                <div class="back" @click="back"></div>
                 <div class="search-inp">
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
@@ -82,8 +82,14 @@
                 },
                 clearSearchVal:function(){
                     this.searchVal = '';
+                },
+                back:function(){
+                    api.closeWin({
+                        name: 'newCustomerHeader'
+                    });
                 }
             }
+
         });
         // 跳转到frame
         var wHei = $(window).height(),
@@ -100,6 +106,7 @@
                 type:'none'
             }
         })
+
     }
 </script>
 

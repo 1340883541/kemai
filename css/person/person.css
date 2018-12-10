@@ -9,6 +9,8 @@
    background-attachment:fixed;
    height:3.59rem;
    position: relative;
+   width:100%;
+   text-align: center;
 }
 .header_title{
     height:0.8rem;
@@ -16,23 +18,19 @@
     text-align: center;
     font-family: PingFangSC-Medium;
 	font-size: 0.34rem;
-	font-weight: normal;
-	font-stretch: normal;
 	letter-spacing: 0px;
 	color: white;
 }
 .header_main{
     margin-top: 0.41rem;
-    width:100%;
+    width:6.9rem;
     padding:0 0.3rem;
     height:3.16rem;
-    position: relative;
-}
-.header_text{
-    height:3.16rem;
+    margin:auto;
     background-color: white;
-    padding-left: 0.4rem;
-    padding-top: 0.63rem;
+    position: relative;
+    /*top: -2.5rem;*/
+    height:3.16rem;
     -webkit-box-shadow: 0 5px 20px 0 #f7f7f7;
     -moz-box-shadow: 0 5px 20px 0 #f7f7f7;
     -ms-box-shadow: 0 5px 20px 0 #f7f7f7;
@@ -44,28 +42,36 @@
     -o-border-radius: 5px;
     border-radius: 5px;
 }
+.header_text{
+    height:3.16rem;
+    background-color: white;
+    padding-left: 0.4rem;
+    padding-top: 0.63rem;
+}
 .flex_con{
     display: flex;
+    align-items: center;
 }
 .name{
-    ont-family: PingFangSC-Medium;
+    font-family: PingFangSC-Medium;
 	font-size: 0.56rem;
-	font-weight: normal;
-	font-stretch: normal;
 	letter-spacing: 0.2px;
 	color: #333333;
 }
 .post{
     margin-left: 0.37rem;
-    margin-top: 0.17rem;
-    padding:0.07rem 0.04rem;
+    margin-top: 0.15rem;
+    padding:0.04rem 0.07rem;
     background-color: #f3a134;
 	border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
     color: white;
     font-size: 0.26rem;
-	font-weight: normal;
-	font-stretch: normal;
 	letter-spacing: 0.1px;
+    line-height: auto;
 }
 .contact_number{
     padding-top: 0.49rem;
@@ -73,8 +79,6 @@
 .contact_number span{
     font-family: PingFangSC-Regular;
 	font-size: 0.28rem;
-	font-weight: normal;
-	font-stretch: normal;
 	letter-spacing: 0.1px;
 	color: #333333;
 }
@@ -92,8 +96,6 @@
 .contact_set span{
     font-family: PingFangSC-Regular;
 	font-size: 0.28rem;
-	font-weight: normal;
-	font-stretch: normal;
 	letter-spacing: 0.1px;
 	color: #333333;
 }
@@ -112,7 +114,8 @@
 }
 .main{
     position: relative;
-    margin-top:80px;
+    /*margin-top:-1.8rem;*/
+    margin-top: 80px;
 }
 .main_box{
     padding:0 0.4rem;
