@@ -444,6 +444,75 @@ var myLocalStorage = {
 function textareaHeightAdaptionFn(o) {
     o.style.height = o.scrollTop + o.scrollHeight + "px";
 };
+
+
+/**
+ * 再一次封装 dialog
+ */
+var jqueryDialog = {
+	toast:function(param){
+		param = param || {};
+		$(document).dialog({
+			type:'notice',
+			infoText:param.txt,
+			autoClose:param.closeTime || 1600,
+			position:param.position
+		})
+	},
+	alert:function(param){
+		param = param || {};
+		$(document).dialog({
+			type:'alert',
+			content:param.txt,
+			buttonTextConfirm:param.confirmTxt,
+			buttonTextCancel:param.cancelTxt,
+			onClickConfirmBtn:param.confirmCb,
+			onClickCancelBtn:param.cancelCb
+		})
+	},
+	confirm:function(param){
+		param = param || {};
+        console.log($(document).dialog)
+		$(document).dialog({
+			type:'confirm',
+			content:param.txt,
+			buttonTextConfirm:param.confirmTxt,
+			buttonTextCancel:param.cancelTxt,
+			onClickConfirmBtn:param.confirmCb,
+			onClickCancelBtn:param.cancelCb
+		})
+	},
+	success:function(param){
+		param = param || {};
+		$(document).dialog({
+			type:'toast',
+			infoText:param.txt,
+			infoIcon:param.icon || '../../assets/img/success.png',
+			autoClose:param.closeTime == undefined ? 1600 : param.closeTime,
+			position:param.position
+		})
+	},
+	fail:function(param){
+		param = param || {};
+		$(document).dialog({
+			type:'toast',
+			infoText:param.txt,
+			infoIcon:param.icon || '../../assets/img/fail.png',
+			autoClose:param.closeTime == undefined ? 1600 : param.closeTime,
+			position:param.position
+		})
+	},
+	loading:function(param){
+		param = param || {};
+		$(document).dialog({
+			type:'toast',
+			infoText:param.txt,
+			infoIcon:param.icon || '../../assets/img/loading.gif',
+			autoClose:param.closeTime == undefined ? 0 : param.closeTime,
+			position:param.position
+		})
+	}
+};
 /**
  *  封装 apicloud 自带的 弹框组件
  *  msg 必填

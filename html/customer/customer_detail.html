@@ -9,6 +9,7 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
 </head>
@@ -16,18 +17,19 @@
 <body>
     <div id="wrap">
         <div class="cd-header" id="cd-header">
-            <div class="back-box" id="back-box">
+            <div class="back-box flex-wrap flex-between" id="back-box">
                 <div class="back"></div>
                 <div class="header-txt">
-                    <span>跟进信息</span>
-                    <span>意向资料</span>
+                    <span class="curr"><i></i>跟进信息</span>
+                    <span><i></i>意向资料</span>
                 </div>
+                <div class="right"></div>
             </div>
             <div class="hname">张先生</div>
             <div class="horigin">客户来源：<span>销售客户</span></div>
         </div>
         <section>
-            <div class="cd-caption">
+            <div class="cd-caption" id="js_cd_cap">
                 <div class="cd-ct w-inline-block">
                     <span>微信号：</span><span>********</span><span class="look">查看微信</span>
                 </div>
@@ -36,14 +38,14 @@
                 </div>
             </div>
             <div class="cd-contain">
-                <div class="cd-nav">
+                <div class="cd-nav" id="js_cd_nav">
                     <div class="cd-nav-ab flex-wrap">
                         <div class="flex-con cd-n curr">跟进信息(<span>325</span>) <i></i></div>
                         <div class="flex-con cd-n">意向资料<i></i></div>
                     </div>
                     <div class="cd-nav-place"></div>
                 </div>
-                <div class="cd-box cd-box0" style="display:none;">
+                <div class="cd-box cd-box0">
                     <div class="cd-flow">
                         <div class="cd-flow-sicon cd-flow-sicon1"></div>
                         <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
@@ -52,27 +54,85 @@
                             <div class="audio"></div>
                             <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
                         </div>
-                        <div class="cd-flow-p">销售专员：<span>王丽</span></div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
                         <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
                             <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
                             <div class="gj-addr gj"><i></i>跟进地址: <span>四川省成都市奥克斯星巴克店</span></div>
                         </div>
                     </div>
-                        <div class="cd-flow">
-                            <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                            <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                            <!-- <div class="cd-flow-all">全文</div> -->
-                            <div class="cd-flow-audio disabled">
-                                <div class="audio"></div>
-                                <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                            </div>
-                            <div class="cd-flow-p">销售专员：<span>王丽</span></div>
-                            <div class="cd-flow-timebox">
-                                <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
-                            </div>
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
                         </div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        </div>
+                    </div>
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        </div>
+                    </div>
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        </div>
+                    </div>
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        </div>
+                    </div>
+                    <div class="cd-flow">
+                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
+                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
+                        <!-- <div class="cd-flow-all">全文</div> -->
+                        <div class="cd-flow-audio disabled">
+                            <div class="audio"></div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p w-inline-block"><span>销售专员：</span><span class="name">王丽</span></div>
+                        <div class="cd-flow-timebox">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="cd-box cd-box1">
+                <div class="cd-box cd-box1" style="display:none;">
                     <div class="cd-info">
                         <div class="cd-info-lis clear">
                             <div class="fl left">意向城市</div>
@@ -103,16 +163,46 @@
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
+    apiready = function() {
         $api.fixStatusBar($('#cd-header')[0]);
         $api.fixStatusBar($('#back-box')[0]);
 
         var param = api.pageParam;
+        // 屏幕滚动
+        var isEventScroll = true;
+        var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+        var navOffsetTop = $("#js_cd_nav").offset().top;
+        console.log(capOffsetTop)
+        console.log(navOffsetTop)
+        $(window).on('scroll',function(){
+            if(isEventScroll){
+                isEventScroll = false;
+                var wTop = $(this).scrollTop();
+                console.log(wTop)
+                if(wTop >= capOffsetTop){
+                    $('#back-box').addClass('curr');
+                    if(wTop >= navOffsetTop){
+                        $('#back-box .header-txt').show();
+                        setTimeout(function(){
+                            $('#back-box .header-txt').animate({opacity:1},300);
+                        },100);
+                    }else{
+                        $('#back-box .header-txt').hide().css('opacity',0);
+                    }
+                }else{
+                    $('#back-box').removeClass('curr');
+                }
+                setTimeout(function(){
+                    isEventScroll = true;
+                },50);
+            }
+        })
         console.log(JSON.stringify(param))
     }
 </script>

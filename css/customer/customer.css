@@ -2,11 +2,10 @@
 
 .cd-header {
     width: 100%;
-    height: 3.26rem;
+    height: 3.8rem;
     background: url('../../image/img-xq-bg.png') no-repeat center;
     background-size: cover;
     color: #fff;
-    padding-top: .9rem;
     text-align: center;
 }
 
@@ -15,9 +14,61 @@
     left: 0;
     top: 0;
     background-color: transparent;
+    width: 100%;
+    line-height: .64rem;
+    text-align: center;
+    z-index: 9999;
+    -webkit-transition:all .3s ease;
+    -moz-transition:all .3s ease;
+    -ms-transition:all .3s ease;
+    -o-transition:all .3s ease;
+    transition:all .3s ease;
+    opacity: 0;
+}
+.cd-header .back-box.curr{
+    background: linear-gradient(90deg,
+		#0d64fa 0%,
+		#54cbf8 100%);
+    opacity: 1;
+}
+.cd-header .back-box .back{
+    width: 1rem;
+    height: .64rem;
+    background: url('../../image/icon-dh-fanhui-w.png') no-repeat center;
+    background-size: .48rem;
+}
+.cd-header .back-box .right{
+    width: 1rem;
+    height: .64rem;
+}
+.cd-header .back-box .header-txt{
+    display: none;
+    opacity: 0;
+}
+.cd-header .back-box .header-txt > span{
+    position: relative;
+    padding:0 .2rem;
+    font-size: .32rem;
+}
+.cd-header .back-box .header-txt > span > i{
+    position: absolute;
+    left: 50%;
+    bottom: -.12rem;
+    margin-left: -.12rem;
+    width: .24rem;
+    height: .04rem;
+    background-color: #fff;
+    display: none;
+}
+.cd-header .back-box .header-txt > span.curr{
+    font-weight: bold;
+}
+.cd-header .back-box .header-txt > span.curr > i{
+    display: block;
 }
 
 .cd-header .hname {
+    padding-top: .9rem;
     line-height: .48rem;
     font-size: .48rem;
     letter-spacing: 0.2px;
@@ -241,10 +292,10 @@
     margin-top: -.1rem;
     border-top: .1rem solid transparent;
     border-bottom: .1rem solid transparent;
-    border-right: .1rem solid #54caf8;
+    border-right: .12rem solid #54caf8;
 }
 .cd-contain .cd-flow .cd-flow-audio.disabled:before {
-    border-right: .1rem solid #ccc;
+    border-right: .12rem solid #ccc;
 }
 
 .cd-contain .cd-flow .cd-flow-audio .audio-txt {
@@ -269,25 +320,31 @@
     border-radius:3px;
 }
 .cd-contain .cd-flow .cd-flow-audio.disabled .audio-txt{
-    background: #ccc;
+    background: #ccc url('../../image/icon-yuying.png') no-repeat .18rem center;
+    background-size: .36rem;
 }
 
 .cd-contain .cd-flow .cd-flow-audio .audio-txt>span {
+    padding-top: .04rem;
     opacity: .9;
 }
-.cd-contain .cd-flow .cd-flow-p{
+.cd-contain .cd-flow .cd-flow-p {
     position: relative;
-    display: inline-block;
     width: auto;
-    height: .36rem;
-    line-height: .36rem;
-    padding:0 .1rem;
+    height: .72rem;
+    line-height: .72rem;
+    padding: 0 .2rem;
     text-align: center;
-    font-size: .26rem;
+    font-size: .52rem;
     letter-spacing: 0.1px;
-	color: #f19600;
+    padding-top: .1rem;
+    color: #f19600;
     background-color: rgba(245, 166, 35, 0.09);
     margin-top: .1rem;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    -webkit-transform-origin: 0 0;
+    transform-origin: 0 0;
 }
 .cd-contain .cd-flow .cd-flow-p:after{
     content: "";
@@ -304,13 +361,27 @@
     -webkit-transform: scale(0.5);
     transform: scale(0.5);
 }
+.cd-contain .cd-flow .cd-flow-p > span{
+    vertical-align: middle;
+}
 .cd-contain .cd-flow .cd-flow-timebox{
     position: relative;
     width: 100%;
     height: auto;
-    padding:.3rem;
+    padding:.25rem;
     margin-top: .24rem;
     background-color: #fafafa;
+}
+.cd-contain .cd-flow .cd-flow-timebox > i.top-icon{
+    position: absolute;
+    left: .24rem;
+    top: -.1rem;
+    z-index: 10;
+    width: .24rem;
+    height: .12rem;
+    background: url('../../image/icon-jianjiao.png') no-repeat center;
+    background-size: .24rem .12rem;
+
 }
 .cd-contain .cd-flow .cd-flow-timebox:after{
     content: "";
@@ -329,11 +400,12 @@
 }
 .cd-contain .cd-flow .cd-flow-timebox .gj{
     position: relative;
-    line-height: 1em;
+    /*line-height: 1em;*/
     font-size: .26rem;
     color:#666;
-    margin-bottom:.2rem;
+    margin-bottom:.1rem;
     padding-left: .34rem;
+    padding-top: .1rem;
 }
 .cd-contain .cd-flow .cd-flow-timebox .gj > i{
     position: absolute;

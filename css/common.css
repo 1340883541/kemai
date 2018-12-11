@@ -483,3 +483,22 @@
     margin-top: .24rem;
     margin-bottom: .3rem;
 }
+/*图片统一样式*/
+.w-toast-icon{
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin: 5px;
+    background-position: center;
+    background-size: cotain;
+    background-repeat: no-repeat;
+}
+.w-success-icon{
+    background-image: url();
+}
+.w-wran-icon{
+    background-image: url();
+}
