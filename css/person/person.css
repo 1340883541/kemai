@@ -29,7 +29,7 @@
     margin:auto;
     background-color: white;
     position: relative;
-    /*top: -2.5rem;*/
+    top: -2.5rem;
     height:3.16rem;
     -webkit-box-shadow: 0 5px 20px 0 #f7f7f7;
     -moz-box-shadow: 0 5px 20px 0 #f7f7f7;
@@ -114,8 +114,8 @@
 }
 .main{
     position: relative;
-    /*margin-top:-1.8rem;*/
-    margin-top: 80px;
+    margin-top:-1.8rem;
+    /*margin-top: 80px;*/
 }
 .main_box{
     padding:0 0.4rem;
