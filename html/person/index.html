@@ -18,9 +18,35 @@
         <div v-show="personal_center">
             <div class="header_pel">
                 <div class=header_title>个人中心</div>
+
             </div>
             <section>
-                
+                <div class="header_main">
+                    <div class="header_text">
+                        <div class="flex_con">
+                            <div class="name">{{name}}</div>
+                            <div class="post">{{post_pos}}</div>
+                        </div>
+                        <div class="flex_con contact_number">
+                            <div class="cont_tel">
+                                <span>拨打号:</span>
+                                <span>{{tel}}</span>
+                            </div>
+                            <div class="Authentication_tel">
+                                <img src="../../image/icon-rz.png">
+                            </div>
+                        </div>
+                        <div class="flex_con contact_set">
+                            <div class="cont_tel">
+                                <span>接听号:</span>
+                                <span class="not_set">未设置</span>
+                            </div>
+                            <div class="Authentication_edit" @click="setting_tel">
+                                <img src="../../image/icon-bianji.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div id="main" class="main">
                     <div class="main_box">
                         <div class="person_center account_security">
