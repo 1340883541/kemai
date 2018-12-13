@@ -23,96 +23,39 @@
 
 <body>
     <div id="wrap">
-        <div class="filter-lists">
-            <div class="filter-lis clear">
-                <div class="fl left" @click="details">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">唐鹏</span>
-                        <span class="n-state state fl w-elli">未联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
+        <div class="filter-popup" id="filter-popup" ontouchmove="event.preventDefault();">
+            <div class="filter-popbg"></div>
+            <div class="filter-popbox">
+                <ul>
+                    <li :class="{'curr':currOriginIndex === ''}" @click="switchTabFn($event,'全部',0)">
+                        <span>全部</span>
+                        <i></i>
+                    </li>
+                    <li v-for="(origin,index) in khOriginList" :class="{'curr':currOriginIndex === index}" @click="switchTabFn($event,origin.name,origin.value)">
+                        <span v-text="origin.name"></span>
+                        <i></i>
+                    </li>
+                </ul>
             </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
+        </div>
+        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
+            <div class="filter-lis clear" v-for="khdata in khDataList">
+                <div class="fl left" @click="skipDetail">
                     <div class="filter-t clear">
-                        <span class="name fl w-elli">姜华胤</span>
-                        <span class="n-state state fl w-elli">未联系</span>
+                        <span class="name fl w-elli" v-text="khdata.name"></span>
+                        <span class="state fl w-elli" :class="[khdata.status === '未联系' ? 'n-state' : 'r-state']" v-text="khdata.status"></span>
                     </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
-            </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">杜毅</span>
-                        <span class="r-state state fl w-elli">已联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
-            </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">黄朵 </span>
-                        <span class="r-state state fl w-elli">已联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
-            </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">杜毅</span>
-                        <span class="r-state state fl w-elli">已联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
-            </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">汤见</span>
-                        <span class="n-state state fl w-elli">未联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
-                </div>
-                <div class="fr right">
-                    <div class="filter-call"></div>
-                </div>
-            </div>
-            <div class="filter-lis clear">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli">魏国国</span>
-                        <span class="r-state state fl w-elli">已联系</span>
-                    </div>
-                    <div class="filter-b">分配时间: 2018/10/20 10 : 26</div>
+                    <div class="filter-b">分配时间: <span v-text="khdata.createtime"></span></div>
                 </div>
                 <div class="fr right">
                     <div class="filter-call"></div>
                 </div>
             </div>
             <!-- 无更多数据 -->
-            <div class="not-more-filter">没有更多数据</div>
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
         </div>
         <!-- 空页面 -->
-        <empty-con :is-show="true" txt="暂无你搜索的资源客户"></empty-con>
+        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的客户"></empty-con>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -123,7 +66,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+    var nCustomerFrame = null;
     apiready = function() {
+        // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
             isScale: true,
@@ -141,30 +86,167 @@
         }, function() {
             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
-            // alert('开始加载刷新数据，摇一摇停止加载状态');
-            setTimeout(function() {
-                api.refreshHeaderLoadDone()
-            }, 2000)
+            // setTimeout(function() {
+            //     api.refreshHeaderLoadDone()
+            // }, 2000)
+            $('#not-more').hide();
+            nCustomerFrame.pageNo = 1;
+            nCustomerFrame.fetchNewAdd(false,api.refreshHeaderLoadDone);
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err){
+            if( ret ){
+                if(++nCustomerFrame.pageNo < nCustomerFrame.totalPage){
+                    nCustomerFrame.fetchNewAdd(true);
+                }else{
+                    $('#not-more').show();
+                }
+            }
         });
 
-        new Vue({
+        var param = api.pageParam;
+        nCustomerFrame = new Vue({
             el: '#wrap',
             data: {
-
+                currOriginIndex:'', //当前选中的客户来源
+                khOriginList:[], //客户来源列表
+                search_cusName:'', // 搜索客户名
+                search_source:'',  // 客户类型
+                search_status:0,  // 联系状态
+                order_time:0,     // 分配时间
+                pageNo:1,
+                totalPage:1,
+                khDataList:[], // 客户数据列表
+            },
+            mounted: function() {
+                this.fetchKhOrigin();
+                this.fetchNewAdd();
             },
             methods: {
-                details: function() {
-                        wHrefJs.openWin({
-                            name: 'customerDetail',
-                            path: '../customer/customer_detail.html'
-                        })
+                // 获取新增客户来源
+                fetchKhOrigin: function() {
+                    var _this = this;
+                    wApiAjax({
+                        url: 'customer/sourceAndType',
+                        header: {
+                            token: '3232'
+                        },
+                        success: function(res) {
+                            if (res.code == 1) {
+                                _this.khOriginList = res.data.customerSourceslist;
+                                res.data.customerSourceslist.forEach(function(v,i){
+                                    if(v.name === param.origin){
+                                        _this.currOriginIndex = i;
+                                    }
+                                })
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 切换客户来源
+                switchTabFn:function(e,name,id){
+                    var tag = e.currentTarget;
+                    if($(tag).hasClass('curr')){
+                        hideFilterPopup();
+                        api.setFrameAttr({
+                            bounces: true,
+                        });
+                        return;
                     }
+                    else{
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                    }
+                    // 获取客户名字
+                    api.execScript({
+                        name:'newCustomerHeader',
+                        script: 'getKhOriginName(\''+name+'\')'
+                    });
+                    $('#not-more').hide();
+                    this.search_source = id;
+                    this.pageNo = 1;
+                    this.fetchNewAdd();
+                    api.setFrameAttr({
+                        bounces: true,
+                    });
+                    hideFilterPopup();
 
+                },
+                // 获取今日新增列表
+                fetchNewAdd:function(isLoadMore,callback){
+                    isLoadMore = isLoadMore ? false : true;
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'workbench/datalist',
+                        header:{
+                            token:'3232'
+                        },
+                        data:{
+                            employeeid:4,
+                            search_cusName:_this.search_cusName,
+                            search_source:_this.search_source,
+                            search_status:_this.search_status,
+                            order_time:_this.order_time,
+                            pageNo:_this.pageNo,
+                            pageSize:10
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(!isLoadMore){
+                                    _this.khDataList = res.data ? res.data : [];
+                                    _this.totalPage = res.count;
+                                }
+                                else{
+                                    if(res.data){
+                                        _this.khDataList = _this.khDataList.concat(res.data);
+                                    }
+                                }
 
-
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail:function(){
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                },
+                skipDetail: function() {
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html'
+                    })
+                }
             }
-
-        })
+        });
+    }
+    // 显示客户来源的弹窗
+    function showFilterPopup(){
+        $('#filter-popup').show();
+    }
+    // 隐藏客户来源的弹窗
+    function hideFilterPopup(){
+        $('#filter-popup').hide();
+    }
+    // 联系状态和分配时间 条件筛选
+    function filterCondition(data){
+        var d = JSON.parse(data);
+        $('#not-more').hide();
+        nCustomerFrame.search_status = d.status1;
+        nCustomerFrame.order_time = d.status2;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchNewAdd();
     }
 </script>
 

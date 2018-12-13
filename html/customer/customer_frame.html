@@ -111,12 +111,81 @@
         cusV = new Vue({
             el: '#wrap',
             data: {
-
+                khClassList:[],
+                khOriginList:[],
+                search_cusName:'', // 搜索客户名
+                search_source:'',  // 客户类型
+                search_status:'',  // 客户类型
+                order_followtime:0,     // 跟进时间
+                order_nextfollow:0,     // 计划跟进时间
             },
             mounted: function() {
-
+                this.fetchKhClass();
+                this.fetchKhOrigin();
+                this.fetchListData();
             },
             methods: {
+                // 获取客户类型
+                fetchKhClass:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/sourceAndType',
+                        header:{
+                            token:'2323'
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.khClassList = res.data.customerSatauslist
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 获取客户来源
+                fetchKhOrigin:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/allSource',
+                        header:{
+                            token:'2323'
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.khOriginList = res.data.allsrorcelist
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 获取页面数据
+                fetchListData:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/datalist',
+                        header:{
+                            token:'2323'
+                        },
+                        data:{
+                            employeeid:4,
+                            search_cusName:_this.search_cusName,
+                            search_source:_this.search_source,
+                            search_status:_this.search_status,
+                            order_followtime:_this.order_followtime,
+                            order_nextfollow:_this.order_nextfollow,
+                            pageNo:_this.pageNo,
+                            pageSize:10,
+                        },
+                        success:function(){
+
+                        }
+                    });
+                },
                 // 跳转客户详情
                 skipCustomerDetail: function() {
                     wHrefJs.openWin({

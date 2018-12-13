@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrapper">
         <div class="header">
             <div class="i-title">工作台</div>
             <div class="offline-box clear" id="offline-box">
@@ -26,24 +26,24 @@
         <!-- 客户 -->
         <div class="kh-box">
             <div class="kh-binner">
-                <div class="kh-add" @click="skipNewCustomer(0)">今日新增</div>
+                <div class="kh-add" @click="skipNewCustomer('全部')">今日新增</div>
                 <div class="kh-nav">
                     <ul class="clear">
-                        <li class="fl bor-r" @click="skipNewCustomer(2)">
+                        <li class="fl bor-r" @click="skipNewCustomer('网络客户')">
                             <p class="kh-t">网络客户</p>
-                            <p class="kh-c">15</p>
+                            <p class="kh-c" v-text="network"></p>
                         </li>
-                        <li class="fl" @click="skipNewCustomer(3)">
+                        <li class="fl" @click="skipNewCustomer('渠道客户')">
                             <p class="kh-t">渠道客户</p>
-                            <p class="kh-c">88</p>
+                            <p class="kh-c" v-text="channel"></p>
                         </li>
-                        <li class="fl bor-r" @click="skipNewCustomer(1)">
+                        <li class="fl bor-r" @click="skipNewCustomer('资源池客户')">
                             <p class="kh-t">资源池客户</p>
-                            <p class="kh-c">26</p>
+                            <p class="kh-c" v-text="respool"></p>
                         </li>
-                        <li class="fl" @click="skipNewCustomer(5)">
+                        <li class="fl" @click="skipNewCustomer('销售客户')">
                             <p class="kh-t">销售客户</p>
-                            <p class="kh-c">988</p>
+                            <p class="kh-c" v-text="market"></p>
                         </li>
                     </ul>
                     <div class="kh-hline"></div>
@@ -149,18 +149,18 @@
                 <div class="tj-lis fl">
                     <div class="tj-icon tj-icon-1"></div>
                     <div class="tj-txt">
-                        <p class="p-t">27</p>
+                        <p class="p-t" v-text="vaildcall"></p>
                         <p class="p-d">客户通话(个)</p>
                     </div>
                 </div>
                 <div class="tj-lis fr">
                     <div class="tj-icon tj-icon-2"></div>
                     <div class="tj-txt">
-                        <p class="p-t">7</p>
+                        <p class="p-t" v-text="noanscall"></p>
                         <p class="p-d">未接听(个)</p>
                     </div>
                 </div>
-                <div class="tj-lis fl">
+                <!-- <div class="tj-lis fl">
                     <div class="tj-icon tj-icon-3"></div>
                     <div class="tj-txt">
                         <p class="p-t">6</p>
@@ -173,7 +173,7 @@
                         <p class="p-t">24</p>
                         <p class="p-d">查看微信(个)</p>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -190,16 +190,21 @@
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
         new Vue({
-            el: '#wrap',
+            el: '#wrapper',
             data: {
                 employeeid: '',
                 account: '',
-                pageNo: 1,
-                pageSize: 10,
+                market:0,  //今日新增销售客户
+                network:0, //今日新增网络客户
+                channel:0, //今日新增渠道客户
+                respool:0, //今日新增资源池客户
+                vaildcall:0, //今日统计有效通话
+                noanscall:0, //今日统计未接听通话
             },
             mounted: function() {
                 this.netWorkStatus();
                 this.getUserInfo();
+                this.fetchData();
             },
             methods: {
                 // 判断网络状态
@@ -217,79 +222,52 @@
                         $('#offline-box').hide();
                     }
                 },
+                // 获取 用户信息
                 getUserInfo: function() {
                     var _this = this
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    console.log(searchArr)
                     _this.employeeid = searchArr ? searchArr.employeeid : '';
                     _this.account = searchArr ? searchArr.account : '';
+                },
+                fetchData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'workbench/datasta',
+                        headers:{
+                            token:'333'
+                        },
+                        data:{
+                            employeeid:4
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.market = res.market;
+                                _this.network = res.network;
+                                _this.channel = res.channel;
+                                _this.respool = res.respool;
+                                _this.vaildcall = res.vaildcall;
+                                _this.noanscall = res.noanscall;
+                            }
+                            wDialog.hideProgress();
+                        },
+                        fail:function(){
+
+                        }
+                    })
                 },
                 // 跳转新增
                 skipNewCustomer: function(val) {
                     var self = this;
-                    wApiAjax({
-                        method: "post",
-                        url: '/workbench/datalist',
-                        data: {
-                            employeeid: self.employeeid,
-                            pageNo: self.pageNo,
-                            pageSize: self.pageSize,
-                            search_status: 0,
-                            search_cusName: '',
-                            search_source:val
+                    wHrefJs.openWin({
+                        name: 'newCustomerHeader',
+                        path: './new_customer_header.html',
+                        param: {
+                            origin: val
                         },
-                        success: function(res) {
-                            console.log(JSON.stringify(res))
-                            wHrefJs.openWin({
-                                name: 'newCustomerHeader',
-                                path: './new_customer_header.html',
-                                param: {
-                                    index: 1
-                                },
-                                bgColor: '#f7f7f7'
-                            })
-
-                        }
+                        bgColor: '#f7f7f7'
                     })
-
-                },
-                // 客户来源：2--网络 3--渠道 5--销售 1--资源客户 0--全部
-                // 联系状态：2--未联系，1--已联系  0--查全部
-                // * @Param employeeid 员工id
-                // * @Param search_cusName 客户姓名
-                // * @Param search_source 客户来源
-                // * @Param search_status 联系状态
-                // * @Param pageNo 当前页
-                // * @Param pageSize 每页条数
-                // skipNewCustomer:function(val){
-                //     var self = this;
-                //     $.ajax({
-                //         method: "post",
-                //         url: beUrl + '/workbench/datalist',
-                //         crossDomain:true,
-                //         // header:("Access-Control-Allow-Origin：http://192.168.0.157:9000"),
-                //         // headers:"application/x-www-form-urlencoded;charset=UTF-8",
-                //         data: {
-                //             employeeid:self.employeeid,
-                //             pageNo:self.pageNo,
-                //             pageSize:self.pageSize,
-                //             search_status:0,
-                //             search_cusName:'',
-                //             search_source:val
-                //         },
-                //         // console.log(data);
-                //         success: function(res) {
-                //              console.log(JSON.stringify(res))
-                //             // window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
-                //             // searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                //             // console.log(searchArr)
-                //
-                //         }
-                //     })
-                //
-                // }
-
-
+                }
             }
         })
     }

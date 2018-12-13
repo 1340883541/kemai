@@ -1,6 +1,6 @@
 var __CONFIG__ = {
     // baseUrl:'http://192.168.0.235/',
-    baseUrl:'https://192.168.0.214:8088/',
+    baseUrl:'https://192.168.0.157:8088/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 var beUrl='https://192.168.0.214:8088/';
@@ -26,12 +26,17 @@ function wApiAjax(par){
             console.log(JSON.stringify(par.files))
         }
     }
+    var defaultHeader = {"Content-Type": "application/x-www-form-urlencoded"},
+        newHeaders = null;
+    if(par.headers){
+        newHeaders = Object.assign(defaultHeader,par.headers)
+    }
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
         timeout:20,
         dataType:par.dataType || 'json',
-        headers:par.header || 'application/json;charset=utf-8',
+        headers:newHeaders,
         report:par.report || false,
         data: {
             values: par.data || {},
