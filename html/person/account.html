@@ -23,11 +23,11 @@
           <div class="form-div form_div">
               <div class="row flex-wrap flex-align">
                   <span class="label">新密码</span>
-                  <div class="input-box flex-con"><input type="password" maxlength="11" placeholder="请输入新密码" v-model="newPwd"></div>
+                  <div class="input-box flex-con"><input type="password" maxlength="20" placeholder="请输入新密码" v-model="newPwd"></div>
               </div>
               <div class="row flex-wrap flex-align">
                   <span class="label">确认密码</span>
-                  <div class="input-box flex-con input_pasd"><input type="password" maxlength="16" placeholder="请再次确认新密码" v-model="pwd" ></div>
+                  <div class="input-box flex-con input_pasd"><input type="password" maxlength="20" placeholder="请再次确认新密码" v-model="pwd" ></div>
               </div>
               <div class="be_careful">注意：两次输入的密码需要保持一致，密码长度为8-20位数字和字母的组合</div>
               <div class="submit-btn space-between" @click="confirm">
@@ -72,6 +72,7 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/speed-toast.js"></script>
 <script type="text/javascript" src="../../script/lib/vant.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
@@ -88,7 +89,8 @@ apiready = function() {
                 show: true,
                 value: '',
                 isActive :false,
-                default_hide:false
+                default_hide:false,
+                employeeid:'',
             },
             props: {
               number: {
@@ -96,31 +98,72 @@ apiready = function() {
               default: 6
               },
              },
+             mounted() {
+                 this.getUserInfo();
+             },
             methods: {
+                getUserInfo: function() {
+                    var _this = this
+                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                    console.log(searchArr)
+                    _this.employeeid = searchArr.employeeid;
+                },
                 confirm:function(){
                      var self = this;
                       var pwdExp = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$");
                       if (self.newPwd == "" || self.newPwd == null || self.newPwd == undefined) {
-                          alert("请输入新密码1111111")
+                          self.$modal.toast({
+                            template: '请输入密码'
+                         });
                            return
                       } else if (!pwdExp.test(self.newPwd)) {
-                          alert("请输入密码55555")
+                          self.$modal.toast({
+                            template: '请输入密码8-20位数字和字母'
+                         });
                            return
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
-                          alert("请确认新密码")
+                          self.$modal.toast({
+                            template: '请确认新密码'
+                         });
                            return
                       } else if (!pwdExp.test(self.pwd)) {
-                          alert("请输入密码33333")
+                          self.$modal.toast({
+                            template: '请输入密码8-20位数字和字母'
+                         });
                            return
                       };
-                      if(self.newPwd == ""||self.pwd == "" ||(!pwdExp.test(self.pwd))){
-                          if(self.newPwd!=self.pwd){
-                              alert("密码不一致")
-                               return
-                          }
+                      if(self.newPwd == ""||self.pwd == "" ||(!pwdExp.test(self.pwd))||(self.newPwd!=self.pwd)){
+                          self.$modal.toast({
+                            template: '两次密码不一致'
+                         });
                       }else {
-                          alert("确认")
+                          wApiAjax({
+                              method: "post",
+                              url: bUrl + 'perCenter/modifyPwd',
+                              withCredentials:true,
+                              headers: {
+                                     "token": "token",
+                                     "Content-Type": "application/x-www-form-urlencoded"
+                                 },
+                              data: {
+                                  employeeid: self.employeeid,
+                                  modifyPwd:hex_md5(self.newPwd)
+                              },
+                              success: function(res) {
+                                 if(res.code==200){
+                                     self.$modal.toast({
+                                       template: res.msg
+                                    });
+                                    api.closeWin({
+                                        name: 'account'
+                                    });
+
+                                 }
+
+                              }
+                          })
+
                       }
 
                 },

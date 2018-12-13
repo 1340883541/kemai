@@ -7,7 +7,7 @@
    background:url(../../image/img-sy-bg.png)  no-repeat center center;
    background-size:cover;
    background-attachment:fixed;
-   height:3.59rem;
+   height:4.07rem;
    position: relative;
    width:100%;
    text-align: center;
@@ -84,7 +84,7 @@
 }
 .Authentication_tel{
     width: 1.06rem;
-	height: .036rem;
+	/*height: .036rem;*/
     margin-left: 0.14rem;
 }
 .Authentication_tel>img{

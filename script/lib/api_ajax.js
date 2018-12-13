@@ -4,6 +4,7 @@ var __CONFIG__ = {
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 var beUrl='https://192.168.0.214:8088/';
+var bUrl='https://192.168.0.222:9000/';
 var besUrl='http://192.168.0.157:9000/';
 
 function wApiAjax(par){

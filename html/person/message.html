@@ -126,9 +126,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-var indexV = null;
-apiready = function() {
-    $api.fixStatusBar($('.header')[0]);
+// var indexV = null;
+// apiready = function() {
+//     $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
@@ -138,6 +138,7 @@ apiready = function() {
               is_checked:this.valueKey,
               arr:[false],
               show_info:true,
+              employeeid:'',
             },
             props: {
               value: {
@@ -156,8 +157,32 @@ apiready = function() {
                 this.is_checked =this.valueKey
               }
             },
+            mounted() {
+                this.getUserInfo();
+            },
             methods: {
-                toggle() {
+                getUserInfo: function() {
+                    var _this = this
+                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                    console.log(searchArr)
+                    _this.employeeid = searchArr.employeeid;
+                    $.ajax({
+                        method: "get",
+                        url: bUrl + 'perCenter/getAllNoticeState',
+                        withCredentials:true,
+                        headers: {
+                               "token": "token",
+                               "Content-Type": "application/x-www-form-urlencoded"
+                           },
+                        data: {
+                            employeeid: _this.phone
+                        },
+                        success: function(res) {
+
+                        }
+                    })
+                },
+                toggle(){
                        // 是否可点击
                          this.me_checked = true;
                          setTimeout(() => {
@@ -215,6 +240,6 @@ apiready = function() {
             },
 
         })
-    }
+    // }
 </script>
 </html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-接听号设置</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/person.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap">
+        <div class="settings header">
+            <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
+            <div class="title">接听号设置</div>
+            <div class="preservation" @click="preservation">保存</div>
+        </div>
+        <div>
+            <div class="settings_tel">
+                <div class="settings_number">
+                    <div class="answer">接听号</div>
+                    <div class="input-box flex-con input_pasd"><input type="tel" maxlength="11" placeholder="请输入手机号" v-model="phone"></div>
+                </div>
+                <div class="be_careful">注意：请设置经常使用的号码，一经填写后将不能更改</div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/speed-toast.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var indexV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.header')[0]);
+        new Vue({
+            el: '#wrap',
+            data: {
+                phone: '',
+                employeeid:'',
+            },
+            mounted() {
+                this.getUserInfo();
+            },
+            methods: {
+                back:function(){
+                    api.closeWin({
+                        name: 'setUp'
+                    });
+                },
+                getUserInfo: function() {
+                    var _this = this
+                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                    console.log(searchArr)
+                    _this.employeeid = searchArr.employeeid;
+                },
+                preservation: function() {
+                    var self = this;
+                    var phoneExp = /^1[3456789]\d{9}$/;
+                    if (self.phone == "" || self.phone == null || self.phone == undefined) {
+                        self.$modal.toast({
+                          template: '请输入手机号'
+                       });
+                    } else if (!phoneExp.test(self.phone)) {
+                        self.$modal.toast({
+                          template: '请正确输入手机号'
+                       });
+                    }
+                    if(self.phone != ""||(phoneExp.test(self.phone))){
+                        wApiAjax({
+                            method: "post",
+                            url: bUrl + 'perCenter/setAnswernum',
+                            withCredentials:true,
+                            headers: {
+                                   "token": "",
+                                   "Content-Type": "application/x-www-form-urlencoded"
+                               },
+                            data: {
+                                employeeid: self.employeeid,
+                                answernum:self.phone
+                            },
+                            success: function(res) {
+                                  if(res.code){
+                                      self.$modal.toast({
+                                        template: res.msg
+                                     });
+                                     api.closeWin({
+                                         name: 'setUp'
+                                     });
+                                  }
+                            }
+                        })
+                    }
+                }
+
+            }
+        })
+    }
+</script>
+
+</html>
