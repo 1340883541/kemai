@@ -23,7 +23,7 @@
     -ms-transition:all .3s ease;
     -o-transition:all .3s ease;
     transition:all .3s ease;
-    opacity: 0;
+    opacity: .8;
 }
 .cd-header .back-box.curr{
     background: linear-gradient(90deg,

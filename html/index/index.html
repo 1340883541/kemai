@@ -202,7 +202,7 @@
                 this.getUserInfo();
             },
             methods: {
-                判断网络状态
+                // 判断网络状态
                 netWorkStatus:function(){
                     listenOnline.offline(function(){
                         $('#offline-box').show();
@@ -221,8 +221,8 @@
                     var _this = this
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
-                    _this.employeeid = searchArr.employeeid;
-                    _this.account = searchArr.account;
+                    _this.employeeid = searchArr ? searchArr.employeeid : '';
+                    _this.account = searchArr ? searchArr.account : '';
                 },
                 // 跳转新增
                 skipNewCustomer: function(val) {
@@ -238,7 +238,6 @@
                             search_cusName: '',
                             search_source:val
                         },
-                        console.log(data)
                         success: function(res) {
                             console.log(JSON.stringify(res))
                             wHrefJs.openWin({
