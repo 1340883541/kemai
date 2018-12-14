@@ -78,7 +78,7 @@
                     </div>
                 </div>
 
-                <div class="submit-btn space-between">
+                <div class="submit-btn space-between" @click="withdraw_account">
                     <div class="text-align">退出账号</div>
                 </div>
             </div>
@@ -91,6 +91,7 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/speed-toast.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
@@ -139,7 +140,6 @@
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
                     _this.employeeid = searchArr.employeeid;
-                    // $.ajax({
                     wApiAjax({
                         method: "get",
                         url: bUrl + 'perCenter/info',
@@ -158,9 +158,27 @@
 
                         }
                     })
-
                 },
-
+                withdraw_account:function () {
+                    var _this = this
+                    $.ajax({
+                        method: "get",
+                        url: bUrl + 'perCenter/logout',
+                        withCredentials:true,
+                        headers: {
+                               "token": "token",
+                               "Content-Type": "application/x-www-form-urlencoded"
+                           },
+                        data: {
+                            employeeid: _this.employeeid,
+                        },
+                        success: function(res) {
+                            _this.$modal.toast({
+                              template: '退出账号'
+                           });
+                        }
+                    })
+                }
             }
         })
     // }

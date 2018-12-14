@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,111 +11,115 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/person/message.css" />
 </head>
+
 <body>
     <!-- 头部 -->
-  <div id="wrap">
-      <div class="header" id="header">
-          <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
-          <div class="title">消息通知</div>
-      </div>
-      <div v-show="defult_show">
-              <div id="main" class="flex-con">
-                  <div class="main_switch">
-                      <div class="notice">通知</div>
-                      <div class="weui-div" @click.stop="toggle">
-                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value" ></span>
+    <div id="wrap">
+        <div class="header" id="header">
+            <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
+            <div class="title">消息通知</div>
+        </div>
+        <div v-show="defult_show">
+            <div id="main" class="flex-con">
+                <div class="main_switch">
+                    <div class="notice">通知</div>
+                    <div class="weui-div" @click.stop="toggle">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value"></span>
                         <div v-if='!value' class="weui-div-2"></div>
                         <div v-if='value' class="weui-div-1"></div>
-                      </div>
-                  </div>
-                  <div class="be_careful">注意：开启后可以单独设置接受消息类型</div>
-             </div>
-         </div>
+                    </div>
+                </div>
+                <div class="be_careful">注意：开启后可以单独设置接受消息类型</div>
+            </div>
+        </div>
 
-          <!-- 列表 -->
-          <div v-show="defult_hide">
-              <!-- <div class="header" id="header">
-                  <div class="back" @click="backGo"><img src="../../image/icon-dh-fanhui.png"></div>
-                  <div class="title">消息通知</div>
-              </div> -->
-              <div id="main" class="flex-con">
-                  <div class="mainSwitch">
-                      <div class="notice">全部通知</div>
-                      <div class="weui-div" @click.stop="toggleShow">
-                        <span class="weui-switch" :class="{'weui-switch-on' : is_checked}" :value=valueKey ></span>
+        <!-- 列表 -->
+        <div v-show="defult_hide">
+            <div id="main" class="flex-con">
+                <div class="mainSwitch">
+                    <div class="notice">全部通知</div>
+                    <div class="weui-div" @click="toggleShow">
+                        <span class="weui-switch" :class="{'weui-switch-on' : is_checked}" :value=valueKey></span>
                         <div v-if='!valueKey' class="weui-div-2"></div>
                         <div v-if='valueKey' class="weui-div-1"></div>
-                      </div>
-                  </div>
-                  <div v-show="show_info">
-                      <div class="main_switch main_top">
-                          <div class="notice">负责人变更</div>
-                          <div class="weui-div" @click.stop="changeChenk(1)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[0]}" :value="arr[0]" ></span>
-                            <div v-if='!arr[0]' class="weui-div-2"></div>
-                            <div v-if='arr[0]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="mainSwitch">
-                          <div class="notice">更近提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(2)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[1]}" :value="arr[1]" ></span>
-                            <div v-if='!arr[1]' class="weui-div-2"></div>
-                            <div v-if='arr[1]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="main_switch">
-                          <div class="notice">回收提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(3)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[2]}" :value="arr[2]" ></span>
-                            <div v-if='!arr[2]' class="weui-div-2"></div>
-                            <div v-if='arr[2]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="mainSwitch">
-                          <div class="notice">资源回收</div>
-                          <div class="weui-div" @click.stop="changeChenk(4)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[3]}" :value="arr[3]" ></span>
-                            <div v-if='!arr[3]' class="weui-div-2"></div>
-                            <div v-if='arr[3]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="main_switch">
-                          <div class="notice">认购提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(5)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[4]}" :value="arr[4]" ></span>
-                            <div v-if='!arr[4]' class="weui-div-2"></div>
-                            <div v-if='arr[4]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="main_switch">
-                          <div class="notice">签约提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(6)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[5]}" :value="arr[5]" ></span>
-                            <div v-if='!arr[5]' class="weui-div-2"></div>
-                            <div v-if='arr[5]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="mainSwitch">
-                          <div class="notice">缴费提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(7)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[6]}" :value="arr[6]" ></span>
-                            <div v-if='! arr[6]' class="weui-div-2"></div>
-                            <div v-if=' arr[6]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                      <div class="main_switch">
-                          <div class="notice">认购书提醒</div>
-                          <div class="weui-div" @click.stop="changeChenk(8)">
-                            <span class="weui-switch" :class="{'weui-switch-on' : arr[7]}" :value="arr[7]" ></span>
-                            <div v-if='!arr[7]' class="weui-div-2"></div>
-                            <div v-if='arr[7]' class="weui-div-1"></div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-     </div>
+                    </div>
+                </div>
+                <div v-show="show_info">
+                    <div class="main_switch main_top">
+                        <div class="notice">负责人变更</div>
+                        <div class="weui-div" @click="changeChenk('change_principal_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.change_principal_state==1}" :value="messageInfo.change_principal_state==1"></span>
+                            <div v-if='!messageInfo.change_principal_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.change_principal_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="mainSwitch">
+                        <div class="notice">更近提醒</div>
+                        <div class="weui-div" @click="changeChenk('follow_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' :messageInfo.follow_state==1}" :value="messageInfo.follow_state==1"></span>
+                            <div v-if='!messageInfo.follow_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.follow_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">回收提醒</div>
+                        <div class="weui-div" @click="changeChenk('recovery_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.recovery_state==1}" :value="messageInfo.recovery_state==1"></span>
+                            <div v-if='!messageInfo.recovery_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.recovery_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="mainSwitch">
+                        <div class="notice">资源回收</div>
+                        <div class="weui-div" @click="changeChenk('resource_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.resource_state==1}" :value="messageInfo.resource_state==1"></span>
+                            <div v-if='messageInfo.resource_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.resource_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">认购提醒</div>
+                        <div class="weui-div" @click="changeChenk('subscription_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.subscription_state==1}" :value="messageInfo.subscriptionBook_state==1"></span>
+                            <div v-if='messageInfo.subscriptionBook_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.subscriptionBook_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">签约提醒</div>
+                        <div class="weui-div" @click="changeChenk('sign_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.sign_state==1}" :value="messageInfo.sign_state==1"></span>
+                            <div v-if='!messageInfo.sign_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.sign_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="mainSwitch">
+                        <div class="notice">缴费提醒</div>
+                        <div class="weui-div" @click="changeChenk('pay_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.pay_state==1}" :value="messageInfo.pay_state==1"></span>
+                            <div v-if='!messageInfo.pay_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.pay_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="main_switch">
+                        <div class="notice">认购书提醒</div>
+                        <div class="weui-div" @click="changeChenk('subscriptionBook_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.subscriptionBook_state ==1}" :value="messageInfo.subscriptionBook_state ==1"></span>
+                            <div v-if='!messageInfo.subscriptionBook_state ==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.subscriptionBook_state ==1' class="weui-div-1"></div>
+                            <!-- <div class="weui-div" @click.stop="changeChenk(8)">
+                                <span class="weui-switch" :class="{'weui-switch-on' : arr[7]}" :value="arr[7]"></span>
+                                <div v-if='!arr[7]' class="weui-div-2"></div>
+                                <div v-if='arr[7]' class="weui-div-1"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
@@ -126,39 +131,50 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-// var indexV = null;
-// apiready = function() {
-//     $api.fixStatusBar($('.header')[0]);
+    // var indexV = null;
+    // apiready = function() {
+    //     $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
-              me_checked: this.value,
-              defult_show:true,
-              defult_hide:false,
-              is_checked:this.valueKey,
-              arr:[false],
-              show_info:true,
-              employeeid:'',
+                me_checked: this.value,
+                defult_show: true,
+                defult_hide: false,
+                is_checked: this.valueKey,
+                arr: [false],
+                show_info: true,
+                employeeid: '',
+                messageInfo: {
+                    change_principal_state: 0,
+                    follow_state: 0,
+                    pay_state: 0,
+                    recovery_state: 0,
+                    resource_state: 0,
+                    sign_state: 0,
+                    subscriptionBook_state: 0,
+                    subscription_state: 0,
+                }
             },
             props: {
-              value: {
-                type: Boolean,
-                 default: true
-              },
-              valueKey:{
-                  type: Boolean,
-                 default: true
-              },
+                value: {
+                    type: Boolean,
+                    default: true
+                },
+                valueKey: {
+                    type: Boolean,
+                    default: true
+                },
 
             },
             watch: {
-              value(){
-                this.me_checked = this.value;
-                this.is_checked =this.valueKey
-              }
+                value() {
+                    this.me_checked = this.value;
+                    this.is_checked = this.valueKey
+                }
             },
             mounted() {
                 this.getUserInfo();
+
             },
             methods: {
                 getUserInfo: function() {
@@ -169,60 +185,141 @@
                     $.ajax({
                         method: "get",
                         url: bUrl + 'perCenter/getAllNoticeState',
-                        withCredentials:true,
+                        withCredentials: true,
                         headers: {
-                               "token": "token",
-                               "Content-Type": "application/x-www-form-urlencoded"
-                           },
-                        data: {
-                            employeeid: _this.phone
+                            "token": "token",
+                            "Content-Type": "application/x-www-form-urlencoded"
                         },
+                        data: {
+                            employeeid: _this.employeeid
+                        },
+                        // pay_state int 缴费提醒， 0 关闭， 1 开启
+                        // sign_state int 签约提醒， 0 关闭， 1 开启
+                        // subscription_state int 认购提醒， 0 关闭， 1 开启
+                        // resource_state int 资源回收， 0 关闭， 1 开启
+                        // follow_state int 跟进提醒， 0 关闭， 1 开启
+                        // change_principal_state int 负责人变更状态, 0 关闭提醒， 1 开启提醒
+                        // subscriptionBook_state int 认购书提醒， 0 关闭， 1 开启
+                        // recovery_state int 回收提醒， 0 关闭， 1 开启
                         success: function(res) {
-
+                            console.log(JSON.stringify(res))
+                            if (res.code == 200) {
+                                _this.messageInfo = res.info;
+                                console.log(_this.messageInfo)
+                                this.me_checked = true;
+                                _this.is_checked = true;
+                                _this.defult_hide = true;
+                                _this.defult_show = false;
+                            }
+                            if(res.code == 201){
+                                this.me_checked = false;
+                                _this.is_checked = false;
+                                _this.defult_hide = false;
+                                _this.defult_show = false;
+                            }
                         }
                     })
                 },
-                toggle(){
-                       // 是否可点击
-                         this.me_checked = true;
-                         setTimeout(() => {
-                          this.defult_hide = true;
-                          this.defult_show=false;
-                          this.arr=[true,true,true,true,true,true,true,true];
-                          this.is_checked = true;
-                        //   this.show_info = true;
-
-                      },500);
-                   },
-                   changeChenk:function(num){
-                       this.$set(this.arr,num-1,!this.arr[num-1])
-                       this.is_checked=true;
-                       this.chenked()
-                   },
-                     toggleShow(num){
-                         if(!this.is_checked){
-                           this.is_checked = true;
-                           this.arr=[true,true,true,true,true,true,true,true]
-                           this.show_info = true;
+                toggle() {
+                     // 是否可点击
+                    this.me_checked = true;
+                    setTimeout(() => {
+                        this.defult_hide = true;
+                        this.defult_show = false;
+                        this.is_checked = true;
+                    }, 500);
+                },
+                changeChenk: function(num) {
+                    console.log(11111)
+                    var _this = this;
+                    if(_this.messageInfo[num]== 1){
+                        _this.$set(_this.messageInfo,num,0)
+                        //   _this.messageInfo.num = 0
+                         console.log("关闭")
                     }else{
-                         this.is_checked = false;
-                         this.arr=[false,false,false,false,false,false,false,false];
-                         this.show_info = false;
+                         _this.$set(_this.messageInfo,num,1)
+                         $.ajax({
+                             method: "get",
+                             url: bUrl + 'perCenter/setNoticeState',
+                             withCredentials: true,
+                             headers: {
+                                 "token": "token",
+                                 "Content-Type": "application/x-www-form-urlencoded"
+                             },
+                             data: {
+                                 employeeid: _this.employeeid,
+                                 state:1,
+                                 noticeType:_this.messageInfo
+
+                             },
+                             success: function(res) {
+                                 console.log(JSON.stringify(res))
+                                 if (res.code == 200) {
+
+                                 }
+
+                             }
+                         })
+                    }
+                    console.log(num)
+                    console.log(_this.messageInfo)
+
+                    // $.ajax({
+                    //     method: "get",
+                    //     url: bUrl + 'perCenter/setNoticeState',
+                    //     withCredentials: true,
+                    //     headers: {
+                    //         "token": "token",
+                    //         "Content-Type": "application/x-www-form-urlencoded"
+                    //     },
+                    //     data: {
+                    //         employeeid: _this.employeeid,
+                    //         state:'',
+                    //
+                    //     },
+                    //     success: function(res) {
+                    //         console.log(JSON.stringify(res))
+                    //         if (res.code == 200) {
+                    //
+                    //         }
+                    //
+                    //     }
+                    // })
+                    // this.$set(this.arr, num - 1, !this.arr[num - 1])
+                    // this.is_checked = true;
+                    // this.chenked()
+                },
+                toggleShow(num) {
+                    if (!this.is_checked) {
+                        this.is_checked = true;
+                        this.show_info = true;
+                    } else {
+                        this.is_checked = false;
+                        this.show_info = false;
                     }
                 },
                 // 判断是否全选
-                chenked:function(){
-                    var isAllcheck = this.arr.indexOf(false,0);//是否全选
-                    var isAllclose = this.arr.indexOf(true,0);//是否全部关闭
-                    if(isAllcheck<0){
-                           this.is_checked = true;
-                    }else{
+                chenked: function() {
+                    // var isAllcheck = this.arr.indexOf(false, 0); //是否全选
+                    // var isAllclose = this.arr.indexOf(true, 0); //是否全部关闭
+                    var isAllcheck =true; //是否全选
+                    var isAllclose = true; //是否全部关闭
+                    for(var key in this.messageInfo){
+                        if(this.messageInfo.key==1){
+                            isAllclose = false
+                        }else if(this.messageInfo.key==0){
+                            isAllcheck = false
+                        }
+                    }
+                    if (isAllcheck < 0) {
+                        this.is_checked = true;
+                    } else {
                         //  this.is_checked = true;
                         //  this.show_info=true;
                     }
-                    if(isAllclose<0){
-                          this.is_checked = false;
-                          this.show_info=false;
+                    if (isAllclose < 0) {
+                        this.is_checked = false;
+                        this.show_info = false;
                         //   this.defult_hide = false;
                         //   this.defult_show=true;
                         //   this.me_checked = false;
@@ -232,7 +329,7 @@
                 //     this.defult_hide =false;
                 //     this.defult_show= true
                 // },
-                back:function(){
+                back: function() {
                     api.closeWin({
                         name: 'message'
                     });
@@ -240,6 +337,7 @@
             },
 
         })
-    // }
+        // }
 </script>
+
 </html>

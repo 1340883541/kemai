@@ -110,7 +110,6 @@
 
                 login: function() {
                     var self = this;
-                    // var accountExp = /^[a-zA-Z0-9]+$/
                     var accountExp =/^([A-Za-z0-9]{3,20})$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
                         alert("请输入账号")
@@ -127,16 +126,6 @@
                         alert("请输入密码33333")
                         return
                     }
-                    // wApiAjax({
-                    //     url:'loginapp/verifyLogin',
-                    //     data:{
-                    //         account:self.phone,
-                    //         pwd: hex_md5(self.pwd)
-                    //     },
-                    //     success:function(res){
-                    //         console.log(JSON.stringify(res))
-                    //     }
-                    // })
                     wHrefJs.openWin({
                         name: 'phonerz',
                         path: './phonerz.html'
@@ -148,50 +137,48 @@
                             self.login_hide = false
                         } else {
                             var token = "1564654wqswdewfreefgvr";
-                            // wApiAjax({
-                            //     method: "post",
-                            //     url: 'loginapp/verifyLogin',
-                            //     withCredentials:true,
-                            //     headers: {
-                            //            "token": token,
-                            //            "Content-Type": "application/x-www-form-urlencoded"
-                            //        },
-                            //     data: {
-                            //         account: self.phone,
-                            //         pwd: hex_md5(self.pwd)
-                            //     },
-                            //     success: function(res) {
-                            //         console.log(JSON.stringify(res))
-                            //         window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
-                            //         searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                            //         console.log(searchArr)
-                            //         // 6--账号不存在 4--登录成功  3--该员工账号未进行授权
-                            //         if (res.code == 6) {
-                            //             // alert("账号不存在")
-                            //             self.$modal.toast({
-                            //                 template: res.msg
-                            //             });
-                            //         }
-                            //         if (res.code == 3) {
-                            //             // alert("该员工账号未进行授权")
-                            //             self.$modal.toast({
-                            //                 template: res.msg
-                            //             });
-                            //         }
-                            //         if (res.code == 4) {
-                            //             self.$modal.toast({
-                            //                 template: res.msg
-                            //             });
-                            //             self.sign = "登录中"
-                            //             self.login_hide = true
-                            //             wHrefJs.openWin({
-                            //                 name: 'phonerz',
-                            //                 path: './phonerz.html'
-                            //             })
-                            //
-                            //         }
-                            //     }
-                            // })
+                            wApiAjax({
+                                method: "post",
+                                url: 'loginapp/verifyLogin',
+                                withCredentials:true,
+                                headers: {
+                                       "token": token,
+                                       "Content-Type": "application/x-www-form-urlencoded"
+                                   },
+                                data: {
+                                    account: self.phone,
+                                    pwd: hex_md5(self.pwd)
+                                },
+                                success: function(res) {
+                                    console.log(JSON.stringify(res))
+                                    window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
+                                    searchArr = JSON.parse(window.localStorage.getItem('searchData'))
+                                    console.log(searchArr)
+                                    // 6--账号不存在 4--登录成功  3--该员工账号未进行授权
+                                    if (res.code == 6) {
+                                        self.$modal.toast({
+                                            template: res.msg
+                                        });
+                                    }
+                                    if (res.code == 3) {
+                                        self.$modal.toast({
+                                            template: res.msg
+                                        });
+                                    }
+                                    if (res.code == 4) {
+                                        self.$modal.toast({
+                                            template: res.msg
+                                        });
+                                        self.sign = "登录中"
+                                        self.login_hide = true
+                                        wHrefJs.openWin({
+                                            name: 'phonerz',
+                                            path: './phonerz.html'
+                                        })
+
+                                    }
+                                }
+                            })
 
                             // $.ajax({
                             //     method: "post",ii
