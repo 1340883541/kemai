@@ -175,42 +175,13 @@
                                             name: 'phonerz',
                                             path: './phonerz.html'
                                         })
-
+                                        setTimeout(() => {
+                                            self.sign = "登录"
+                                            self.login_hide = false
+                                        }, 3000);
                                     }
                                 }
                             })
-
-                            // $.ajax({
-                            //     method: "post",ii
-                            //     url: beUrl + 'loginapp/verifyLogin',
-                            //     withCredentials:true,
-                            //     headers: {
-                            //            "token": token,
-                            //            "Content-Type": "application/x-www-form-urlencoded"
-                            //        },
-                            //     data: {
-                            //         account: self.phone,
-                            //         pwd: hex_md5(self.pwd)
-                            //     },
-                            //     success: function(res) {
-                            //         window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
-                            //         searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                            //         console.log(searchArr)
-                            //         if (res.code == 6) {
-                            //             alert("账号不存在")
-                            //         }
-                            //         if (res.code == 3) {
-                            //             alert("该员工账号未进行授权")
-                            //         }
-                            //         if (res.code == 4) {
-                            //             alert("正在登录")
-                            //             self.sign = "登录中"
-                            //             self.login_hide = true
-                            //             window.location.href = "phonerz.html"
-                            //
-                            //         }
-                            //     }
-                            // })
                         }
                     }
                 }

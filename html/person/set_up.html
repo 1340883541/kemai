@@ -65,7 +65,7 @@
                     var _this = this
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
-                    _this.employeeid = searchArr.employeeid;
+                    _this.employeeid = searchArr ? searchArr.employeeid : '';
                 },
                 preservation: function() {
                     var self = this;

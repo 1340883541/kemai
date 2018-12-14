@@ -72,8 +72,8 @@
                     var _this = this
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
-                    _this.emp = searchArr.employeeid;
-                    _this.ount = searchArr.account;
+                    _this.employeeid = searchArr ? searchArr.employeeid : '';
+                    _this.account = searchArr ? searchArr.account : '';
                 },
                 obtainClick: function() {
                     var _this = this;

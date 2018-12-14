@@ -38,11 +38,17 @@
             <div id="main" class="flex-con">
                 <div class="mainSwitch">
                     <div class="notice">全部通知</div>
-                    <div class="weui-div" @click="toggleShow">
+                    <!-- <div class="weui-div" @click="toggleShow">
                         <span class="weui-switch" :class="{'weui-switch-on' : is_checked}" :value=valueKey></span>
                         <div v-if='!valueKey' class="weui-div-2"></div>
                         <div v-if='valueKey' class="weui-div-1"></div>
+                    </div> -->
+                    <div class="weui-div" @click="toggleShow('notice_state')">
+                        <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.notice_state==1}" :value=messageInfo.notice_state==1></span>
+                        <div v-if='!messageInfo.notice_state==1' class="weui-div-2"></div>
+                        <div v-if='messageInfo.notice_state==1' class="weui-div-1"></div>
                     </div>
+
                 </div>
                 <div v-show="show_info">
                     <div class="main_switch main_top">
@@ -131,28 +137,28 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // var indexV = null;
-    // apiready = function() {
-    //     $api.fixStatusBar($('.header')[0]);
+    var indexV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.header')[0]);
     new Vue({
             el: '#wrap',
             data: {
                 me_checked: this.value,
                 defult_show: true,
                 defult_hide: false,
-                is_checked: this.valueKey,
                 arr: [false],
                 show_info: true,
                 employeeid: '',
                 messageInfo: {
-                    change_principal_state: 0,
-                    follow_state: 0,
-                    pay_state: 0,
-                    recovery_state: 0,
-                    resource_state: 0,
-                    sign_state: 0,
-                    subscriptionBook_state: 0,
-                    subscription_state: 0,
+                    change_principal_state: 0,//负责人变更状态
+                    follow_state: 0,//跟进提醒，
+                    notice_state: 0,//总开关
+                    pay_state: 0,//缴费提醒
+                    recovery_state: 0,//回收提醒，
+                    resource_state: 0,//资源回收，
+                    sign_state: 0,//签约提醒，
+                    subscriptionBook_state: 0,//认购书提醒，
+                    subscription_state: 0,//认购提醒，
                 }
             },
             props: {
@@ -160,29 +166,72 @@
                     type: Boolean,
                     default: true
                 },
-                valueKey: {
-                    type: Boolean,
-                    default: true
-                },
-
             },
             watch: {
                 value() {
                     this.me_checked = this.value;
-                    this.is_checked = this.valueKey
                 }
             },
             mounted() {
                 this.getUserInfo();
-
             },
             methods: {
                 getUserInfo: function() {
                     var _this = this
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
-                    _this.employeeid = searchArr.employeeid;
-                    $.ajax({
+                    _this.employeeid = searchArr ? searchArr.employeeid : '';
+                    wApiAjax({
+                        method: "get",
+                        url: bUrl + 'perCenter/getSwitchState',
+                        withCredentials: true,
+                        headers: {
+                            "token": "token",
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        data: {
+                            employeeid: _this.employeeid
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.switch == 0) {}
+                            if (res.switch == 1) {
+                                _this.me_checked = true;
+                                wApiAjax({
+                                    method: "get",
+                                    url: bUrl + 'perCenter/getAllNoticeState',
+                                    withCredentials: true,
+                                    headers: {
+                                        "token": "token",
+                                        "Content-Type": "application/x-www-form-urlencoded"
+                                    },
+                                    data: {
+                                        employeeid: _this.employeeid
+                                    },
+                                    success: function(res) {
+                                        console.log(JSON.stringify(res))
+                                        if (res.code == 200) {
+                                            _this.messageInfo = res.info;
+                                            _this.defult_hide = true;
+                                            _this.defult_show = false;
+                                        }
+                                        if (res.code == 201) {
+                                            this.me_checked = false;
+                                            _this.defult_hide = false;
+                                            _this.defult_show = false;
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
+
+                },
+                toggle() {
+                    // 是否可点击
+                    var _this = this;
+                    _this.me_checked = true;
+                    wApiAjax({
                         method: "get",
                         url: bUrl + 'perCenter/getAllNoticeState',
                         withCredentials: true,
@@ -193,142 +242,170 @@
                         data: {
                             employeeid: _this.employeeid
                         },
-                        // pay_state int 缴费提醒， 0 关闭， 1 开启
-                        // sign_state int 签约提醒， 0 关闭， 1 开启
-                        // subscription_state int 认购提醒， 0 关闭， 1 开启
-                        // resource_state int 资源回收， 0 关闭， 1 开启
-                        // follow_state int 跟进提醒， 0 关闭， 1 开启
-                        // change_principal_state int 负责人变更状态, 0 关闭提醒， 1 开启提醒
-                        // subscriptionBook_state int 认购书提醒， 0 关闭， 1 开启
-                        // recovery_state int 回收提醒， 0 关闭， 1 开启
                         success: function(res) {
                             console.log(JSON.stringify(res))
                             if (res.code == 200) {
                                 _this.messageInfo = res.info;
                                 console.log(_this.messageInfo)
-                                this.me_checked = true;
-                                _this.is_checked = true;
                                 _this.defult_hide = true;
                                 _this.defult_show = false;
+                                _this.show_info = true;
                             }
-                            if(res.code == 201){
+                            if (res.code == 201) {
                                 this.me_checked = false;
-                                _this.is_checked = false;
                                 _this.defult_hide = false;
                                 _this.defult_show = false;
                             }
                         }
                     })
-                },
-                toggle() {
-                     // 是否可点击
-                    this.me_checked = true;
-                    setTimeout(() => {
-                        this.defult_hide = true;
-                        this.defult_show = false;
-                        this.is_checked = true;
-                    }, 500);
+                    // setTimeout(() => {
+                    //     this.defult_hide = true;
+                    //     this.defult_show = false;
+                    //     this.is_checked = true;
+                    // }, 500);
                 },
                 changeChenk: function(num) {
-                    console.log(11111)
                     var _this = this;
-                    if(_this.messageInfo[num]== 1){
-                        _this.$set(_this.messageInfo,num,0)
-                        //   _this.messageInfo.num = 0
-                         console.log("关闭")
-                    }else{
-                         _this.$set(_this.messageInfo,num,1)
-                         $.ajax({
-                             method: "get",
-                             url: bUrl + 'perCenter/setNoticeState',
-                             withCredentials: true,
-                             headers: {
-                                 "token": "token",
-                                 "Content-Type": "application/x-www-form-urlencoded"
-                             },
-                             data: {
-                                 employeeid: _this.employeeid,
-                                 state:1,
-                                 noticeType:_this.messageInfo
+                    _this.chenked();
+                    if (_this.messageInfo[num] == 1) {
+                        _this.$set(_this.messageInfo, num, 0)
+                        wApiAjax({
+                            method: "POST",
+                            url: bUrl + 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": "token",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            data: {
+                                employeeid: _this.employeeid,
+                                state: 0,
+                                noticeType: _this.messageInfo
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                console.log(res)
+                                if (res.code == 200) {
 
-                             },
-                             success: function(res) {
-                                 console.log(JSON.stringify(res))
-                                 if (res.code == 200) {
+                                }
+                            }
+                        })
+                    } else {
+                        _this.$set(_this.messageInfo, num, 1)
+                        wApiAjax({
+                            method: "POST",
+                            url: bUrl + 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": "token",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            data: {
+                                employeeid: _this.employeeid,
+                                state: 1,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
 
-                                 }
+                                }
 
-                             }
-                         })
+                            }
+                        })
                     }
-                    console.log(num)
-                    console.log(_this.messageInfo)
-
-                    // $.ajax({
-                    //     method: "get",
-                    //     url: bUrl + 'perCenter/setNoticeState',
-                    //     withCredentials: true,
-                    //     headers: {
-                    //         "token": "token",
-                    //         "Content-Type": "application/x-www-form-urlencoded"
-                    //     },
-                    //     data: {
-                    //         employeeid: _this.employeeid,
-                    //         state:'',
-                    //
-                    //     },
-                    //     success: function(res) {
-                    //         console.log(JSON.stringify(res))
-                    //         if (res.code == 200) {
-                    //
-                    //         }
-                    //
-                    //     }
-                    // })
-                    // this.$set(this.arr, num - 1, !this.arr[num - 1])
-                    // this.is_checked = true;
-                    // this.chenked()
                 },
                 toggleShow(num) {
-                    if (!this.is_checked) {
-                        this.is_checked = true;
-                        this.show_info = true;
+                    var _this = this;
+                    if (_this.messageInfo[num] == 1) {
+                        _this.$set(_this.messageInfo, num, 0)
+                        wApiAjax({
+                            method: "POST",
+                            url: bUrl + 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": "token",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            data: {
+                                employeeid: _this.employeeid,
+                                state: 0,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+                                    _this.show_info = false
+                                    _this.defult_hide = false;
+                                    _this.defult_show = true;
+                                    _this.me_checked = false;
+                                }
+                            }
+                        })
                     } else {
-                        this.is_checked = false;
-                        this.show_info = false;
+                        _this.$set(_this.messageInfo, num, 1)
+                        _this.show_info = true
+                        wApiAjax({
+                            method: "POST",
+                            url: bUrl + 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": "token",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            data: {
+                                employeeid: _this.employeeid,
+                                state: 1,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+                                   _this.defult_hide = true;
+                                   _this.show_info = true
+                                }
+                            }
+                        })
                     }
                 },
                 // 判断是否全选
                 chenked: function() {
-                    // var isAllcheck = this.arr.indexOf(false, 0); //是否全选
-                    // var isAllclose = this.arr.indexOf(true, 0); //是否全部关闭
-                    var isAllcheck =true; //是否全选
-                    var isAllclose = true; //是否全部关闭
-                    for(var key in this.messageInfo){
-                        if(this.messageInfo.key==1){
-                            isAllclose = false
-                        }else if(this.messageInfo.key==0){
-                            isAllcheck = false
-                        }
-                    }
-                    if (isAllcheck < 0) {
-                        this.is_checked = true;
-                    } else {
-                        //  this.is_checked = true;
-                        //  this.show_info=true;
-                    }
-                    if (isAllclose < 0) {
-                        this.is_checked = false;
-                        this.show_info = false;
-                        //   this.defult_hide = false;
-                        //   this.defult_show=true;
-                        //   this.me_checked = false;
-                    }
+                    // var isAllcheck = true; //是否全选 shi
+                    // var isAllclose = true; //是否全部关闭  shi
+                    // for (var key in this.messageInfo) {
+                    //     if (this.messageInfo[key] == 0) { // 如果对象有1 说明为全选
+                    //         isAllcheck = false
+                    //     }
+                    //     if (this.messageInfo[key] == 1) { //  如果对象有0 说明为全部关闭
+                    //         isAllclose = false
+                    //     }
+                    // }
+                    // if (isAllcheck && !isAllclose) { // 全选
+                    //     //this.show_info = true
+                    // }
+                    // if (isAllclose && !isAllcheck) { // 全部关闭
+                    //     this.show_info = false
+                    // }
+                    // if (!isAllcheck && !isAllclose) { // 未全选 也未全部关闭
+                    //
+                    // }
                 },
-                // backGo:function(){
-                //     this.defult_hide =false;
-                //     this.defult_show= true
-                // },
+                //var isAllcheck = this.arr.indexOf(false, 0); //是否全选
+                // var isAllclose = this.arr.indexOf(true, 0); //是否全部关闭
+                // if (isAllcheck < 0) {
+                //     this.is_checked = true;
+                // } else {
+                //     //  this.is_checked = true;
+                //     //  this.show_info=true;
+                // }
+                // if (isAllclose < 0) {
+                //     this.is_checked = false;
+                //     this.show_info = false;
+                //     //   this.defult_hide = false;
+                //     //   this.defult_show=true;
+                //     //   this.me_checked = false;
+                // }
+
                 back: function() {
                     api.closeWin({
                         name: 'message'
@@ -337,7 +414,7 @@
             },
 
         })
-        // }
+        }
 </script>
 
 </html>
