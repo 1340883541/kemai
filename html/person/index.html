@@ -105,8 +105,8 @@
                 name: '',
                 post_pos: '',
                 tel: "",
-                userInfo:'',
-                token:'',
+                userInfo: '',
+                token: '',
             },
             mounted() {
                 this.getUserInfo();
@@ -138,52 +138,50 @@
                 },
                 getUserInfo: function() {
                     var _this = this
-                    getUserInfo: function() {
-                         var _this = this
-                        _this.userInfo = wPref.getPrefs({
-                            key:'userInfo'
-                        })
-                         _this.userInfo = _this.userInfo ? _this.userInfo : {};//判断是否为空
-                        console.log(JSON.parse(_this.userInfo).account)
-                        _this.token = wPref.getPrefs({
-                            key:'token'
-                        })
-                        _this.token = _this.token ? _this.token : {};//判断是否为空
-                    },
+                    _this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    })
+                    _this.userInfo = _this.userInfo ? _this.userInfo : {}; //判断是否为空
+                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.token = wPref.getPrefs({
+                        key: 'token'
+                    })
+                    _this.token = _this.token ? _this.token : {}; //判断是否为空
+
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
-                        withCredentials:true,
+                        withCredentials: true,
                         headers: {
-                               "token": _this.token,
-                           },
+                            "token": _this.token,
+                        },
                         data: {
-                            employeeid:JSON.parse(_this.userInfo).employeeid,
+                            employeeid: JSON.parse(_this.userInfo).employeeid,
                         },
                         success: function(res) {
                             _this.name = res.info.name;
-                            _this. post_pos = res.info.job;
+                            _this.post_pos = res.info.job;
                             _this.tel = res.info.phone;
 
                         }
                     })
                 },
-                withdraw_account:function () {
+                withdraw_account: function() {
                     var _this = this
                     $.ajax({
                         method: "get",
                         url: 'perCenter/logout',
-                        withCredentials:true,
+                        withCredentials: true,
                         headers: {
-                               "token":'',
-                           },
+                            "token": '',
+                        },
                         data: {
-                            employeeid:JSON.parse(_this.userInfo).employeeid,
+                            employeeid: JSON.parse(_this.userInfo).employeeid,
                         },
                         success: function(res) {
-                           wDialog.toast({
-                               msg:'退出账号'
-                           })
+                            wDialog.toast({
+                                msg: '退出账号'
+                            })
                         }
                     })
                 }

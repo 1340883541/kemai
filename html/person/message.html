@@ -148,7 +148,8 @@
                 defult_hide: false,
                 arr: [false],
                 show_info: true,
-                employeeid: '',
+                userInfo: '',
+                token: '',
                 messageInfo: {
                     change_principal_state: 0, //负责人变更状态
                     follow_state: 0, //跟进提醒，
@@ -178,20 +179,24 @@
             methods: {
                 getUserInfo: function() {
                     var _this = this
-                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    console.log(searchArr)
-                    _this.employeeid = searchArr ? searchArr.employeeid : '';
+                    _this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    })
+                    _this.userInfo = _this.userInfo ? _this.userInfo : {}; //判断是否为空
+                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.token = wPref.getPrefs({
+                        key: 'token'
+                    })
+                    _this.token = _this.token ? _this.token : {}; //判断是否为空
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/getSwitchState',
                         withCredentials: true,
                         headers: {
-                            "token": "token",
-                            "Content-Type": "application/x-www-form-urlencoded"
+                            "token": _this.token,
                         },
                         data: {
-                            // employeeid: _this.employeeid
-                            employeeid: 4
+                            employeeid: JSON.parse(_this.userInfo).employeeid,
                         },
                         success: function(res) {
                             console.log(JSON.stringify(res))
@@ -203,11 +208,10 @@
                                     url: 'perCenter/getAllNoticeState',
                                     withCredentials: true,
                                     headers: {
-                                        "token": "token",
-                                        "Content-Type": "application/x-www-form-urlencoded"
+                                        "token": _this.token
                                     },
                                     data: {
-                                        employeeid: 4
+                                        employeeid: JSON.parse(_this.userInfo).employeeid,
                                     },
                                     success: function(res) {
                                         console.log(JSON.stringify(res))
@@ -233,32 +237,31 @@
                     var _this = this;
                     _this.me_checked = true;
                     wApiAjax({
-                            method: "get",
-                            url: 'perCenter/getAllNoticeState',
-                            withCredentials: true,
-                            headers: {
-                                "token": "token",
-                                "Content-Type": "application/x-www-form-urlencoded"
-                            },
-                            data: {
-                                employeeid: 4
-                            },
-                            success: function(res) {
-                                console.log(JSON.stringify(res))
-                                if (res.code == 200) {
-                                    _this.messageInfo = res.info;
-                                    console.log(_this.messageInfo)
-                                    _this.defult_hide = true;
-                                    _this.defult_show = false;
-                                    _this.show_info = true;
-                                }
-                                if (res.code == 201) {
-                                    this.me_checked = false;
-                                    _this.defult_hide = false;
-                                    _this.defult_show = false;
-                                }
+                        method: "get",
+                        url: 'perCenter/getAllNoticeState',
+                        withCredentials: true,
+                        headers: {
+                            "token": _this.token
+                        },
+                        data: {
+                            employeeid: JSON.parse(_this.userInfo).employeeid,
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.code == 200) {
+                                _this.messageInfo = res.info;
+                                console.log(_this.messageInfo)
+                                _this.defult_hide = true;
+                                _this.defult_show = false;
+                                _this.show_info = true;
                             }
-                        })
+                            if (res.code == 201) {
+                                this.me_checked = false;
+                                _this.defult_hide = false;
+                                _this.defult_show = false;
+                            }
+                        }
+                    })
                 },
                 changeChenk: function(num) {
                     var _this = this;
@@ -270,11 +273,10 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": "token",
-                                "Content-Type": "application/x-www-form-urlencoded"
+                                "token": _this.token
                             },
                             data: {
-                                employeeid: 4,
+                                employeeid: JSON.parse(_this.userInfo).employeeid,
                                 state: 0,
                                 noticeType: _this.messageInfo
                             },
@@ -293,11 +295,10 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": "token",
-                                "Content-Type": "application/x-www-form-urlencoded"
+                                "token": _this.token
                             },
                             data: {
-                                employeeid: 4,
+                                employeeid: JSON.parse(_this.userInfo).employeeid,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -320,11 +321,10 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": "token",
-                                "Content-Type": "application/x-www-form-urlencoded"
+                                "token": _this.token
                             },
                             data: {
-                                employeeid: 4,
+                                employeeid: JSON.parse(_this.userInfo).employeeid,
                                 state: 0,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -346,11 +346,10 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": "token",
-                                "Content-Type": "application/x-www-form-urlencoded"
+                                "token": _this.token
                             },
                             data: {
-                                employeeid: 4,
+                                employeeid: JSON.parse(_this.userInfo).employeeid,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },

@@ -216,7 +216,7 @@
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
-                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                 this.token = wPref.getPrefs({
                     token:'token'
                 });

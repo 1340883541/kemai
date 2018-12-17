@@ -17,33 +17,37 @@
         body {
             height: 100%;
         }
-        .wrap,.swiper-container{
+
+        .wrap,
+        .swiper-container {
             height: 100%;
             position: relative;
         }
-        .swiper-container{
+
+        .swiper-container {
             display: none;
         }
-        .now-skip{
+        .now-skip {
             position: fixed;
-            left: 25%;
-            bottom: 20px;
-            width: 50%;
-            height:40px;
-            line-height: 40px;
-            -webkit-border-radius:8px;
-            -moz-border-radius:8px;
-            -ms-border-radius:8px;
-            -o-border-radius:8px;
-            border-radius:8px;
-            background-color: rgba(0,0,0,.5);
-            color:#fff;
+            width: 20%;
+            height: 32px;
+            line-height: 32px;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            -ms-border-radius: 8px;
+            -o-border-radius: 8px;
+            border-radius: 8px;
+            background-color: rgba(0, 0, 0, .5);
+            color: #fff;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             z-index: 9;
+            top: 40px;
+            right: 10px;
         }
     </style>
 </head>
+
 <body class="wrap">
     <div class="swiper-container" id="qd-swiper">
         <div class="swiper-wrapper">
@@ -68,40 +72,40 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
-        wPref.removePrefs({
-            key:'isLogin'
-        })
-        wPref.removePrefs({
-            key:'userInfo'
-        })
-        // 设置沉浸式效果
-        api.setStatusBarStyle({
-            style: 'dark'
+    wPref.removePrefs({
+        key:'isLogin'
+    })
+    wPref.removePrefs({
+        key:'userInfo'
+    })
+    // 设置沉浸式效果
+    api.setStatusBarStyle({
+        style: 'dark'
+     });
+    if (checkLogin()) {
+        // 打开main
+        wHrefJs.openWin({
+            // name:'login',
+            // path:'./html/login/login.html'
+            name:'main',
+            path:'./html/main.html'
         });
-        if (checkLogin()) {
-            // 打开main
-            wHrefJs.openWin({
-                // name:'login',
-                // path:'./html/login/login.html'
-                name:'main',
-                path:'./html/main.html'
-            });
-        }else{
-            $('#qd-swiper').show();
-            new Swiper({
-                el:'#qd-swiper'
-            });
-            setTimeout(function(){
-                goToLogin();
-            },5000);
-        }
+    }else{
+    $('#qd-swiper').show();
+    new Swiper({
+        el: '#qd-swiper'
+    });
+    setTimeout(function() {
+        goToLogin();
+    }, 5000);
+    }
 
     };
     // 跳转到main
-    function goToLogin(){
+    function goToLogin() {
         wHrefJs.openWin({
-            name:'login',
-            path:'./html/login/login.html'
+            name: 'login',
+            path: './html/login/login.html'
         });
     }
 </script>

@@ -64,29 +64,18 @@
                 count: '',
                 timer: null,
                 verification: '',
-                token:'',
-                userInfo:''
+                InfoPhone:'',
             },
             methods: {
                 getUserInfo: function() {
                      var _this = this
-                    // let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    // console.log(searchArr)
-                    // _this.employeeid = searchArr ? searchArr.employeeid : '';
-                    // _this.account = searchArr ? searchArr.account : '';
-                    _this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                    _this.InfoPhone = wPref.getPrefs({
+                        key:'InfoPhone'
                     })
-                     _this.userInfo = _this.userInfo ? _this.userInfo : {};//判断是否为空
-                    console.log(JSON.parse(_this.userInfo).account)
-                    _this.token = wPref.getPrefs({
-                        key:'token'
-                    })
-                    _this.token = _this.token ? _this.token : {};//判断是否为空
+                    console.log(JSON.parse(_this.InfoPhone).employeeid)
                 },
                 obtainClick: function() {
                     var _this = this;
-                    console.log(_this.phone)
                     const phoneExp = /^1[3456789]\d{9}$/;
                     if ((!phoneExp.test(_this.phone)) || _this.phone == "") {
                        wDialog.toast({
@@ -112,12 +101,9 @@
                             dataType: "json",
                             type: 'POST',
                             withCredentials: true,
-                            headers: {
-                                "token": _this.token
-                            },
                             data: {
-                                account: JSON.parse(_this.userInfo).account,
-                                employeeid:JSON.parse(_this.userInfo).employeeid,
+                                account: JSON.parse(_this.InfoPhone).account,
+                                employeeid:JSON.parse(_this.InfoPhone).employeeid,
                                 phone: _this.phone,
                                 type:1
                             },
@@ -158,15 +144,13 @@
                         return;
                     };
                     if (self.code == self.verification || phoneExp.test(self.phone)) {
-                        $.ajax({
+                        console.log(2222222)
+                        wApiAjax({
                             method: "post",
                             url:'phoneauth/bind',
-                            headers: {
-                                "token": _this.token
-                            },
                             data: {
-                                account: JSON.parse(_this.userInfo).account,
-                                employeeid:JSON.parse(_this.userInfo).employeeid,
+                                account: JSON.parse(self.InfoPhone).account,
+                                employeeid:JSON.parse(self.InfoPhone).employeeid,
                                 phone: self.phone,
                                 authcode: self.code,
                                 type:1   //发送短信类型:1-手机号验证，2-微信号查看
@@ -177,10 +161,9 @@
                                    wDialog.toast({
                                        msg:res.msg
                                    })
-                                   wHrefJs.openWin({
-                                       name: 'index',
-                                       path: '../index/index.html'
-                                   })
+                                   api.closeWin({
+                                       name: 'phonerz'
+                                   });
                                 }
                                 if (res.code == 2) {
                                     wDialog.toast({
