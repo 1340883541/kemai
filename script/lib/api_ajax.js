@@ -9,7 +9,7 @@ var besUrl='http://192.168.0.157:9000/';
 
 function wApiAjax(par){
     par.data = par.data || '';
-    par.data = createSign(par);
+    // par.data = createSign(par);
     if(Object.prototype.toString.call(par.files).toLowerCase() === '[object array]'){
         var file = {};
         for(var i = 0, len = par.files.length;i < len;i++){
@@ -31,6 +31,7 @@ function wApiAjax(par){
     if(par.headers){
         newHeaders = Object.assign(defaultHeader,par.headers)
     }
+    console.log(JSON.stringify(par.data))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',

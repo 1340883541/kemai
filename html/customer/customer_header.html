@@ -34,16 +34,16 @@
                 <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
             <div class="filter-box flex-wrap">
-                <div class="flex-con filter-lis kh" data-kh="0">
-                    <span>客户来源</span><i></i>
+                <div class="flex-con filter-lis kh" @click="clickFilterFn($event,0)">
+                    <span v-text="khOriginTxt"></span><i></i>
                 </div>
-                <div class="flex-con filter-lis lx" data-lx="0">
-                    <span>客户类型</span><i></i>
+                <div class="flex-con filter-lis lx" @click="clickFilterFn($event,1)">
+                    <span v-text="khClassTxt"></span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil" data-fil="0">
+                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,2)">
                     <span>跟进时间</span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil" data-fil="0">
+                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,3)">
                     <span>计划跟进</span><i></i>
                 </div>
             </div>
@@ -64,7 +64,9 @@
         ncusHeaderV = new Vue({
             el:"#wrap",
             data:{
-                searchVal:''
+                searchVal:'',
+                khOriginTxt:'客户来源',
+                khClassTxt:'客户类型'
             },
             methods:{
                 // 获取焦点
@@ -74,17 +76,91 @@
                         $('#search-inp').focus();
                     },200);
                 },
+                // 点击筛选
+                clickFilterFn:function(e,i){
+                    // 客户来源筛选
+                    if(i === 0){
+                        api.setFrameAttr({
+                            name: 'customerFrame',
+                            bounces: false,
+                        });
+                        api.execScript({
+                            name: 'main',
+                            frameName: 'customerFrame',
+                            script: 'showOriginFilterPopup();'
+                        });
+                        return;
+                    }
+                    else if(i == 1){
+                        api.setFrameAttr({
+                            name: 'customerFrame',
+                            bounces: false,
+                        });
+                        api.execScript({
+                            name: 'main',
+                            frameName: 'customerFrame',
+                            script: 'showClassFilterPopup();'
+                        });
+                        return;
+                    }
+                    // 跟进时间
+                    else if(i == 2){
+                        var tag = e.currentTarget;
+                        this.status2 = -1;
+                        if($(tag).hasClass('curr')){
+                            this.status1 = 1;
+                            $(tag).removeClass('curr');
+                        }else{
+                            this.status1 = 2;
+                            $(tag).addClass('curr');
+                        }
+                    }
+                    // 计划跟进时间
+                    else{
+                        var tag = e.currentTarget;
+                        this.status1 = -1;
+                        if($(tag).hasClass('curr')){
+                            this.status2 = 1;
+                            $(tag).removeClass('curr');
+                        }else{
+                            this.status2 = 2;
+                            $(tag).addClass('curr');
+                        }
+                    }
+                    this.filterCondition();
+                },
+                // 筛选 联系状态和分配时间
+                filterCondition:function(){
+                    var data = JSON.stringify({status1:this.status1,status2:this.status2});
+                    console.log(data)
+                    api.execScript({
+                        name:'main',
+                        frameName: 'customerFrame',
+                        script: 'filterCondition(\''+data+'\');'
+                    })
+                },
                 // 取消搜索
                 cancelSearch:function(){
                     $('#search-inp').blur();
                     $('#header-search-box').removeClass('curr');
                     this.clearSearchVal();
                 },
-                submitSeach:function(){
-                },
                 clearSearchVal:function(){
                     this.searchVal = '';
-                }
+                    api.execScript({
+                        name:'main',
+                        frameName: 'customerFrame',
+                        script: 'clearSearchValue();'
+                    });
+                },
+                // 搜索
+                submitSeach:function(){
+                    api.execScript({
+                        name:'main',
+                        frameName: 'customerFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
+                },
             }
         });
         // 打开frame
@@ -114,10 +190,28 @@
             api.closeFrame({
                 name: 'customerFrame'
             });
-
         });
 
+
+        // 获取客户来源的名字
+        api.addEventListener({
+            name: 'getKhOriginName'
+        }, function(ret, err){
+            if( ret ){
+                 ncusHeaderV.khOriginTxt = ret.value.name;
+            }
+        });
+
+        // 获取客户类型的名字
+        api.addEventListener({
+            name: 'getKhClassName'
+        }, function(ret, err){
+            if( ret ){
+                 ncusHeaderV.khClassTxt = ret.value.name;
+            }
+        });
     }
+
 </script>
 
 </html>

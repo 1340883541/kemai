@@ -419,6 +419,12 @@
     max-height: 5.4rem;
     padding:0 .3rem;
     background-color: #fff;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling:touch;
+}
+.filter-popup .filter-popbox > ul{
+
 }
 .filter-popup .filter-popbox li{
     position: relative;
@@ -502,4 +508,47 @@
 }
 .w-wran-icon{
     background-image: url();
+}
+/*vue  transition动画*/
+.fade-enter-active{
+    -webkit-transition:all .1s ease;
+    -moz-transition:all .1s ease;
+    -ms-transition:all .1s ease;
+    -o-transition:all .1s ease;
+    transition:all .1s ease;
+
+}
+.fade-leave-active{
+    -webkit-transition:all .1s ease;
+    -moz-transition:all .1s ease;
+    -ms-transition:all .1s ease;
+    -o-transition:all .1s ease;
+    transition:all .1s ease;
+}
+.fade-enter,.fade-leave-to{
+    opacity: 0;
+}
+.fade-leave{
+    display: none;
+}
+.fade1-enter-active{
+    -webkit-transition:all .1s ease;
+    -moz-transition:all .1s ease;
+    -ms-transition:all .1s ease;
+    -o-transition:all .1s ease;
+    transition:all .1s ease;
+    transition-delay: .15s;
+}
+.fade1-leave-active{
+    -webkit-transition:all .1s ease;
+    -moz-transition:all .1s ease;
+    -ms-transition:all .1s ease;
+    -o-transition:all .1s ease;
+    transition:all .1s ease;
+}
+.fade1-leave{
+    display: none;
+}
+.fade1-enter,.fade1-leave-to{
+    opacity: 0;
 }

@@ -22,80 +22,56 @@
 </head>
 
 <body>
-    <div id="wrap">
-        <div class="filter-popup" ontouchstart="event.preventDefault();">
-            <div class="filter-popbg"></div>
+    <div id="wrap" v-cloak>
+        <!-- 客户来源列表 -->
+        <div class="filter-popup" id="filter-origin-popup">
+            <div class="filter-popbg" onclick="hideFilterPopup()"></div>
             <div class="filter-popbox">
                 <ul>
-                    <li>
-                        <span>网络客户</span>
+                    <li :class="{'curr':currOriginIndex === ''}" @click="originSwitchTab($event,'全部',0)">
+                        <span>全部</span>
                         <i></i>
                     </li>
-                    <li class="curr">
-                        <span>渠道客户</span>
-                        <i></i>
-                    </li>
-                    <li>
-                        <span>销售客户</span>
-                        <i></i>
-                    </li>
-                    <li>
-                        <span>资源客户</span>
+                    <li v-for="(khorigin,index) in khOriginList" :key="index" :class="{'curr':currOriginIndex === index}" @click="originSwitchTab($event,khorigin.name,khorigin.value)">
+                        <span v-text="khorigin.name"></span>
                         <i></i>
                     </li>
                 </ul>
             </div>
         </div>
-        <div class="filter-lists">
-            <div class="filter-lis cfil-lis" @click="skipCustomerDetail">
-                <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname">蔡丁</div>
-                    <div class="cphone" @click="callPhone($event)"></div>
-                </div>
-                <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span>短期</span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span>2018/10/22</span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span>2018/10/20</span></div>
-                </div>
+        <!-- 客户类型列表 -->
+        <div class="filter-popup" id="filter-class-popup">
+            <div class="filter-popbg" onclick="hideFilterPopup()"></div>
+            <div class="filter-popbox">
+                <ul>
+                    <li :class="{'curr':currClassIndex === ''}" @click="classSwitchTab($event,'全部',0)">
+                        <span>全部</span>
+                        <i></i>
+                    </li>
+                    <li v-for="(khclass,index) in khClassList" :key="index" :class="{'curr':currClassIndex === index}" @click="classSwitchTab($event,khclass.name,khclass.value)">
+                        <span v-text="khclass.name"></span>
+                        <i></i>
+                    </li>
+                </ul>
             </div>
-            <div class="filter-lis cfil-lis" @click="skipCustomerDetail">
+        </div>
+        <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
+            <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id)">
                 <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname">孙京京</div>
-                    <div class="cphone" @click="callPhone($event)"></div>
+                    <div class="cname" v-text="khdata.name"></div>
+                    <div class="cphone" @click.stop="callPhone($event)"></div>
                 </div>
                 <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span>长期</span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span>2018/10/22</span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span>2018/10/20</span></div>
-                </div>
-            </div>
-            <div class="filter-lis cfil-lis" @click="skipCustomerDetail">
-                <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname">王朔</div>
-                    <div class="cphone" @click="callPhone($event)"></div>
-                </div>
-                <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span>成交</span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span>2018/10/22</span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span>2018/10/20</span></div>
-                </div>
-            </div>
-            <div class="filter-lis cfil-lis" @click="skipCustomerDetail">
-                <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname">薛元元</div>
-                    <div class="cphone" @click="callPhone($event)"></div>
-                </div>
-                <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span>短期</span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span>2018/10/22</span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span>2018/10/20</span></div>
+                    <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status"></span></div>
+                    <div class="cfil-gj time lis"><i></i>跟进时间: <span v-text="khdata.followtime"></span></div>
+                    <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow"></span></div>
                 </div>
             </div>
             <!-- 无更多数据 -->
-            <div class="not-more-filter">没有更多数据</div>
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
         </div>
         <!-- 空页面 -->
-        <empty-con :is-show="true" txt="暂无资源客户"></empty-con>
+        <empty-con :is-show="khDataList.length === 0" txt="暂无客户信息"></empty-con>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -106,18 +82,58 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var cusV = null;
+    var nCustomerFrame = null;
     apiready = function() {
-        cusV = new Vue({
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: true,
+            image: {
+                pull: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png'
+                ],
+                load: [
+                    'widget://image/loading_more.gif',
+                    'widget://image/icon-loading40-2.png',
+                    'widget://image/loading_more.gif',
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            $('#not-more').hide();
+            nCustomerFrame.pageNo = 1;
+            nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err){
+            if( ret ){
+                if(++nCustomerFrame.pageNo < nCustomerFrame.totalPage){
+                    nCustomerFrame.fetchListData(true);
+                }else{
+                    $('#not-more').show();
+                }
+            }
+        });
+        // vue实例
+        nCustomerFrame = new Vue({
             el: '#wrap',
             data: {
                 khClassList:[],
                 khOriginList:[],
+                currOriginIndex:'',
+                currClassIndex:'',
                 search_cusName:'', // 搜索客户名
-                search_source:'',  // 客户类型
+                search_source:'',  // 客户来源
                 search_status:'',  // 客户类型
                 order_followtime:0,     // 跟进时间
                 order_nextfollow:0,     // 计划跟进时间
+                pageNo:1,
+                totalPage:1,
+                khDataList:[],  // 客户信息list
             },
             mounted: function() {
                 this.fetchKhClass();
@@ -164,15 +180,18 @@
                     })
                 },
                 // 获取页面数据
-                fetchListData:function(){
+                fetchListData:function(isLoadMore,callback){
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    console.log(isLoadMore)
                     var _this = this;
+                    wDialog.showProgress();
                     wApiAjax({
                         url:'customer/datalist',
                         header:{
                             token:'2323'
                         },
                         data:{
-                            employeeid:4,
+                            employeeid:133,
                             search_cusName:_this.search_cusName,
                             search_source:_this.search_source,
                             search_status:_this.search_status,
@@ -181,18 +200,86 @@
                             pageNo:_this.pageNo,
                             pageSize:10,
                         },
-                        success:function(){
-
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(!isLoadMore){
+                                    _this.khDataList = res.data ? res.data : [];
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                }
+                                else{
+                                    if(res.data){
+                                        _this.khDataList = _this.khDataList.concat(res.data);
+                                    }
+                                }
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                            callback && typeof callback === 'function' && callback();
                         }
                     });
                 },
+                // 切换客户来源筛选
+                originSwitchTab:function(e,name,id){
+                    var tag = e.currentTarget;
+                    hideOriginFilterPopup();
+                    api.setFrameAttr({
+                        bounces: true,
+                    });
+                    if($(tag).hasClass('curr')){
+                        return;
+                    }
+                    else{
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                    }
+                    // 获取客户来源名字
+                    api.sendEvent({
+                        name: 'getKhOriginName',
+                        extra: {
+                            name: name
+                        }
+                    });
+                    $('#not-more').hide();
+                    this.search_source = id;
+                    this.pageNo = 1;
+                    this.fetchListData();
+                },
+                // 切换客户类型筛选
+                classSwitchTab:function(e,name,id){
+                    var tag = e.currentTarget;
+                    hideClassFilterPopup();
+                    api.setFrameAttr({
+                        bounces: true,
+                    });
+                    if($(tag).hasClass('curr')){
+                        return;
+                    }
+                    else{
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                    }
+                    // 获取客户类型名字
+                    api.sendEvent({
+                        name: 'getKhClassName',
+                        extra: {
+                            name: name
+                        }
+                    });
+
+                    $('#not-more').hide();
+                    this.search_status = id;
+                    this.pageNo = 1;
+                    this.fetchListData();
+                },
                 // 跳转客户详情
-                skipCustomerDetail: function() {
+                skipCustomerDetail: function(id) {
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: './customer_detail.html',
                         param: {
-                            cusId: 3
+                            cusId: id
                         }
                     })
                 },
@@ -205,29 +292,52 @@
                 }
             }
         })
+    }
 
-        api.setCustomRefreshHeaderInfo({
-            bgColor: '#f7f7f7',
-            isScale: true,
-            image: {
-                pull: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png'
-                ],
-                load: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png',
-                    'widget://image/loading_more.gif',
-                ]
-            }
-        }, function() {
-            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
-            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
-            // alert('开始加载刷新数据，摇一摇停止加载状态');
-            setTimeout(function() {
-                api.refreshHeaderLoadDone()
-            }, 2000)
+    // 显示客户来源的弹窗
+    function showOriginFilterPopup(){
+        $('#filter-class-popup').hide();
+        $('#filter-origin-popup').show();
+    }
+    // 显示客户类型的弹窗
+    function showClassFilterPopup(){
+        $('#filter-origin-popup').hide();
+        $('#filter-class-popup').show();
+    }
+    // 隐藏客户来源的弹窗
+    function hideOriginFilterPopup(){
+        $('#filter-origin-popup').hide();
+    }
+    // 隐藏客户来源的弹窗
+    function hideClassFilterPopup(){
+        $('#filter-class-popup').hide();
+    }
+    // 隐藏弹窗框
+    function hideFilterPopup(){
+        hideOriginFilterPopup();
+        hideClassFilterPopup();
+        api.setFrameAttr({
+            bounces: true
         });
+    }
+    // 跟进时间&计划跟进时间 条件筛选
+    function filterCondition(data){
+        var d = JSON.parse(data);
+        $('#not-more').hide();
+        nCustomerFrame.order_followtime = d.status1;
+        nCustomerFrame.order_nextfollow = d.status2;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchListData();
+    }
+    // 获取搜索的内容
+    function getSearchValue(val){
+        nCustomerFrame.search_cusName = val;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchListData();
+    }
+    // 清空搜索的内容
+    function clearSearchValue(){
+        nCustomerFrame.search_cusName = '';
     }
 </script>
 

@@ -12,150 +12,121 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
+    <style media="screen">
+        body{
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="wrapper">
+    <div id="wrapper" v-cloak>
         <div class="cd-header" id="cd-header">
             <div class="back-box flex-wrap flex-between" id="back-box">
-                <div class="back"></div>
+                <div class="back" onclick="wBackThisFunc()"></div>
                 <div class="header-txt">
-                    <span class="curr"><i></i>跟进信息</span>
-                    <span><i></i>意向资料</span>
+                    <span :class="{'curr':isShowDetailBox}" @click="switchTab(true)"><i></i>跟进信息</span>
+                    <span :class="{'curr':!isShowDetailBox}" @click="switchTab(false)"><i></i>意向资料</span>
                 </div>
                 <div class="right"></div>
             </div>
-            <div class="hname">张先生</div>
-            <div class="horigin">客户来源：<span>销售客户</span></div>
+            <div class="hname" v-text="cusInfo.cusName"></div>
+            <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
         </div>
         <section>
             <div class="cd-caption" id="js_cd_cap">
-                <div class="cd-ct w-inline-block">
-                    <span>微信号：</span><span>********</span><span class="look">查看微信</span>
+                <div class="cd-ct w-inline-block" v-if="!isShowWechat">
+                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look">查看微信</span>
+                </div>
+                <div class="cd-ct w-inline-block" v-if="isShowWechat">
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look">复制</span>
                 </div>
                 <div class="cd-cb w-inline-block">
-                    <span>销售负责人：</span><span>张晓丽</span><span class="line">|</span><span>渠道负责人：</span><span>王丽</span>
+                    <span v-if="cusInfo.markName">销售负责人：</span><span v-if="cusInfo.markName" v-text="cusInfo.markName"></span><span class="line"><em v-if="cusInfo.markName && cusInfo.chanName" style="font-style:normal;">|</em></span><span v-if="cusInfo.chanName">渠道负责人：</span><span v-if="cusInfo.chanName" v-text="cusInfo.chanName"></span>
                 </div>
             </div>
             <div class="cd-contain">
                 <div class="cd-nav" id="js_cd_nav">
                     <div class="cd-nav-ab flex-wrap">
-                        <div class="flex-con cd-n curr">跟进信息(<span>325</span>) <i></i></div>
-                        <div class="flex-con cd-n">意向资料<i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox}" @click="switchTab(true)">跟进信息(<span v-text="cusCount"></span>) <i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':!isShowDetailBox}" @click="switchTab(false)">意向资料<i></i></div>
                     </div>
                     <div class="cd-nav-place"></div>
                 </div>
-                <div class="cd-box cd-box0">
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon1"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                        </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
-                            <div class="gj-addr gj"><i></i>跟进地址: <span>四川省成都市奥克斯星巴克店</span></div>
-                        </div>
-                    </div>
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                        </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                <transition name="fade">
+                    <div class="cd-box cd-box0" v-show="isShowDetailBox">
+                        <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
+                            <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
+                            <div class="cd-flow-t" v-if="flow.result" v-text="flow.result"></div>
+                            <!-- <div class="cd-flow-all">全文</div> -->
+                            <!-- <div class="cd-flow-audio disabled">
+                                <div class="audio"></div>
+                                <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                            </div> -->
+                            <div class="cd-flow-p w-inline-block" v-if="flow.markName"><span>销售负责人：</span><span class="name" v-text="flow.markName"></span></div>
+                            <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
+                                <i class="top-icon"></i>
+                                <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime"></span></div>
+                                <div class="gj-time gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow"></span></div>
+                                <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                        </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
-                        </div>
-                    </div>
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                        </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                </transition>
+                <transition name="fade1">
+                    <div class="cd-box cd-box1" v-show="!isShowDetailBox">
+                        <div class="cd-info">
+                            <div class="cd-info-lis clear" v-if="cusPersonInfo.city">
+                                <div class="fl left">意向城市</div>
+                                <div class="fl right" v-text="cusPersonInfo.city"></div>
+                            </div>
+                            <div class="cd-info-lis clear" v-if="cusPersonInfo.premises">
+                                <div class="fl left">意向楼盘</div>
+                                <div class="fl right" v-text="cusPersonInfo.premises"></div>
+                            </div>
+                            <div class="cd-info-lis clear" v-if="cusPersonInfo.housestyle">
+                                <div class="fl left">意向房型</div>
+                                <div class="fl right" v-text="cusPersonInfo.housestyle"></div>
+                            </div>
+                            <div class="cd-info-lis clear" v-if="cusPersonInfo.purpose">
+                                <div class="fl left">购房用途</div>
+                                <div class="fl right" v-text="cusPersonInfo.purpose"></div>
+                            </div>
+                            <div class="cd-info-lis clear" v-if="cusPersonInfo.comment">
+                                <div class="fl left">客户备注</div>
+                                <div class="fl right" v-text="cusPersonInfo.comment"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                </transition>
+            </div>
+            <!-- 短信验证码 -->
+            <div class="verification_code" v-if="isShowVerify">
+               <div class="shade"></div>
+               <div class="content">
+                   <div class="content_code">
+                       <div class="close right"><img src="../../image/icon-dh-guanbi.png"></div>
+                       <div class="short_message">短信验证</div>
+                       <div class="text_tel">
+                           查看微信需要短信确认，验证码已发送至您的手机<span>152****0654</span> <span class="timer_r">60s</span>
+                       </div>
+                       <div class="tel_num">
+                           <label for="code">
+                             <ul class="security-code-container">
+                                 <li class="field-wrap" v-for="(item, index) in number" :key="index">
+                                  <i class="char-field">{{value[index]}}</i>
+                                 </li>
+                             </ul>
+                            </label>
+                            <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
+                              id="code" name="code" type="tel" minlength="6" maxlength="6"
+                              autocorrect="off" autocomplete="off" autocapitalize="off">
                         </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
+                        <div class="submit space-between">
+                            <div class="text-align" :class="{'submitClick' : isActive}">立即验证</div>
                         </div>
-                    </div>
-                    <div class="cd-flow">
-                        <div class="cd-flow-sicon cd-flow-sicon2"></div>
-                        <div class="cd-flow-t">下午2点拜访了张老板，跟张老板详细讲解了淮河路壹号楼盘信息</div>
-                        <!-- <div class="cd-flow-all">全文</div> -->
-                        <div class="cd-flow-audio disabled">
-                            <div class="audio"></div>
-                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                        </div>
-                        <div class="cd-flow-p w-inline-block"><span>销售负责人：</span><span class="name">王丽</span></div>
-                        <div class="cd-flow-timebox">
-                            <i class="top-icon"></i>
-                            <div class="gj-time gj"><i></i>跟进时间: <span>2018/09/19 14:15</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="cd-box cd-box1" style="display:none;">
-                    <div class="cd-info">
-                        <div class="cd-info-lis clear">
-                            <div class="fl left">意向城市</div>
-                            <div class="fl right">墨尔本</div>
-                        </div>
-                        <div class="cd-info-lis clear">
-                            <div class="fl left">意向楼盘</div>
-                            <div class="fl right">公寓</div>
-                        </div>
-                        <div class="cd-info-lis clear">
-                            <div class="fl left">意向房型</div>
-                            <div class="fl right">120m²三房</div>
-                        </div>
-                        <div class="cd-info-lis clear">
-                            <div class="fl left">购房用途</div>
-                            <div class="fl right">自住</div>
-                        </div>
-                        <div class="cd-info-lis clear">
-                            <div class="fl left">客户备注</div>
-                            <div class="fl right">张先生想在墨尔本购买一套自住房屋。现阶段正在与家人商量是否购买，房屋地段问题待回复。</div>
-                        </div>
-                    </div>
-                </div>
+                   </div>
+               </div>
             </div>
         </section>
     </div>
@@ -169,18 +140,142 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+    var cusDetailV = null;
     apiready = function() {
         $api.fixStatusBar($('#cd-header')[0]);
         $api.fixStatusBar($('#back-box')[0]);
 
         var param = api.pageParam;
-        new
+        // 下拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err){
+            if(cusDetailV.isShowDetailBox){
+                if(++cusDetailV.pageNo <= cusDetailV.totalPage){
+                    cusDetailV.fetchData(true);
+                }
+            }
+        });
+
+        //
+        // hideKeyboard() {
+        //   // 输入完成隐藏键盘
+        //   document.activeElement.blur() // ios隐藏键盘
+        //   this.$refs.input.blur() // android隐藏键盘
+        //   },
+        //   handleSubmit() {
+        //   this.$emit('input', this.value)
+        //   },
+        //   handleInput(e) {
+        //   this.$refs.input.value = this.value
+        //   if (this.value.length >= this.number) {
+        // //    this.hideKeyboard()
+        //   this.isActive = true;
+        //   }else{
+        //       this.isActive = false;
+        //   }
+        //   this.handleSubmit()
+        //   }
+        cusDetailV = new Vue({
+            el:'#wrapper',
+            data:{
+                cusId:0,
+                pageNo:1,
+                totalPage:1,
+                isShowDetailBox:true,
+                cusPersonInfo:{}, // 意向资料
+                cusInfoList:[], // 跟进信息列表
+                cusInfo:{},   // 跟进信息
+                wechatCard:'',  // 微信号
+                cusCount:0,
+                isShowWechat:false,
+                // 短信验证
+                isShowVerify:false,
+            },
+            created:function(){
+                this.cusId = param.cusId;
+            },
+            mounted:function(){
+                this.fetchData();
+            },
+            methods:{
+                fetchData:function(isLoadMore){
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/getcusinfo',
+                        data:{
+                            employeeid:133,
+                            customerid:_this.cusId,
+                            pageNo:_this.pageNo,
+                            pageSize:10
+                        },
+                        header:{
+                            token:'2332'
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(!isLoadMore){
+                                    _this.cusInfo = res.data.cusInfo;
+                                    _this.cusPersonInfo = res.data.cusPurInfo[0];
+                                    _this.cusInfoList = res.data.cusFllowInfo;
+                                    _this.totalPage = res.followcount / res.pageSize;
+                                    _this.cusCount = res.followcount;
+                                }
+                                else{
+                                    if(res.data && res.data.cusFllowInfo){
+                                        _this.cusInfoList = _this.cusInfoList.concat(res.data.cusFllowInfo);
+                                    }
+                                }
+
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 切换 跟进信息 和 意向资料
+                switchTab:function(bool){
+                    this.isShowDetailBox = bool;
+                },
+                // 判断是通过什么方式联系的，显示不同的icon
+                judgeIcon:function(i){
+                    var iconClass = 'cd-flow-sicon';
+                    // 电话
+                    if(i === 1){
+                        return iconClass+'3';
+                    }
+                    // 短信
+                    else if(i === 2){
+                        return iconClass+'2';
+                    }
+                    // 邮箱
+                    else if(i === 3){
+                        return iconClass+'4';
+                    }
+                    // 微信、qq
+                    else if(i === 4){
+                        return iconClass+'2';
+                    }
+                    // 面访
+                    else if(i === 9){
+                        return iconClass+'1';
+                    }
+                    else{
+                        return iconClass+'4';
+                    }
+                }
+            }
+        })
         // 屏幕滚动
         var isEventScroll = true;
         var capOffsetTop = $('#js_cd_cap').offset().top - 40;
         var navOffsetTop = $("#js_cd_nav").offset().top;
-        // console.log(capOffsetTop)
-        // console.log(navOffsetTop)
         $(window).on('scroll',function(){
             if(isEventScroll){
                 isEventScroll = false;
@@ -204,7 +299,6 @@
                 },50);
             }
         })
-        console.log(JSON.stringify(param))
     }
 </script>
 

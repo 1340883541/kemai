@@ -142,9 +142,19 @@
                     this.clearSearchVal();
                 },
                 submitSeach:function(){
+                    api.execScript({
+                        name:'newCustomerHeader',
+                        frameName: 'newCustomerFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
                 },
                 clearSearchVal:function(){
                     this.searchVal = '';
+                    api.execScript({
+                        name:'newCustomerHeader',
+                        frameName: 'newCustomerFrame',
+                        script: 'clearSearchValue();'
+                    });
                 },
                 back:function(){
                     api.closeWin({
