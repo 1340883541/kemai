@@ -76,6 +76,15 @@
      var indexV = null;
     apiready = function() {
         console.log('index')
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            api.closeWidget({
+                silent:false
+            });
+
+        });
+
         new Vue({
             el: '#wrap',
             data: {

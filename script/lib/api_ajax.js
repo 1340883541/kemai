@@ -1,6 +1,6 @@
 var __CONFIG__ = {
     // baseUrl:'http://192.168.0.235/',
-    baseUrl:'https://192.168.0.157:8088/',
+    baseUrl:'https://192.168.0.220:9000/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 var beUrl='https://192.168.0.214:8088/';

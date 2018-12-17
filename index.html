@@ -55,7 +55,7 @@
             </div>
         </div>
     </div>
-    <div class="now-skip" onclick="goToMain()">跳过</div>
+    <div class="now-skip" onclick="goToLogin()">跳过</div>
 </body>
 <script type="text/javascript" src="./script/lib/api.js"></script>
 <script type="text/javascript" src="./script/lib/jquery_3.1.1.min.js"></script>
@@ -68,7 +68,11 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
-        // if (checkLogin()) {
+        // 设置沉浸式效果
+        api.setStatusBarStyle({
+            style: 'dark'
+        });
+        if (checkLogin()) {
             // 打开main
             wHrefJs.openWin({
                 // name:'login',
@@ -76,20 +80,19 @@
                 name:'main',
                 path:'./html/main.html'
             });
-        // }else{
-        //     $('#qd-swiper').show();
-        //     new Swiper({
-        //         el:'#qd-swiper'
-        //     })
-        // }
-        // 设置沉浸式效果
-        api.setStatusBarStyle({
-            style: 'dark'
-        });
+        }else{
+            $('#qd-swiper').show();
+            new Swiper({
+                el:'#qd-swiper'
+            });
+            setTimeout(function(){
+                goToLogin();
+            },5000);
+        }
 
     };
     // 跳转到main
-    function goToMain(){
+    function goToLogin(){
         wHrefJs.openWin({
             name:'login',
             path:'./html/login/login.html'
