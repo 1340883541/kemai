@@ -218,13 +218,13 @@
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                 this.token = wPref.getPrefs({
-                    token:'token'
+                    key:'token'
                 });
             },
             mounted: function() {
                 this.netWorkStatus();
-                // this.fetchData();
-                // this.getMessageData();
+                this.fetchData();
+                this.getMessageData();
             },
             filters:{
                 messageFilter:function(n){

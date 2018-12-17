@@ -47,7 +47,7 @@
                     </div>
                     <div class="filter-b">分配时间: <span v-text="khdata.createtime"></span></div>
                 </div>
-                <div class="fr right" @click.stop="callPhone">
+                <div class="fr right" @click.stop="callPhone($event,khdata.id,khdata.phone)">
                     <div class="filter-call"></div>
                 </div>
             </div>
@@ -70,23 +70,13 @@
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
-            bgColor: '#f5f5f5',
+            bgColor: '#f7f7f7',
             isScale: false,
             loadAnimInterval:120,
             image: {
                 pull: [
-                    'widget://image/load-xl-1.png',
-                    'widget://image/load-xl-2.png',
-                    'widget://image/load-xl-3.png',
-                    'widget://image/load-xl-4.png',
-                    'widget://image/load-xl-5.png',
-                    'widget://image/load-xl-6.png',
-                    'widget://image/load-xl-7.png',
-                    'widget://image/load-xl-8.png',
-                    'widget://image/load-xl-9.png',
-                    'widget://image/load-xl-10.png',
-                    'widget://image/load-xl-11.png',
-                    'widget://image/load-xl-12.png'
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
                 ],
                 load: [
                     'widget://image/load-xl-1.png',
@@ -108,8 +98,7 @@
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
             nCustomerFrame.pageNo = 1;
-            setTimeout(api.refreshHeaderLoadDone,2000);
-            // nCustomerFrame.fetchNewAdd(false,api.refreshHeaderLoadDone);
+            nCustomerFrame.fetchNewAdd(false,api.refreshHeaderLoadDone);
         });
         // 上拉加载更多
         api.addEventListener({
@@ -150,7 +139,7 @@
                 });
             },
             mounted: function() {
-                // this.fetchKhOrigin();
+                this.fetchKhOrigin();
             },
             methods: {
                 // 获取新增客户来源
@@ -258,8 +247,27 @@
                     })
                 },
                 // 拨打电话
-                callPhone:function(){
+                callPhone:function(e,cusId,phone){
+                    var _this = this;
+                    wDialog.toast({
+                        msg: '拨打电话中，请注意接听'
+                    });
+                    wApiAjax({
+                        url:'ema/makeCall',
+                        header:{
+                            token:_this.token
+                        },
+                        data:{
+                            account:_this.userInfo.account,
+                            customerNumber:phone,
+                            cusid:cusId,
+                            empid:_this.userInfo.employeeid,
+                            is_work:2
+                        },
+                        success:function(res){
 
+                        }
+                    })
                 }
             }
         });

@@ -62,7 +62,7 @@
         <section>
             <div class="cd-caption" id="js_cd_cap">
                 <div class="cd-ct w-inline-block" v-if="!isShowWechat">
-                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look">查看微信</span>
+                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="lookWechat">查看微信</span>
                 </div>
                 <div class="cd-ct w-inline-block" v-if="isShowWechat">
                     <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="copyWechatFn">复制</span>
@@ -131,7 +131,7 @@
                <div class="shade"></div>
                <div class="content">
                    <div class="content_code">
-                       <div class="close right"><img src="../../image/icon-dh-guanbi.png"></div>
+                       <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
                        <div class="short_message">短信验证</div>
                        <div class="text_tel">
                            查看微信需要短信确认，验证码已发送至您的手机<span>152****0654</span> <span class="timer_r">{{downCountTime}}s</span>
@@ -207,7 +207,7 @@
                 number:6,
                 value:'',
                 isVerifyIng:false,
-                userInfo:{}
+                userInfo:{},
 
             },
             created:function(){
@@ -306,6 +306,8 @@
                 // 发送验证码
                 getCode:function(){
                     var _this = this;
+                    clearInterval(_this.downTimer);
+                    this.downCountTime = 60;
                     wApiAjax({
                         url:"phoneauth/authen",
                         header:{
@@ -321,21 +323,21 @@
                             if(res.code == 4){
 
                             }else{
-                                clearInterval(_this.downTimer);
+                                // clearInterval(_this.downTimer);
                                 wDialog.toast({
                                     msg:'发送验证码失败'
                                 });
                             }
                         },
                         fail:function(){
-                            clearInterval(_this.downTimer);
+                            // clearInterval(_this.downTimer);
                         }
                     })
                 },
                 // 倒计时
                 downCount:function(){
                     var _this = this;
-                    this.downTimer = setInterVal(function(){
+                    this.downTimer = setInterval(function(){
                         --_this.downCountTime;
                         if(_this.downCountTime <= 0){
                             _this.downCountTime = 60;
@@ -411,6 +413,13 @@
                             })
                         }
                     });
+                },
+                // 查看微信号
+                lookWechat:function(){
+                    this.isShowVerify = true;
+                },
+                closeCodeVerify:function(){
+                    this.isShowVerify = false;
                 }
             }
         })

@@ -59,7 +59,7 @@
             <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id)">
                 <div class="cfil-t flex-wrap flex-between">
                     <div class="cname" v-text="khdata.name"></div>
-                    <div class="cphone" @click.stop="callPhone($event)"></div>
+                    <div class="cphone" @click.stop="callPhone($event,khdata.id,khdata.phone)"></div>
                 </div>
                 <div class="cfil-b">
                     <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status"></span></div>
@@ -87,22 +87,12 @@
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
-            isScale: false,
+            isScale: true,
             loadAnimInterval:120,
             image: {
                 pull: [
-                    'widget://image/load-xl-1.png',
-                    'widget://image/load-xl-2.png',
-                    'widget://image/load-xl-3.png',
-                    'widget://image/load-xl-4.png',
-                    'widget://image/load-xl-5.png',
-                    'widget://image/load-xl-6.png',
-                    'widget://image/load-xl-7.png',
-                    'widget://image/load-xl-8.png',
-                    'widget://image/load-xl-9.png',
-                    'widget://image/load-xl-10.png',
-                    'widget://image/load-xl-11.png',
-                    'widget://image/load-xl-12.png'
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png'
                 ],
                 load: [
                     'widget://image/load-xl-1.png',
@@ -181,11 +171,12 @@
                             token:_this.token
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             if(res.code == 1){
                                 _this.khClassList = res.data.customerSatauslist
                             }else{
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg:res.message
                                 })
                             }
                         }
@@ -200,11 +191,12 @@
                             token:_this.token
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             if(res.code == 1){
                                 _this.khOriginList = res.data.allsrorcelist
                             }else{
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg:res.message
                                 })
                             }
                         }
@@ -246,7 +238,7 @@
                                 }
                             }else{
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg:res.message
                                 })
                             }
                             callback && typeof callback === 'function' && callback();
@@ -314,11 +306,38 @@
                         }
                     })
                 },
-                callPhone: function(e) {
+                // 拨打电话
+                callPhone: function(e,cusId,phone) {
                     e.preventDefault();
                     e.stopPropagation();
                     wDialog.toast({
                         msg: '拨打电话中，请注意接听'
+                    });
+                    var _this = this;
+                    var tag = e.currentTarget;
+                    $(tag).addClass('w-event-none');
+                    wApiAjax({
+                        url:'ema/makeCall',
+                        header:{
+                            token:_this.token
+                        },
+                        data:{
+                            account:_this.userInfo.account,
+                            customerNumber:phone,
+                            cusid:cusId,
+                            empid:_this.userInfo.employeeid,
+                            is_work:1
+                        },
+                        success:function(res){
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
+                        },
+                        fail:function(){
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
+                        }
                     })
                 }
             }

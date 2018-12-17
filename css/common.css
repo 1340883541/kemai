@@ -370,7 +370,7 @@
     top:50%;
     width: .24rem;
     height: .24rem;
-    margin-top: -.12rem;
+    margin-top: -.16rem;
     background: url('../image/icon-leixing.png') no-repeat center;
     background-size: .24rem;
 }
@@ -380,7 +380,7 @@
     top:50%;
     width: 6px;
     height: 6px;
-    margin-top: -3px;
+    margin-top: -4px;
     -webkit-border-radius:100%;
     -moz-border-radius:100%;
     -ms-border-radius:100%;
