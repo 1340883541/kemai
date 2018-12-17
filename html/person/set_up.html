@@ -50,7 +50,9 @@
             el: '#wrap',
             data: {
                 phone: '',
-                employeeid:'',
+                userInfo:'',
+                token:''
+
             },
             mounted() {
                 this.getUserInfo();
@@ -62,22 +64,28 @@
                     });
                 },
                 getUserInfo: function() {
-                    var _this = this
-                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    console.log(searchArr)
-                    _this.employeeid = searchArr ? searchArr.employeeid : '';
+                     var _this = this
+                    _this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    })
+                     _this.userInfo = _this.userInfo ? _this.userInfo : {};//判断是否为空
+                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.token = wPref.getPrefs({
+                        key:'token'
+                    })
+                    _this.token = _this.token ? _this.token : {};//判断是否为空
                 },
                 preservation: function() {
                     var self = this;
                     var phoneExp = /^1[3456789]\d{9}$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
-                        self.$modal.toast({
-                          template: '请输入手机号'
-                       });
+                       wDialog.toast({
+                           msg:'请输入手机号'
+                       })
                     } else if (!phoneExp.test(self.phone)) {
-                        self.$modal.toast({
-                          template: '请正确输入手机号'
-                       });
+                       wDialog.toast({
+                           msg:'请正确输入手机号'
+                       })
                     }
                     if(self.phone != ""||(phoneExp.test(self.phone))){
                         wApiAjax({
@@ -85,18 +93,17 @@
                             url: 'perCenter/setAnswernum',
                             withCredentials:true,
                             headers: {
-                                   "token": "",
-                                   "Content-Type": "application/x-www-form-urlencoded"
+                                   "token":self.token
                                },
                             data: {
-                                employeeid: self.employeeid,
+                                employeeid: JSON.parse(self.userInfo).employeeid,
                                 answernum:self.phone
                             },
                             success: function(res) {
                                   if(res.code){
-                                      self.$modal.toast({
-                                        template: res.msg
-                                     });
+                                      wDialog.toast({
+                                          msg:res.msg
+                                      })
                                      api.closeWin({
                                          name: 'setUp'
                                      });
@@ -105,7 +112,6 @@
                         })
                     }
                 }
-
             }
         })
     }

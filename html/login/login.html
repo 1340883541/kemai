@@ -82,9 +82,7 @@
             api.closeWidget({
                 silent:false
             });
-
         });
-
         new Vue({
             el: '#wrap',
             data: {
@@ -121,63 +119,78 @@
                     var self = this;
                     var accountExp =/^([A-Za-z0-9]{3,20})$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
-                        alert("请输入账号")
+                        wDialog.toast({
+                            msg:"请输入账号"
+                        })
                         return
                     }else if (!accountExp.test(self.phone)) {
-                        alert("请输入账号222222")
+                        wDialog.toast({
+                            msg:"请正确输入账号"
+                        })
                         return
                     }
                     var pwdExp = /^[\w]{6,16}$/;
                     if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
-                        alert("请输入密码")
+                        wDialog.toast({
+                            msg:"请输入密码"
+                        })
                         return
                     } else if (!pwdExp.test(self.pwd)) {
-                        alert("请输入密码33333")
+                        wDialog.toast({
+                            msg:"请正确输入密码"
+                        })
                         return
                     }
-                    wHrefJs.openWin({
-                        name: 'phonerz',
-                        path: './phonerz.html'
-                    });
-
                     if (self.phone != "" || self.phone != null || self.phone != undefined || self.pwd != "" || self.pwd != null || self.pwd != undefined) {
                         if ((!pwdExp.test(self.pwd))||(!accountExp.test(self.phone))) {
                             self.sign = "登录"
                             self.login_hide = false
                         } else {
-                            var token = "1564654wqswdewfreefgvr";
                             wApiAjax({
                                 method: "post",
                                 url: 'loginapp/verifyLogin',
                                 withCredentials:true,
                                 headers: {
-                                       "token": token,
-                                       "Content-Type": "application/x-www-form-urlencoded"
+                                       "token": ''
                                    },
                                 data: {
                                     account: self.phone,
                                     pwd: hex_md5(self.pwd)
                                 },
                                 success: function(res) {
+                                    wPref.setPrefs({
+                                        key:'isLogin',
+                                        value:1
+                                    })
+                                    wPref.setPrefs({
+                                        key:'userInfo',
+                                        value:res.accountInfo
+                                    })
+                                    wPref.setPrefs({
+                                        key:'token',
+                                        value:res.token
+                                    })
                                     console.log(JSON.stringify(res))
-                                    window.localStorage.setItem('searchData', JSON.stringify(res.accountInfo))
-                                    searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                                    console.log(searchArr)
-                                    // 6--账号不存在 4--登录成功  3--该员工账号未进行授权
+                                    // 6--账号不存在 4--登录成功  3--该员工账号未进行授权 5--账号密码错误
                                     if (res.code == 6) {
-                                        self.$modal.toast({
-                                            template: res.msg
-                                        });
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
                                     }
                                     if (res.code == 3) {
-                                        self.$modal.toast({
-                                            template: res.msg
-                                        });
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
                                     }
                                     if (res.code == 4) {
-                                        self.$modal.toast({
-                                            template: res.msg
-                                        });
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
+                                    }
+                                    if (res.code == 4) {
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
                                         self.sign = "登录中"
                                         self.login_hide = true
                                         wHrefJs.openWin({
@@ -195,7 +208,6 @@
                     }
                 }
             }
-
         })
     }
 </script>

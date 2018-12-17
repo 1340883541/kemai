@@ -105,7 +105,8 @@
                 name: '',
                 post_pos: '',
                 tel: "",
-                employeeid:'',
+                userInfo:'',
+                token:'',
             },
             mounted() {
                 this.getUserInfo();
@@ -137,21 +138,27 @@
                 },
                 getUserInfo: function() {
                     var _this = this
-                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    console.log(searchArr)
-                    _this.employeeid = searchArr ? searchArr.employeeid : '';
-                    console.log(_this.employeeid)
+                    getUserInfo: function() {
+                         var _this = this
+                        _this.userInfo = wPref.getPrefs({
+                            key:'userInfo'
+                        })
+                         _this.userInfo = _this.userInfo ? _this.userInfo : {};//判断是否为空
+                        console.log(JSON.parse(_this.userInfo).account)
+                        _this.token = wPref.getPrefs({
+                            key:'token'
+                        })
+                        _this.token = _this.token ? _this.token : {};//判断是否为空
+                    },
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
                         withCredentials:true,
                         headers: {
-                               "token": "token",
-                               "Content-Type": "application/x-www-form-urlencoded"
+                               "token": _this.token,
                            },
                         data: {
-                            // employeeid: _this.employeeid,、
-                             employeeid: 4,
+                            employeeid:JSON.parse(_this.userInfo).employeeid,
                         },
                         success: function(res) {
                             _this.name = res.info.name;
@@ -168,17 +175,15 @@
                         url: 'perCenter/logout',
                         withCredentials:true,
                         headers: {
-                               "token": "token",
-                               "Content-Type": "application/x-www-form-urlencoded"
+                               "token":'',
                            },
                         data: {
-                            // employeeid: _this.employeeid,
-                             employeeid: 4,
+                            employeeid:JSON.parse(_this.userInfo).employeeid,
                         },
                         success: function(res) {
-                            _this.$modal.toast({
-                              template: '退出账号'
-                           });
+                           wDialog.toast({
+                               msg:'退出账号'
+                           })
                         }
                     })
                 }

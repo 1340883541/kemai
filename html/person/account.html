@@ -60,65 +60,71 @@ apiready = function() {
                 show: true,
                 value: '',
                 isActive :false,
-                employeeid:'',
+                userInfo:'',
+                token:''
             },
              mounted() {
                  this.getUserInfo();
              },
             methods: {
                 getUserInfo: function() {
-                    var _this = this
-                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                        _this.employeeid = searchArr ? searchArr.employeeid : '';
+                     var _this = this
+                    _this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    })
+                     _this.userInfo = _this.userInfo ? _this.userInfo : {};//判断是否为空
+                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.token = wPref.getPrefs({
+                        key:'token'
+                    })
+                    _this.token = _this.token ? _this.token : {};//判断是否为空
                 },
                 confirm:function(){
                      var self = this;
                       var pwdExp = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$");
                       if (self.newPwd == "" || self.newPwd == null || self.newPwd == undefined) {
-                          self.$modal.toast({
-                            template: '请输入密码'
-                         });
+                         wDialog.toast({
+                             msg:"请输入密码"
+                         })
                            return
                       } else if (!pwdExp.test(self.newPwd)) {
-                          self.$modal.toast({
-                            template: '请输入密码8-20位数字和字母'
-                         });
+                          wDialog.toast({
+                              msg:"请输入密码8-20位数字和字母"
+                          })
                            return
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
-                          self.$modal.toast({
-                            template: '请确认新密码'
-                         });
+                          wDialog.toast({
+                              msg:"请确认新密码"
+                          })
                            return
                       } else if (!pwdExp.test(self.pwd)) {
-                          self.$modal.toast({
-                            template: '请输入密码8-20位数字和字母'
-                         });
+                          wDialog.toast({
+                              msg:"请输入密码8-20位数字和字母"
+                          })
                            return
                       };
                       if(self.newPwd == ""||self.pwd == "" ||(!pwdExp.test(self.pwd))||(self.newPwd!=self.pwd)){
-                          self.$modal.toast({
-                            template: '两次密码不一致'
-                         });
+                         wDialog.toast({
+                             msg:"两次密码不一致"
+                         })
                       }else {
                           wApiAjax({
                               method: "post",
                               url:'perCenter/modifyPwd',
                               withCredentials:true,
                               headers: {
-                                     "token": "token",
-                                     "Content-Type": "application/x-www-form-urlencoded"
+                                     "token": self.token,
                                  },
                               data: {
-                                //   employeeid: self.employeeid,
-                                  employeeid:4,
+                                 employeeid:JSON.parse(_this.userInfo).employeeid,
                                   modifyPwd:hex_md5(self.newPwd)
                               },
                               success: function(res) {
                                  if(res.code==200){
-                                     self.$modal.toast({
-                                       template: res.msg
-                                    });
+                                     wDialog.toast({
+                                         msg:res.msg
+                                     })
                                     api.closeWin({
                                         name: 'account'
                                     });
