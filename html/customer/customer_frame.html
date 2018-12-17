@@ -87,16 +87,36 @@
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
-            isScale: true,
+            isScale: false,
+            loadAnimInterval:120,
             image: {
                 pull: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png'
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
                 ],
                 load: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png',
-                    'widget://image/loading_more.gif',
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
                 ]
             }
         }, function() {
@@ -134,6 +154,17 @@
                 pageNo:1,
                 totalPage:1,
                 khDataList:[],  // 客户信息list
+                token:'',
+                userInfo:''
+            },
+            created:function(){
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.token = wPref.getPrefs({
+                    token:'token'
+                });
             },
             mounted: function() {
                 this.fetchKhClass();
@@ -147,7 +178,7 @@
                     wApiAjax({
                         url:'customer/sourceAndType',
                         header:{
-                            token:'2323'
+                            token:_this.token
                         },
                         success:function(res){
                             if(res.code == 1){
@@ -166,7 +197,7 @@
                     wApiAjax({
                         url:'customer/allSource',
                         header:{
-                            token:'2323'
+                            token:_this.token
                         },
                         success:function(res){
                             if(res.code == 1){
@@ -188,10 +219,10 @@
                     wApiAjax({
                         url:'customer/datalist',
                         header:{
-                            token:'2323'
+                            token:_this.token
                         },
                         data:{
-                            employeeid:133,
+                            employeeid:_this.userInfo.employeeid,
                             search_cusName:_this.search_cusName,
                             search_source:_this.search_source,
                             search_status:_this.search_status,

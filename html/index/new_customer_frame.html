@@ -70,17 +70,37 @@
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
-            bgColor: '#f7f7f7',
-            isScale: true,
+            bgColor: '#f5f5f5',
+            isScale: false,
+            loadAnimInterval:120,
             image: {
                 pull: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png'
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
                 ],
                 load: [
-                    'widget://image/loading_more.gif',
-                    'widget://image/icon-loading40-2.png',
-                    'widget://image/loading_more.gif',
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
                 ]
             }
         }, function() {
@@ -88,7 +108,8 @@
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
             nCustomerFrame.pageNo = 1;
-            nCustomerFrame.fetchNewAdd(false,api.refreshHeaderLoadDone);
+            setTimeout(api.refreshHeaderLoadDone,2000);
+            // nCustomerFrame.fetchNewAdd(false,api.refreshHeaderLoadDone);
         });
         // 上拉加载更多
         api.addEventListener({
@@ -116,9 +137,20 @@
                 pageNo:1,
                 totalPage:1,
                 khDataList:[], // 客户数据列表
+                token:'',
+                userInfo:''
+            },
+            created:function(){
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.token = wPref.getPrefs({
+                    token:'token'
+                });
             },
             mounted: function() {
-                this.fetchKhOrigin();
+                // this.fetchKhOrigin();
             },
             methods: {
                 // 获取新增客户来源
@@ -127,7 +159,7 @@
                     wApiAjax({
                         url: 'customer/sourceAndType',
                         header: {
-                            token: '3232'
+                            token: _this.token
                         },
                         success: function(res) {
                             if (res.code == 1) {
@@ -155,10 +187,10 @@
                     wApiAjax({
                         url:'workbench/datalist',
                         header:{
-                            token:'3232'
+                            token:_this.token
                         },
                         data:{
-                            employeeid:133,
+                            employeeid:_this.userInfo.employeeid,
                             search_cusName:_this.search_cusName,
                             search_source:_this.search_source,
                             search_status:_this.search_status,

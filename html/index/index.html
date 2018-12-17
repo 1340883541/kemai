@@ -55,13 +55,13 @@
         <div class="msg-title">
             <div class="i-title">消息提醒</div>
         </div>
-        <div class="msg-box">
+        <div class="msg-box" v-cloak>
             <div class="msg-binner clear">
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-1">
                             <div class="read-msg">
-                                <span>9</span>
+                                <span v-if="change_principal">{{change_principal|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-2">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="follow">{{follow|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -81,7 +81,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-3">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="recovery">{{recovery|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-4">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="resource">{{resource|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-5">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="subscription">{{subscription|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-6">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="sign">{{sign|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-7">
                             <div class="read-msg">
-                                <span>99</span>
+                                <span v-if="pay">{{pay|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -131,7 +131,7 @@
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-8">
                             <div class="read-msg">
-                                <span>99+</span>
+                                <span v-if="subscriptionBook">{{subscriptionBook|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -189,6 +189,7 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
+
         new Vue({
             el: '#wrapper',
             data: {
@@ -200,11 +201,35 @@
                 respool:0, //今日新增资源池客户
                 vaildcall:0, //今日统计有效通话
                 noanscall:0, //今日统计未接听通话
+                resource:0, //资源回收
+                sign:0,  //签约消息
+                pay:0,  //缴费消息
+                change_principal:0,//负责人变更
+                recovery:0, //回收提醒
+                subscription:0,//认购消息
+                follow:0, //跟进提醒
+                subscriptionBook:0, //认购书提醒
+                userInfo:'',
+                token:''
+            },
+            created:function(){
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.token = wPref.getPrefs({
+                    token:'token'
+                });
             },
             mounted: function() {
                 this.netWorkStatus();
-                this.getUserInfo();
-                this.fetchData();
+                // this.fetchData();
+                // this.getMessageData();
+            },
+            filters:{
+                messageFilter:function(n){
+                    return n > 99 ? '99+' : n;
+                }
             },
             methods: {
                 // 判断网络状态
@@ -222,12 +247,42 @@
                         $('#offline-box').hide();
                     }
                 },
-                // 获取 用户信息
-                getUserInfo: function() {
-                    var _this = this
-                    let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
-                    _this.employeeid = searchArr ? searchArr.employeeid : '';
-                    _this.account = searchArr ? searchArr.account : '';
+                // 获取消息提醒的数据
+                getMessageData:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:"msgRemind/getAllNoticeCount",
+                        header:{
+                            token:_this.token
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid
+                        },
+                        success:function(res){
+                            if(res.code == 200){
+                                if(res.switch == 0){
+                                    _this.resource = 0;
+                                    _this.sign = 0;
+                                    _this.pay = 0;
+                                    _this.change_principal = 0;
+                                    _this.recovery = 0;
+                                    _this.subscription = 0;
+                                    _this.follow = 0;
+                                    _this.subscriptionBook = 0;
+                                }else{
+                                    res.info = res.info || {};
+                                    _this.resource = res.info.resource == 'off' ? 0 : res.info.resource;
+                                    _this.sign = res.info.sign == 'off' ? 0 : res.info.sign;
+                                    _this.pay = res.info.pay == 'off' ? 0 : res.info.pay;
+                                    _this.change_principal = res.info.change_principal == 'off' ? 0 : res.info.change_principal;
+                                    _this.recovery =  res.info.recovery == 'off' ? 0 : res.info.recovery;
+                                    _this.subscription =  res.info.subscription == 'off' ? 0 : res.info.subscription;
+                                    _this.follow =  res.info.follow == 'off' ? 0 : res.info.follow;
+                                    _this.subscriptionBook =  res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
+                                }
+                            }
+                        }
+                    })
                 },
                 fetchData:function(){
                     var _this = this;
@@ -235,10 +290,10 @@
                     wApiAjax({
                         url:'workbench/datasta',
                         headers:{
-                            token:'333'
+                            token:_this.token
                         },
                         data:{
-                            employeeid:4
+                            employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
                             if(res.code == 1){
