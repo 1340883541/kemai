@@ -62,12 +62,6 @@ apiready = function() {
                 isActive :false,
                 employeeid:'',
             },
-            props: {
-              number: {
-              type: Number,
-              default: 6
-              },
-             },
              mounted() {
                  this.getUserInfo();
              },
@@ -109,14 +103,15 @@ apiready = function() {
                       }else {
                           wApiAjax({
                               method: "post",
-                              url: bUrl + 'perCenter/modifyPwd',
+                              url:'perCenter/modifyPwd',
                               withCredentials:true,
                               headers: {
                                      "token": "token",
                                      "Content-Type": "application/x-www-form-urlencoded"
                                  },
                               data: {
-                                  employeeid: self.employeeid,
+                                //   employeeid: self.employeeid,
+                                  employeeid:4,
                                   modifyPwd:hex_md5(self.newPwd)
                               },
                               success: function(res) {
@@ -137,7 +132,7 @@ apiready = function() {
                         name: 'account'
                     });
                 }
-            },
+            }
         })
     }
 </script>

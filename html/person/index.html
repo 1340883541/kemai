@@ -140,9 +140,10 @@
                     let searchArr = JSON.parse(window.localStorage.getItem('searchData'))
                     console.log(searchArr)
                     _this.employeeid = searchArr ? searchArr.employeeid : '';
+                    console.log(_this.employeeid)
                     wApiAjax({
                         method: "get",
-                        url: bUrl + 'perCenter/info',
+                        url: 'perCenter/info',
                         withCredentials:true,
                         headers: {
                                "token": "token",
@@ -164,7 +165,7 @@
                     var _this = this
                     $.ajax({
                         method: "get",
-                        url: bUrl + 'perCenter/logout',
+                        url: 'perCenter/logout',
                         withCredentials:true,
                         headers: {
                                "token": "token",

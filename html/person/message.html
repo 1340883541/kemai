@@ -140,7 +140,7 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
-    new Vue({
+        new Vue({
             el: '#wrap',
             data: {
                 me_checked: this.value,
@@ -150,15 +150,15 @@
                 show_info: true,
                 employeeid: '',
                 messageInfo: {
-                    change_principal_state: 0,//负责人变更状态
-                    follow_state: 0,//跟进提醒，
-                    notice_state: 0,//总开关
-                    pay_state: 0,//缴费提醒
-                    recovery_state: 0,//回收提醒，
-                    resource_state: 0,//资源回收，
-                    sign_state: 0,//签约提醒，
-                    subscriptionBook_state: 0,//认购书提醒，
-                    subscription_state: 0,//认购提醒，
+                    change_principal_state: 0, //负责人变更状态
+                    follow_state: 0, //跟进提醒，
+                    notice_state: 0, //总开关
+                    pay_state: 0, //缴费提醒
+                    recovery_state: 0, //回收提醒，
+                    resource_state: 0, //资源回收，
+                    sign_state: 0, //签约提醒，
+                    subscriptionBook_state: 0, //认购书提醒，
+                    subscription_state: 0, //认购提醒，
                 }
             },
             props: {
@@ -183,14 +183,15 @@
                     _this.employeeid = searchArr ? searchArr.employeeid : '';
                     wApiAjax({
                         method: "get",
-                        url: bUrl + 'perCenter/getSwitchState',
+                        url: 'perCenter/getSwitchState',
                         withCredentials: true,
                         headers: {
                             "token": "token",
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
                         data: {
-                            employeeid: _this.employeeid
+                            // employeeid: _this.employeeid
+                            employeeid: 4
                         },
                         success: function(res) {
                             console.log(JSON.stringify(res))
@@ -199,14 +200,14 @@
                                 _this.me_checked = true;
                                 wApiAjax({
                                     method: "get",
-                                    url: bUrl + 'perCenter/getAllNoticeState',
+                                    url: 'perCenter/getAllNoticeState',
                                     withCredentials: true,
                                     headers: {
                                         "token": "token",
                                         "Content-Type": "application/x-www-form-urlencoded"
                                     },
                                     data: {
-                                        employeeid: _this.employeeid
+                                        employeeid: 4
                                     },
                                     success: function(res) {
                                         console.log(JSON.stringify(res))
@@ -232,37 +233,37 @@
                     var _this = this;
                     _this.me_checked = true;
                     wApiAjax({
-                        method: "get",
-                        url: bUrl + 'perCenter/getAllNoticeState',
-                        withCredentials: true,
-                        headers: {
-                            "token": "token",
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        data: {
-                            employeeid: _this.employeeid
-                        },
-                        success: function(res) {
-                            console.log(JSON.stringify(res))
-                            if (res.code == 200) {
-                                _this.messageInfo = res.info;
-                                console.log(_this.messageInfo)
-                                _this.defult_hide = true;
-                                _this.defult_show = false;
-                                _this.show_info = true;
+                            method: "get",
+                            url: 'perCenter/getAllNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": "token",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            data: {
+                                employeeid: 4
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+                                    _this.messageInfo = res.info;
+                                    console.log(_this.messageInfo)
+                                    _this.defult_hide = true;
+                                    _this.defult_show = false;
+                                    _this.show_info = true;
+                                }
+                                if (res.code == 201) {
+                                    this.me_checked = false;
+                                    _this.defult_hide = false;
+                                    _this.defult_show = false;
+                                }
                             }
-                            if (res.code == 201) {
-                                this.me_checked = false;
-                                _this.defult_hide = false;
-                                _this.defult_show = false;
-                            }
-                        }
-                    })
-                    // setTimeout(() => {
-                    //     this.defult_hide = true;
-                    //     this.defult_show = false;
-                    //     this.is_checked = true;
-                    // }, 500);
+                        })
+                        // setTimeout(() => {
+                        //     this.defult_hide = true;
+                        //     this.defult_show = false;
+                        //     this.is_checked = true;
+                        // }, 500);
                 },
                 changeChenk: function(num) {
                     var _this = this;
@@ -271,14 +272,14 @@
                         _this.$set(_this.messageInfo, num, 0)
                         wApiAjax({
                             method: "POST",
-                            url: bUrl + 'perCenter/setNoticeState',
+                            url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
                                 "token": "token",
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
                             data: {
-                                employeeid: _this.employeeid,
+                                employeeid: 4,
                                 state: 0,
                                 noticeType: _this.messageInfo
                             },
@@ -294,14 +295,14 @@
                         _this.$set(_this.messageInfo, num, 1)
                         wApiAjax({
                             method: "POST",
-                            url: bUrl + 'perCenter/setNoticeState',
+                            url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
                                 "token": "token",
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
                             data: {
-                                employeeid: _this.employeeid,
+                                employeeid: 4,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -321,14 +322,14 @@
                         _this.$set(_this.messageInfo, num, 0)
                         wApiAjax({
                             method: "POST",
-                            url: bUrl + 'perCenter/setNoticeState',
+                            url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
                                 "token": "token",
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
                             data: {
-                                employeeid: _this.employeeid,
+                                employeeid: 4,
                                 state: 0,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -347,22 +348,22 @@
                         _this.show_info = true
                         wApiAjax({
                             method: "POST",
-                            url: bUrl + 'perCenter/setNoticeState',
+                            url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
                                 "token": "token",
                                 "Content-Type": "application/x-www-form-urlencoded"
                             },
                             data: {
-                                employeeid: _this.employeeid,
+                                employeeid: 4,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
                                 if (res.code == 200) {
-                                   _this.defult_hide = true;
-                                   _this.show_info = true
+                                    _this.defult_hide = true;
+                                    _this.show_info = true
                                 }
                             }
                         })
@@ -414,7 +415,7 @@
             },
 
         })
-        }
+    }
 </script>
 
 </html>
