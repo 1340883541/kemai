@@ -103,6 +103,9 @@
 .not_set{
 	color: #666666!important;
 }
+.ready_set{
+	color: #333!important;
+}
 .Authentication_edit{
     width: 0.24rem;
 	height: 0.26rem;

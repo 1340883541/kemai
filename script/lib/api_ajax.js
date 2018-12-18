@@ -31,8 +31,8 @@ function wApiAjax(par){
     if(par.headers){
         newHeaders = Object.assign(defaultHeader,par.headers)
     }
-    console.log(JSON.stringify(newHeaders))
-    console.log(JSON.stringify(par.data))
+    // console.log(JSON.stringify(newHeaders))
+    // console.log(JSON.stringify(par.data))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
@@ -51,6 +51,7 @@ function wApiAjax(par){
             wDialog.toast({
                 msg:'请求失败，请重试'
             })
+            console.log(JSON.stringify(par.url))
             console.log(JSON.stringify(err))
             wDialog.hideProgress();
             par.fail && typeof par.fail === 'function' && par.fail(err);

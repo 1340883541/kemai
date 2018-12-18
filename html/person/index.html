@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>个人中心-首页</title>
     <script src="../../script/lib/rem.js"></script>
@@ -23,7 +26,7 @@
                 <div class="header_text">
                     <div class="flex_con">
                         <div class="name">{{name}}</div>
-                        <div class="post">{{post_pos}}</div>
+                        <div class="post" v-if="post_pos">{{post_pos}}</div>
                     </div>
                     <div class="flex_con contact_number">
                         <div class="cont_tel">
@@ -37,9 +40,10 @@
                     <div class="flex_con contact_set">
                         <div class="cont_tel">
                             <span>接听号:</span>
-                            <span class="not_set">未设置</span>
+                            <span class="not_set" v-if="!answernum">未设置</span>
+                            <span class="ready_set" v-if="answernum" v-text="answernum"></span>
                         </div>
-                        <div class="Authentication_edit" @click="setting_tel">
+                        <div class="Authentication_edit" @click="setting_tel" v-if="!answernum">
                             <img src="../../image/icon-bianji.png">
                         </div>
                     </div>
@@ -99,7 +103,14 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
-        new Vue({
+        // 监听设置成功
+        api.addEventListener({
+            name: 'setJtPhoneSuc'
+        }, function(ret, err){
+            indexV.getUserInfo();
+        });
+
+        indexV = new Vue({
             el: '#wrap',
             data: {
                 name: '',
@@ -107,6 +118,17 @@
                 tel: "",
                 userInfo: '',
                 token: '',
+                answernum:'', // 接听号
+            },
+            created:function(){
+                var _this = this;
+                _this.userInfo = wPref.getPrefs({
+                    key: 'userInfo'
+                })
+                _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
+                _this.token = wPref.getPrefs({
+                    key: 'token'
+                })
             },
             mounted() {
                 this.getUserInfo();
@@ -138,13 +160,6 @@
                 },
                 getUserInfo: function() {
                     var _this = this
-                    _this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    })
-                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
-                    _this.token = wPref.getPrefs({
-                        key: 'token'
-                    })
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
@@ -156,9 +171,17 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
-                            _this.name = res.info.name;
-                            _this.post_pos = res.info.job;
-                            _this.tel = res.info.phone;
+                            console.log(JSON.stringify(res))
+                            if(res.code == 200){
+                                _this.name = res.info.name;
+                                _this.post_pos = res.info.job;
+                                _this.tel = res.info.phone;
+                                _this.answernum = res.info.answernum
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
 
                         }
                     })
@@ -171,30 +194,34 @@
                             wApiAjax({
                                 method: "get",
                                 url: 'perCenter/logout',
-                                withCredentials: true,
                                 headers: {
-                                    "token": '',
+                                    "token": _this.token,
                                 },
                                 data: {
                                     employeeid: _this.userInfo.employeeid,
                                 },
                                 success: function(res) {
-                                    wPref.removePrefs({
-                                        key: 'isLogin'
-                                    })
-                                    wPref.removePrefs({
-                                        key: 'userInfo'
-                                    })
-                                    wPref.removePrefs({
-                                        key: 'token'
-                                    })
-                                    setTimeout(() => {
-                                        wHrefJs.openWin({
-                                            name: 'login',
-                                            path: '../login/login.html',
+                                    console.log(JSON.stringify(res))
+                                    if(res.code == 200){
+                                        wPref.removePrefs({
+                                            key: 'isLogin'
                                         })
-                                    }, 300);
-
+                                        wPref.removePrefs({
+                                            key: 'userInfo'
+                                        })
+                                        wPref.removePrefs({
+                                            key: 'token'
+                                        })
+                                        wDialog.toast({
+                                            msg:'退出成功'
+                                        })
+                                        setTimeout(() => {
+                                            wHrefJs.openWin({
+                                                name: 'login',
+                                                path: '../login/login.html',
+                                            })
+                                        }, 300);
+                                    }
                                 }
                             })
                         },
