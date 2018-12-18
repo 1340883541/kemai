@@ -220,6 +220,7 @@
                 this.token = wPref.getPrefs({
                     key:'token'
                 });
+                console.log(this.token)
             },
             mounted: function() {
                 this.netWorkStatus();
@@ -250,6 +251,7 @@
                 // 获取消息提醒的数据
                 getMessageData:function(){
                     var _this = this;
+                    console.log(_this.token)
                     wApiAjax({
                         url:"msgRemind/getAllNoticeCount",
                         header:{

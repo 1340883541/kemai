@@ -146,8 +146,6 @@
                     _this.token = wPref.getPrefs({
                         key: 'token'
                     })
-                    _this.token = _this.token ? _this.token : {}; //判断是否为空
-
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
