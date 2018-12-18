@@ -16,7 +16,7 @@
     <div id="wrapper">
         <div class="header">
             <div class="i-title">工作台</div>
-            <div class="offline-box clear" id="offline-box">
+            <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
                 <div class="fl left">
                     <i></i>网络不给力，请检查您的网络设置
                 </div>
@@ -60,8 +60,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-1">
-                            <div class="read-msg">
-                                <span v-if="change_principal">{{change_principal|messageFilter}}</span>
+                            <div class="read-msg" v-if="change_principal">
+                                <span>{{change_principal|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -70,8 +70,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-2">
-                            <div class="read-msg">
-                                <span v-if="follow">{{follow|messageFilter}}</span>
+                            <div class="read-msg" v-if="follow">
+                                <span>{{follow|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -80,8 +80,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-3">
-                            <div class="read-msg">
-                                <span v-if="recovery">{{recovery|messageFilter}}</span>
+                            <div class="read-msg" v-if="recovery">
+                                <span>{{recovery|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -90,8 +90,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-4">
-                            <div class="read-msg">
-                                <span v-if="resource">{{resource|messageFilter}}</span>
+                            <div class="read-msg" v-if="resource">
+                                <span>{{resource|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -100,8 +100,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-5">
-                            <div class="read-msg">
-                                <span v-if="subscription">{{subscription|messageFilter}}</span>
+                            <div class="read-msg" v-if="subscription">
+                                <span>{{subscription|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -110,8 +110,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-6">
-                            <div class="read-msg">
-                                <span v-if="sign">{{sign|messageFilter}}</span>
+                            <div class="read-msg" v-if="sign">
+                                <span>{{sign|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -120,8 +120,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-7">
-                            <div class="read-msg">
-                                <span v-if="pay">{{pay|messageFilter}}</span>
+                            <div class="read-msg" v-if="pay">
+                                <span>{{pay|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -130,8 +130,8 @@
                 <div class="fl msg-lis">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-8">
-                            <div class="read-msg">
-                                <span v-if="subscriptionBook">{{subscriptionBook|messageFilter}}</span>
+                            <div class="read-msg" v-if="subscriptionBook">
+                                <span>{{subscriptionBook|messageFilter}}</span>
                             </div>
                         </div>
                     </div>
@@ -247,6 +247,13 @@
                     }else{
                         $('#offline-box').hide();
                     }
+                },
+                // 跳转到offline
+                skipOfflinePage:function(){
+                    wHrefJs.openWin({
+                        name:'offline',
+                        path:'../person/solution.html'
+                    })
                 },
                 // 获取消息提醒的数据
                 getMessageData:function(){
