@@ -141,8 +141,7 @@
                     _this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     })
-                    this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {}; //判断是否为空
-                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
                     _this.token = wPref.getPrefs({
                         key: 'token'
                     })
@@ -154,7 +153,7 @@
                             "token": _this.token,
                         },
                         data: {
-                            employeeid: JSON.parse(_this.userInfo).employeeid,
+                            employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
                             _this.name = res.info.name;
@@ -166,7 +165,7 @@
                 },
                 withdraw_account: function() {
                     var _this = this
-                    $.ajax({
+                    wApiAjax({
                         method: "get",
                         url: 'perCenter/logout',
                         withCredentials: true,
@@ -174,11 +173,20 @@
                             "token":'',
                         },
                         data: {
-                            employeeid: JSON.parse(_this.userInfo).employeeid,
+                            employeeid:_this.userInfo.employeeid,
                         },
                         success: function(res) {
+                            wPref.removePrefs({
+                                key:'isLogin'
+                            })
+                            wPref.removePrefs({
+                                key:'userInfo'
+                            })
+                            wPref.removePrefs({
+                                key:'token'
+                            })
                             wDialog.toast({
-                                msg: '退出账号'
+                                msg:'退出账号'
                             })
                         }
                     })

@@ -182,8 +182,7 @@
                     _this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     })
-                        this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {}; //判断是否为空
-                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
                     _this.token = wPref.getPrefs({
                         key: 'token'
                     })
@@ -195,7 +194,7 @@
                             "token": _this.token,
                         },
                         data: {
-                            employeeid: JSON.parse(_this.userInfo).employeeid,
+                            employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
                             console.log(JSON.stringify(res))
@@ -210,7 +209,7 @@
                                         "token": _this.token
                                     },
                                     data: {
-                                        employeeid: JSON.parse(_this.userInfo).employeeid,
+                                        employeeid: _this.userInfo.employeeid,
                                     },
                                     success: function(res) {
                                         console.log(JSON.stringify(res))
@@ -243,7 +242,7 @@
                             "token": _this.token
                         },
                         data: {
-                            employeeid: JSON.parse(_this.userInfo).employeeid,
+                            employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
                             console.log(JSON.stringify(res))
@@ -275,7 +274,7 @@
                                 "token": _this.token
                             },
                             data: {
-                                employeeid: JSON.parse(_this.userInfo).employeeid,
+                                employeeid: _this.userInfo.employeeid,
                                 state: 0,
                                 noticeType: _this.messageInfo
                             },
@@ -297,7 +296,7 @@
                                 "token": _this.token
                             },
                             data: {
-                                employeeid: JSON.parse(_this.userInfo).employeeid,
+                                employeeid: _this.userInfo.employeeid,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -323,7 +322,7 @@
                                 "token": _this.token
                             },
                             data: {
-                                employeeid: JSON.parse(_this.userInfo).employeeid,
+                                employeeid: _this.userInfo.employeeid,
                                 state: 0,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },
@@ -348,7 +347,7 @@
                                 "token": _this.token
                             },
                             data: {
-                                employeeid: JSON.parse(_this.userInfo).employeeid,
+                                employeeid: _this.userInfo.employeeid,
                                 state: 1,
                                 noticeType: JSON.stringify(_this.messageInfo)
                             },

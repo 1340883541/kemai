@@ -208,6 +208,7 @@
                 value:'',
                 isVerifyIng:false,
                 userInfo:{},
+                token:"",
 
             },
             created:function(){
@@ -238,15 +239,16 @@
                     wDialog.showProgress();
                     wApiAjax({
                         url:'customer/getcusinfo',
+                        header:{
+                            "token":_this.token
+                        },
                         data:{
                             employeeid:_this.userInfo.employeeid,
                             customerid:_this.cusId,
                             pageNo:_this.pageNo,
                             pageSize:10
                         },
-                        header:{
-                            "token":_this.token
-                        },
+
                         success:function(res){
                             console.log(JSON.stringify(res))
                             wDialog.hideProgress();

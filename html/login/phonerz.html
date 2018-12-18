@@ -72,8 +72,7 @@
                     _this.InfoPhone = wPref.getPrefs({
                         key:'InfoPhone'
                     })
-                    this.InfoPhone = this.InfoPhone ? JSON.parse(this.InfoPhone) : {};
-                    console.log(JSON.parse(_this.InfoPhone).employeeid)
+                    _this.InfoPhone = _this.InfoPhone ? JSON.parse(_this.InfoPhone) : {};
                 },
                 obtainClick: function() {
                     var _this = this;
@@ -103,8 +102,8 @@
                             type: 'POST',
                             withCredentials: true,
                             data: {
-                                account: JSON.parse(_this.InfoPhone).account,
-                                employeeid:JSON.parse(_this.InfoPhone).employeeid,
+                                account: _this.InfoPhone.account,
+                                employeeid:_this.InfoPhone.employeeid,
                                 phone: _this.phone,
                                 type:1
                             },
@@ -149,8 +148,8 @@
                             method: "post",
                             url:'phoneauth/bind',
                             data: {
-                                account: JSON.parse(self.InfoPhone).account,
-                                employeeid:JSON.parse(self.InfoPhone).employeeid,
+                                account: self.InfoPhone.account,
+                                employeeid:self.InfoPhone.employeeid,
                                 phone: self.phone,
                                 authcode: self.code,
                                 type:1   //发送短信类型:1-手机号验证，2-微信号查看

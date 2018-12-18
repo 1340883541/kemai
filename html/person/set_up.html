@@ -68,8 +68,7 @@
                     _this.userInfo = wPref.getPrefs({
                         key:'userInfo'
                     })
-                        this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {};//判断是否为空
-                    console.log(JSON.parse(_this.userInfo).account)
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {};//判断是否为空
                     _this.token = wPref.getPrefs({
                         key:'token'
                     })
@@ -95,7 +94,7 @@
                                    "token":self.token
                                },
                             data: {
-                                employeeid: JSON.parse(self.userInfo).employeeid,
+                                employeeid: self.userInfo.employeeid,
                                 answernum:self.phone
                             },
                             success: function(res) {
