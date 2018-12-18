@@ -168,7 +168,7 @@
                     var _this = this;
                     wApiAjax({
                         url:'customer/sourceAndType',
-                        header:{
+                        headers:{
                             "token":_this.token
                         },
                         success:function(res){
@@ -188,7 +188,7 @@
                     var _this = this;
                     wApiAjax({
                         url:'customer/allSource',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         success:function(res){
@@ -211,7 +211,7 @@
                     wDialog.showProgress();
                     wApiAjax({
                         url:'customer/datalist',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{
@@ -319,7 +319,7 @@
                     $(tag).addClass('w-event-none');
                     wApiAjax({
                         url:'ema/makeCall',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{

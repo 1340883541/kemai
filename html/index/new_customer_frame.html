@@ -147,7 +147,7 @@
                     var _this = this;
                     wApiAjax({
                         url: 'customer/sourceAndType',
-                        header: {
+                        headers: {
                             "token": _this.token
                         },
                         success: function(res) {
@@ -175,7 +175,7 @@
                     wDialog.showProgress();
                     wApiAjax({
                         url:'workbench/datalist',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{
@@ -254,7 +254,7 @@
                     });
                     wApiAjax({
                         url:'ema/makeCall',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{

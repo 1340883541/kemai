@@ -239,7 +239,7 @@
                     wDialog.showProgress();
                     wApiAjax({
                         url:'customer/getcusinfo',
-                        header:{
+                        headers:{
                             "token":_this.token
                         },
                         data:{
@@ -312,7 +312,7 @@
                     this.downCountTime = 60;
                     wApiAjax({
                         url:"phoneauth/authen",
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{
@@ -370,7 +370,7 @@
                     this.isVerifyIng = true;
                     wApiAjax({
                         url:'phoneauth/bind',
-                        header:{
+                        headers:{
                             token:_this.token
                         },
                         data:{
