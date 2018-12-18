@@ -181,7 +181,7 @@
                                                 key: 'userInfo',
                                                 value: JSON.stringify(res.data.platAccount[0])
                                             })
-                                            console.log(res.data.platAccount[0])
+                                            console.log(JSON.stringify(res.data.platAccount[0]))
                                             wPref.setPrefs({
                                                 key: 'token',
                                                 value: res.token

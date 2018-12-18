@@ -144,7 +144,6 @@
                         return;
                     };
                     if (self.code == self.verification || phoneExp.test(self.phone)) {
-                        console.log(2222222)
                         wApiAjax({
                             method: "post",
                             url:'phoneauth/bind',
