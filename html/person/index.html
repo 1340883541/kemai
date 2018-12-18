@@ -165,31 +165,45 @@
                 },
                 withdraw_account: function() {
                     var _this = this
-                    wApiAjax({
-                        method: "get",
-                        url: 'perCenter/logout',
-                        withCredentials: true,
-                        headers: {
-                            "token":'',
+                    wDialog.confirm({
+                        msg: '确认要退出登录吗？',
+                        sureCb: function() {
+                            wApiAjax({
+                                method: "get",
+                                url: 'perCenter/logout',
+                                withCredentials: true,
+                                headers: {
+                                    "token": '',
+                                },
+                                data: {
+                                    employeeid: _this.userInfo.employeeid,
+                                },
+                                success: function(res) {
+                                    wPref.removePrefs({
+                                        key: 'isLogin'
+                                    })
+                                    wPref.removePrefs({
+                                        key: 'userInfo'
+                                    })
+                                    wPref.removePrefs({
+                                        key: 'token'
+                                    })
+                                    setTimeout(() => {
+                                        wHrefJs.openWin({
+                                            name: 'login',
+                                            path: '../login/login.html',
+                                        })
+                                    }, 300);
+
+                                }
+                            })
                         },
-                        data: {
-                            employeeid:_this.userInfo.employeeid,
-                        },
-                        success: function(res) {
-                            wPref.removePrefs({
-                                key:'isLogin'
-                            })
-                            wPref.removePrefs({
-                                key:'userInfo'
-                            })
-                            wPref.removePrefs({
-                                key:'token'
-                            })
-                            wDialog.toast({
-                                msg:'退出账号'
-                            })
+                        cancelCb: function() {
+                            // 取消，不执行
                         }
                     })
+
+
                 }
             }
         })

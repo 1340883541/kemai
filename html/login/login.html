@@ -225,7 +225,13 @@
                                         // }
                                         setTimeout(() => {
                                             self.sign = "登录"
-                                            self.login_hide = false
+                                            self.login_hide = false;
+                                            self.phone = "";
+                                            self.pwd="";
+                                            self.defult_hide = false;
+                                            self.defult_hideImg =false;
+
+
                                         }, 3000);
                                     }
                                     if(res.code==7){
