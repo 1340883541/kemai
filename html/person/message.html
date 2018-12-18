@@ -182,7 +182,7 @@
                     _this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     })
-                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {}); //判断是否为空
+                        this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {}; //判断是否为空
                     console.log(JSON.parse(_this.userInfo).account)
                     _this.token = wPref.getPrefs({
                         key: 'token'

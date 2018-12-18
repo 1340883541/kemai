@@ -72,7 +72,7 @@
                     _this.InfoPhone = wPref.getPrefs({
                         key:'InfoPhone'
                     })
-                    this.InfoPhoneInfoPhone = (this.InfoPhone != '' ? JSON.parse(this.InfoPhone) : {});
+                    this.InfoPhone = this.InfoPhone ? JSON.parse(this.InfoPhone) : {};
                     console.log(JSON.parse(_this.InfoPhone).employeeid)
                 },
                 obtainClick: function() {

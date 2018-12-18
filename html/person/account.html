@@ -72,7 +72,7 @@ apiready = function() {
                     _this.userInfo = wPref.getPrefs({
                         key:'userInfo'
                     })
-                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {}); //判断是否为空
+                    this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {}; //判断是否为空
                     console.log(JSON.parse(_this.userInfo).account)
                     _this.token = wPref.getPrefs({
                         key:'token'
@@ -117,7 +117,7 @@ apiready = function() {
                                      "token": self.token,
                                  },
                               data: {
-                                 employeeid:JSON.parse(_this.userInfo).employeeid,
+                                 employeeid:JSON.parse(self.userInfo).employeeid,
                                   modifyPwd:hex_md5(self.newPwd)
                               },
                               success: function(res) {

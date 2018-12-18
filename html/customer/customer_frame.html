@@ -155,6 +155,7 @@
                 this.token = wPref.getPrefs({
                     key:'token'
                 });
+                console.log(this.token)
             },
             mounted: function() {
                 this.fetchKhClass();
@@ -168,7 +169,7 @@
                     wApiAjax({
                         url:'customer/sourceAndType',
                         header:{
-                            token:_this.token
+                            "token":_this.token
                         },
                         success:function(res){
                             console.log(JSON.stringify(res))
