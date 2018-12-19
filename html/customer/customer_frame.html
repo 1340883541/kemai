@@ -245,6 +245,9 @@
                                 })
                             }
                             callback && typeof callback === 'function' && callback();
+                        },
+                        fail:function(){
+                            callback && typeof callback === 'function' && callback();
                         }
                     });
                 },
@@ -349,6 +352,7 @@
 
     // 显示客户来源的弹窗
     function showOriginFilterPopup(){
+        console.log('-------------')
         $('#filter-class-popup').hide();
         $('#filter-origin-popup').show();
     }

@@ -598,17 +598,32 @@ var wDialog = {
     // 显示进度提示框
     showProgress: function(par) {
         par = par || {};
-        api.showProgress({
-            style: 'default',
-            animationType: par.animateType || 'fade',
-            title: par.title || '努力加载中...',
-            text: par.text || '请稍等...',
-            modal: par.modal || true
-        });
+        // api.showProgress({
+        //     style: 'default',
+        //     animationType: par.animateType || 'fade',
+        //     title: par.title || '努力加载中...',
+        //     text: par.text || '请稍等...',
+        //     modal: par.modal || true
+        // });
+        if(!$('#w-progress-popup')[0]){
+            var htmlString = '<div id="w-progress-popup">'+
+                                '<div class="progress-img">'+
+                                    '<img src="../../image/load-cs.gif" alt="">'+
+                                '</div>'+
+                                '<div class="progress-title">努力加载中...</div>'+
+                                '<div class="progress-text">请稍等</div>'+
+                            '</div>'
+            $('body').append(htmlString);
+            $('#w-progress-popup').show();
+        }
+        else{
+            $('#w-progress-popup').show();
+        }
     },
     // 隐藏进度提示框
     hideProgress: function() {
-        api.hideProgress();
+        // api.hideProgress();
+        $('#w-progress-popup').hide();
     }
 };
 

@@ -68,6 +68,7 @@
                 timer: null,
                 verification: '',
                 InfoPhone:'',
+                token:''
             },
             methods: {
                 getUserInfo: function() {
@@ -76,6 +77,9 @@
                         key:'InfoPhone'
                     })
                     _this.InfoPhone = _this.InfoPhone ? JSON.parse(_this.InfoPhone) : {};
+                    _this.token = wPref.getPrefs({
+                        key:'token'
+                    })
                 },
                 obtainClick: function() {
                     var _this = this;
@@ -103,7 +107,9 @@
                             url:'phoneauth/authen',
                             dataType: "json",
                             type: 'POST',
-                            withCredentials: true,
+                            headers:{
+                                token:_this.token
+                            },
                             data: {
                                 account: _this.InfoPhone.account,
                                 employeeid:_this.InfoPhone.employeeid,
@@ -150,6 +156,9 @@
                         wApiAjax({
                             method: "post",
                             url:'phoneauth/bind',
+                            headers:{
+                                token:self.token,
+                            },
                             data: {
                                 account: self.InfoPhone.account,
                                 employeeid:self.InfoPhone.employeeid,
@@ -178,9 +187,7 @@
                     }
                 },
                 back() {
-                    api.closeWin({
-                        name: 'phonerz'
-                    });
+                    api.closeWin({});
                 }
             },
             mounted() {

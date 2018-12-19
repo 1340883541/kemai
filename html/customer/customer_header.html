@@ -87,6 +87,7 @@
                             name: 'customerFrame',
                             bounces: false,
                         });
+                        console.log('innnnnnnnnn')
                         api.execScript({
                             name: 'main',
                             frameName: 'customerFrame',
@@ -166,6 +167,22 @@
                 },
             }
         });
+        // // 跳转到frame
+        // var wHei = $(window).height(),
+        //     y = api.safeArea.top + $('.w-header').height(),
+        //     h = wHei - y;
+        // wHrefJs.openFrame({
+        //     name:'customerFrame',
+        //     path:'./customer_frame.html',
+        //     y:y,
+        //     h:h,
+        //     bounces:true,
+        //     bgColor:'#f7f7f7',
+        //     animation:{
+        //         type:'none'
+        //     }
+        // });
+        // console.log('innn')
         // 打开frame
         api.addEventListener({
             name: 'openCustomerFrame'

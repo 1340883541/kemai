@@ -104,15 +104,6 @@
                 });
             }
         });
-        // 判断是否登录
-        if (checkLogin()) {
-
-        } else {
-            wHrefJs.openWin({
-                name: 'login',
-                path: './login/login.html'
-            });
-        }
         openFrameGroup(0);
     };
     // 底部按钮切换
@@ -152,8 +143,6 @@
     // 打开frame组
     function openFrameGroup(i){
         var h = $(window).height() - $('.footer').height();
-        // console.log($(window).height())
-        // console.log(h)
         api.openFrameGroup ({
             name: 'mainFrameGroup',
             background: '#fff',

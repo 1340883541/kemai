@@ -25,13 +25,13 @@
             <div class="header_main">
                 <div class="header_text">
                     <div class="flex_con">
-                        <div class="name">{{name}}</div>
-                        <div class="post" v-if="post_pos">{{post_pos}}</div>
+                        <div class="name" v-text="name"></div>
+                        <div class="post" v-if="post_pos" v-text="post_pos"></div>
                     </div>
                     <div class="flex_con contact_number">
                         <div class="cont_tel">
                             <span>拨打号:</span>
-                            <span>{{tel}}</span>
+                            <span v-text="tel"></span>
                         </div>
                         <div class="Authentication_tel">
                             <img src="../../image/icon-rz.png">
@@ -109,6 +109,16 @@
         }, function(ret, err){
             indexV.getUserInfo();
         });
+        // 监听登陆成功
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err){
+            // console.log('----------person----------'+JSON.stringify(ret));
+            if(ret.value.origin != 'index'){
+                indexV.init();
+                indexV.getUserInfo();
+            }
+        });
 
         indexV = new Vue({
             el: '#wrap',
@@ -121,19 +131,22 @@
                 answernum:'', // 接听号
             },
             created:function(){
-                var _this = this;
-                _this.userInfo = wPref.getPrefs({
-                    key: 'userInfo'
-                })
-                _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
-                _this.token = wPref.getPrefs({
-                    key: 'token'
-                })
+                this.init();
             },
             mounted() {
                 this.getUserInfo();
             },
             methods: {
+                init:function(){
+                    var _this = this;
+                    _this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    })
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
+                    _this.token = wPref.getPrefs({
+                        key: 'token'
+                    })
+                },
                 account: function() {
                     wHrefJs.openWin({
                         name: 'account',
@@ -215,11 +228,16 @@
                                         wDialog.toast({
                                             msg:'退出成功'
                                         })
+                                        api.sendEvent({
+                                            name: 'loginOutSuc'
+                                        });
+
                                         setTimeout(() => {
                                             wHrefJs.openWin({
                                                 name: 'login',
                                                 path: '../login/login.html',
-                                            })
+                                                param:{origin:'person'}
+                                            });
                                         }, 300);
                                     }
                                 }

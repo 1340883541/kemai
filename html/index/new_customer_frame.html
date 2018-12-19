@@ -255,6 +255,8 @@
                     wDialog.toast({
                         msg: '拨打电话中，请注意接听'
                     });
+                    var tag = e.currentTarget;
+                    $(tag).addClass('w-event-none');
                     wApiAjax({
                         url:'ema/makeCall',
                         headers:{
@@ -268,7 +270,15 @@
                             is_work:2
                         },
                         success:function(res){
-
+                            console.log('拨打电话--'+JSON.stringify(res))
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
+                        },
+                        fail:function(){
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
                         }
                     })
                 }

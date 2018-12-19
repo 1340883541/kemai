@@ -551,3 +551,45 @@ textarea:input-placeholder{
         transform: rotateZ(0deg);
     }
 }
+
+/*加载动画*/
+#w-progress-popup{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 10000;
+    -webkit-transform:translate(-50%,-50%);
+    -moz-transform:translate(-50%,-50%);
+    -ms-transform:translate(-50%,-50%);
+    -o-transform:translate(-50%,-50%);
+    transform:translate(-50%,-50%);
+    background-color: rgba(0,0,0,1);
+    padding:20px;
+    text-align: center;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    -ms-border-radius:10px;
+    -o-border-radius:10px;
+    border-radius:10px;
+}
+#w-progress-popup .progress-img{
+    display: block;
+    width: .8rem;
+    height: .8rem;
+    margin:0 auto;
+}
+#w-progress-popup .progress-img > img{
+    display: block;
+    width: 100%;
+    opacity: .4;
+}
+#w-progress-popup .progress-title{
+    color:#fff;
+    font-size: .32rem;
+    margin-top: .2rem;
+    margin-bottom: .12rem;
+}
+#w-progress-popup .progress-text{
+    color:#fff;
+    font-size: .28rem;
+}
