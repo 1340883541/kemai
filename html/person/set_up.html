@@ -13,15 +13,31 @@
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/person/person.css" />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        #wrap {
+            background-color: #f7f7f7;
+        }
+
+        .header {
+            background-color: #fff;
+        }
+    </style>
 </head>
 
 <body>
     <!-- 头部 -->
     <div id="wrap">
-        <div class="settings header">
-            <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
-            <div class="title">接听号设置</div>
-            <div class="preservation" @click="preservation">保存</div>
+        <div class="header">
+            <div class="settings">
+                <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
+                <div class="title">接听号设置</div>
+                <div class="preservation" @click="preservation">保存</div>
+            </div>
         </div>
         <div>
             <div class="settings_tel">
@@ -53,66 +69,62 @@
             el: '#wrap',
             data: {
                 phone: '',
-                userInfo:'',
-                token:''
+                userInfo: ''
 
             },
             mounted() {
                 this.getUserInfo();
             },
             methods: {
-                back:function(){
+                back: function() {
                     api.closeWin({
                         name: 'setUp'
                     });
                 },
                 getUserInfo: function() {
-                     var _this = this
+                    var _this = this
                     _this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                        key: 'userInfo'
                     })
-                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {};//判断是否为空
-                    _this.token = wPref.getPrefs({
-                        key:'token'
-                    })
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
                 },
                 preservation: function() {
                     var self = this;
                     var phoneExp = /^1[3456789]\d{9}$/;
                     if (self.phone == "" || self.phone == null || self.phone == undefined) {
-                       wDialog.toast({
-                           msg:'请输入手机号'
-                       })
+                        wDialog.toast({
+                            msg: '请输入手机号'
+                        })
                     } else if (!phoneExp.test(self.phone)) {
-                       wDialog.toast({
-                           msg:'请正确输入手机号'
-                       })
+                        wDialog.toast({
+                            msg: '请正确输入手机号'
+                        })
                     }
-                    if(self.phone != ""||(phoneExp.test(self.phone))){
+                    if (self.phone != "" || (phoneExp.test(self.phone))) {
                         wApiAjax({
                             method: "post",
                             url: 'perCenter/setAnswernum',
-                            withCredentials:true,
+                            withCredentials: true,
                             headers: {
-                                   "token":self.token
-                               },
+                                "token": TOKEN_DATA
+                            },
                             data: {
                                 employeeid: self.userInfo.employeeid,
-                                answernum:self.phone
+                                answernum: self.phone
                             },
                             success: function(res) {
-                                  if(res.code){
-                                      wDialog.toast({
-                                          msg:res.msg
-                                      })
-                                     api.closeWin({
-                                         name: 'setUp'
-                                     });
-                                     api.sendEvent({
-                                         name: 'setJtPhoneSuc'
-                                     });
+                                if (res.code) {
+                                    wDialog.toast({
+                                        msg: res.msg
+                                    })
+                                    api.closeWin({
+                                        name: 'setUp'
+                                    });
+                                    api.sendEvent({
+                                        name: 'setJtPhoneSuc'
+                                    });
 
-                                  }
+                                }
                             }
                         })
                     }

@@ -209,7 +209,6 @@
                 value:'',
                 isVerifyIng:false,
                 userInfo:{},
-                token:"",
 
             },
             created:function(){
@@ -218,9 +217,6 @@
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                this.token = wPref.getPrefs({
-                    key:'token'
-                });
             },
             mounted:function(){
                 this.fetchData();
@@ -241,7 +237,7 @@
                     wApiAjax({
                         url:'customer/getcusinfo',
                         headers:{
-                            "token":_this.token
+                            "token":TOKEN_DATA
                         },
                         data:{
                             employeeid:_this.userInfo.employeeid,
@@ -314,7 +310,7 @@
                     wApiAjax({
                         url:"phoneauth/authen",
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             account:_this.userInfo.account,
@@ -372,7 +368,7 @@
                     wApiAjax({
                         url:'phoneauth/bind',
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             account:_this.userInfo.account,

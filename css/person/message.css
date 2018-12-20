@@ -1,6 +1,14 @@
+body,html{
+    height: 100%;
+}
+html,body{-webkit-text-size-adjust: 100%;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
 #wrap{
     width:100%;
     height:100%;
+    background-color: #f7f7f7;
+}
+#header{
+    background-color: #fff;
 }
 .header{
     height:0.84rem;
@@ -30,22 +38,42 @@
     margin:auto;
 }
 
-#main{
+.msg-box{
     margin-top:0.6rem;
     padding-left: 0.32rem;
 }
 .main_switch{
+    position: relative;
     display: flex;
     height: 1.04rem;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 0.01rem 0 #ededed;
+    background-color: #fff;
+    margin-left: -.32rem;
+    padding-left: .32rem;
 }
 .mainSwitch{
+    position: relative;
     display: flex;
     height: 1.04rem;
     align-items: center;
     justify-content: space-between;
+    background-color: #fff;
+    margin-left: -.32rem;
+    padding-left: .32rem;
+}
+.main_switch:after,.mainSwitch:after{
+    content: '';
+    position: absolute;
+    left: .32rem;
+    bottom: 0;
+    right: 0;
+    border-bottom: 1px solid #ededed;
+    -webkit-transform:scaleY(.5);
+    -moz-transform:scaleY(.5);
+    -ms-transform:scaleY(.5);
+    -o-transform:scaleY(.5);
+    transform:scaleY(.5);
 }
 .main_top{
     margin-top: 0.6rem;
@@ -68,22 +96,7 @@
    height: 0.29rem;
  }
 
- .weui-switch {
-   display: block;
-   position: relative;
-   width: 0.88rem;
-   height: 0.29rem;
-   border: 1px solid #DFDFDF;
-   outline: 0;
-   border-radius: 0.4rem;
-   -webkit-border-radius: 0.4rem;
-   -moz-border-radius: 0.4rem;
-   -ms-border-radius: 0.4rem;
-   -o-border-radius: 0.4rem;
-   box-sizing: border-box;
-   background-color: #DFDFDF;
-   transition: background-color 0.1s, border 0.1s;
- }
+
  .weui-div{
      position:relative;
      font-weight: bold;
@@ -112,8 +125,8 @@
      position: relative;
      width: 0.88rem;
      height: 0.29rem;
-     border: 1px solid #DFDFDF;
-     outline: 0;
+     border: none;
+     outline: none;
      border-radius: 0.4rem;
      -webkit-border-radius: 0.4rem;
      -moz-border-radius: 0.4rem;

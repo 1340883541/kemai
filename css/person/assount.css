@@ -1,9 +1,16 @@
+body,html{
+    height: 100%;
+}
 #wrap {
     width: 100%;
     height: 100%;
+    background-color: #f7f7f7;
 }
-
+#header{
+    background-color: #fff;
+}
 .header {
+    position: relative;
     height: 0.84rem;
     line-height: 0.84rem;
     padding: 0 0.29rem;
@@ -11,6 +18,7 @@
     justify-content: start;
     align-items: center;
     width: 100%;
+    background-color: #fff;
 }
 
 .header .back {
@@ -35,15 +43,20 @@
 }
 
 .form_div {
-    padding: 0 0.31rem;
+    padding:0 0.31rem;
     margin-top: 0.6rem;
 }
-
+.form_div.form-inp-box{
+    background-color: #fff;
+}
+.form_div.mar-top-0{
+    margin-top: 0;
+}
 .row {
     position: relative;
     padding: 0.44rem 0;
-    -webkit-box-shadow: 0 1px 0px #e9e9e9;
-    box-shadow: 0 1px 0px #e9e9e9;
+    -webkit-box-shadow: 0 .5px 0px #e9e9e9;
+    box-shadow: 0 .5px 0px #e9e9e9;
 }
 
 .label {
@@ -96,11 +109,11 @@
     width: 100%;
     height: 0.96rem;
     background-image: linear-gradient(90deg, rgba(84, 203, 248, 0.95) 0%, rgba(13, 100, 250, 0.95) 100%);
-    border-radius: 8px;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    -ms-border-radius: 8px;
-    -o-border-radius: 8px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
     text-align: center;
     line-height: 0.96rem;
     font-size: 0.34rem;

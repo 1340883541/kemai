@@ -31,7 +31,7 @@
                     <div class="flex_con contact_number">
                         <div class="cont_tel">
                             <span>拨打号:</span>
-                            <span v-text="tel"></span>
+                            <span v-text="tel" class="w-event-"></span>
                         </div>
                         <div class="Authentication_tel">
                             <img src="../../image/icon-rz.png">
@@ -119,7 +119,7 @@
                 indexV.getUserInfo();
             }
         });
-
+        // 监听token，
         indexV = new Vue({
             el: '#wrap',
             data: {
@@ -127,7 +127,6 @@
                 post_pos: '',
                 tel: "",
                 userInfo: '',
-                token: '',
                 answernum:'', // 接听号
             },
             created:function(){
@@ -143,9 +142,6 @@
                         key: 'userInfo'
                     })
                     _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
-                    _this.token = wPref.getPrefs({
-                        key: 'token'
-                    })
                 },
                 account: function() {
                     wHrefJs.openWin({
@@ -178,7 +174,7 @@
                         url: 'perCenter/info',
                         withCredentials: true,
                         headers: {
-                            "token": _this.token,
+                            "token": TOKEN_DATA,
                         },
                         data: {
                             employeeid: _this.userInfo.employeeid,
@@ -208,7 +204,7 @@
                                 method: "get",
                                 url: 'perCenter/logout',
                                 headers: {
-                                    "token": _this.token,
+                                    "token": TOKEN_DATA,
                                 },
                                 data: {
                                     employeeid: _this.userInfo.employeeid,
@@ -222,9 +218,8 @@
                                         wPref.removePrefs({
                                             key: 'userInfo'
                                         })
-                                        wPref.removePrefs({
-                                            key: 'token'
-                                        })
+                                        myLocalStorage.clearItem('token');
+                                        
                                         wDialog.toast({
                                             msg:'退出成功'
                                         })

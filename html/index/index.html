@@ -213,17 +213,12 @@
                 follow:0, //跟进提醒
                 subscriptionBook:0, //认购书提醒
                 userInfo:'',
-                token:''
             },
             created:function(){
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                this.token = wPref.getPrefs({
-                    key:'token'
-                });
-                console.log(this.token)
             },
             mounted: function() {
                 this.netWorkStatus();
@@ -261,12 +256,11 @@
                 // 获取消息提醒的数据
                 getMessageData:function(){
                     var _this = this;
-                    console.log(_this.token)
                     wApiAjax({
                         url:"msgRemind/getAllNoticeCount",
                         method:'get',
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             employeeid:_this.userInfo.employeeid
@@ -303,7 +297,7 @@
                     wApiAjax({
                         url:'workbench/datasta',
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             employeeid:_this.userInfo.employeeid

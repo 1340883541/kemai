@@ -141,6 +141,13 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
+
+        // 全局token
+        myLocalStorage.clearItem('token')
+        wPref.removePrefs({key:'userInfo'})
+        wPref.removePrefs({key:'isLogin'})
+        TOKEN_DATA = myLocalStorage.getItem('token')
+        console.log('token======================'+TOKEN_DATA)
         // 设置沉浸式效果
         api.setStatusBarStyle({
             style: 'dark'
@@ -183,7 +190,7 @@
                             url: 'appset/imglist',
                             method: 'post',
                             success: function(res) {
-                                console.log(JSON.stringify(res))
+                                // console.log(JSON.stringify(res))
                                 if (res.code == 1) {
                                     _this.sList = res.data;
                                     _this.$nextTick(function() {

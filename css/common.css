@@ -127,6 +127,8 @@
     color: #ccc;
     font-size: .28rem;
     vertical-align: middle;
+    line-height: 1em;
+    padding-top: 2px;
 }
 
 .w-header .search-box .search-inp .search-pop:after {

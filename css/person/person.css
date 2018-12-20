@@ -31,22 +31,18 @@
     position: relative;
     top: -2.5rem;
     height:3.16rem;
-    -webkit-box-shadow: 0 5px 20px 0 #f7f7f7;
-    -moz-box-shadow: 0 5px 20px 0 #f7f7f7;
-    -ms-box-shadow: 0 5px 20px 0 #f7f7f7;
-    -o-box-shadow: 0 5px 20px 0 #f7f7f7;
-    box-shadow: 0 5px 20px 0 #f7f7f7;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
+    box-shadow: 0px 8px 12px 8px rgba(0, 0, 0, 0.03);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
 }
 .header_text{
     height:3.16rem;
     background-color: white;
-    padding-left: 0.4rem;
-    padding-top: 0.63rem;
+    padding-left: 0.1rem;
+    padding-top: 0.6rem;
 }
 .flex_con{
     display: flex;
@@ -57,6 +53,7 @@
 	font-size: 0.56rem;
 	letter-spacing: 0.2px;
 	color: #333333;
+    line-height: 1em;
 }
 .post{
     margin-left: 0.37rem;
@@ -74,7 +71,7 @@
     line-height: auto;
 }
 .contact_number{
-    padding-top: 0.49rem;
+    padding-top: 0.48rem;
 }
 .contact_number span{
     font-family: PingFangSC-Regular;
@@ -91,7 +88,7 @@
     width:100%;
 }
 .contact_set{
-    padding-top:0.33rem;
+    padding-top:0.3rem;
 }
 .contact_set span{
     font-family: PingFangSC-Regular;
@@ -105,12 +102,12 @@
 }
 .ready_set{
 	color: #333!important;
+    pointer-events: none;
 }
 .Authentication_edit{
-    width: 0.24rem;
-	height: 0.26rem;
+    width: 0.32rem;
+	height: 0.32rem;
     margin-left: 0.2rem;
-    margin-top: 0.04rem;
 }
 .Authentication_edit>img{
     width:100%
@@ -163,8 +160,8 @@
         box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
 }*/
 .account_rig>div img{
-    width:0.16rem;
-    height:0.26rem;
+    width:0.32rem;
+    height:0.32rem;
 }
 .account_rig img{
     width:100%;
@@ -179,11 +176,11 @@
 	background-image: linear-gradient(90deg,
 		rgba(84, 203, 248, 0.95) 0%,
 		rgba(13, 100, 250, 0.95) 100%);
-	border-radius: 8px;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    -ms-border-radius: 8px;
-    -o-border-radius: 8px;
+	border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
     text-align: center;
     line-height: 0.96rem;
     font-size: 0.34rem;
@@ -202,6 +199,7 @@
     /*justify-content: space-between;
     align-items: center;*/
     width: 100%;
+    background-color: #fff;
 }
 .settings .back{
     width: 0.48rem;
@@ -226,17 +224,19 @@
   	font-size: 0.3rem;
   	font-weight: normal;
   	font-stretch: normal;
-  	letter-spacing: 0px;
+  	letter-spacing: 0px;-
   	color: #4c9ff8;
 }
 .settings_tel{
-    margin-top: 0.6rem;
-    padding:0.3rem;
+    margin-top: 0.3rem;
+    padding:0.3rem 0;
 }
 .settings_number{
     height: 1.2rem;
     display: flex;
     align-items: center;
+    padding:0 .3rem;
+    background-color: #fff;
 }
 .answer{
     font-family: PingFangSC-Regular;
@@ -259,7 +259,7 @@
 	color: #333333;
 }
 .be_careful{
-    padding-top: 0.3rem;
+    padding: 0.3rem .3rem 0;
     font-family: PingFangSC-Regular;
 	font-size: 0.26rem;
 	font-weight: normal;

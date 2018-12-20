@@ -852,3 +852,6 @@ var wPhotoBrowser = {
         this.photoBrowser.close()
     }
 };
+
+// 全局token
+var TOKEN_DATA =  myLocalStorage.getItem('token');

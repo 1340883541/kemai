@@ -1,5 +1,7 @@
 var __CONFIG__ = {
+    // baseUrl:'https://192.168.0.157:9000/',
     // baseUrl:'https://192.168.0.157:8088/',
+    // baseUrl:'https://192.168.0.222:9000/',
     baseUrl:'https://calltest.jindinghaiju.com:9000/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
@@ -27,9 +29,11 @@ function wApiAjax(par){
         newHeaders = null;
     if(par.headers){
         newHeaders = Object.assign(defaultHeader,par.headers)
+    }else{
+        newHeaders = defaultHeader;
     }
     console.log(JSON.stringify(newHeaders))
-    console.log(JSON.stringify(par.data))
+    // console.log(JSON.stringify(par.data))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
@@ -42,6 +46,8 @@ function wApiAjax(par){
             files: par.files || {}
         },
     },function(ret, err){
+        // console.log(JSON.stringify(ret))
+        // console.log(JSON.stringify(err))
         if (ret) {
             par.success && typeof par.success === 'function' && par.success(ret);
         } else {

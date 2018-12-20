@@ -70,7 +70,7 @@
 .kh-box .kh-binner .kh-add{
     width: 1.44rem;
     height: .48rem;
-    line-height: .48rem;
+    line-height: .52rem;
     background-color: #fff;
     -webkit-border-top-right-radius:.48rem;
     -moz-border-top-right-radius:.48rem;
@@ -86,6 +86,7 @@
     padding-left: .2rem;
     font-size: .24rem;
     color: #1486f7;
+    overflow: hidden;
 }
 .kh-box .kh-nav{
     position: relative;

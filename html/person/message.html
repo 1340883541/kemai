@@ -18,12 +18,14 @@
 <body>
     <!-- 头部 -->
     <div id="wrap">
-        <div class="header" id="header">
-            <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
-            <div class="title">消息通知</div>
+        <div id="header">
+            <div class="header">
+                <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
+                <div class="title">消息通知</div>
+            </div>
         </div>
         <div v-show="defult_show">
-            <div id="main" class="flex-con">
+            <div class="flex-con msg-box">
                 <div class="main_switch">
                     <div class="notice">通知</div>
                     <div class="weui-div" @click.stop="toggle">
@@ -38,7 +40,7 @@
 
         <!-- 列表 -->
         <div v-show="defult_hide">
-            <div id="main" class="flex-con">
+            <div class="flex-con msg-box">
                 <div class="mainSwitch">
                     <div class="notice">全部通知</div>
                     <!-- <div class="weui-div" @click="toggleShow">
@@ -140,9 +142,9 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var indexV = null;
+    var messageV = null;
     apiready = function() {
-        $api.fixStatusBar($('.header')[0]);
+        $api.fixStatusBar($('#header')[0]);
         new Vue({
             el: '#wrap',
             data: {
@@ -152,7 +154,6 @@
                 arr: [false],
                 show_info: true,
                 userInfo: '',
-                token: '',
                 messageInfo: {
                     change_principal_state: 0, //负责人变更状态
                     follow_state: 0, //跟进提醒，
@@ -186,15 +187,12 @@
                         key: 'userInfo'
                     })
                     _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
-                    _this.token = wPref.getPrefs({
-                        key: 'token'
-                    })
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/getSwitchState',
                         withCredentials: true,
                         headers: {
-                            "token": _this.token,
+                            "token": TOKEN_DATA,
                         },
                         data: {
                             employeeid: _this.userInfo.employeeid,
@@ -209,7 +207,7 @@
                                     url: 'perCenter/getAllNoticeState',
                                     withCredentials: true,
                                     headers: {
-                                        "token": _this.token
+                                        "token": TOKEN_DATA
                                     },
                                     data: {
                                         employeeid: _this.userInfo.employeeid,
@@ -242,7 +240,7 @@
                         url: 'perCenter/getAllNoticeState',
                         withCredentials: true,
                         headers: {
-                            "token": _this.token
+                            "token":TOKEN_DATA
                         },
                         data: {
                             employeeid: _this.userInfo.employeeid,
@@ -274,7 +272,7 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": _this.token
+                                "token": TOKEN_DATA
                             },
                             data: {
                                 employeeid: _this.userInfo.employeeid,
@@ -296,7 +294,7 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": _this.token
+                                "token":TOKEN_DATA
                             },
                             data: {
                                 employeeid: _this.userInfo.employeeid,
@@ -322,7 +320,7 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": _this.token
+                                "token":TOKEN_DATA
                             },
                             data: {
                                 employeeid: _this.userInfo.employeeid,
@@ -347,7 +345,7 @@
                             url: 'perCenter/setNoticeState',
                             withCredentials: true,
                             headers: {
-                                "token": _this.token
+                                "token":TOKEN_DATA
                             },
                             data: {
                                 employeeid: _this.userInfo.employeeid,

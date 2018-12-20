@@ -129,7 +129,6 @@
                 pageNo:1,
                 totalPage:1,
                 khDataList:[], // 客户数据列表
-                token:'',
                 userInfo:''
             },
             created:function(){
@@ -137,9 +136,6 @@
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                this.token = wPref.getPrefs({
-                    key:'token'
-                });
             },
             mounted: function() {
                 this.fetchKhOrigin();
@@ -151,7 +147,7 @@
                     wApiAjax({
                         url: 'customer/sourceAndType',
                         headers: {
-                            "token": _this.token
+                            "token":TOKEN_DATA
                         },
                         success: function(res) {
                             if (res.code == 1) {
@@ -179,7 +175,7 @@
                     wApiAjax({
                         url:'workbench/datalist',
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             employeeid:_this.userInfo.employeeid,
@@ -260,7 +256,7 @@
                     wApiAjax({
                         url:'ema/makeCall',
                         headers:{
-                            token:_this.token
+                            token:TOKEN_DATA
                         },
                         data:{
                             account:_this.userInfo.account,
