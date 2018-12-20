@@ -137,7 +137,7 @@
                        <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
                        <div class="short_message">短信验证</div>
                        <div class="text_tel">
-                           查看微信需要短信确认，验证码已发送至您的手机<span>152****0654</span> <span class="timer_r">{{downCountTime}}s</span>
+                           查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r">{{downCountTime}}s</span>
                        </div>
                        <div class="tel_num">
                            <label for="code">
@@ -199,6 +199,7 @@
                 wechatCard:'',  // 微信号
                 cusCount:0,
                 isShowWechat:false,
+                minePhone:'',
                 // 短信验证
                 isShowVerify:false,
                 isActive:false,
@@ -217,6 +218,10 @@
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                var phone = this.userInfo.phone;
+                if(phone){
+                    this.minePhone = this.userInfo.phone.substring(0,3)+'****'+this.userInfo.phone.substring(7);
+                }
             },
             mounted:function(){
                 this.fetchData();
@@ -319,6 +324,7 @@
                             type:2
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res));
                             if(res.code == 4){
 
                             }else{

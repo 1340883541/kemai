@@ -33,7 +33,7 @@ function wApiAjax(par){
         newHeaders = defaultHeader;
     }
     console.log(JSON.stringify(newHeaders))
-    // console.log(JSON.stringify(par.data))
+    console.log(JSON.stringify(par.data))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',

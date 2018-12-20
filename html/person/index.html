@@ -200,6 +200,7 @@
                     wDialog.confirm({
                         msg: '确认要退出登录吗？',
                         sureCb: function() {
+                            TOKEN_DATA = myLocalStorage.getItem('token')
                             wApiAjax({
                                 method: "get",
                                 url: 'perCenter/logout',
@@ -219,7 +220,7 @@
                                             key: 'userInfo'
                                         })
                                         myLocalStorage.clearItem('token');
-                                        
+
                                         wDialog.toast({
                                             msg:'退出成功'
                                         })

@@ -123,15 +123,29 @@
                                 modifyPwd: hex_md5(self.newPwd)
                             },
                             success: function(res) {
+                                console.log(JSON.stringify(res));
                                 if (res.code == 200) {
                                     wDialog.toast({
                                         msg: res.msg
                                     });
+                                    if(res.token){
+                                        myLocalStorage.setItem('token',res.token);
+                                        api.closeWin({
+                                            name: 'account'
+                                        });
+                                    }
+                                    else{
+                                        myLocalStorage.clearItem('token');
+                                        // 不会走这个流程，以防万一
+                                        api.openWin({
+                                            name: 'login',
+                                            url: '../login/login.html',
+                                            pageParam: {
+                                                origin: 'person'
+                                            }
+                                        });
 
-                                    myLocalStorage.setItem('token',res.token);
-                                    api.closeWin({
-                                        name: 'account'
-                                    });
+                                    }
                                 }
                             }
                         })
