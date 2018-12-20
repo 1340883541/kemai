@@ -95,12 +95,14 @@
                         wDialog.toast({
                             msg: '请输入手机号'
                         })
+                        return;
                     } else if (!phoneExp.test(self.phone)) {
                         wDialog.toast({
                             msg: '请正确输入手机号'
                         })
+                        return;
                     }
-                    if (self.phone != "" || (phoneExp.test(self.phone))) {
+                    if (self.phone != "" && (phoneExp.test(self.phone))) {
                         wApiAjax({
                             method: "post",
                             url: 'perCenter/setAnswernum',

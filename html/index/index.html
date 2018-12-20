@@ -17,6 +17,7 @@
 
 <body>
     <div id="wrapper">
+        <div class="fixed-header"></div>
         <div class="header">
             <div class="i-title">工作台</div>
             <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
@@ -192,8 +193,10 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
+        $api.fixStatusBar($('.fixed-header')[0]);
 
-        new Vue({
+        
+        indexV = new Vue({
             el: '#wrapper',
             data: {
                 employeeid: '',

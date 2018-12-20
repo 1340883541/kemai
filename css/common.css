@@ -114,10 +114,10 @@
     position: relative;
     top: -1px;
     display: inline-block;
-    width: .32rem;
-    height: .32rem;
+    width: 16px;
+    height: 16px;
     background: url('../image/shousuo.png') no-repeat center;
-    background-size: .32rem;
+    background-size: contain;
     margin-right: .1rem;
     vertical-align: middle;
 }

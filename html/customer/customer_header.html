@@ -64,6 +64,13 @@
     var ncusHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
+        api.addEventListener({
+            name: 'switchFootTab'
+        }, function(ret, err){
+            ncusHeaderV.khOriginTxt = '客户来源';
+            ncusHeaderV.khClassTxt = '客户类型';
+        });
+
         ncusHeaderV = new Vue({
             el:"#wrap",
             data:{
@@ -218,7 +225,8 @@
             name: 'getKhOriginName'
         }, function(ret, err){
             if( ret ){
-                 ncusHeaderV.khOriginTxt = ret.value.name;
+                if(ret.value.name == '全部') ret.value.name = '客户来源';
+                ncusHeaderV.khOriginTxt = ret.value.name;
             }
         });
 
@@ -227,6 +235,7 @@
             name: 'getKhClassName'
         }, function(ret, err){
             if( ret ){
+                if(ret.value.name == '全部') ret.value.name = '客户类型';
                  ncusHeaderV.khClassTxt = ret.value.name;
             }
         });

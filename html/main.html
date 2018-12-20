@@ -13,39 +13,45 @@
     <link rel="stylesheet" type="text/css" href="../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../css/lib/swiper.css" />
     <style>
-        .footer{
+        .footer {
             position: fixed;
             left: 0;
-            bottom:0;
+            bottom: 0;
             z-index: 9;
             height: 1rem;
             width: 100%;
             text-align: center;
         }
-        .footer > ul{
+
+        .footer>ul {
             padding-top: .11rem;
         }
-        .footer li .f-img{
+
+        .footer li .f-img {
             width: .48rem;
             height: .48rem;
-            margin:0 auto;
+            margin: 0 auto;
         }
+
         .footer li .f-img .default,
-        .footer li.curr .f-img .checked{
+        .footer li.curr .f-img .checked {
             display: block;
         }
+
         .footer li.curr .f-img .default,
-        .footer li .f-img .checked{
+        .footer li .f-img .checked {
             display: none;
         }
-        .footer li .f-txt{
+
+        .footer li .f-txt {
             line-height: 1em;
             margin-top: .1rem;
-            color:#ccc;
+            color: #ccc;
             font-size: 11px;
         }
-        .footer li.curr .f-txt{
-            color:#5494f2;
+
+        .footer li.curr .f-txt {
+            color: #5494f2;
         }
     </style>
 </head>
@@ -95,6 +101,7 @@
 <script type="text/javascript" src="../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../script/common.js"></script>
 <script type="text/javascript">
+    var isReFreshLogin = false;
     apiready = function() {
         // 安卓 关闭app
         wHrefJs.andriodBackMain({
@@ -104,69 +111,76 @@
                 });
             }
         });
+        // 登录成功
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err) {
+            isReFreshLogin = true;
+        });
         openFrameGroup(0);
     };
     // 底部按钮切换
-    function setFootBar(_this,i){
-        if(!$(_this).hasClass('curr')){
+    function setFootBar(_this, i) {
+        if (!$(_this).hasClass('curr')) {
             $(_this).addClass('curr').siblings().removeClass('curr');
-            setFrameGroup(i);
-            if(i == 1){
+            setFrameGroup(i, isReFreshLogin);
+            if (i == 1) {
                 // 打开frame
                 api.sendEvent({
                     name: 'openCustomerFrame'
                 });
-            }else{
+            } else {
                 api.sendEvent({
                     name: 'closeCustomerFrame'
                 });
+                api.sendEvent({
+                    name: 'switchFootTab'
+                });
+            }
+            if(i == 0){
+                isReFreshLogin = false;
             }
         }
     }
-    var frameList = [
-        {
-            name: 'index',
-            url: './index/index.html',
-            bgColor: '#fff'
-        },
-        {
-            name: 'customer',
-            url: './customer/customer_header.html',
-            bgColor: '#fff'
-        },
-        {
-            name: 'person',
-            url: './person/index.html',
-            bgColor: '#fff'
-        }
-    ];
+    var frameList = [{
+        name: 'index',
+        url: './index/index.html',
+        bgColor: '#fff'
+    }, {
+        name: 'customer',
+        url: './customer/customer_header.html',
+        bgColor: '#fff'
+    }, {
+        name: 'person',
+        url: './person/index.html',
+        bgColor: '#fff'
+    }];
     // 打开frame组
-    function openFrameGroup(i){
+    function openFrameGroup(i) {
         var h = $(window).height() - $('.footer').height();
-        api.openFrameGroup ({
+        api.openFrameGroup({
             name: 'mainFrameGroup',
             background: '#fff',
             scrollEnabled: false,
             rect: {
-                 x: 0,
-                 y: 0,
-                 w: 'auto',
-                 h: h
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: h
             },
             index: i,
-            preload:2,
-            frames:frameList,
-            reload:true
-        }, function(ret, err){});
+            preload: 2,
+            frames: frameList
+        }, function(ret, err) {});
     }
 
     // 设置frameGroup的index
-    function setFrameGroup(index){
+    function setFrameGroup(index, isReload) {
         api.setFrameGroupIndex({
             name: 'mainFrameGroup',
             index: index,
             scroll: true,
-            reload:false
+            reload: isReload
         });
     }
 </script>

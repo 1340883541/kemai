@@ -78,7 +78,11 @@
             },
             methods:{
                 init:function(){
-                    this.khOriginTxt = param.origin;
+                    if(param.origin == '全部'){
+                        this.khOriginTxt = '客户来源';
+                    }else{
+                        this.khOriginTxt = param.origin;
+                    }
                 },
                 // 获取焦点
                 onFoucsInp:function(){
@@ -188,6 +192,9 @@
     }
     // 获取客户来源的名字
     function getKhOriginName(name){
+        if(name == '全部'){
+            name = '客户来源';
+        }
         ncusHeaderV.khOriginTxt = name;
     }
 </script>

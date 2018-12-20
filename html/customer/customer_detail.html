@@ -16,8 +16,11 @@
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
     <style media="screen">
-        body{
-            overflow: hidden;
+        body,html{
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling:touch;
         }
 
         .loading {
@@ -27,8 +30,8 @@
             top: -1px;
             margin-right: 6px;
             /*固定loading*/
-            width: 0.4rem;
-            height: 0.4rem;
+            width: 0.28rem;
+            height: 0.28rem;
             border: 2px solid;
             border-color: #fff #fff transparent;
             border-radius: 50%;
@@ -82,7 +85,7 @@
                     </div>
                     <div class="cd-nav-place"></div>
                 </div>
-                <transition name="fade">
+                <!-- <transition name="fade"> -->
                     <div class="cd-box cd-box0" v-show="isShowDetailBox">
                         <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
                             <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
@@ -92,7 +95,7 @@
                                 <div class="audio"></div>
                                 <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
                             </div> -->
-                            <div class="cd-flow-p w-inline-block" v-if="flow.markName"><span>销售负责人：</span><span class="name" v-text="flow.markName"></span></div>
+                            <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
                             <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
                                 <i class="top-icon"></i>
                                 <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime"></span></div>
@@ -101,10 +104,10 @@
                             </div>
                         </div>
                     </div>
-                </transition>
-                <transition name="fade1">
+                <!-- </transition> -->
+                <!-- <transition name="fade1"> -->
                     <div class="cd-box cd-box1" v-show="!isShowDetailBox">
-                        <div class="cd-info">
+                        <div class="cd-info" v-if="cusPersonInfo">
                             <div class="cd-info-lis clear" v-if="cusPersonInfo.city">
                                 <div class="fl left">意向城市</div>
                                 <div class="fl right" v-text="cusPersonInfo.city"></div>
@@ -127,7 +130,7 @@
                             </div>
                         </div>
                     </div>
-                </transition>
+                <!-- </transition> -->
             </div>
             <!-- 短信验证码 -->
             <div class="verification_code" v-if="isShowVerify">
@@ -137,12 +140,12 @@
                        <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
                        <div class="short_message">短信验证</div>
                        <div class="text_tel">
-                           查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r">{{downCountTime}}s</span>
+                           查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span><span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
                        </div>
                        <div class="tel_num">
                            <label for="code">
                              <ul class="security-code-container">
-                                 <li class="field-wrap" v-for="(item, index) in number" :key="index">
+                                 <li class="field-wrap" :class="{'active':index<value.length}" v-for="(item, index) in number" :key="index">
                                   <i class="char-field">{{value[index]}}</i>
                                  </li>
                              </ul>
@@ -152,12 +155,14 @@
                               autocorrect="off" autocomplete="off" autocapitalize="off">
                         </div>
                         <div class="submit space-between">
-                            <div class="text-align" v-if="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即验证</div>
-                            <div class="text-align submitClick" v-else><span class="loading"></span>验证中</div>
+                            <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即验证</div>
+                            <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>验证中</div>
                         </div>
                    </div>
                </div>
             </div>
+
+            <input type="hidden" id="scroll-val" value="0">
         </section>
     </div>
 </body>
@@ -211,6 +216,8 @@
                 isVerifyIng:false,
                 userInfo:{},
 
+                isShowCodeDown:false,
+                getCodeText:'立即发送'
             },
             created:function(){
                 this.cusId = param.cusId;
@@ -227,10 +234,11 @@
                 this.fetchData();
             },
             watch:{
-                isShowVerify:function(nv,ov){
-                    if(nv === true){
-                        this.getCode();
-                        this.downCount();
+                isShowDetailBox:function(nv){
+                    if(nv === false){
+                        $('#scroll-val').val('0');
+                        $('#back-box .header-txt').hide();
+                        $('#back-box').removeClass('curr');
                     }
                 }
             },
@@ -257,6 +265,12 @@
                             if(res.code == 1){
                                 if(!isLoadMore){
                                     _this.cusInfo = res.data.cusInfo;
+                                    if(res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1){
+                                        _this.isShowWechat = false;
+                                    }else{
+                                        _this.isShowWechat = true;
+                                        _this.wechatCard = res.data.cusInfo.wechat.trim();
+                                    }
                                     _this.cusPersonInfo = res.data.cusPurInfo[0];
                                     _this.cusInfoList = res.data.cusFllowInfo;
                                     _this.totalPage = res.followcount / res.pageSize;
@@ -308,10 +322,13 @@
                     }
                 },
                 // 发送验证码
-                getCode:function(){
+                getCodeFn:function(){
                     var _this = this;
                     clearInterval(_this.downTimer);
                     this.downCountTime = 60;
+                    this.downCount();
+                    this.isShowCodeDown = true;
+                    this.getCodeText = '再次发送';
                     wApiAjax({
                         url:"phoneauth/authen",
                         headers:{
@@ -326,16 +343,22 @@
                         success:function(res){
                             console.log(JSON.stringify(res));
                             if(res.code == 4){
-
-                            }else{
-                                // clearInterval(_this.downTimer);
                                 wDialog.toast({
-                                    msg:'发送验证码失败'
+                                    msg:'发送验证码成功'
                                 });
+                            }else{
+                                clearInterval(_this.downTimer);
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                                _this.isShowCodeDown = false;
+                                _this.getCodeText = '再次发送';
                             }
                         },
                         fail:function(){
-                            // clearInterval(_this.downTimer);
+                            clearInterval(_this.downTimer);
+                            _this.isShowCodeDown = false;
+                            _this.getCodeText = '再次发送';
                         }
                     })
                 },
@@ -347,15 +370,16 @@
                         if(_this.downCountTime <= 0){
                             _this.downCountTime = 60;
                             clearInterval(_this.downTimer);
+                            _this.isShowCodeDown = false;
                         }
                     },1000);
                 },
                 // 输入
                 handleInput(e) {
                     this.$refs.input.value = this.value;
-                    console.log(this.value)
+                    // console.log(this.value)
                     if (this.value.length >= this.number) {
-                        this.hideKeyboard();
+                        // this.hideKeyboard();
                         this.isActive = true;
                     }else{
                         this.isActive = false;
@@ -364,8 +388,8 @@
                 },
                 // 输入完成隐藏键盘
                 hideKeyboard() {
-                    document.activeElement.blur() // ios隐藏键盘
-                    this.$refs.input.blur(); // android隐藏键盘
+                    // document.activeElement.blur() // ios隐藏键盘
+                    // this.$refs.input.blur(); // android隐藏键盘
                 },
                 // 提交短信验证码，获取微信号
                 handleSubmit:function(){
@@ -381,10 +405,11 @@
                             employeeid:_this.userInfo.employeeid,
                             phone:_this.userInfo.phone,
                             type:2,
-                            authcode:'',
+                            authcode:_this.value,
                             cusid:_this.cusId
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             if(res.code == 5 && res.wechat){
                                 // 认证成功
                                 _this.isShowVerify = false;
@@ -392,14 +417,14 @@
                                 _this.wechatCard = res.wechat;
                                 clearInterval(_this.downTimer);
                             }else{
-                                this.isVerifyIng = false;
+                                _this.isVerifyIng = false;
                                 wDialog.toast({
                                     msg:res.msg
                                 })
                             }
                         },
                         fail:function(){
-                            this.isVerifyIng = false;
+                            _this.isVerifyIng = false;
                         }
                     })
                 },
@@ -413,7 +438,7 @@
                         console.log(JSON.stringify(ret));
                         console.log(JSON.stringify(err));
                         if(ret.status){
-                            wDialog({
+                            wDialog.toast({
                                 msg:'复制成功'
                             })
                         }
@@ -434,20 +459,24 @@
         var navOffsetTop = $("#js_cd_nav").offset().top;
         $(window).on('scroll',function(){
             if(isEventScroll){
+                var val = $('#scroll-val').val();
                 isEventScroll = false;
                 var wTop = $(this).scrollTop();
                 // console.log(wTop)
                 if(wTop >= capOffsetTop){
                     $('#back-box').addClass('curr');
                     if(wTop >= navOffsetTop){
-                        $('#back-box .header-txt').show();
-                        setTimeout(function(){
-                            $('#back-box .header-txt').animate({opacity:1},300);
-                        },100);
+                        // console.log('--------------------'+val);
+                        if(val == 0){
+                            $('#scroll-val').val('1');
+                            $('#back-box .header-txt').show();
+                        }
                     }else{
-                        $('#back-box .header-txt').hide().css('opacity',0);
+                        $('#scroll-val').val('0');
+                        $('#back-box .header-txt').hide();
                     }
                 }else{
+                    $('#scroll-val').val('0');
                     $('#back-box').removeClass('curr');
                 }
                 setTimeout(function(){

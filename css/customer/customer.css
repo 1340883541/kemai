@@ -1,5 +1,4 @@
 /*客户详情*/
-
 .cd-header {
     width: 100%;
     height: 3.8rem;
@@ -18,11 +17,6 @@
     line-height: .64rem;
     text-align: center;
     z-index: 9999;
-    -webkit-transition:all .3s ease;
-    -moz-transition:all .3s ease;
-    -ms-transition:all .3s ease;
-    -o-transition:all .3s ease;
-    transition:all .3s ease;
     opacity: .8;
 }
 .cd-header .back-box.curr{
@@ -43,7 +37,6 @@
 }
 .cd-header .back-box .header-txt{
     display: none;
-    opacity: 0;
 }
 .cd-header .back-box .header-txt > span{
     position: relative;
@@ -574,7 +567,13 @@
     -ms-box-shadow:inset 0px -0.5px 0px 0px #ccc;
     -o-box-shadow:inset 0px -0.5px 0px 0px #ccc;
 }
-
+.field-wrap.active{
+    box-shadow: inset 0px -0.5px 0px 0px #1d70fb;
+    -webkit-box-shadow:inset 0px -0.5px 0px 0px #1d70fb;
+    -moz-box-shadow:inset 0px -0.5px 0px 0px #1d70fb;
+    -ms-box-shadow:inset 0px -0.5px 0px 0px #1d70fb;
+    -o-box-shadow:inset 0px -0.5px 0px 0px #1d70fb;
+}
 .char-field {
     font-style: normal;
 }
@@ -599,11 +598,11 @@
     height: 0.72rem;
     background-image: linear-gradient(90deg, rgba(84, 203, 248, 0.95) 0%, rgba(13, 100, 250, 0.95) 100%);
     opacity: 0.6;
-    border-radius: 8px;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    -ms-border-radius: 8px;
-    -o-border-radius: 8px;
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
     text-align: center;
     line-height: 0.72rem;
     font-size: 0.34rem;

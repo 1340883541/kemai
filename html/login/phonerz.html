@@ -114,13 +114,12 @@
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
-                                if(res.code==-3){
+                                if(res.code==4){
+                                    _this.verification = res.random
+                                }else{
                                     wDialog.toast({
                                         msg:res.msg
                                     })
-                                }
-                                if(res.code==4){
-                                    _this.verification = res.random
                                 }
 
                             }

@@ -3,14 +3,23 @@
     height:100%;
 }
 .header{
-    position: relative;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: 9;
     height:0.84rem;
     line-height: 0.84rem;
     padding: 0 0.29rem;
     display: flex;
     justify-content: start;
     align-items: center;
-    width: 100%;
+    background-color: #fff;
+    -webkit-box-sizing:content-box;
+    -moz-box-sizing:content-box;
+    -ms-box-sizing:content-box;
+    -o-box-sizing:content-box;
+    box-sizing:content-box;
 }
 .header:after{
     content: '';
@@ -45,7 +54,7 @@
     margin:auto;
 }
 #main{
-    margin-top: 2rem;
+    margin-top: 2.84rem;
     padding:0 0.3rem;
     text-align: center;
 }
@@ -77,6 +86,7 @@
 	color: #666666;
     margin-top: 2rem;
     padding-top: .66rem;
+    padding-bottom: .66rem;
     text-align: left;
 }
 .introduction:before{
