@@ -247,9 +247,6 @@
                 // 拨打电话
                 callPhone:function(e,cusId,phone){
                     var _this = this;
-                    wDialog.toast({
-                        msg: '拨打电话中，请注意接听'
-                    });
                     var tag = e.currentTarget;
                     $(tag).addClass('w-event-none');
                     wApiAjax({
@@ -266,6 +263,15 @@
                         },
                         success:function(res){
                             console.log('拨打电话--'+JSON.stringify(res))
+                            if(res.code == 200){
+                                wDialog.toast({
+                                    msg: '拨打电话中，请注意接听'
+                                });
+                            }else{
+                                wDialog.toast({
+                                    msg:'拨打失败，请重试'
+                                });
+                            }
                             setTimeout(function(){
                                 $(tag).removeClass('w-event-none');
                             },2000);
