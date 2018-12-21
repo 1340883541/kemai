@@ -17,12 +17,14 @@
     <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
     <style media="screen">
         body,html{
+            height: 100%;
+        }
+        #wrapper{
             min-height: 100%;
             overflow-x: hidden;
             overflow-y: scroll;
             -webkit-overflow-scrolling:touch;
         }
-
         .loading {
             display: inline-block;
             vertical-align: middle;
@@ -132,38 +134,39 @@
                     </div>
                 <!-- </transition> -->
             </div>
-            <!-- 短信验证码 -->
-            <div class="verification_code" v-if="isShowVerify">
-               <div class="shade"></div>
-               <div class="content">
-                   <div class="content_code">
-                       <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
-                       <div class="short_message">短信验证</div>
-                       <div class="text_tel">
-                           查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span><span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
-                       </div>
-                       <div class="tel_num">
-                           <label for="code">
-                             <ul class="security-code-container">
-                                 <li class="field-wrap" :class="{'active':index<value.length}" v-for="(item, index) in number" :key="index">
-                                  <i class="char-field">{{value[index]}}</i>
-                                 </li>
-                             </ul>
-                            </label>
-                            <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
-                              id="code" name="code" type="tel" minlength="6" maxlength="6"
-                              autocorrect="off" autocomplete="off" autocapitalize="off">
-                        </div>
-                        <div class="submit space-between">
-                            <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即验证</div>
-                            <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>验证中</div>
-                        </div>
-                   </div>
-               </div>
-            </div>
-
             <input type="hidden" id="scroll-val" value="0">
         </section>
+
+        <!-- 短信验证码 -->
+        <div class="verification_code" v-if="isShowVerify">
+           <div class="shade" ontouchmove="event.preventDefault();"></div>
+           <div class="content">
+               <div class="content_code">
+                   <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
+                   <div class="short_message">短信验证</div>
+                   <div class="text_tel">
+                       查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span><span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
+                   </div>
+                   <div class="tel_num">
+                       <label for="code">
+                         <ul class="security-code-container">
+                             <li class="field-wrap" :class="{'active':index<value.length}" v-for="(item, index) in number" :key="index">
+                              <i class="char-field">{{value[index]}}</i>
+                             </li>
+                         </ul>
+                        </label>
+                        <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
+                          id="code" name="code" type="tel" minlength="6" maxlength="6"
+                          autocorrect="off" autocomplete="off" autocapitalize="off">
+                    </div>
+                    <div class="submit space-between">
+                        <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即验证</div>
+                        <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>验证中</div>
+                    </div>
+               </div>
+           </div>
+        </div>
+
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -188,6 +191,7 @@
                 threshold:8
             }
         }, function(ret, err){
+            // console.log('-----------------------------------')
             if(cusDetailV.isShowDetailBox){
                 if(++cusDetailV.pageNo <= cusDetailV.totalPage){
                     cusDetailV.fetchData(true);
@@ -480,6 +484,7 @@
                     }
                 }else{
                     $('#scroll-val').val('0');
+                    $('#back-box .header-txt').hide();
                     $('#back-box').removeClass('curr');
                 }
                 setTimeout(function(){
