@@ -107,12 +107,10 @@
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err){
-            if( ret ){
-                if(++nCustomerFrame.pageNo < nCustomerFrame.totalPage){
-                    nCustomerFrame.fetchNewAdd(true);
-                }else{
-                    $('#not-more').show();
-                }
+            if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
+                nCustomerFrame.fetchNewAdd(true);
+            }else{
+                $('#not-more').show();
             }
         });
 

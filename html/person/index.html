@@ -103,6 +103,7 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
+        $api.fixStatusBar($('.header_title')[0]);
         // 监听设置成功
         api.addEventListener({
             name: 'setJtPhoneSuc'

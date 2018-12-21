@@ -183,7 +183,10 @@
         var param = api.pageParam;
         // 下拉加载更多
         api.addEventListener({
-            name: 'scrolltobottom'
+            name: 'scrolltobottom',
+            extra:{
+                threshold:8
+            }
         }, function(ret, err){
             if(cusDetailV.isShowDetailBox){
                 if(++cusDetailV.pageNo <= cusDetailV.totalPage){
@@ -273,7 +276,7 @@
                                     }
                                     _this.cusPersonInfo = res.data.cusPurInfo[0];
                                     _this.cusInfoList = res.data.cusFllowInfo;
-                                    _this.totalPage = res.followcount / res.pageSize;
+                                    _this.totalPage = Math.ceil(res.followcount / res.pageSize);
                                     _this.cusCount = res.followcount;
                                 }
                                 else{
@@ -481,7 +484,7 @@
                 }
                 setTimeout(function(){
                     isEventScroll = true;
-                },50);
+                },30);
             }
         })
     }

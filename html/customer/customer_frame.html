@@ -121,14 +121,15 @@
         });
         // 上拉加载更多
         api.addEventListener({
-            name: 'scrolltobottom'
+            name: 'scrolltobottom',
+            extra:{
+                threshold:0
+            }
         }, function(ret, err){
-            if( ret ){
-                if(++nCustomerFrame.pageNo < nCustomerFrame.totalPage){
-                    nCustomerFrame.fetchListData(true);
-                }else{
-                    $('#not-more').show();
-                }
+            if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
+                nCustomerFrame.fetchListData(true);
+            }else{
+                $('#not-more').show();
             }
         });
         // vue实例
@@ -170,9 +171,9 @@
                             "token":TOKEN_DATA
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             if(res.code == 1){
-                                _this.khClassList = res.data.customerSatauslist
+                                _this.khClassList = res.data.customerSatauslist;
                             }else{
                                 wDialog.toast({
                                     msg:res.message
@@ -190,7 +191,7 @@
                             token:TOKEN_DATA
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             if(res.code == 1){
                                 _this.khOriginList = res.data.allsrorcelist
                             }else{
@@ -204,7 +205,6 @@
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
-                    console.log(isLoadMore)
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
@@ -312,9 +312,6 @@
                 callPhone: function(e,cusId,phone) {
                     e.preventDefault();
                     e.stopPropagation();
-                    wDialog.toast({
-                        msg: '拨打电话中，请注意接听'
-                    });
                     var _this = this;
                     var tag = e.currentTarget;
                     $(tag).addClass('w-event-none');
@@ -331,6 +328,16 @@
                             is_work:1
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 200){
+                                wDialog.toast({
+                                    msg: '拨打电话中，请注意接听'
+                                });
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
                             setTimeout(function(){
                                 $(tag).removeClass('w-event-none');
                             },2000);
@@ -348,7 +355,6 @@
 
     // 显示客户来源的弹窗
     function showOriginFilterPopup(){
-        console.log('-------------')
         $('#filter-class-popup').hide();
         $('#filter-origin-popup').show();
     }

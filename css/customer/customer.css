@@ -330,19 +330,19 @@
 .cd-contain .cd-flow .cd-flow-p {
     position: relative;
     width: auto;
-    height: .72rem;
-    line-height: .72rem;
+    height: .36rem;
+    line-height: .36rem;
     padding: .1rem .2rem 0;
     text-align: center;
-    font-size: .52rem;
+    font-size: .26rem;
     letter-spacing: 0.1px;
     color: #f19600;
     background-color: rgba(245, 166, 35, 0.09);
     margin-top: .1rem;
-    -webkit-transform: scale(0.5);
-    transform: scale(0.5);
-    -webkit-transform-origin: 0 0;
-    transform-origin: 0 0;
+    /*-webkit-transform: scale(0.5);
+    transform: scale(0.5);*/
+    /*-webkit-transform-origin: 0 0;
+    transform-origin: 0 0;*/
 }
 .cd-contain .cd-flow .cd-flow-p:after{
     content: "";
@@ -367,7 +367,7 @@
     width: 100%;
     height: auto;
     padding:.25rem;
-    margin-top: -.16rem;
+    margin-top: .26rem;
     background-color: #fafafa;
 }
 .cd-contain .cd-flow .cd-flow-timebox > i.top-icon{

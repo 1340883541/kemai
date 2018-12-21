@@ -6,11 +6,16 @@
 .header_pel{
    background:url(../../image/img-sy-bg.png)  no-repeat center center;
    background-size:cover;
-   background-attachment:fixed;
+   /*background-attachment:fixed;*/
    height:4.07rem;
    position: relative;
    width:100%;
    text-align: center;
+   -webkit-box-sizing:content-box;
+   -moz-box-sizing:content-box;
+   -ms-box-sizing:content-box;
+   -o-box-sizing:content-box;
+   box-sizing:content-box;
 }
 .header_title{
     height:0.8rem;
