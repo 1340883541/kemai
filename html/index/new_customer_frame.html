@@ -192,7 +192,8 @@
                             if(res.code == 1){
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
-                                    _this.totalPage = res.count / res.pageSize;
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                    console.log(_this.totalPage)
                                 }
                                 else{
                                     if(res.data){

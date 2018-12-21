@@ -146,7 +146,7 @@
         <!-- 今日统计 -->
 
         <div class="tj-title">
-            <div class="i-title">消息提醒</div>
+            <div class="i-title">今日统计</div>
         </div>
         <div class="tj-box">
             <div class="tj-binner clear">
@@ -164,20 +164,20 @@
                         <p class="p-d">未接听(个)</p>
                     </div>
                 </div>
-                <!-- <div class="tj-lis fl">
+                <div class="tj-lis fl">
                     <div class="tj-icon tj-icon-3"></div>
                     <div class="tj-txt">
-                        <p class="p-t">6</p>
+                        <p class="p-t" v-text="todaynotefollow"></p>
                         <p class="p-d">短信跟进(个)</p>
                     </div>
                 </div>
                 <div class="tj-lis fr">
                     <div class="tj-icon tj-icon-4"></div>
                     <div class="tj-txt">
-                        <p class="p-t">24</p>
+                        <p class="p-t" v-text="lookwechatcount"></p>
                         <p class="p-d">查看微信(个)</p>
                     </div>
-                </div> -->
+                </div>
             </div>
         </div>
     </div>
@@ -195,7 +195,7 @@
         $api.fixStatusBar($('.header')[0]);
         $api.fixStatusBar($('.fixed-header')[0]);
 
-        
+
         indexV = new Vue({
             el: '#wrapper',
             data: {
@@ -215,6 +215,8 @@
                 subscription:0,//认购消息
                 follow:0, //跟进提醒
                 subscriptionBook:0, //认购书提醒
+                todaynotefollow:0,  //微信次数
+                lookwechatcount:0, //短信跟进个数
                 userInfo:'',
             },
             created:function(){
@@ -306,6 +308,7 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             if(res.code == 1){
                                 _this.market = res.market;
                                 _this.network = res.network;
@@ -313,6 +316,8 @@
                                 _this.respool = res.respool;
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;
+                                _this.todaynotefollow = res.todaynotefollow;
+                                _this.lookwechatcount = res.lookwechatcount;
                             }
                             wDialog.hideProgress();
                         },
