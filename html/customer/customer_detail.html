@@ -64,7 +64,9 @@
                 </div>
                 <div class="right"></div>
             </div>
-            <div class="hname" v-text="cusInfo.cusName"></div>
+            <div class="hname" id="scroll-hname">
+                <span v-text="cusInfo.cusName"></span>
+            </div>
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
         </div>
         <section>
@@ -282,6 +284,36 @@
                                     _this.cusInfoList = res.data.cusFllowInfo;
                                     _this.totalPage = Math.ceil(res.followcount / res.pageSize);
                                     _this.cusCount = res.followcount;
+                                    _this.$nextTick(function(){
+                                        var sinnerWid = $('#scroll-hname').width();
+                                        var sspWid = $('#scroll-hname > span').outerWidth();
+                                        var caWid = Math.floor(sspWid - sinnerWid);
+                                        var step = 80;
+                                        var initStep = 0;
+                                        if(caWid > 0){
+                                            // setInterval(function(){
+                                                // initStep += step
+                                                // if(initStep >= caWid){
+                                                //     initStep = 0;
+                                                //     $('#scroll-hname > span').css({
+                                                //         'margin-left':0
+                                                //     })
+                                                // }else{
+                                                    xunhuanScroll();
+                                                    function xunhuanScroll(){
+                                                        $('#scroll-hname > span').animate({
+                                                            'margin-left':-caWid
+                                                        },caWid * 12,'linear',function(){
+                                                            $('#scroll-hname > span').css({
+                                                                'margin-left':0
+                                                            });
+                                                            xunhuanScroll();
+                                                        })
+                                                    }
+                                                // }
+                                            // },1);
+                                        }
+                                    })
                                 }
                                 else{
                                     if(res.data && res.data.cusFllowInfo){

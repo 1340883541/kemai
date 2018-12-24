@@ -335,6 +335,7 @@
     transform:scaleY(0.5);
 }
 .filter-lists .cfil-lis .cfil-t .cname{
+    max-width: 5.2rem;
     color:#333;
     font-size: .36rem;
 }

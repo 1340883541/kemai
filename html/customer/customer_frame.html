@@ -61,7 +61,7 @@
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id)">
                 <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname" v-text="khdata.name"></div>
+                    <div class="cname w-elli" v-text="khdata.name"></div>
                     <div class="cphone" @click.stop="callPhone($event,khdata.id,khdata.phone)"></div>
                 </div>
                 <div class="cfil-b">

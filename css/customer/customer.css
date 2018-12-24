@@ -61,13 +61,21 @@
 }
 
 .cd-header .hname {
+    position: relative;
     padding-top: .9rem;
+    height: 1.38rem;
     line-height: .48rem;
     font-size: .48rem;
     letter-spacing: 0.2px;
     margin-bottom: .3rem;
+    overflow: hidden;
+    padding-left: .4rem;
+    padding-right: .4rem;
 }
 
+.cd-header .hname > span{
+    white-space: nowrap;
+}
 .cd-header .horigin {
     font-size: .3rem;
     line-height: .3rem;
