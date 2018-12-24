@@ -20,7 +20,7 @@
     <div id="wrap">
         <div id="header">
             <div class="header">
-                <div class="back" @click="back"><img src="../../image/icon-dh-fanhui.png"></div>
+                <div class="back" onclick="messageBackFn()"><img src="../../image/icon-dh-fanhui.png"></div>
                 <div class="title">消息通知</div>
             </div>
         </div>
@@ -145,7 +145,28 @@
     var messageV = null;
     apiready = function() {
         $api.fixStatusBar($('#header')[0]);
-        new Vue({
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            var isChange = false;
+            for(var key in messageV.messageInfo){
+                if(messageV.messageInfo[key] == JSON.parse(messageV.initMessageInfo)[key]){
+                    // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+                }else{
+                    // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+                    isChange = true;
+                    break;
+                }
+            }
+            console.log(messageV.isChangeToggle)
+            if(messageV.isChangeToggle || isChange){
+                api.sendEvent({
+                    name:'refreshMessage'
+                })
+            }
+            wHrefJs.backWin();
+        });
+        messageV = new Vue({
             el: '#wrap',
             data: {
                 me_checked: this.value,
@@ -164,7 +185,9 @@
                     sign_state: 0, //签约提醒，
                     subscriptionBook_state: 0, //认购书提醒，
                     subscription_state: 0, //认购提醒，
-                }
+                },
+                initMessageInfo:{},
+                isChangeToggle:false,
             },
             props: {
                 value: {
@@ -202,20 +225,21 @@
                             if (res.switch == 0) {}
                             if (res.switch == 1) {
                                 _this.me_checked = true;
-                                wApiAjax({
-                                    method: "get",
-                                    url: 'perCenter/getAllNoticeState',
-                                    withCredentials: true,
-                                    headers: {
-                                        "token": TOKEN_DATA
-                                    },
-                                    data: {
-                                        employeeid: _this.userInfo.employeeid,
-                                    },
-                                    success: function(res) {
-                                        console.log(JSON.stringify(res))
+                                // wApiAjax({
+                                //     method: "get",
+                                //     url: 'perCenter/getAllNoticeState',
+                                //     withCredentials: true,
+                                //     headers: {
+                                //         "token": TOKEN_DATA
+                                //     },
+                                //     data: {
+                                //         employeeid: _this.userInfo.employeeid,
+                                //     },
+                                //     success: function(res) {
+                                //         console.log(JSON.stringify(res))
                                         if (res.code == 200) {
                                             _this.messageInfo = res.info;
+                                            _this.initMessageInfo = JSON.stringify(res.info);
                                             _this.defult_hide = true;
                                             _this.defult_show = false;
                                         }
@@ -224,8 +248,8 @@
                                             _this.defult_hide = false;
                                             _this.defult_show = false;
                                         }
-                                    }
-                                })
+                                //     }
+                                // })
                             }
                         }
                     })
@@ -235,6 +259,7 @@
                     // 是否可点击
                     var _this = this;
                     _this.me_checked = true;
+                    this.isChangeToggle = !this.isChangeToggle;
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/getAllNoticeState',
@@ -249,7 +274,7 @@
                             console.log(JSON.stringify(res))
                             if (res.code == 200) {
                                 _this.messageInfo = res.info;
-                                console.log(_this.messageInfo)
+                                _this.initMessageInfo = JSON.stringify(res.info);
                                 _this.defult_hide = true;
                                 _this.defult_show = false;
                                 _this.show_info = true;
@@ -281,7 +306,6 @@
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
-                                console.log(res)
                                 if (res.code == 200) {
 
                                 }
@@ -408,6 +432,25 @@
             },
 
         })
+    }
+    function messageBackFn(){
+        var isChange = false;
+        for(var key in messageV.messageInfo){
+            if(messageV.messageInfo[key] == JSON.parse(messageV.initMessageInfo)[key]){
+                // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+            }else{
+                // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+                isChange = true;
+                break;
+            }
+        }
+        // console.log(isChange)
+        if(messageV.isChangeToggle||isChange){
+            api.sendEvent({
+                name:'refreshMessage'
+            })
+        }
+        wHrefJs.backWin();
     }
 </script>
 

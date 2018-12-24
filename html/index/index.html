@@ -194,6 +194,12 @@
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
         $api.fixStatusBar($('.fixed-header')[0]);
+        api.addEventListener({
+            name: 'refreshMessage'
+        }, function(ret, err){
+            console.log('innnnnnnn')
+            indexV.getMessageData();
+        });
 
 
         indexV = new Vue({
