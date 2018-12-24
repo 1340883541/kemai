@@ -148,23 +148,7 @@
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err){
-            var isChange = false;
-            for(var key in messageV.messageInfo){
-                if(messageV.messageInfo[key] == JSON.parse(messageV.initMessageInfo)[key]){
-                    // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
-                }else{
-                    // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
-                    isChange = true;
-                    break;
-                }
-            }
-            console.log(messageV.isChangeToggle)
-            if(messageV.isChangeToggle || isChange){
-                api.sendEvent({
-                    name:'refreshMessage'
-                })
-            }
-            wHrefJs.backWin();
+            messageBackFn();
         });
         messageV = new Vue({
             el: '#wrap',
