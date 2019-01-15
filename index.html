@@ -190,9 +190,9 @@
                             url: 'appset/imglist',
                             method: 'post',
                             success: function(res) {
-                                // console.log(JSON.stringify(res))
+                                console.log(JSON.stringify(res))
                                 if (res.code == 1) {
-                                    _this.sList = res.data;
+                                    _this.sList = res.data || [];
                                     _this.$nextTick(function() {
                                         new Swiper('#qd-swiper', {
                                             pagination: {

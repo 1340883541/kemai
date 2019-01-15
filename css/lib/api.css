@@ -417,6 +417,9 @@ textarea:input-placeholder{
 .flex-align-between{
 	align-content: space-between;
 }
+.flex-align-item{
+    align-items:center;
+}
 /* css 禁止事件*/
 .w-event-none{
     pointer-events: none !important;

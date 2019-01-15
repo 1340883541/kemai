@@ -47,6 +47,106 @@ Vue.component('empty-con', {
         }
     }
 });
+// 跟进记录组件
+Vue.component('follow-record',{
+    template:`<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc">
+        <div class="w-follow-popup-box">
+            <div class="w-follow-t">跟进记录</div>
+            <div class="w-follow-box">
+                <div class="w-follow-inp flex-wrap bor-1px-b">
+                    <div class="w-follow-inp-cap">客户名称：</div>
+                    <input type="text" class="flex-con" v-model="clientName" placeholder="请输入客户姓名">
+                </div>
+                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop="chooseFollowStateFunc">
+                    <div class="w-follow-inp-cap">客户状态：</div>
+                    <input type="text" class="flex-con" readonly placeholder="请选择客户状态" v-model="clientState">
+                    <div class="client-state-icon"></div>
+                    <div class="w-follow-inp-lis" v-show="isShowFollowState">
+                        <ul>
+                            <li class="bor-1px-b" @click.stop="sureClientState">意向客户，打算买房</li>
+                            <li class="bor-1px-b">未确定，未付定金</li>
+                            <li class="bor-1px-b">意向客户，打算买房</li>
+                            <li class="bor-1px-b">未确定，未付定金</li>
+                            <li class="bor-1px-b">意向客户，打算买房</li>
+                            <li class="bor-1px-b">未确定，未付定金</li>
+                            <li class="bor-1px-b">意向客户，打算买房</li>
+                            <li class="bor-1px-b">未确定，未付定金</li>
+                            <li>已交押金，等待沟通</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop="chooseFollowDateFunc">
+                    <div class="w-follow-inp-cap">下次跟进时间：</div>
+                    <input type="text" placeholder="请选择下次跟进时间" class="flex-con"  readonly v-model="followDate">
+                    <div class="client-state-icon"></div>
+                </div>
+                <div class="w-follow-textarea flex-wrap">
+                    <div class="w-follow-inp-cap">跟进备注：</div>
+                    <textarea class="flex-con" placeholder="请输入跟进备注" v-model="followRemark"></textarea>
+                </div>
+                <div class="w-follow-btn" @click.stop="fillFollowFunc">通话完成</div>
+            </div>
+        </div>
+    </div>`,
+    data:function(){
+        return{
+            clientName:'',
+            clientStateList:[],
+            clientState:'',
+            followDate:'',
+            followRemark:'',
+            isShowFollowState:false
+        }
+    },
+    props:{
+        isShowFollow:{
+            default:false,
+            type:Boolean
+        }
+    },
+    mounted:function(){
+        console.log('innn')
+    },
+    methods:{
+        hideFollowInfoFunc:function(){
+            this.isShowFollowState = false;
+        },
+        // 获取客户信息
+        getClientInfo:function(){
+
+        },
+        // 选择客户状态
+        chooseFollowStateFunc:function(){
+            this.isShowFollowState = true;
+        },
+        // 确认客户状态
+        sureClientState:function(){
+            console.log('innnnnnn')
+            this.isShowFollowState = false;
+        },
+        // 选择跟进日期
+        chooseFollowDateFunc:function(){
+            var _this = this;
+            api.openPicker({
+                type: 'date',
+                date: '2014-05-01',
+                title: '选择跟进时间'
+            }, function(ret, err){
+                console.log(JSON.stringify( ret ));
+                console.log(JSON.stringify( err ));
+                if(ret){
+                    _this.followDate = ret.year + '-' + ret.month + '-' + ret.day;
+                }
+            });
+
+        },
+        // 填写完成跟进记录
+        fillFollowFunc:function(){
+
+        },
+    }
+
+});
 // 再次封装 openWin openFrame
 // 页面跳转
 var wHrefJs = {

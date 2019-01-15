@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>今日统计</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style>
+        html,
+        body {
+            min-height: 100%;
+        }
+        body {
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="stat-header">
+            <div class="stat-fixed-header">
+                <div class="stat-header-t">
+                    <div class="back" onclick="wBackThisFunc()"></div>
+                    <div class="center">今日统计</div>
+                    <div class="place"></div>
+                </div>
+                <div class="stat-header-nav flex-wrap">
+                    <div class="flex-con nav0 nav" @click="filterNav($event,0)" ><span v-text="typeList[type-1]"></span><i></i></div>
+                    <div class="flex-con nav1 nav" @click="filterNav($event,1)">日期筛选<i></i></div>
+                    <div class="stat-nav-box stat-nav-box0">
+                        <ul>
+                            <li v-for="(type,index) in typeList" :class="{'curr':index===currTypeIndex}" @click="switchType(index)"><span v-text="type"></span><i></i></li>
+                        </ul>
+                    </div>
+                    <div class="stat-nav-box stat-nav-box1">
+                        <ul>
+                            <li v-for="(date,index) in dateList" :class="{'curr':index===currDateIndex}" @click="switchDate(index)"><span v-text="date"></span><i></i></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="stat-header-place"></div>
+        </div>
+
+        <div class="stat-nav-bg" @click="closeFilterNav"  ontouchmove="event.preventDefault();"></div>
+        <div class="stat-contain">
+            <ul>
+                <li class="clear" v-for="info in infoList" @click="skipDetail(info.id)">
+                    <div class="fl name" v-text="info.name">胡通</div>
+                    <div class="fr time">{{info.time | dateFilter}}</div>
+                </li>
+                <!-- 无更多数据 -->
+                <div class="not-more-filter" id="not-more">没有更多数据</div>
+            </ul>
+            <!-- 空页面 -->
+            <empty-con :is-show="infoList.length === 0" txt="暂无数据"></empty-con>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var statV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.stat-header')[0]);
+        $api.fixStatusBar($('.stat-fixed-header')[0]);
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
+        // 下拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err){
+            if(statV.page++ < statV.totalPage){
+                statV.getData(true);
+            }else{
+                $('#not-more').show();
+            }
+        });
+
+        statV = new Vue({
+            el: '#wrapper',
+            data: {
+                type:1,
+                typeList:['有效通话','未接听','短信跟进','查看微信'],
+                currTypeIndex:0,
+                userInfo:{},
+                date:1,
+                dateList:['全部','今日'],
+                currDateIndex:1,
+                page:1,
+                totalPage:1,
+                pageSize:10,
+                infoList:[]
+            },
+            created:function(){
+                this.type = param.statType;
+                this.currTypeIndex = this.type - 1;
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+            },
+            mounted: function() {
+                this.getData();
+            },
+            filters:{
+                dateFilter:function(d){
+                    var date = new Date(d);
+                    var year = date.getFullYear();
+                    var month = date.getMonth() + 1;
+                    var day = date.getDate();
+                    month = (month+'').length > 1 ? month : '0' + month;
+                    day = (day+'').length > 1 ? day : '0' + day;
+                    return year + '/' + month + '/' + day;
+                }
+            },
+            methods: {
+                getData:function(isLoadMore = false){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:"workbench/statislist",
+                        method:'post',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            search_type:_this.type,
+                            search_date:_this.date,
+                            pageNo:_this.page,
+                            pageSize:_this.pageSize
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            console.log(JSON.stringify(res))
+                            if(res.code == 1){
+                                if(!isLoadMore){
+                                    _this.infoList = res.data || [];
+                                    _this.totalPage = Math.ceil(res.count / _this.pageSize);
+                                    console.log(_this.totalPage)
+                                    if(_this.totalPage === 1){
+                                        $('#not-more').show();
+                                    }else{
+                                        $('#not-more').hide();
+                                    }
+                                }else{
+                                    _this.infoList = _this.infoList.concat(res.data);
+                                }
+                            }else{
+                                wDialot.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        }
+                    });
+                },
+                // 筛选今日统计nav
+                filterNav: function(e, i) {
+                    var tag = e.currentTarget;
+                    if ($(tag).hasClass('curr')) {
+                        $('.stat-nav-bg').hide();
+                        $(tag).removeClass('curr');
+                        $('.stat-nav-box' + i).hide();
+                        this.allowScroll();
+                    } else {
+                        $('.stat-nav-bg').show();
+                        $(tag).addClass('curr').siblings('.nav').removeClass('curr');
+                        $('.stat-nav-box' + i).show().siblings('.stat-nav-box').hide();
+                        this.noScroll();
+                    }
+                },
+                // 关闭筛选
+                closeFilterNav: function() {
+                    $('.stat-header-nav .nav').removeClass('curr');
+                    $('.stat-nav-bg').hide();
+                    $('.stat-nav-box').hide();
+                    this.allowScroll();
+                },
+                noScroll:function(){
+                    $('.stat-contain').addClass('fixed');
+                },
+                allowScroll:function(){
+                    $('.stat-contain').removeClass('fixed');
+                },
+                // 切换
+                switchType:function(type){
+                    if(this.type === type+1){
+                        console.log('已经被选中')
+                    }else{
+                        this.type = type + 1;
+                        this.currTypeIndex = type;
+                        this.page = 1;
+                        this.getData();
+                    }
+                    this.closeFilterNav();
+                },
+                // 日期
+                switchDate:function(date){
+                    if(this.date === date){
+                        console.log('已经被选中')
+                    }else{
+                        this.date = date;
+                        this.currDateIndex = date;
+                        this.page = 1;
+                        this.getData();
+                    }
+                    this.closeFilterNav();
+                },
+                skipDetail:function(id){
+                    wHrefJs.openWin({
+                        name:'customerDetail',
+                        path:'../customer/customer_detail.html',
+                        param:{
+                            cusId:id
+                        }
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+</html>

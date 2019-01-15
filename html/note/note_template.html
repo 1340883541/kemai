@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>选中短信模板</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/note/note.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back"></div>
+                    <div class="u-center">选中模板</div>
+                    <div class="u-right">确认</div>
+                </div>
+            </div>
+        </div>
+        <div class="note-tem-contain">
+            <div class="note-tem-list">
+                <ul>
+                    <li class="flex-wrap">
+                        <div class="check-box">
+                            <i class="check-icon"></i>
+                        </div>
+                        <div class="flex-con not-tem-info">
+                            <div class="caption">短信模版0000001</div>
+                            <div class="desc">尊敬的客户你好，金鼎地产于2018年12月1日在银龙湾开演唱会，凭此短信可获精美小礼品，数量有限。地址：成都市高新区成华大道666号奥克斯广场B座。</div>
+                        </div>
+                    </li>
+                    <li class="flex-wrap curr">
+                        <div class="check-box">
+                            <i class="check-icon"></i>
+                        </div>
+                        <div class="flex-con not-tem-info">
+                            <div class="caption">短信模版0000002</div>
+                            <div class="desc">尊敬的客户你好，金鼎地产于2018年12月1日在银龙湾开演唱会，凭此短信可获精美小礼品，数量有限。地址：成都市高新区成华大道666号奥克斯广场B座。</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    // apiready = function() {
+        // $api.fixStatusBar($('.stat-header')[0]);
+        // $api.fixStatusBar($('.stat-fixed-header')[0]);
+        new Vue({
+            el:'#wrapper',
+            data:{
+
+            },
+        })
+    // }
+</script>
+
+</html>

@@ -208,7 +208,59 @@
 .cd-contain .cd-box0 {
     padding: .34rem .3rem;
 }
+.cd-contain .cd-box{
+    padding-bottom: 1.48rem;
+}
+.cd-btm-btn{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 999;
+    height: 1.48rem;
+    width: 100%;
+    background-color: #fff;
+    padding:.3rem 1.32rem;
+    text-align: center;
+}
+.cd-btm-btn .cd-btn{
+    width: 100%;
+    height: .88rem;
+    line-height: .88rem;
+    box-shadow: 0px 5px 7px 0px rgba(0, 0, 0, 0.1);
+    border-radius: .44rem;
+    color:#fff;
+    font-size: .34rem;
+}
+.cd-btm-btn .cd-btn .phone-follow-btn{
+    border-top-left-radius: .44rem;
+    border-bottom-left-radius: .44rem;
+    background-image: linear-gradient(90deg, rgba(13, 100, 250, 0.95) 0%,  rgba(84, 203, 248, 0.95) 100%);
 
+}
+.cd-btm-btn .cd-btn .note-follow-btn{
+    border-top-right-radius: .44rem;
+    border-bottom-right-radius: .44rem;
+    background-image: linear-gradient(90deg, #ffca00 0%,  #fe9606 100%);
+
+}
+.cd-btm-btn .cd-btn .follow-btn > i{
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    width: .32rem;
+    height: .32rem;
+    vertical-align: middle;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: .32rem;
+    margin-right: .1rem;
+}
+.cd-btm-btn .cd-btn .phone-follow-btn > i{
+    background-image: url('../../image/icon-dianhua32.png');
+}
+.cd-btm-btn .cd-btn .note-follow-btn > i{
+    background-image: url('../../image/icon-duanxin32.png');
+}
 .cd-contain .cd-flow {
     position: relative;
     padding-left: .68rem;

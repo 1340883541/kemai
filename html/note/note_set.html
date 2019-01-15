@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>短信设置</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/note/note.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back"></div>
+                    <div class="u-center">短信设置</div>
+                    <div class="u-right" @click="skipNoteDetail('',1)">新增</div>
+                </div>
+            </div>
+        </div>
+        <div class="note-set-contain">
+            <ul>
+                <li v-for="(note,index) in noteList" @touchstart="delTouchStart($event)" @touchmove="delTouchMove($event,index)" @touchend="testEnd($event)">
+                    <div class="note-lis-contain" :class="{'left-swiper':leftSwiperList[index]}" @click.stop.prevent="skipNoteDetail(note.smsid,2)">
+                        <div class="note-lis-t" v-text="note.temp_name"></div>
+                        <div class="note-lis-s" :class="['status-'+(index+1)]" v-text="noteStateList[index]"></div>
+                        <div class="note-lis-d" v-text="note.apptext"></div>
+                        <div class="note-lis-i" @click.stop.prevent="openDelBox(index)"></div>
+                    </div>
+                    <div class="note-lis-del flex-wrap flex-align-item flex-center" @click.stop.prevent="delNote(note.smsid)"><span>删除</span></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var noteV = null,
+        startX = 0,
+        moveX = 0;
+    apiready = function() {
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+
+        noteV = new Vue({
+            el: '#wrapper',
+            data: {
+                userInfo:{},
+                noteList:[],
+                noteStateList:['审核通过','待审核','未通过'],
+                leftSwiperList:[],
+                infoList:[]
+            },
+            mounted: function() {
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                this.getInfoList();
+                this.getData();
+            },
+            methods: {
+                getData:function(isLoadMore = false){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'sms/findAllStatusSmsTemplateById',
+                        method:'get',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            empid:_this.userInfo.employeeid
+                        },
+                        success:function(res) {
+                            wDialog.hideProgress();
+                            console.log(JSON.stringify(res))
+                            _this.noteList = res.data;
+                            _this.leftSwiperList = _this.noteList.map(function(v){return false});
+                        }
+                    })
+                },
+                getInfoList:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'sms/getTempPlateParam',
+                        method:'get',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            empid:_this.userInfo.employeeid
+                        },
+                        success:function(res) {
+                            _this.infoList = res.info;
+                            console.log(JSON.stringify(res))
+                        }
+                    })
+                },
+                delTouchStart: function(e) {
+                    console.log('00000000')
+                    startX = e.targetTouches[0].pageX;
+                },
+                delTouchMove: function(e,i) {
+                    console.log('---------------')
+                    var _this = this;
+                    interValHandle.handle(function() {
+                        moveX = e.targetTouches[0].pageX;
+                        console.log(moveX - startX)
+                        if (moveX - startX > 10) {
+                            console.log("inn1")
+                            if(_this.leftSwiperList[i]){
+                                Vue.set(_this.leftSwiperList,i,false);
+                            }
+                        } else if (moveX - startX < -10) {
+                            console.log('innn3')
+                            var arr = _this.leftSwiperList.map(function(v,j){
+                                if(i === j) return true;
+                                return false;
+                            });
+                            _this.leftSwiperList = arr;
+                        }
+
+                        console.log(JSON.stringify(_this.leftSwiperList))
+                    }, 20)
+                },
+                testEnd:function(e){
+                    console.log(JSON.stringify(e));
+                },
+                skipNoteDetail: function(id,index) {
+                    var _this = this;
+                    var param = null;
+                    // 新增
+                    if(index == 1){
+                        param = {
+                            origin:'add',
+                            title:'短信新增',
+                            noteId:id,
+                            infoList:JSON.stringify(_this.infoList)
+                        }
+                    }else{
+                        param = {
+                            origin:'edit',
+                            title:'短信编辑',
+                            noteId:id,
+                            infoList:JSON.stringify(_this.infoList)
+                        }
+                    }
+                    wHrefJs.openWin({
+                        name:'noteAddEdit',
+                        path:'./note_add_edit.html',
+                        param:param
+                    })
+                },
+                delNote: function(id) {
+                    var _this = this;
+                    wDialog.confirm({
+                        msg:'确认要删除此短信模板吗？',
+                        sureCb:function(){
+                            _this.delNoteFunc(id);
+                        }
+                    })
+                },
+                // 删除短信模板
+                delNoteFunc:function(id){
+                    // wApiAjax({
+                    //     url:'sms/delSmsTemplateById',
+                    //     method:'get',
+                    //     headers:{
+                    //         token:TOKEN_DATA
+                    //     },
+                    //     data:{
+                    //         empid:_this.userInfo.employeeid,
+                    //         templateid:id
+                    //     },
+                    //     success:function(res) {
+                    //         console.log(JSON.stringify(res))
+                    //         _this.noteList = res.data;
+                    //         _this.leftSwiperList = _this.noteList.map(function(v){return false});
+                    //         console.log(JSON.stringify(_this.leftSwiperList))
+                    //     }
+                    // })
+                },
+                openDelBox: function(i) {
+                    Vue.set(this.leftSwiperList,i,!this.leftSwiperList[i]);
+                }
+            }
+        })
+    }
+    var interValHandle = {
+        isStartHandle: true,
+        handle: function(cb, time = 30) {
+            var _this = this;
+            if (this.isStartHandle) {
+                this.isStartHandle = false;
+                cb && typeof cb === 'function' && cb.call(this);
+                setTimeout(function() {
+                    _this.isStartHandle = true;
+                }, time);
+            }
+        }
+    }
+</script>
+
+</html>

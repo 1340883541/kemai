@@ -54,8 +54,7 @@
     margin:auto;
 }
 #main{
-    margin-top: 2.84rem;
-    padding:0 0.3rem;
+    margin-top: .8rem;
     text-align: center;
 }
 .logo{
@@ -76,20 +75,18 @@
     font-family: PingFangSC-Medium;
     font-size: 0.28rem;
 	color: #aaaaaa;
-    margin-top: 0.1rem;
+    margin-top: 0.2rem;
+    line-height: .4rem;
 }
-.introduction{
+.about-list{
+    margin-top: .8rem;
+}
+.about-list .about-lis{
     position: relative;
-    font-family: PingFangSC-Regular;
-	font-size: 0.28rem;
-	line-height: 0.44rem;
-	color: #666666;
-    margin-top: 2rem;
-    padding-top: .66rem;
-    padding-bottom: .66rem;
-    text-align: left;
+    min-height: 1.5rem;
+    background-color: #fff;
 }
-.introduction:before{
+.about-list .about-lis:before{
     content: '';
     position: absolute;
     left:0;
@@ -102,4 +99,78 @@
     -ms-transform:scaleY(.5);
     -o-transform:scaleY(.5);
     transform:scaleY(.5);
+}
+.about-list .about-lis .about-lis-t{
+    padding:0 .3rem;
+}
+.about-list .about-lis .about-lis-t > .left{
+    text-align: left;
+}
+.about-list .about-lis .about-lis-t > .left .caption{
+    padding-top: .44rem;
+    font-size: .32rem;
+    line-height: 1em;
+    color:#333;
+}
+.about-list .about-lis .about-lis-t > .left .time{
+    line-height: .32rem;
+    margin-top: .12rem;
+    color:#999;
+    padding-bottom: .3rem;
+}
+.about-list .about-lis .about-lis-t > .right{
+    position: relative;
+}
+.about-list .about-lis .about-lis-t > .right .icon{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width:.32rem;
+    height: .32rem;
+    margin-top: -.16rem;
+    background:url('../../image/icon-gr-jiantou2.png') no-repeat center;
+    background-size: .32rem;
+    -webkit-transition:transform .3s ease;
+    -moz-transition:transform .3s ease;
+    -ms-transition:transform .3s ease;
+    -o-transition:transform .3s ease;
+    transition:transform .3s ease;
+}
+.about-list .about-lis .about-lis-t.curr > .right .icon{
+    -webkit-transform:rotate(180deg);
+    -moz-transform:rotate(180deg);
+    -ms-transform:rotate(180deg);
+    -o-transform:rotate(180deg);
+    transform:rotate(180deg);
+}
+.about-list .about-lis .about-lis-d{
+    background-color: #fcfcfc;
+    padding: .3rem;
+    text-align: left;
+    display: none;
+}
+.about-list .about-lis .about-lis-t.curr+.about-lis-d{
+    display:block;
+}
+.about-list .about-lis .about-lis-d .about-detail{
+    line-height: .44rem;
+    font-size: .28rem;
+    color:#333;
+}
+.about-list .about-lis .about-lis-d .about-look-btn{
+    margin-top: .2rem;
+    line-height: .4rem;
+    width: 1.6rem;
+    font-size: .28rem;
+    color:#4c9ff8;
+}
+/*关于我们详情*/
+.about-detail-box{
+    background-color: #fff;
+    padding:.3rem;
+}
+.about-detail-box > *{
+    line-height: .4rem !important;
+    color:#333 !important;
+    font-size: .28rem !important;
 }

@@ -25,7 +25,8 @@
 </head>
 
 <body>
-    <div id="wrap" v-cloak>
+    <!-- <div id="wrap" v-cloak> -->
+    <div id="wrap">
         <!-- 客户来源列表 -->
         <div class="filter-popup" id="filter-origin-popup">
             <div class="filter-popbg" onclick="hideFilterPopup()"></div>
@@ -62,12 +63,26 @@
             <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id)">
                 <div class="cfil-t flex-wrap flex-between">
                     <div class="cname w-elli" v-text="khdata.name"></div>
-                    <div class="cphone" @click.stop="callPhone($event,khdata.id,khdata.phone)"></div>
+                    <div class="cphone" @click.stop="callPhone($event,khdata.id,khdata.phone)">去跟进</div>
                 </div>
                 <div class="cfil-b">
                     <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status"></span></div>
                     <div class="cfil-gj time lis"><i></i>跟进时间: <span v-text="khdata.followtime.split(' ')[0]"></span></div>
                     <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow"></span></div>
+                </div>
+                <div class="filter-lis-pop filter-lis-pop1 flex-wrap">
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state phone-state">
+                            <div class="small-img"></div>
+                            <p>电话</p>
+                        </div>
+                    </div>
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state note-state">
+                            <div class="small-img"></div>
+                            <p>短信</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- 无更多数据 -->

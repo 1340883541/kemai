@@ -300,3 +300,155 @@
     color:#999;
     font-family: PingFangSC-Medium;
 }
+/*今日统计*/
+.stat-header{
+    position: relative;
+    width: 100%;
+    height: 1.66rem;
+    box-sizing: content-box;
+}
+.stat-fixed-header{
+    position: fixed;;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 1.66rem;
+    z-index: 9999;
+    box-sizing: content-box;
+	background-image: linear-gradient(90deg,
+		rgba(84, 203, 248, 0.95) 0%,
+		rgba(13, 100, 250, 0.95) 100%);
+}
+.stat-fixed-header .stat-header-t{
+    position: relative;
+    width: 100%;
+    height: .84rem;
+    color:#fff;
+    text-align: center;
+    line-height: .84rem;
+}
+.stat-fixed-header .stat-header-t .back{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: .8rem;
+    height: .84rem;
+    background: url('../../image/icon-dh-fanhui-w.png') no-repeat center;
+    background-size: .48rem;
+}
+.stat-fixed-header .stat-header-t .center{
+    font-size: .36rem;
+}
+.stat-fixed-header .stat-header-nav{
+    position: relative;
+    height: .8rem;
+    line-height: .8rem;
+    text-align: center;
+    color:#fff;
+    font-size: .28rem;
+}
+.stat-fixed-header .stat-header-nav > .nav > i{
+    display: inline-block;
+    width: .2rem;
+    height: .2rem;
+    background: url('../../image/icon-jiantou-sx2.png') no-repeat center;
+    background-size: .2rem;
+    vertical-align: middle;
+}
+.stat-fixed-header .stat-header-nav > .nav.curr > i{
+    background-image: url('../../image/icon-jiantou-sx1.png');
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box{
+    position: absolute;
+    left: 0;
+    top: .8rem;
+    width: 100%;
+    max-height: 4.5rem;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:touch;
+    padding:0 .3rem;
+    background-color: #fff;
+    display: none;
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li{
+    position: relative;
+    height: .8rem;
+    line-height: .8rem;
+    color:#333;
+    font-size: .3rem;
+    text-align: center;
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li:after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #f2f2f2;
+    -webkit-transform:scaleY(.5);
+    -moz-transform:scaleY(.5);
+    -ms-transform:scaleY(.5);
+    -o-transform:scaleY(.5);
+    transform:scaleY(.5);
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li > i{
+    position: absolute;
+    right: -.3rem;
+    top: 0;
+    width: .8rem;
+    height: 100%;
+    background: url('../../image/icon-gou.png') no-repeat .1rem center;
+    background-size: .4rem;
+    display: none;
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li.curr{
+    color:#1b6efb;
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li.curr > i{
+    display: block;
+}
+.stat-fixed-header .stat-header-nav .stat-nav-box li:last-child:after{
+    display: none;
+}
+.stat-nav-bg{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    background-color: rgba(0,0,0,.3);
+    display: none;
+}
+.stat-contain{
+    padding:.3rem .3rem 0;
+}
+.stat-contain.fixed{
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+}
+.stat-contain li{
+    height: 1.2rem;
+    line-height: 1.2rem;
+    width: 100%;
+    background-color: #fff;
+    padding:0 .3rem;
+    margin-bottom: .3rem;
+}
+
+.stat-contain li > .name{
+    color:#333;
+    font-size: .36rem;
+    height: 1.2rem;
+    max-width: 4.3rem;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.stat-contain li > .time{
+    color:#999;
+    font-size: .3rem;
+}

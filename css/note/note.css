@@ -1,0 +1,201 @@
+
+html,body{
+    min-height: 100%;
+}
+body{
+    background-color: #f7f7f7;
+}
+/*短信设置*/
+.note-set-contain{
+    padding:.3rem .3rem 0;
+}
+.note-set-contain li{
+    position: relative;
+    background-color: #fff;
+    margin-bottom: .3rem;
+    overflow:hidden;
+    border-radius: 4px;
+}
+.note-set-contain li .note-lis-contain{
+    position: relative;
+    padding:.3rem;
+    margin-left: 0;
+    width: 100%;
+    -webkit-transition:all .3s ease;
+    -moz-transition:all .3s ease;
+    -ms-transition:all .3s ease;
+    -o-transition:all .3s ease;
+    transition:all .3s ease;
+}
+.note-set-contain li .note-lis-contain.left-swiper{
+    margin-left: -1.58rem;
+}
+.note-set-contain li .note-lis-del{
+    position: absolute;
+    top: 0;
+    right:-1.6rem;
+    width: 1.6rem;
+    height: 100%;
+    text-align: center;
+    background-color:#ff2f00;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    color:#fff;
+    font-size: .36rem;
+    -webkit-transition:right .3s ease;
+    -moz-transition:right .3s ease;
+    -ms-transition:right .3s ease;
+    -o-transition:right .3s ease;
+    transition:right .3s ease;
+}
+.note-set-contain li .note-lis-contain.left-swiper+.note-lis-del{
+    right:0rem;
+}
+.note-set-contain li .note-lis-contain .note-lis-t{
+    height: .48rem;
+    line-height: .48rem;
+    color: #333;
+    font-size: .34rem;
+    margin-bottom: .12rem;
+}
+.note-set-contain li .note-lis-contain .note-lis-s{
+    display: table-cell;
+    height: .32rem;
+    line-height: .32rem;
+    color:#fff;
+    font-size: .22rem;
+    padding:0 .1rem;
+}
+.note-set-contain li .note-lis-contain .note-lis-s.status-1{
+    background-color: #61cd72;
+}
+.note-set-contain li .note-lis-contain .note-lis-s.status-2{
+    background-color: #4c9ff8;
+}
+.note-set-contain li .note-lis-contain .note-lis-s.status-3{
+    background-color: #b0b1bc;
+}
+.note-set-contain li .note-lis-contain .note-lis-d{
+    margin-top: .14rem;
+    color:#666;
+    font-size: .28rem;
+    line-height: .4rem;
+}
+.note-set-contain li .note-lis-contain .note-lis-i{
+    position: absolute;
+    right: .1rem;
+    top: .3rem;
+    width: .48rem;
+    height: .48rem;
+    background:url('../../image/icon-more.png') no-repeat center;
+    background-size: .32rem;
+}
+/*编辑和添加短信模板*/
+.note-add-contain .note-add-con{
+    background-color: #fff;
+    margin-bottom: .3rem;
+    padding:0 .3rem;
+}
+.note-add-contain .note-add-con .note-add-inp{
+    min-height: 1.2rem;
+}
+.note-add-contain .note-add-con .note-add-inp .note-cap{
+    line-height: 1.2rem;
+    width: 1.4rem;
+    color:#333;
+    font-size: .3rem;
+}
+.note-add-contain .note-add-con .note-id{
+    display: block;
+    height: 100%;
+    padding-left: .08rem;
+    padding-top: .3rem;
+    padding-bottom: .3rem;
+    line-height: .6rem;
+    color:#333;
+}
+.note-add-contain .note-add-con .note-lis{
+    padding-left: .08rem;
+    padding-bottom: .3rem;
+}
+.note-add-contain .note-add-con .note-lis li{
+    height: .6rem;
+    margin-top: .3rem;
+    margin-right: .2rem;
+    color:#4c9ff8;
+    padding:0 .16rem;
+    border:1px solid #4c9ff8;
+    border-radius:4px;
+    text-align: center;
+    line-height: .6rem;
+    overflow: hidden;
+}
+.note-add-contain .note-add-con .note-add-text{
+    height: 3.2rem;
+}
+.note-add-contain .note-add-con .note-add-text > .note-textarea{
+    display: block;
+    padding: .2rem 0;
+    width: 100%;
+    height: 100%;
+    line-height: .4rem;
+}
+.note-add-contain .note-add-view{
+    background-color: #fff;
+    margin-bottom: .3rem;
+    padding:0 .3rem;
+}
+.note-add-contain .note-add-view .note-view-t{
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-size: .32rem;
+    font-weight: bold;
+    color: #333;
+}
+.note-add-contain .note-add-view .note-view-text{
+    min-height: 3.2rem;
+    line-height: .4rem;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+}
+/*短信模板，选中模板*/
+.note-tem-contain .note-tem-list{
+    padding: .3rem .3rem 0;
+}
+.note-tem-contain .note-tem-list li{
+    margin-bottom: .3rem;
+    padding: .3rem 0;
+    background-color: #fff;
+}
+.note-tem-contain .note-tem-list li .check-box{
+    width: .8rem;
+}
+.note-tem-contain .note-tem-list li .check-box > .check-icon{
+    display: block;
+    width: .4rem;
+    height: .4rem;
+    margin: .04rem auto 0;
+    background-image: url('../../image/icon-xz-weigouxuan.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: .4rem;
+    transition:all .2s ease;
+}
+.note-tem-contain .note-tem-list li.curr .check-box > .check-icon{
+    background-image: url('../../image/icon-xz-gouxuan.png');
+}
+.note-tem-contain .note-tem-list li .not-tem-info{
+    padding-right: .3rem;
+}
+.note-tem-contain .note-tem-list li .not-tem-info .caption{
+    height: .48rem;
+    line-height: .48rem;
+    color:#333;
+    font-size: .34rem;
+    margin-bottom: .1rem;
+}
+.note-tem-contain .note-tem-list li .not-tem-info .desc{
+    color:#666;
+    font-size: .28rem;
+    line-height: .4rem;
+}

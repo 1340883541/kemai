@@ -60,6 +60,15 @@
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
+                        <div class="person_center account_security">
+                            <div class="account_left">
+                                <div><img src="../../image/icon-dx-set.png"></div>
+                            </div>
+                            <div class="account_rig" @click="skipNoteSet">
+                                <span>短信通知</span>
+                                <div><img src="../../image/icon-gr-jiantou.png"></div>
+                            </div>
+                        </div>
                     <div class="person_center account_security">
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-xx.png"></div>
@@ -166,6 +175,12 @@
                     wHrefJs.openWin({
                         name: 'setUp',
                         path: './set_up.html',
+                    })
+                },
+                skipNoteSet:function(){
+                    wHrefJs.openWin({
+                        name: 'noteSet',
+                        path: '../note/note_set.html',
                     })
                 },
                 getUserInfo: function() {

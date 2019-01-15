@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>短信设置</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/note/note.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back"></div>
+                    <div class="u-center" v-text="title"></div>
+                    <div class="u-right" id="save-note" @click="">保存</div>
+                </div>
+            </div>
+        </div>
+        <div class="note-add-contain">
+            <div class="note-add-con">
+                <div class="note-add-inp flex-wrap bor-1px-b">
+                    <div class="note-cap">短信名称</div>
+                    <div class="note-id flex-con">
+                        <input type="text" placeholder="请输入模板名称，不超过20个字" maxlength="20" v-model="noteInfo.temp_name">
+                    </div>
+                </div>
+                <div class="note-add-inp flex-wrap bor-1px-b">
+                    <div class="note-cap">插入参数</div>
+                    <div class="note-lis flex-con">
+                        <ul class="clear">
+                            <li class="fl" isFocus="true"  v-for="info in infoList" v-text="info.name" ></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="note-add-text">
+                    <textarea class="note-textarea" placeholder="例：尊敬的{客户姓名}，过年好！" id="note-textarea" isFocus="true"  ></textarea>
+                </div>
+            </div>
+            <!-- <div class="note-add-view">
+                <div class="note-view-t bor-1px-b">
+                    短信预览
+                </div>
+                <div class="note-view-text" v-html="showInfo"></div>
+            </div> -->
+            <div contenteditable="true" id="test">3</div>
+            <input id="tinput">
+            <span id="keycode"></span>
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+// $('#tinput').on('input', e => {
+//     console.log(e)
+//     var keyCode = '';
+//     if( e.originalEvent.data){
+//      keyCode = e.originalEvent.data.charCodeAt(0);
+//     }
+//     else{
+//         console.log
+//         keyCode = e.keyCode;
+//     }
+//      $('#keycode').html(keyCode)
+//      // keyCode is ASCII of character entered.
+// })
+    var noteV = null,infoList = [];
+    // apiready = function() {
+    //     $api.fixStatusBar($('.uni-header')[0]);
+    //     $api.fixStatusBar($('.uni-fixed-header')[0]);
+    //     var param = api.pageParam;
+    //     infoList = JSON.parse(param.infoList)
+        noteV = new Vue({
+            el:'#wrapper',
+            data:{
+                infoList:[{"defaultValue":"张三","name":"客户姓名","key":"cusname"}],
+                selectionStart:0,
+
+                userInfo:{},
+                // 编辑
+                noteId:'',
+                title:'',
+
+
+                noteInfo:{
+                    temp_name:'',
+                    apptext:''
+                }
+            },
+            mounted:function(){
+                this.title = param.title;
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                this.noteId = param.noteId;
+                // this.getData();
+            },
+            methods:{
+                getData:function(){
+                    if(param.origin === 'edit'){
+                        var _this = this;
+                        wApiAjax({
+                            url:'sms/findSmsTemplateById',
+                            method:'get',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                empid:_this.userInfo.employeeid,
+                                smsid:_this.noteId
+                            },
+                            success:function(res) {
+                                wDialog.hideProgress();
+                                console.log(JSON.stringify(res))
+                                _this.noteInfo = res.data;
+                            }
+                        })
+                    }
+                },
+                // 插入内容
+                insertTextarea:function(name,key){
+                    // var str = '{'+name+'}';
+                    // this.textareaInfo = this.textareaInfo.substring(0,this.selectionStart) + str + this.textareaInfo.substring(this.selectionStart);
+                },
+                // 监听输入
+                listenBlur:function(e){
+                    // var tag = e.currentTarget;
+                    // this.selectionStart = tag.selectionStart;
+                    // console.log(tag.selectionStart)
+                    // console.log(tag.selectionEnd)
+                },
+                inputFn:function(e){
+                    // console.log(e)
+                }
+            },
+            computed:function(){
+
+            }
+        })
+
+
+    //在这里主要是对可编辑区域的操作,主要是监控按键操作
+    var obj = document.querySelector('#note-textarea');
+
+    //首先定义焦点位置为空，这样初始化页面之后点击关键字，关键字就不会添加到文本中
+    var cursorIndex = null;
+    //这里定义一个最后一次按键是为了判断左键是不是由于按左中括号而带动的。
+    var lastKeyCode = 0;
+    // //记录所添加的关键字
+    var allKeyWords = [];
+    //把所有的关键字以内容为key,id为value保存，以便于提交的时候获取相应id
+    var keyWordsJson = {};
+    //这里处理
+    var newData = infoList;
+    var i=0,len=newData.length;
+    for(i;i<len;i++){
+    	if(keyWordsJson[newData[i].name]!==null){
+    		keyWordsJson[newData[i].name]=newData[i].key;
+    	}
+    }
+    //点击可编辑区域时要对光标更新
+    obj.addEventListener('click', function() {
+    	cursorIndex = getFocus(obj);
+        console.log(cursorIndex)
+    	dealFocusExtend(obj,cursorIndex);
+    })
+
+    obj.addEventListener('keyup', function(e) {
+        // 229 37
+        // obj.value = obj.value.replace('{','');
+    	//每次在文本域中输入的时候都要获取其光标位置，以便于其他操作
+    	cursorIndex = getFocus(obj);
+
+    	//由于我们是禁止输入中文中括号的，而中文中括号输入左右情况不同，需要分别处理
+    	if (e.keyCode == 219) {
+    		e.preventDefault();
+    		//这里获取到光标左侧的内容
+    		var leftChar = obj.value.slice(cursorIndex - 1, cursorIndex);
+
+    		//只有输入结束的是右中括号，而且它的前一个字符是左中括号才把它删除，防止把关键字删除掉
+    		if (/\}/g.test(leftChar) && obj.value.charAt(cursorIndex - 2) === '{') {
+    			obj.value = obj.value.slice(0, cursorIndex - 2) + obj.value.slice(cursorIndex, obj.value.length);
+    		}
+
+    	} else if (e.keyCode == 221) {
+    		e.preventDefault();
+    		//右中括号就好办多了，因为它不会自动带出左中括号
+    		var leftChar = obj.value.slice(cursorIndex - 1, cursorIndex);
+    		if (/\}/g.test(leftChar)) {
+    			obj.value = obj.value.slice(0, cursorIndex - 1) + obj.value.slice(cursorIndex, obj.value.length);
+    		}
+    	}
+    	//防止上下左右键移动光标进入关键字中
+    	if ((e.keyCode == 37 || e.keyCode == 39 || e.keyCode == 38 || e.keyCode == 40) && lastKeyCode !== 219) {
+    		dealFocusMove(obj, cursorIndex);
+    	} else if (e.keyCode == 8) {
+    		//backspace删除的时候删除整个关键字
+    		dealFocusL(obj, cursorIndex, allKeyWords);
+    	} else if (e.keyCode == 46) {
+    		//delete删除的时候也是删除整个关键字
+    		dealFocusR(obj, cursorIndex, allKeyWords)
+    	}
+    	if (e.keyCode !== 37 && e.keyCode !== 39) {
+    		//这里防止手动按得左右键影响左中括号判断
+    		lastKeyCode = e.keyCode;
+    	}
+    }, false);
+    obj.addEventListener('input',function(e){
+        console.log(e.data.charCodeAt(0))
+        if(obj.value.indexOf('{}') > -1){
+            obj.value = obj.value.replace('{}','')
+        }else{
+            if(e.data.charCodeAt(0) == 123 || e.data.charCodeAt(0) == 125){
+                console.log(obj.value)
+                obj.value = obj.value.substring(0,obj.value.length - 1);
+            }
+        }
+    })
+    obj.addEventListener('keydown', function(e) {
+    	if (e.keyCode == 221 || e.keyCode == 219 ) {
+    		//这里防止按下英文中括号，你没看错，这里就是坑，英文的可以直接阻止默认事件，但是中文的不可以
+    		e.preventDefault();
+    	}
+    	if ((e.keyCode == 37 || e.keyCode == 39) && lastKeyCode === 219) {
+    		//这里是防止按下中文中括号左键的时候带动左右键的按下，这样保证光标一直在最后
+    		e.preventDefault();
+    	}
+    }, false);
+
+    //现在做添加关键字事件，首先明白一点，就是只有我们在文本域中有光标的时候点击添加关键字才可以添加，而点击其他地方失去光标，再点击关键字的时候是不可以添加的
+    //所以我们给document添加事件,利用事件冒泡
+    document.addEventListener('click', function(e) {
+        console.log(cursorIndex);
+    	//首先判断是否有光标，这样我们的光标位置是不存在的
+    	if (cursorIndex !== null) {
+    		//这里判断是否是我们要点击的是不是关键字
+    		if (e.target.tagName !== "TEXTAREA" && e.target.getAttribute('isFocus')) {
+    			//要添加东西当然要先放入光标了，这里会记住之前的光标位置，所以直接focus即可
+    			obj.focus();
+    			cursorIndex = getFocus(obj);
+    			var text = obj.value;
+    			//文本中关键字以中括号包裹的形式显示
+    			var textNode = text.substring(0, cursorIndex) + '{' + e.target.innerHTML + '}' + text.substring(cursorIndex, text.length);
+    			obj.value = textNode;
+    			//添加完之后我们要刷新光标位置
+    			cursorIndex = cursorIndex + e.target.innerHTML.length + 2;
+    			obj.selectionStart = cursorIndex;
+    			obj.selectionEnd = cursorIndex;
+
+    		} else if (e.target.tagName == "TEXTAREA" && e.target.getAttribute('isFocus')) {
+    			//点击文本区域操作
+    			cursorIndex = getFocus(obj);
+    		} else {
+    			//点击其他地方要将光标位置置空，防止点击关键字添加
+    			cursorIndex = null;
+    			console.log(1);
+    		}
+    	}
+    });
+
+    //最后我们处理提交模板的内容
+
+    var oBtn = document.querySelector('#save-note');
+    oBtn.addEventListener('click', function(){
+
+    	//模板原始内容
+    	var templatename = obj.value||"";
+    	var reg = /\{([^\{\}]+)\}/g;
+    	var res;
+    	//我们把模板做一次变更，方便后端识别，模板关键字变为这种形式：[*]
+    	var templateformula = templatename.replace(reg,'{*}')||"";
+    	console.log(templatename,templateformula,allKeyWords);
+    },false)
+
+
+	//处理删除关键字
+	function dealFocusL(obj,index,allKeyWords){
+		var text = obj.value.slice(0,index);
+		var resL,resR,i=0,j=0;
+		var lastIndex=0;
+		var regL = /\{/g;
+		var regR = /\}/g;
+		while(resL=regL.exec(text)){
+			i++;
+			//获取左中括号位置
+			lastIndex = regL.lastIndex;
+		}
+		while(resR=regR.exec(text)){
+			j++;
+		}
+		if(i!=j){
+			var textAll = obj.value;
+			obj.value = textAll.substring(0, lastIndex-1)+ textAll.substring(index, textAll.length);
+			allKeyWords.splice(i-1,1);
+		}
+
+	}
+	//delete关键字
+	function dealFocusR(obj,index,allKeyWords){
+		var text = obj.value.slice(index,obj.value.length);
+		text = text.split('').reverse().join('');
+		var resL,resR,i=0,j=0;
+		var lastIndex = 0;
+		var regL = /\{/g;
+		var regR = /\}/g;
+        console.log(obj,index,allKeyWords)
+		while(resL=regL.exec(text)){
+			i++;
+		}
+		while(resR=regR.exec(text)){
+			j++;
+			lastIndex = regR.lastIndex;
+		}
+		if(i!=j){
+			//获取右中括号位置
+			var textAll = obj.value;
+			lastIndex = index+text.length-lastIndex+1;
+
+			allKeyWords.splice(j-1,1);
+			obj.value = textAll.substring(0, index)+ textAll.substring(lastIndex, textAll.length);
+		}
+	}
+	//处理光标上下左右移动
+	function dealFocusMove(obj,index){
+		var text = obj.value.slice(0,index);
+		var resL,resR,i=0,j=0;
+		var lastIndex=0;
+		var _lastIndex=0;
+		var regL = /\{/g;
+		var regR = /\}/g;
+		while(resL=regL.exec(text)){
+			i++;
+			lastIndex = regL.lastIndex;
+		}
+		while(resR=regR.exec(text)){
+			j++;
+		}
+		if(i!=j){
+			if(index==lastIndex){
+				var rightText = regR.exec(obj.value.slice(index, obj.value.length));
+				_lastIndex = rightText['index'];
+				index = _lastIndex+index+1;
+			}else{
+				index = lastIndex-1;
+			}
+			obj.selectionStart = index;
+			obj.selectionEnd = index;
+		}
+	}
+	//处理鼠标定位光标
+	function dealFocusExtend(obj,index){
+		var text = obj.value.slice(0,index);
+		var resL,resR,i=0,j=0;
+		var lastIndex=0;
+		var regL = /\{/g;
+		var regR = /\}/g;
+		while(resL=regL.exec(text)){
+			i++;
+			lastIndex = regL.lastIndex;
+		}
+		while(resR=regR.exec(text)){
+			j++;
+		}
+		if(i!=j){
+			index = obj.value.length;
+			obj.selectionStart = index;
+			obj.selectionEnd = index;
+		}
+	}
+	//获取光标位置
+	function getFocus(elem) {
+		var index = 0;
+		if (document.selection) { // IE Support
+			elem.focus();
+			var Sel = document.selection.createRange();
+			if (elem.nodeName === 'TEXTAREA') { //textarea
+				var Sel2 = Sel.duplicate();
+				Sel2.moveToElementText(elem);
+				var index = -1;
+				while (Sel2.inRange(Sel)) {
+					Sel2.moveStart('character');
+					index++;
+				};
+			} else if (elem.nodeName === 'INPUT') { // input
+				Sel.moveStart('character', -elem.value.length);
+				index = Sel.text.length;
+			}
+		} else if (elem.selectionStart || elem.selectionStart == '0') { // Firefox support
+			index = elem.selectionStart;
+		}
+		return (index);
+	}
+    // }
+
+</script>
+
+</html>
