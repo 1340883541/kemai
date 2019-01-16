@@ -211,7 +211,7 @@
     height: 1.54rem;
     background-color: #fff;
     padding: .3rem;
-    margin: 0 auto .2rem;
+    margin: 0 auto .3rem;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
@@ -297,6 +297,8 @@
     background-color: rgba(0,0,0,0.4);
     padding:0 1.35rem;
     text-align: center;
+}
+.filter-lists .filter-lis .filter-lis-pop.hide{
     display: none;
 }
 .filter-lists .filter-lis .filter-lis-pop1{
@@ -401,7 +403,7 @@
      rgba(84, 203, 248, 0.95) 0%,
      rgba(13, 100, 250, 0.95) 100%);
     text-align: center;
-    line-height: .64rem;
+    line-height: .68rem;
     color:#fff;
     font-size: .28rem;
     -webkit-border-radius: 4px;
@@ -410,6 +412,7 @@
     -o-border-radius: 4px;
     border-radius: 4px;
     margin-top: .16rem;
+    overflow:hidden;
 }
 .filter-lists .cfil-lis .cfil-b{
     color:#666;

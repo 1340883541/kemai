@@ -21,22 +21,22 @@
         <div class="uni-header">
             <div class="uni-fixed-header">
                 <div class="u-header-box">
-                    <div class="u-back"></div>
+                    <div class="u-back" onclick="wBackThisFunc()"></div>
                     <div class="u-center">短信设置</div>
-                    <div class="u-right" @click="skipNoteDetail('',1)">新增</div>
+                    <div class="u-right" @click="skipNoteDetail('',1,-1)">新增</div>
                 </div>
             </div>
         </div>
         <div class="note-set-contain">
             <ul>
-                <li v-for="(note,index) in noteList" @touchstart="delTouchStart($event)" @touchmove="delTouchMove($event,index)" @touchend="testEnd($event)">
-                    <div class="note-lis-contain" :class="{'left-swiper':leftSwiperList[index]}" @click.stop.prevent="skipNoteDetail(note.smsid,2)">
+                <li v-for="(note,index) in noteList" @touchstart="delTouchStart($event)" @touchend="delTouchEnd($event,index)">
+                    <div class="note-lis-contain" :class="{'left-swiper':leftSwiperList[index]}" @click.stop.prevent="skipNoteDetail(note.smsid,2,note.status)">
                         <div class="note-lis-t" v-text="note.temp_name"></div>
-                        <div class="note-lis-s" :class="['status-'+(index+1)]" v-text="noteStateList[index]"></div>
+                        <div class="note-lis-s" :class="['status-'+(note.status+1)]" v-text="noteStateList[note.status]"></div>
                         <div class="note-lis-d" v-text="note.apptext"></div>
                         <div class="note-lis-i" @click.stop.prevent="openDelBox(index)"></div>
                     </div>
-                    <div class="note-lis-del flex-wrap flex-align-item flex-center" @click.stop.prevent="delNote(note.smsid)"><span>删除</span></div>
+                    <div class="note-lis-del flex-wrap flex-align-item flex-center" @click.stop.prevent="delNote(note.smsid,index)"><span>删除</span></div>
                 </li>
             </ul>
         </div>
@@ -113,36 +113,23 @@
                     })
                 },
                 delTouchStart: function(e) {
-                    console.log('00000000')
                     startX = e.targetTouches[0].pageX;
                 },
-                delTouchMove: function(e,i) {
-                    console.log('---------------')
-                    var _this = this;
-                    interValHandle.handle(function() {
-                        moveX = e.targetTouches[0].pageX;
-                        console.log(moveX - startX)
-                        if (moveX - startX > 10) {
-                            console.log("inn1")
-                            if(_this.leftSwiperList[i]){
-                                Vue.set(_this.leftSwiperList,i,false);
-                            }
-                        } else if (moveX - startX < -10) {
-                            console.log('innn3')
-                            var arr = _this.leftSwiperList.map(function(v,j){
-                                if(i === j) return true;
-                                return false;
-                            });
-                            _this.leftSwiperList = arr;
+                delTouchEnd:function(e,i){
+                    moveX = e.changedTouches[0].pageX;
+                    if (moveX - startX > 10) {
+                        if(this.leftSwiperList[i]){
+                            Vue.set(this.leftSwiperList,i,false);
                         }
-
-                        console.log(JSON.stringify(_this.leftSwiperList))
-                    }, 20)
+                    } else if (moveX - startX < -10) {
+                        var arr = this.leftSwiperList.map(function(v,j){
+                            if(i === j) return true;
+                            return false;
+                        });
+                        this.leftSwiperList = arr;
+                    }
                 },
-                testEnd:function(e){
-                    console.log(JSON.stringify(e));
-                },
-                skipNoteDetail: function(id,index) {
+                skipNoteDetail: function(id,index,status) {
                     var _this = this;
                     var param = null;
                     // 新增
@@ -154,6 +141,12 @@
                             infoList:JSON.stringify(_this.infoList)
                         }
                     }else{
+                        if(status == 0 || status == 1){
+                            wDialog.toast({
+                                msg:'审核成功和待审核的状态，不允许编辑。'
+                            });
+                            return false;
+                        }
                         param = {
                             origin:'edit',
                             title:'短信编辑',
@@ -167,37 +160,58 @@
                         param:param
                     })
                 },
-                delNote: function(id) {
+                delNote: function(id,i) {
                     var _this = this;
                     wDialog.confirm({
                         msg:'确认要删除此短信模板吗？',
                         sureCb:function(){
-                            _this.delNoteFunc(id);
+                            _this.delNoteFunc(id,i);
                         }
                     })
                 },
                 // 删除短信模板
-                delNoteFunc:function(id){
-                    // wApiAjax({
-                    //     url:'sms/delSmsTemplateById',
-                    //     method:'get',
-                    //     headers:{
-                    //         token:TOKEN_DATA
-                    //     },
-                    //     data:{
-                    //         empid:_this.userInfo.employeeid,
-                    //         templateid:id
-                    //     },
-                    //     success:function(res) {
-                    //         console.log(JSON.stringify(res))
-                    //         _this.noteList = res.data;
-                    //         _this.leftSwiperList = _this.noteList.map(function(v){return false});
-                    //         console.log(JSON.stringify(_this.leftSwiperList))
-                    //     }
-                    // })
+                delNoteFunc:function(id,i){
+                    var _this = this;
+                    wApiAjax({
+                        url:'sms/delSmsTemplateById',
+                        method:'get',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            empid:_this.userInfo.employeeid,
+                            smsid:id
+                        },
+                        success:function(res) {
+                            console.log(JSON.stringify(res))
+                            if(res.code == 0){
+                                _this.getData();
+                                _this.leftSwiperList.splice(i,1)
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
                 },
                 openDelBox: function(i) {
-                    Vue.set(this.leftSwiperList,i,!this.leftSwiperList[i]);
+                    var isSomeLeftSwiper = this.leftSwiperList.some(function(v){
+                        return v;
+                    })
+                    console.log(isSomeLeftSwiper)
+                    if(isSomeLeftSwiper){
+                        var arr = this.leftSwiperList.map(function(v,j,arr){
+                            if(i === j){
+                                return !arr[j];
+                            }
+                            return false;
+                        });
+                        this.leftSwiperList = arr;
+                    }else{
+                        Vue.set(this.leftSwiperList,i,!this.leftSwiperList[i]);
+                    }
                 }
             }
         })
@@ -214,6 +228,10 @@
                 }, time);
             }
         }
+    };
+    // 更新模板内容
+    function refreshNoteSet(){
+        noteV.getData();
     }
 </script>
 

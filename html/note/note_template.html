@@ -17,38 +17,31 @@
 </head>
 
 <body>
-    <div id="wrapper">
+    <div id="wrapper" v-cloak>
         <div class="uni-header">
             <div class="uni-fixed-header">
                 <div class="u-header-box">
-                    <div class="u-back"></div>
+                    <div class="u-back" onclick="wBackThisFunc()"></div>
                     <div class="u-center">选中模板</div>
-                    <div class="u-right">确认</div>
+                    <div class="u-right" @click="sureCheckedTemplate">确认</div>
                 </div>
             </div>
         </div>
         <div class="note-tem-contain">
             <div class="note-tem-list">
                 <ul>
-                    <li class="flex-wrap">
+                    <li class="flex-wrap" v-for="(note,index) in noteList" @click="checkNoteTemplate(index)" :class="{curr:index === checkedIndex}">
                         <div class="check-box">
                             <i class="check-icon"></i>
                         </div>
                         <div class="flex-con not-tem-info">
-                            <div class="caption">短信模版0000001</div>
-                            <div class="desc">尊敬的客户你好，金鼎地产于2018年12月1日在银龙湾开演唱会，凭此短信可获精美小礼品，数量有限。地址：成都市高新区成华大道666号奥克斯广场B座。</div>
-                        </div>
-                    </li>
-                    <li class="flex-wrap curr">
-                        <div class="check-box">
-                            <i class="check-icon"></i>
-                        </div>
-                        <div class="flex-con not-tem-info">
-                            <div class="caption">短信模版0000002</div>
-                            <div class="desc">尊敬的客户你好，金鼎地产于2018年12月1日在银龙湾开演唱会，凭此短信可获精美小礼品，数量有限。地址：成都市高新区成华大道666号奥克斯广场B座。</div>
+                            <div class="caption" v-text="note.temp_name"></div>
+                            <div class="desc" v-text="note.content"></div>
                         </div>
                     </li>
                 </ul>
+                <!-- 空页面 -->
+                <empty-con :is-show="noteList.length === 0" txt="暂无客户信息"></empty-con>
             </div>
         </div>
     </div>
@@ -61,16 +54,86 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    // apiready = function() {
-        // $api.fixStatusBar($('.stat-header')[0]);
-        // $api.fixStatusBar($('.stat-fixed-header')[0]);
+    apiready = function() {
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
         new Vue({
             el:'#wrapper',
             data:{
-
+                cusId:param.cusId,
+                cusPhone:param.cusPhone,
+                noteList:[],
+                checkedIndex:''
             },
+            mounted:function(){
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.getData();
+            },
+            methods:{
+                getData:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'sms/getSmsTemplate',
+                        method:'get',
+                        headers:{
+                            "token":TOKEN_DATA
+                        },
+                        data:{
+                            empid:_this.userInfo.employeeid,
+                            customerids:_this.cusId
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 0){
+                                _this.noteList = res.data;
+                            }
+                        }
+                    })
+                },
+                // 切换选择的模板
+                checkNoteTemplate:function(index){
+                    this.checkedIndex = index;
+                },
+                sureCheckedTemplate:function(){
+                    if(this.checkedIndex === ''){
+                        wDialog.toast({
+                            msg:'请选择一个模板'
+                        });
+                    }
+                    else{
+                        var _this = this;
+                        wApiAjax({
+                            url:'sms/sendSmsTemplate',
+                            headers:{
+                                "token":TOKEN_DATA
+                            },
+                            data:{
+                                empid:_this.userInfo.employeeid,
+                                cusid:_this.cusId,
+                                phone:_this.cusPhone,
+                                smsid:_this.noteList[_this.checkedIndex].smsid,
+                                templateid:_this.noteList[_this.checkedIndex].templateid,
+                                params:_this.noteList[_this.checkedIndex].params.join(',')
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                if(res.code == 0){
+                                    wDialog.toast({
+                                        msg:'发送成功'
+                                    })
+                                }
+                            }
+                        })
+                    }
+                }
+            }
         })
-    // }
+    }
 </script>
 
 </html>

@@ -139,7 +139,7 @@
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
                     <div class="flex-con phone-follow-btn follow-btn"><i></i>电话跟进</div>
-                    <div class="flex-con note-follow-btn follow-btn"><i></i>短信跟进</div>
+                    <div class="flex-con note-follow-btn follow-btn" @click="skipNoteList"><i></i>短信跟进</div>
                 </div>
             </div>
             <input type="hidden" id="scroll-val" value="0">
@@ -210,6 +210,7 @@
             el:'#wrapper',
             data:{
                 cusId:0,
+                cusPhone:'',
                 pageNo:1,
                 totalPage:1,
                 isShowDetailBox:true,
@@ -236,6 +237,7 @@
             },
             created:function(){
                 this.cusId = param.cusId;
+                this.cusPhone = param.cusPhone
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
@@ -495,6 +497,18 @@
                 },
                 closeCodeVerify:function(){
                     this.isShowVerify = false;
+                },
+                // 跳转到短信跟进列表
+                skipNoteList:function(){
+                    var _this = this;
+                    wHrefJs.openWin({
+                        name:'noteTemplate',
+                        path:'../note/note_template.html',
+                        param:{
+                            cusId:_this.cusId,
+                            cusPhone:_this.cusPhone
+                        }
+                    })
                 }
             }
         })

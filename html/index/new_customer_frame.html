@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
-        <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0"> -->
+            <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0"> -->
             <div class="filter-lis clear" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipDetail(khdata.id)">
                 <div class="fl left">
                     <div class="filter-t clear">
@@ -51,17 +51,17 @@
                     </div>
                     <div class="filter-b">分配时间: <span v-text="khdata.createtime"></span></div>
                 </div>
-                <div class="fr right" @click.stop="callPhone($event,khdata.id,khdata.phone)">
+                <div class="fr right" @click.stop="openFollowChoosePopup($event)">
                     <div class="filter-call">去跟进</div>
                 </div>
-                <div class="filter-lis-pop flex-wrap">
-                    <div class="flex-con filter-lis-p">
+                <div class="filter-lis-pop flex-wrap hide new-follow-record-pop" @click.stop="hideFollowChoosePopup($event)">
+                    <div class="flex-con filter-lis-p" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
                         <div class="small-state phone-state">
                             <div class="small-img"></div>
                             <p>电话</p>
                         </div>
                     </div>
-                    <div class="flex-con filter-lis-p">
+                    <div class="flex-con filter-lis-p" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
                         <div class="small-state note-state">
                             <div class="small-img"></div>
                             <p>短信</p>
@@ -114,7 +114,7 @@
                 </div>
             </div>
         </div> -->
-        <follow-record :is-show-follow="true"></follow-record>
+        <!-- <follow-record :is-show-follow="true"></follow-record> -->
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -126,254 +126,276 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var nCustomerFrame = null;
-    // apiready = function() {
-    //         // 下拉刷新
-    //         api.setCustomRefreshHeaderInfo({
-    //             bgColor: '#f7f7f7',
-    //             isScale: false,
-    //             loadAnimInterval: 120,
-    //             image: {
-    //                 pull: [
-    //                     'widget://image/load-xl-s1.png',
-    //                     'widget://image/load-xl-s2.png',
-    //                 ],
-    //                 load: [
-    //                     'widget://image/load-xl-1.png',
-    //                     'widget://image/load-xl-2.png',
-    //                     'widget://image/load-xl-3.png',
-    //                     'widget://image/load-xl-4.png',
-    //                     'widget://image/load-xl-5.png',
-    //                     'widget://image/load-xl-6.png',
-    //                     'widget://image/load-xl-7.png',
-    //                     'widget://image/load-xl-8.png',
-    //                     'widget://image/load-xl-9.png',
-    //                     'widget://image/load-xl-10.png',
-    //                     'widget://image/load-xl-11.png',
-    //                     'widget://image/load-xl-12.png'
-    //                 ]
-    //             }
-    //         }, function() {
-    //             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
-    //             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
-    //             $('#not-more').hide();
-    //             nCustomerFrame.pageNo = 1;
-    //             nCustomerFrame.fetchNewAdd(false, api.refreshHeaderLoadDone);
-    //         });
-    //         // 上拉加载更多
-    //         api.addEventListener({
-    //             name: 'scrolltobottom'
-    //         }, function(ret, err) {
-    //             if (++nCustomerFrame.pageNo <= nCustomerFrame.totalPage) {
-    //                 nCustomerFrame.fetchNewAdd(true);
-    //             } else {
-    //                 $('#not-more').show();
-    //             }
-    //         });
-    //
-    //         var param = api.pageParam;
-            nCustomerFrame = new Vue({
-                el: '#wrap',
-                data: {
-                    currOriginIndex: '', //当前选中的客户来源
-                    khOriginList: [], //客户来源列表
-                    search_cusName: '', // 搜索客户名
-                    search_source: '', // 客户类型
-                    search_status: 0, // 联系状态
-                    order_time: 0, // 分配时间
-                    pageNo: 1,
-                    totalPage: 1,
-                    khDataList: [], // 客户数据列表
-                    userInfo: ''
-                },
-                created: function() {
-                    this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    });
-                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                },
-                mounted: function() {
-                    // this.fetchKhOrigin();
-                },
-                methods: {
-                    // 获取新增客户来源
-                    fetchKhOrigin: function() {
-                        var _this = this;
-                        wApiAjax({
-                            url: 'customer/sourceAndType',
-                            headers: {
-                                "token": TOKEN_DATA
-                            },
-                            success: function(res) {
-                                if (res.code == 1) {
-                                    _this.khOriginList = res.data.customerSourceslist;
-                                    res.data.customerSourceslist.forEach(function(v, i) {
-                                        if (v.name === param.origin) {
-                                            _this.currOriginIndex = i;
-                                            _this.search_source = v.value;
-                                        }
-                                    })
-                                    _this.fetchNewAdd();
-                                } else {
-                                    wDialog.toast({
-                                        msg: res.msg
-                                    })
-                                }
-                            }
-                        })
-                    },
-                    // 获取今日新增列表
-                    fetchNewAdd: function(isLoadMore, callback) {
-                        isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
-                        var _this = this;
-                        wDialog.showProgress();
-                        wApiAjax({
-                            url: 'workbench/datalist',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            data: {
-                                employeeid: _this.userInfo.employeeid,
-                                search_cusName: _this.search_cusName,
-                                search_source: _this.search_source,
-                                search_status: _this.search_status,
-                                order_time: _this.order_time,
-                                pageNo: _this.pageNo,
-                                pageSize: 10
-                            },
-                            success: function(res) {
-                                console.log(JSON.stringify(res))
-                                wDialog.hideProgress();
-                                if (res.code == 1) {
-                                    if (!isLoadMore) {
-                                        _this.khDataList = res.data ? res.data : [];
-                                        _this.totalPage = Math.ceil(res.count / res.pageSize);
-                                        console.log(_this.totalPage)
-                                    } else {
-                                        if (res.data) {
-                                            _this.khDataList = _this.khDataList.concat(res.data);
-                                        }
+    apiready = function() {
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: false,
+            loadAnimInterval: 120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            $('#not-more').hide();
+            nCustomerFrame.pageNo = 1;
+            nCustomerFrame.fetchNewAdd(false, api.refreshHeaderLoadDone);
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (++nCustomerFrame.pageNo <= nCustomerFrame.totalPage) {
+                nCustomerFrame.fetchNewAdd(true);
+            } else {
+                $('#not-more').show();
+            }
+        });
+
+        var param = api.pageParam;
+        nCustomerFrame = new Vue({
+            el: '#wrap',
+            data: {
+                currOriginIndex: '', //当前选中的客户来源
+                khOriginList: [], //客户来源列表
+                search_cusName: '', // 搜索客户名
+                search_source: '', // 客户类型
+                search_status: 0, // 联系状态
+                order_time: 0, // 分配时间
+                pageNo: 1,
+                totalPage: 1,
+                khDataList: [], // 客户数据列表
+                userInfo: ''
+            },
+            created: function() {
+                this.userInfo = wPref.getPrefs({
+                    key: 'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+            },
+            mounted: function() {
+                // this.fetchKhOrigin();
+            },
+            methods: {
+                // 获取新增客户来源
+                fetchKhOrigin: function() {
+                    var _this = this;
+                    wApiAjax({
+                        url: 'customer/sourceAndType',
+                        headers: {
+                            "token": TOKEN_DATA
+                        },
+                        success: function(res) {
+                            if (res.code == 1) {
+                                _this.khOriginList = res.data.customerSourceslist;
+                                res.data.customerSourceslist.forEach(function(v, i) {
+                                    if (v.name === param.origin) {
+                                        _this.currOriginIndex = i;
+                                        _this.search_source = v.value;
                                     }
-
-                                } else {
-                                    wDialog.toast({
-                                        msg: res.msg
-                                    })
-                                }
-                                callback && typeof callback === 'function' && callback();
-                            },
-                            fail: function() {
-                                callback && typeof callback === 'function' && callback();
+                                })
+                                _this.fetchNewAdd();
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
                             }
-                        })
-                    },
-                    // 切换客户来源
-                    switchTabFn: function(e, name, id) {
-                        var tag = e.currentTarget;
-                        hideFilterPopup();
-                        api.setFrameAttr({
-                            bounces: true,
-                        });
-                        if ($(tag).hasClass('curr')) {
-                            return;
-                        } else {
-                            $(tag).addClass('curr').siblings().removeClass('curr');
                         }
-                        // 获取客户名字
-                        api.execScript({
-                            name: 'newCustomerHeader',
-                            script: 'getKhOriginName(\'' + name + '\')'
-                        });
-                        $('#not-more').hide();
-                        this.search_source = id;
-                        this.pageNo = 1;
-                        this.fetchNewAdd();
-
-                    },
-                    skipDetail: function(id) {
-                        wHrefJs.openWin({
-                            name: 'customerDetail',
-                            path: '../customer/customer_detail.html',
-                            param: {
-                                cusId: id
-                            }
-                        })
-                    },
-                    // 拨打电话
-                    callPhone: function(e, cusId, phone) {
-                        var _this = this;
-                        var tag = e.currentTarget;
-                        $(tag).addClass('w-event-none');
-                        wApiAjax({
-                            url: 'ema/makeCall',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            data: {
-                                account: _this.userInfo.account,
-                                customerNumber: phone,
-                                cusid: cusId,
-                                empid: _this.userInfo.employeeid,
-                                is_work: 2
-                            },
-                            success: function(res) {
-                                console.log('拨打电话--' + JSON.stringify(res))
-                                if (res.code == 200) {
-                                    wDialog.toast({
-                                        msg: '拨打电话中，请注意接听'
-                                    });
+                    })
+                },
+                // 获取今日新增列表
+                fetchNewAdd: function(isLoadMore, callback) {
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url: 'workbench/datalist',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            search_cusName: _this.search_cusName,
+                            search_source: _this.search_source,
+                            search_status: _this.search_status,
+                            order_time: _this.order_time,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
+                                    _this.khDataList = res.data ? res.data : [];
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                    console.log(_this.totalPage)
                                 } else {
-                                    wDialog.toast({
-                                        msg: res.msg
-                                    });
+                                    if (res.data) {
+                                        _this.khDataList = _this.khDataList.concat(res.data);
+                                    }
                                 }
-                                setTimeout(function() {
-                                    $(tag).removeClass('w-event-none');
-                                }, 2000);
-                            },
-                            fail: function() {
-                                setTimeout(function() {
-                                    $(tag).removeClass('w-event-none');
-                                }, 2000);
+
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
                             }
-                        })
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail: function() {
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                },
+                // 切换客户来源
+                switchTabFn: function(e, name, id) {
+                    var tag = e.currentTarget;
+                    hideFilterPopup();
+                    api.setFrameAttr({
+                        bounces: true,
+                    });
+                    if ($(tag).hasClass('curr')) {
+                        return;
+                    } else {
+                        $(tag).addClass('curr').siblings().removeClass('curr');
                     }
+                    // 获取客户名字
+                    api.execScript({
+                        name: 'newCustomerHeader',
+                        script: 'getKhOriginName(\'' + name + '\')'
+                    });
+                    $('#not-more').hide();
+                    this.search_source = id;
+                    this.pageNo = 1;
+                    this.fetchNewAdd();
+
+                },
+                skipDetail: function(id) {
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html',
+                        param: {
+                            cusId: id
+                        }
+                    })
+                },
+                // 打开跟进弹窗
+                openFollowChoosePopup:function(e){
+                    var tag = e.currentTarget;
+                    $('.new-follow-record-pop').addClass('hide');
+                    $(tag).siblings('.new-follow-record-pop').removeClass('hide');
+                },
+                // 关闭跟进弹窗
+                hideFollowChoosePopup:function(e){
+                    var tag = e.currentTarget;
+                    $(tag).addClass('hide');
+                },
+                // 跳转到短信模板页面
+                skipNoteTempate:function(e,id,phone){
+                    wHrefJs.openWin({
+                        name:"noteTemplate",
+                        path:"../note/note_template.html",
+                        param:{
+                            cusId:id,
+                            cusPhone:phone
+                        }
+                    })
+                },
+                // 拨打电话
+                callPhone: function(e, cusId, phone) {
+                    var _this = this;
+                    var tag = e.currentTarget;
+                    $(tag).addClass('w-event-none');
+                    wApiAjax({
+                        url: 'ema/makeCall',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            account: _this.userInfo.account,
+                            customerNumber: phone,
+                            cusid: cusId,
+                            empid: _this.userInfo.employeeid,
+                            is_work: 2
+                        },
+                        success: function(res) {
+                            console.log('拨打电话--' + JSON.stringify(res))
+                            if (res.code == 200) {
+                                wDialog.toast({
+                                    msg: '拨打电话中，请注意接听'
+                                });
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                });
+                            }
+                            setTimeout(function() {
+                                $(tag).removeClass('w-event-none');
+                            }, 2000);
+                        },
+                        fail: function() {
+                            setTimeout(function() {
+                                $(tag).removeClass('w-event-none');
+                            }, 2000);
+                        }
+                    })
                 }
-            });
-        // }
-    // // 显示客户来源的弹窗
-    // function showFilterPopup() {
-    //     $('#filter-popup').show();
-    // }
-    // // 隐藏客户来源的弹窗
-    // function hideFilterPopup() {
-    //     $('#filter-popup').hide();
-    // }
-    // // 隐藏弹窗框
-    // function hideFilterPopupBox() {
-    //     hideFilterPopup();
-    //     api.setFrameAttr({
-    //         bounces: true
-    //     });
-    // }
-    // // 联系状态和分配时间 条件筛选
-    // function filterCondition(data) {
-    //     var d = JSON.parse(data);
-    //     $('#not-more').hide();
-    //     nCustomerFrame.search_status = d.status1;
-    //     nCustomerFrame.order_time = d.status2;
-    //     nCustomerFrame.pageNo = 1;
-    //     nCustomerFrame.fetchNewAdd();
-    // }
-    // // 获取搜索的内容
-    // function getSearchValue(val) {
-    //     nCustomerFrame.search_cusName = val;
-    //     nCustomerFrame.pageNo = 1;
-    //     nCustomerFrame.fetchNewAdd();
-    // }
-    // // 清空搜索的内容
-    // function clearSearchValue() {
-    //     nCustomerFrame.search_cusName = '';
-    // }
+            }
+        });
+    }
+    // 显示客户来源的弹窗
+    function showFilterPopup() {
+        $('#filter-popup').show();
+    }
+    // 隐藏客户来源的弹窗
+    function hideFilterPopup() {
+        $('#filter-popup').hide();
+    }
+    // 隐藏弹窗框
+    function hideFilterPopupBox() {
+        hideFilterPopup();
+        api.setFrameAttr({
+            bounces: true
+        });
+    }
+    // 联系状态和分配时间 条件筛选
+    function filterCondition(data) {
+        var d = JSON.parse(data);
+        $('#not-more').hide();
+        nCustomerFrame.search_status = d.status1;
+        nCustomerFrame.order_time = d.status2;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchNewAdd();
+    }
+    // 获取搜索的内容
+    function getSearchValue(val) {
+        nCustomerFrame.search_cusName = val;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchNewAdd();
+    }
+    // 清空搜索的内容
+    function clearSearchValue() {
+        nCustomerFrame.search_cusName = '';
+    }
 </script>
 
 </html>
