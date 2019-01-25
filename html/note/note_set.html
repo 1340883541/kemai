@@ -185,13 +185,14 @@
                         success:function(res) {
                             console.log(JSON.stringify(res))
                             if(res.code == 0){
-                                _this.getData();
                                 _this.leftSwiperList.splice(i,1)
+                                _this.getData();
                             }
                             else{
                                 wDialog.toast({
-                                    msg:res.message
+                                    msg:res.msg
                                 })
+                                Vue.set(_this.leftSwiperList,i,!_this.leftSwiperList[i]);
                             }
                         }
                     })

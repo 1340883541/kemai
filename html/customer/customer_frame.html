@@ -70,14 +70,14 @@
                     <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow"></span></div>
                 </div>
                 <div class="filter-lis-pop filter-lis-pop1 flex-wrap follow-record-pop hide" @click.stop="hideFollowChoosePopup($event)">
-                    <div class="flex-con filter-lis-p" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
-                        <div class="small-state phone-state">
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state phone-state" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
                             <div class="small-img"></div>
                             <p>电话</p>
                         </div>
                     </div>
-                    <div class="flex-con filter-lis-p" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
-                        <div class="small-state note-state">
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state note-state" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
                             <div class="small-img"></div>
                             <p>短信</p>
                         </div>
@@ -146,6 +146,8 @@
                 $('#not-more').show();
             }
         });
+
+        
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',

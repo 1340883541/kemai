@@ -55,14 +55,14 @@
                     <div class="filter-call">去跟进</div>
                 </div>
                 <div class="filter-lis-pop flex-wrap hide new-follow-record-pop" @click.stop="hideFollowChoosePopup($event)">
-                    <div class="flex-con filter-lis-p" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
-                        <div class="small-state phone-state">
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state phone-state" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
                             <div class="small-img"></div>
                             <p>电话</p>
                         </div>
                     </div>
-                    <div class="flex-con filter-lis-p" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
-                        <div class="small-state note-state">
+                    <div class="flex-con filter-lis-p">
+                        <div class="small-state note-state" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
                             <div class="small-img"></div>
                             <p>短信</p>
                         </div>
@@ -169,7 +169,6 @@
                 $('#not-more').show();
             }
         });
-
         var param = api.pageParam;
         nCustomerFrame = new Vue({
             el: '#wrap',
@@ -192,7 +191,7 @@
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
             },
             mounted: function() {
-                // this.fetchKhOrigin();
+                this.fetchKhOrigin();
             },
             methods: {
                 // 获取新增客户来源
