@@ -138,7 +138,7 @@
             </div>
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
-                    <div class="flex-con phone-follow-btn follow-btn"><i></i>电话跟进</div>
+                    <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(event)"><i></i>电话跟进</div>
                     <div class="flex-con note-follow-btn follow-btn" @click="skipNoteList"><i></i>短信跟进</div>
                 </div>
             </div>
@@ -507,6 +507,46 @@
                         param:{
                             cusId:_this.cusId,
                             cusPhone:_this.cusPhone
+                        }
+                    })
+                },
+                // 拨打电话
+                callPhone: function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var _this = this;
+                    var tag = e.currentTarget;
+                    wApiAjax({
+                        url:'ema/makeCall',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            account:_this.userInfo.account,
+                            customerNumber:_this.cusPhone,
+                            cusid:_this.cusId,
+                            empid:_this.userInfo.employeeid,
+                            is_work:1
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 200){
+                                wDialog.toast({
+                                    msg: '拨打电话中，请注意接听'
+                                });
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                            }
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
+                        },
+                        fail:function(){
+                            setTimeout(function(){
+                                $(tag).removeClass('w-event-none');
+                            },2000);
                         }
                     })
                 }
