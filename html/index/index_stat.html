@@ -56,8 +56,8 @@
         <div class="stat-nav-bg" @click="closeFilterNav"  ontouchmove="event.preventDefault();"></div>
         <div class="stat-contain">
             <ul>
-                <li class="clear" v-for="info in infoList" @click="skipDetail(info.id)">
-                    <div class="fl name" v-text="info.name">胡通</div>
+                <li class="clear" v-for="info in infoList" @click="skipDetail(info.id,info.phone)">
+                    <div class="fl name" v-text="info.name"></div>
                     <div class="fr time">{{info.time | dateFilter}}</div>
                 </li>
                 <!-- 无更多数据 -->
@@ -131,7 +131,8 @@
                 }
             },
             methods: {
-                getData:function(isLoadMore = false){
+                getData:function(isLoadMore){
+                    isLoadMore = isLoadMore || false;
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
@@ -223,12 +224,13 @@
                     }
                     this.closeFilterNav();
                 },
-                skipDetail:function(id){
+                skipDetail:function(id,phone){
                     wHrefJs.openWin({
                         name:'customerDetail',
                         path:'../customer/customer_detail.html',
                         param:{
-                            cusId:id
+                            cusId:id,
+                            cusPhone:phone
                         }
                     })
                 }

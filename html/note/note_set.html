@@ -75,7 +75,8 @@
                 this.getData();
             },
             methods: {
-                getData:function(isLoadMore = false){
+                getData:function(isLoadMore){
+                    isLoadMore = isLoadMore || false;
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
