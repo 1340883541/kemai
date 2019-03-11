@@ -218,7 +218,8 @@
     z-index: 999;
     height: 1.48rem;
     width: 100%;
-    background-color: #fff;
+    /*background-color: transparent;*/
+    background-image: linear-gradient(180deg, rgba(0,0,0, 0) 0%,  rgba(0,0,0,.15) 100%);
     padding:.3rem 1.32rem;
     text-align: center;
 }
@@ -351,7 +352,7 @@
     margin-top: -.1rem;
     border-top: .1rem solid transparent;
     border-bottom: .1rem solid transparent;
-    border-right: .12rem solid #54caf8;
+    border-right: .12rem solid rgb(30,125,249);
 }
 .cd-contain .cd-flow .cd-flow-audio.disabled:before {
     border-right: .12rem solid #ccc;
@@ -364,13 +365,7 @@
     padding: 0 .2rem;
     font-size: .28rem;
     color: #fff;
-    background: -webkit-linear-gradient(left, #54caf8, #0f67fa);
-    /* Safari 5.1 - 6.0 */
-    background: -o-linear-gradient(left, #54caf8, #0f67fa);
-    /* Opera 11.1 - 12.0 */
-    background: -moz-linear-gradient(left, #54caf8, #0f67fa);
-    /* Firefox 3.6 - 15 */
-    background: linear-gradient(left, #54caf8, #0f67fa);
+    background-color:rgb(30,125,249);
     /* 标准的语法 */
     -webkit-border-radius:3px;
     -moz-border-radius:3px;
@@ -378,11 +373,26 @@
     -o-border-radius:3px;
     border-radius:3px;
 }
+.cd-contain .cd-flow .cd-flow-audio.disabled{
+    pointer-events: none;
+}
 .cd-contain .cd-flow .cd-flow-audio.disabled .audio-txt{
     background: #ccc url('../../image/icon-yuying.png') no-repeat .18rem center;
     background-size: .36rem;
 }
+.cd-contain .cd-flow .cd-flow-audio.disabled .audio-txt > i{
+    display: none;
+}
+.cd-contain .cd-flow .cd-flow-audio .audio-txt > i{
+    width: .36rem;
+    height: 100%;
+    background: url('../../image/icon-yuying.png') no-repeat center;
+    background-size: .36rem;
+}
 
+.cd-contain .cd-flow .cd-flow-audio .audio-txt.playing > i{
+    background-image: url('../../image/icon-yuyin.gif');
+}
 .cd-contain .cd-flow .cd-flow-audio .audio-txt>span {
     padding-top: .04rem;
     opacity: .9;

@@ -1,7 +1,7 @@
 var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:9000/',
     // baseUrl:'https://192.168.0.157:8081/',
-    // baseUrl:'https://192.168.0.222:9000/',
+    // baseUrl:'https://192.168.0.222:8765/',
     baseUrl:'https://calltest.jindinghaiju.com:9000/',
     fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }

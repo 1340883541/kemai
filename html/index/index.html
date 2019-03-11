@@ -61,7 +61,7 @@
         </div>
         <div class="msg-box" v-cloak>
             <div class="msg-binner clear">
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(0)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-1">
                             <div class="read-msg" v-if="change_principal">
@@ -71,7 +71,7 @@
                     </div>
                     <div class="msg-txt">负责人变更</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(1)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-2">
                             <div class="read-msg" v-if="follow">
@@ -81,7 +81,7 @@
                     </div>
                     <div class="msg-txt">跟进提醒</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(2)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-3">
                             <div class="read-msg" v-if="recovery">
@@ -91,7 +91,7 @@
                     </div>
                     <div class="msg-txt">回收提醒</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(3)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-4">
                             <div class="read-msg" v-if="resource">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="msg-txt">资源回收</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(4)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-5">
                             <div class="read-msg" v-if="subscription">
@@ -111,7 +111,7 @@
                     </div>
                     <div class="msg-txt">认购提醒</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(5)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-6">
                             <div class="read-msg" v-if="sign">
@@ -121,7 +121,7 @@
                     </div>
                     <div class="msg-txt">签约提醒</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(6)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-7">
                             <div class="read-msg" v-if="pay">
@@ -131,7 +131,7 @@
                     </div>
                     <div class="msg-txt">缴费提醒</div>
                 </div>
-                <div class="fl msg-lis">
+                <div class="fl msg-lis" @click="skipMessage(7)">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-8">
                             <div class="read-msg" v-if="subscriptionBook">
@@ -242,6 +242,11 @@
                 }
             },
             methods: {
+                skipMessage:function(i){
+                    wDialog.toast({
+                        msg:'暂不支持查看\n敬请期待'
+                    })
+                },
                 // 判断网络状态
                 netWorkStatus:function(){
                     listenOnline.offline(function(){

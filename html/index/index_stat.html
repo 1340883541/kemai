@@ -89,7 +89,9 @@
             if(statV.page++ < statV.totalPage){
                 statV.getData(true);
             }else{
-                $('#not-more').show();
+                if(statV.totalPage > 1){
+                    $('#not-more').show();
+                }
             }
         });
 

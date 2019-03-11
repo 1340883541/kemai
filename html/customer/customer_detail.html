@@ -95,10 +95,12 @@
                             <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
                             <div class="cd-flow-t" v-if="flow.result" v-text="flow.result"></div>
                             <!-- <div class="cd-flow-all">全文</div> -->
-                            <!-- <div class="cd-flow-audio disabled">
-                                <div class="audio"></div>
+                            <div class="cd-flow-audio" v-if="flow.callStatus" :class="{'disabled':flow.callStatus&&!flow.callStatusUrl}" @click="handlePlayAudio($event)">
+                                <div class="audio audio-box" v-if="flow.callStatus && flow.callStatusUrl">
+                                    <audio :src="baseUrl+flow.callStatusUrl"></audio>
+                                </div>
                                 <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                            </div> -->
+                            </div>
                             <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
                             <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
                                 <i class="top-icon"></i>
@@ -174,6 +176,8 @@
                </div>
            </div>
         </div>
+        <!-- 跟进记录弹窗 -->
+        <follow-record :is-show-follow.sync="isShowFollow" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" @refresh-view="refreshView"></follow-record>
 
     </div>
 </body>
@@ -233,7 +237,15 @@
                 userInfo:{},
 
                 isShowCodeDown:false,
-                getCodeText:'立即发送'
+                getCodeText:'立即发送',
+                // 是否显示跟进弹窗
+                isShowFollow:false,
+                followCurrPhone:'',
+                followCurrId:'',
+                baseUrl:__CONFIG__.baseUrl,
+                // 当前播放的dom
+                currHandlePlayTag:null,
+                isHandlePlay:false
             },
             created:function(){
                 this.cusId = param.cusId;
@@ -424,7 +436,10 @@
                 // 输入
                 handleInput(e) {
                     this.$refs.input.value = this.value;
-                    // console.log(this.value)
+                    console.log(this.value)
+                    var tag = e.currentTarget;
+                    $(tag)[0].selectionStart = this.value.length;
+                    $(tag)[0].selectionEnd = this.value.length;
                     if (this.value.length >= this.number) {
                         // this.hideKeyboard();
                         this.isActive = true;
@@ -512,43 +527,70 @@
                 },
                 // 拨打电话
                 callPhone: function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var _this = this;
+                    this.isShowFollow = true;
+                    this.followCurrId = this.cusId;
+                    this.followCurrPhone = this.cusPhone;
+                },
+                refreshView:function(){
+                    this.pageNo = 1;
+                    this.fetchData();
+                },
+                // 播放
+                handlePlayAudio:function(e){
                     var tag = e.currentTarget;
-                    wApiAjax({
-                        url:'ema/makeCall',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        data:{
-                            account:_this.userInfo.account,
-                            customerNumber:_this.cusPhone,
-                            cusid:_this.cusId,
-                            empid:_this.userInfo.employeeid,
-                            is_work:1
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            if(res.code == 200){
-                                wDialog.toast({
-                                    msg: '拨打电话中，请注意接听'
-                                });
+                    var _this = this;
+                    // console.log('----------------------')
+                    if(!$(tag).hasClass('disabled')){
+                        var audioEle = $(tag).find('.audio-box audio')[0];
+                        var audioTxtEle = $(tag).find('.audio-txt')[0];
+                        if(audioEle){
+                            if(_this.currHandlePlayTag === audioEle){
+                                // console.log('innnnnnnnnn2222')
+                                if(_this.isHandlePlay = !_this.isHandlePlay){;
+                                    $(audioTxtEle).removeClass('playing');
+                                    audioEle.removeEventListener('ended',function(){})
+                                    audioEle.pause()
+                                }else{
+                                    $(audioTxtEle).addClass('playing');
+                                    audioEle.play();
+                                    audioEle.addEventListener('ended',function(){
+                                        console.log('innnn-----------end1')
+                                        $(audioTxtEle).removeClass('playing');
+                                    })
+                                }
                             }else{
-                                wDialog.toast({
-                                    msg:res.msg
+                                $('.audio-box audio').each(function(i,d){
+                                    if(audioEle === d){
+                                            $(audioTxtEle).addClass('playing');
+                                            _this.isHandlePlay = false;
+                                            audioEle.load();
+                                            audioEle.play();
+                                            // if(_this.currHandlePlayTag){
+                                            //     _this.currHandlePlayTag.removeEventListener('ended',function(){})
+                                            // }
+                                            audioEle.addEventListener('ended',function(){
+                                                console.log('innnn-----------end2')
+                                                $(audioTxtEle).removeClass('playing');
+                                            })
+                                            _this.currHandlePlayTag = audioEle;
+                                    }else{
+                                        $(d).parent().siblings('.audio-txt').removeClass('playing');
+                                        d.removeEventListener('ended',function(){})
+                                        d.pause();
+                                    }
                                 });
                             }
-                            setTimeout(function(){
-                                $(tag).removeClass('w-event-none');
-                            },2000);
-                        },
-                        fail:function(){
-                            setTimeout(function(){
-                                $(tag).removeClass('w-event-none');
-                            },2000);
+                            // audioEle.addEventListener('ended',function(){
+                            //     console.log('innnn-----------end')
+                            //     $(audioTxtEle).removeClass('playing');
+                            // })
                         }
-                    })
+                        else{
+                            wDialog.toast({
+                                msg:'暂没有播放文件'
+                            })
+                        }
+                    }
                 }
             }
         })

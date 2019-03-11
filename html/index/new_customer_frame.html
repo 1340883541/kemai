@@ -75,46 +75,7 @@
         <!-- 空页面 -->
         <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的客户"></empty-con>
         <!-- 跟进记录弹窗 -->
-        <!-- <div class="w-follow-popup">
-            <div class="w-follow-popup-box">
-                <div class="w-follow-t">跟进记录</div>
-                <div class="w-follow-box">
-                    <div class="w-follow-inp flex-wrap bor-1px-b">
-                        <div class="w-follow-inp-cap">客户名称：</div>
-                        <input type="text" class="flex-con" value="哈哈哈" placeholder="请输入客户姓名">
-                    </div>
-                    <div class="w-follow-inp flex-wrap bor-1px-b">
-                        <div class="w-follow-inp-cap">客户状态：</div>
-                        <input type="text" class="flex-con" readonly placeholder="请选择客户状态">
-                        <div class="client-state-icon"></div>
-                        <div class="w-follow-inp-lis">
-                            <ul>
-                                <li class="bor-1px-b">意向客户，打算买房</li>
-                                <li class="bor-1px-b">未确定，未付定金</li>
-                                <li class="bor-1px-b">意向客户，打算买房</li>
-                                <li class="bor-1px-b">未确定，未付定金</li>
-                                <li class="bor-1px-b">意向客户，打算买房</li>
-                                <li class="bor-1px-b">未确定，未付定金</li>
-                                <li class="bor-1px-b">意向客户，打算买房</li>
-                                <li class="bor-1px-b">未确定，未付定金</li>
-                                <li>已交押金，等待沟通</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="w-follow-inp flex-wrap bor-1px-b">
-                        <div class="w-follow-inp-cap">下次跟进时间：</div>
-                        <input type="text" value="yy-mm-dd" class="flex-con" readonly>
-                        <div class="client-state-icon"></div>
-                    </div>
-                    <div class="w-follow-textarea flex-wrap">
-                        <div class="w-follow-inp-cap">跟进备注：</div>
-                        <textarea class="flex-con" placeholder="请输入跟进备注"></textarea>
-                    </div>
-                    <div class="w-follow-btn">通话完成</div>
-                </div>
-            </div>
-        </div> -->
-        <!-- <follow-record :is-show-follow="true"></follow-record> -->
+        <follow-record :is-show-follow.sync="isShowFollow" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" origin-view="originView" :is-work="isWork" @refresh-view="refreshView"></follow-record>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -182,7 +143,12 @@
                 pageNo: 1,
                 totalPage: 1,
                 khDataList: [], // 客户数据列表
-                userInfo: ''
+                userInfo: '',
+                // 是否显示跟进弹窗
+                isShowFollow:false,
+                followCurrPhone:'',
+                followCurrId:'',
+                isWork:2
             },
             created: function() {
                 this.userInfo = wPref.getPrefs({
@@ -321,42 +287,50 @@
                 },
                 // 拨打电话
                 callPhone: function(e, cusId, phone) {
-                    var _this = this;
-                    var tag = e.currentTarget;
-                    $(tag).addClass('w-event-none');
-                    wApiAjax({
-                        url: 'ema/makeCall',
-                        headers: {
-                            token: TOKEN_DATA
-                        },
-                        data: {
-                            account: _this.userInfo.account,
-                            customerNumber: phone,
-                            cusid: cusId,
-                            empid: _this.userInfo.employeeid,
-                            is_work: 2
-                        },
-                        success: function(res) {
-                            console.log('拨打电话--' + JSON.stringify(res))
-                            if (res.code == 200) {
-                                wDialog.toast({
-                                    msg: '拨打电话中，请注意接听'
-                                });
-                            } else {
-                                wDialog.toast({
-                                    msg: res.msg
-                                });
-                            }
-                            setTimeout(function() {
-                                $(tag).removeClass('w-event-none');
-                            }, 2000);
-                        },
-                        fail: function() {
-                            setTimeout(function() {
-                                $(tag).removeClass('w-event-none');
-                            }, 2000);
-                        }
-                    })
+                    this.isShowFollow = true;
+                    this.followCurrId = cusId;
+                    this.followCurrPhone = phone;
+                    // var _this = this;
+                    // var tag = e.currentTarget;
+                    // $(tag).addClass('w-event-none');
+                    // wApiAjax({
+                    //     url: 'ema/makeCall',
+                    //     headers: {
+                    //         token: TOKEN_DATA
+                    //     },
+                    //     data: {
+                    //         account: _this.userInfo.account,
+                    //         customerNumber: phone,
+                    //         cusid: cusId,
+                    //         empid: _this.userInfo.employeeid,
+                    //         is_work: 2
+                    //     },
+                    //     success: function(res) {
+                    //         console.log('拨打电话--' + JSON.stringify(res))
+                    //         if (res.code == 200) {
+                    //             wDialog.toast({
+                    //                 msg: '拨打电话中，请注意接听'
+                    //             });
+                    //         } else {
+                    //             wDialog.toast({
+                    //                 msg: res.msg
+                    //             });
+                    //         }
+                    //         setTimeout(function() {
+                    //             $(tag).removeClass('w-event-none');
+                    //         }, 2000);
+                    //     },
+                    //     fail: function() {
+                    //         setTimeout(function() {
+                    //             $(tag).removeClass('w-event-none');
+                    //         }, 2000);
+                    //     }
+                    // })
+                },
+                // 页面刷新
+                refreshView:function(){
+                    this.pageNo = 1;
+                    this.fetchKhOrigin();
                 }
             }
         });

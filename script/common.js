@@ -49,7 +49,8 @@ Vue.component('empty-con', {
 });
 // 跟进记录组件
 Vue.component('follow-record',{
-    template:`<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc">
+    template:`<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc" @touchmove.prevent>
+        <div class="w-follow-bg"></div>
         <div class="w-follow-popup-box">
             <div class="w-follow-t">跟进记录</div>
             <div class="w-follow-box">
@@ -57,34 +58,33 @@ Vue.component('follow-record',{
                     <div class="w-follow-inp-cap">客户名称：</div>
                     <input type="text" class="flex-con" v-model="clientName" placeholder="请输入客户姓名">
                 </div>
-                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop="chooseFollowStateFunc">
+                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prevent="chooseFollowStateFunc">
                     <div class="w-follow-inp-cap">客户状态：</div>
                     <input type="text" class="flex-con" readonly placeholder="请选择客户状态" v-model="clientState">
                     <div class="client-state-icon"></div>
                     <div class="w-follow-inp-lis" v-show="isShowFollowState">
                         <ul>
-                            <li class="bor-1px-b" @click.stop="sureClientState">意向客户，打算买房</li>
-                            <li class="bor-1px-b">未确定，未付定金</li>
-                            <li class="bor-1px-b">意向客户，打算买房</li>
-                            <li class="bor-1px-b">未确定，未付定金</li>
-                            <li class="bor-1px-b">意向客户，打算买房</li>
-                            <li class="bor-1px-b">未确定，未付定金</li>
-                            <li class="bor-1px-b">意向客户，打算买房</li>
-                            <li class="bor-1px-b">未确定，未付定金</li>
-                            <li>已交押金，等待沟通</li>
+                            <li class="bor-1px-b"
+                                v-for="state in clientStateList"
+                                :key="state.value"
+                                @click.stop="sureClientState(state.name,state.value)"
+                                v-text="state.name"
+                                ></li>
                         </ul>
                     </div>
                 </div>
-                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop="chooseFollowDateFunc">
-                    <div class="w-follow-inp-cap">下次跟进时间：</div>
+                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prenvent="chooseFollowDateFunc">
+                    <div class="w-follow-inp-cap">跟进时间：</div>
                     <input type="text" placeholder="请选择下次跟进时间" class="flex-con"  readonly v-model="followDate">
                     <div class="client-state-icon"></div>
                 </div>
                 <div class="w-follow-textarea flex-wrap">
-                    <div class="w-follow-inp-cap">跟进备注：</div>
-                    <textarea class="flex-con" placeholder="请输入跟进备注" v-model="followRemark"></textarea>
+                    <textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>
                 </div>
-                <div class="w-follow-btn" @click.stop="fillFollowFunc">通话完成</div>
+                <div class="w-follow-btn clear">
+                    <div class="fl one" @click.stop="callPhone($event)">拨打电话</div>
+                    <div class="fr two" id="call-finish-btn" @click.stop="fillFollowFunc">通话完成</div>
+                </div>
             </div>
         </div>
     </div>`,
@@ -93,19 +93,77 @@ Vue.component('follow-record',{
             clientName:'',
             clientStateList:[],
             clientState:'',
+            clientStateCode:'',
             followDate:'',
             followRemark:'',
-            isShowFollowState:false
+            isShowFollowState:false,
+            userInfo:{},
+            // 能否拨打电话
+            isCanCall:false,
+            // 防止多次点击
+            preventMostClick:true,
+            followId:'',
+            isFollowHandle:true
         }
     },
     props:{
         isShowFollow:{
             default:false,
             type:Boolean
+        },
+        followCurrId:{
+            default:'',
+            type:Number
+        },
+        followCurrPhone:{
+            default:"",
+            type:String
+        },
+        originView:{
+            default:'',
+            type:String
+        },
+        isWork:{
+            default:1,
+            type:Number
         }
     },
     mounted:function(){
-        console.log('innn')
+        this.userInfo = wPref.getPrefs({
+            key:'userInfo'
+        });
+        this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+    },
+    watch:{
+        isShowFollow:function(n){
+            var _this = this;
+            console.log('-----------'+this.originView)
+            if(n){
+                api.setFrameAttr({
+                    bounces: false
+                });
+                this.getClientInfo();
+                api.sendEvent({
+                    name: 'followShowPopup',
+                    extra: {
+                        origin: _this.originView
+                    }
+                });
+
+            }
+            else{
+                api.setFrameAttr({
+                    bounces: true
+                });
+                api.sendEvent({
+                    name: 'followHidePopup',
+                    extra: {
+                        origin: _this.originView
+                    }
+                });
+
+            }
+        }
     },
     methods:{
         hideFollowInfoFunc:function(){
@@ -113,15 +171,83 @@ Vue.component('follow-record',{
         },
         // 获取客户信息
         getClientInfo:function(){
-
+            var _this = this;
+            wApiAjax({
+                url:'customer/getFollowRecordEchoData',
+                data:{
+                    customerid:_this.followCurrId
+                },
+                headers:{
+                    token:TOKEN_DATA
+                },
+                success:function(res){
+                    console.log(JSON.stringify(res))
+                    if(res.code==0){
+                        _this.clientStateList = res.estateList;
+                        _this.clientName = res.data.name;
+                        var clientStateObj = res.estateList.filter(function(v){
+                            return v.value == res.data.estate
+                        })[0];
+                        _this.clientState = clientStateObj.name;
+                        _this.clientStateCode = clientStateObj.value;
+                        _this.followId = res.followId;
+                        _this.isCanCall = true;
+                    }
+                }
+            })
+        },
+        // 拨打电话
+        callPhone:function(e){
+            var _this = this;
+            var tag = e.currentTarget;
+            if(this.isCanCall && this.preventMostClick){
+                this.preventMostClick =  false;
+                wApiAjax({
+                    url:'ema/makeCall',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        account:_this.userInfo.account,
+                        customerNumber:_this.followCurrPhone,
+                        cusid:_this.followCurrId,
+                        empid:_this.userInfo.employeeid,
+                        is_work:_this.isWork,
+                        followId:_this.followId
+                    },
+                    success:function(res){
+                        console.log(JSON.stringify(res))
+                        if(res.code == 200){
+                            $(tag).addClass('w-event-none gray-bg');
+                            $('#call-finish-btn').addClass('w-event-none gray-bg');
+                            setTimeout(function(){
+                                $('#call-finish-btn').removeClass('w-event-none gray-bg');
+                            },5000);
+                            wDialog.toast({
+                                msg: '拨打电话中，请注意接听'
+                            });
+                        }else{
+                            _this.preventMostClick = true;
+                            wDialog.toast({
+                                msg:res.message
+                            });
+                        }
+                    }
+                })
+            }else{
+                wDialog.toast({
+                    msg:"请稍等，再拨打电话"
+                })
+            }
         },
         // 选择客户状态
         chooseFollowStateFunc:function(){
             this.isShowFollowState = true;
         },
         // 确认客户状态
-        sureClientState:function(){
-            console.log('innnnnnn')
+        sureClientState:function(name,value){
+            this.clientState = name;
+            this.clientStateCode = value;
             this.isShowFollowState = false;
         },
         // 选择跟进日期
@@ -129,11 +255,9 @@ Vue.component('follow-record',{
             var _this = this;
             api.openPicker({
                 type: 'date',
-                date: '2014-05-01',
+                date: Date.now(),
                 title: '选择跟进时间'
             }, function(ret, err){
-                console.log(JSON.stringify( ret ));
-                console.log(JSON.stringify( err ));
                 if(ret){
                     _this.followDate = ret.year + '-' + ret.month + '-' + ret.day;
                 }
@@ -142,8 +266,64 @@ Vue.component('follow-record',{
         },
         // 填写完成跟进记录
         fillFollowFunc:function(){
-
+            var _this = this;
+            if(this.isFollowHandle){
+                this.isFollowHandle = false;
+                wApiAjax({
+                    url:'customer/saveCallFollowPlus',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        employeeid:_this.userInfo.employeeid,
+                        customerid:_this.followCurrId,
+                        nextfollow:_this.followDate,
+                        estate:_this.clientStateCode,
+                        followResult:_this.followRemark,
+                        cusname:_this.clientName,
+                        followId:_this.followId
+                    },
+                    success:function(res){
+                        console.log(JSON.stringify(res))
+                        _this.isFollowHandle = true;
+                        if(res.code == 200){
+                            wDialog.toast({
+                                msg:'跟进记录成功'
+                            });
+                            _this.clearData(true);
+                        }
+                        else if(res.code == 201){
+                            wDialog.toast({
+                                msg:'电话没有拨打成功'
+                            });
+                            _this.clearData(false);
+                        }
+                        else{
+                            wDialog.toast({
+                                msg:res.msg
+                            })
+                        }
+                    }
+                })
+            }
         },
+        clearData:function(isCallSuc){
+            this.clientName = '';
+            this.clientState = '';
+            this.clientStateCode = '';
+            this.followDate = '';
+            this.followRemark = '';
+            this.isShowFollowState = false;
+            this.preventMostClick = true;
+            this.$emit('update:isShowFollow',false);
+            if(isCallSuc){
+                this.$emit('refresh-view');
+            }
+        },
+        // stopTouch:function(e){
+        //     e.preventDefault();
+        //     e.stopPropagation();
+        // }
     }
 
 });
