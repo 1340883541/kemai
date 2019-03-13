@@ -2,58 +2,82 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:9000/',
     // baseUrl:'https://192.168.0.157:8081/',
     // baseUrl:'https://192.168.0.222:8765/',
-    baseUrl:'https://calltest.jindinghaiju.com:9000/',
-    fixstr:'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
+    baseUrl: 'https://calltest.jindinghaiju.com:9000/',
+    fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
+}
+// Object.assign pollify
+if (typeof Object.assign != 'function') {
+    Object.assign = function(target) {
+        'use strict';
+        if (target == null) {
+            throw new TypeError('Cannot convert undefined or null to object');
+        }
+
+        target = Object(target);
+        for (var index = 1; index < arguments.length; index++) {
+            var source = arguments[index];
+            if (source != null) {
+                for (var key in source) {
+                    if (Object.prototype.hasOwnProperty.call(source, key)) {
+                        target[key] = source[key];
+                    }
+                }
+            }
+        }
+        return target;
+    };
 }
 
-function wApiAjax(par){
+function wApiAjax(par) {
     par.data = par.data || '';
     // par.data = createSign(par);
-    if(Object.prototype.toString.call(par.files).toLowerCase() === '[object array]'){
+    if (Object.prototype.toString.call(par.files).toLowerCase() === '[object array]') {
         var file = {};
-        for(var i = 0, len = par.files.length;i < len;i++){
-            file['file'+i] = par.files[i]
+        for (var i = 0, len = par.files.length; i < len; i++) {
+            file['file' + i] = par.files[i]
         }
         par.files = file;
         console.log(JSON.stringify(par.files))
-    }else{
-        if(par.files){
+    } else {
+        if (par.files) {
             var file = {
-                image:par.files
+                image: par.files
             };
             par.files = file;
             console.log(JSON.stringify(par.files))
         }
     }
-    var defaultHeader = {"Content-Type": "application/x-www-form-urlencoded"},
+    var defaultHeader = {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
         newHeaders = null;
-    if(par.headers){
-        newHeaders = Object.assign(defaultHeader,par.headers)
-    }else{
+    if (par.headers) {
+        newHeaders = Object.assign({}, defaultHeader, par.headers)
+    } else {
         newHeaders = defaultHeader;
     }
     // console.log(JSON.stringify(newHeaders))
     console.log(JSON.stringify(par.data))
-    // console.log(JSON.stringify(par.url))
+        // console.log(JSON.stringify(par.url))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
-        timeout:20,
-        dataType:par.dataType || 'json',
-        headers:newHeaders,
-        report:par.report || false,
+        timeout: 20,
+        dataType: par.dataType || 'json',
+        headers: newHeaders,
+        report: par.report || false,
         data: {
             values: par.data || {},
             files: par.files || {}
         },
-    },function(ret, err){
+    }, function(ret, err) {
         // console.log(JSON.stringify(ret))
         // console.log(JSON.stringify(err))
         if (ret) {
             par.success && typeof par.success === 'function' && par.success(ret);
         } else {
             wDialog.toast({
-                msg:'请求失败，请重试'
+                msg: '请求失败，请重试'
             })
             console.log(JSON.stringify(par.url))
             console.log(JSON.stringify(err))
@@ -65,23 +89,23 @@ function wApiAjax(par){
 /**
  * 创建一个sign
  */
-function createSign(par){
+function createSign(par) {
     var today = new Date();
-	today.setHours(0);
-	today.setMinutes(0);
-	today.setSeconds(0);
-	today.setMilliseconds(0);
-	today = today.getTime()/1000;
-	var md5_str,parameters;
+    today.setHours(0);
+    today.setMinutes(0);
+    today.setSeconds(0);
+    today.setMilliseconds(0);
+    today = today.getTime() / 1000;
+    var md5_str, parameters;
     // console.log(today)
-	if(par.data == '') {
-		md5_str = hex_md5( today + __CONFIG__.fixstr);
-		parameters = {};
-	} else {
-		md5_str = hex_md5(par.url + today + __CONFIG__.fixstr);
-		parameters = par.data;
-	}
-	parameters.sign = md5_str;
+    if (par.data == '') {
+        md5_str = hex_md5(today + __CONFIG__.fixstr);
+        parameters = {};
+    } else {
+        md5_str = hex_md5(par.url + today + __CONFIG__.fixstr);
+        parameters = par.data;
+    }
+    parameters.sign = md5_str;
     // console.log(JSON.stringify(parameters))
-	return parameters;
+    return parameters;
 }

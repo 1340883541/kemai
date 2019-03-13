@@ -229,7 +229,7 @@ Vue.component('follow-record',{
                         }else{
                             _this.preventMostClick = true;
                             wDialog.toast({
-                                msg:res.message
+                                msg:res.msg
                             });
                         }
                     }

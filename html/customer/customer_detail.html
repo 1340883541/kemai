@@ -141,7 +141,7 @@
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
                     <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(event)"><i></i>电话跟进</div>
-                    <div class="flex-con note-follow-btn follow-btn" @click="skipNoteList"><i></i>短信跟进</div>
+                    <div class="flex-con note-follow-btn follow-btn disabled" @click="skipNoteList"><i></i>短信跟进</div>
                 </div>
             </div>
             <input type="hidden" id="scroll-val" value="0">
@@ -515,15 +515,18 @@
                 },
                 // 跳转到短信跟进列表
                 skipNoteList:function(){
-                    var _this = this;
-                    wHrefJs.openWin({
-                        name:'noteTemplate',
-                        path:'../note/note_template.html',
-                        param:{
-                            cusId:_this.cusId,
-                            cusPhone:_this.cusPhone
-                        }
+                    wDialog.toast({
+                        msg:'暂不支持，敬请期待'
                     })
+                    // var _this = this;
+                    // wHrefJs.openWin({
+                    //     name:'noteTemplate',
+                    //     path:'../note/note_template.html',
+                    //     param:{
+                    //         cusId:_this.cusId,
+                    //         cusPhone:_this.cusPhone
+                    //     }
+                    // })
                 },
                 // 拨打电话
                 callPhone: function(e) {

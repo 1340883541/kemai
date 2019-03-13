@@ -244,6 +244,11 @@
     background-image: linear-gradient(90deg, #ffca00 0%,  #fe9606 100%);
 
 }
+.cd-btm-btn .cd-btn .note-follow-btn.disabled{
+    background-image: -webkit-linear-gradient(left, #eee 0%, #ccc 100%);
+    background-image: -o-linear-gradient(left, #eee 0%, #ccc 100%);
+    background-image: linear-gradient(to right, #eee 0%, #ccc 100%);
+}
 .cd-btm-btn .cd-btn .follow-btn > i{
     position: relative;
     top: -1px;

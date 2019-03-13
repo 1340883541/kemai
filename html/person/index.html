@@ -60,15 +60,15 @@
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
-                        <div class="person_center account_security">
-                            <div class="account_left">
-                                <div><img src="../../image/icon-dx-set.png"></div>
-                            </div>
-                            <div class="account_rig" @click="skipNoteSet">
-                                <span>短信通知</span>
-                                <div><img src="../../image/icon-gr-jiantou.png"></div>
-                            </div>
+                    <!-- <div class="person_center account_security">
+                        <div class="account_left">
+                            <div><img src="../../image/icon-dx-set.png"></div>
                         </div>
+                        <div class="account_rig" @click="skipNoteSet">
+                            <span>短信通知</span>
+                            <div><img src="../../image/icon-gr-jiantou.png"></div>
+                        </div>
+                    </div> -->
                     <div class="person_center account_security">
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-xx.png"></div>
@@ -116,15 +116,15 @@
         // 监听设置成功
         api.addEventListener({
             name: 'setJtPhoneSuc'
-        }, function(ret, err){
+        }, function(ret, err) {
             indexV.getUserInfo();
         });
         // 监听登陆成功
         api.addEventListener({
             name: 'loginSuc'
-        }, function(ret, err){
+        }, function(ret, err) {
             // console.log('----------person----------'+JSON.stringify(ret));
-            if(ret.value.origin != 'index'){
+            if (ret.value.origin != 'index') {
                 indexV.init();
                 indexV.getUserInfo();
             }
@@ -137,16 +137,16 @@
                 post_pos: '',
                 tel: "",
                 userInfo: '',
-                answernum:'', // 接听号
+                answernum: '', // 接听号
             },
-            created:function(){
+            created: function() {
                 this.init();
             },
             mounted() {
                 this.getUserInfo();
             },
             methods: {
-                init:function(){
+                init: function() {
                     var _this = this;
                     _this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
@@ -177,7 +177,7 @@
                         path: './set_up.html',
                     })
                 },
-                skipNoteSet:function(){
+                skipNoteSet: function() {
                     wHrefJs.openWin({
                         name: 'noteSet',
                         path: '../note/note_set.html',
@@ -197,14 +197,14 @@
                         },
                         success: function(res) {
                             // console.log(JSON.stringify(res))
-                            if(res.code == 200){
+                            if (res.code == 200) {
                                 _this.name = res.info.name;
                                 _this.post_pos = res.info.job;
                                 _this.tel = res.info.phone;
                                 _this.answernum = res.info.answernum
-                            }else{
+                            } else {
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg: res.msg
                                 })
                             }
 
@@ -228,7 +228,7 @@
                                 },
                                 success: function(res) {
                                     console.log(JSON.stringify(res))
-                                    if(res.code == 200){
+                                    if (res.code == 200) {
                                         wPref.removePrefs({
                                             key: 'isLogin'
                                         })
@@ -238,7 +238,7 @@
                                         myLocalStorage.clearItem('token');
 
                                         wDialog.toast({
-                                            msg:'退出成功'
+                                            msg: '退出成功'
                                         })
                                         api.sendEvent({
                                             name: 'loginOutSuc'
@@ -248,7 +248,9 @@
                                             wHrefJs.openWin({
                                                 name: 'login',
                                                 path: '../login/login.html',
-                                                param:{origin:'person'}
+                                                param: {
+                                                    origin: 'person'
+                                                }
                                             });
                                         }, 300);
                                     }

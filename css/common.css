@@ -334,6 +334,9 @@
 .filter-lists .filter-lis .filter-lis-pop .note-state .small-img{
     background-image: url('../image/icon-duanxin40.png');
 }
+.filter-lists .filter-lis .filter-lis-pop .note-state .small-img-hui{
+    background-image: url('../image/icon-duanxin40-hui.png');
+}
 .filter-lists .filter-lis .filter-lis-pop .small-state > p{
     line-height: 1em;
 }

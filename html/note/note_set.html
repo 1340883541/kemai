@@ -220,7 +220,8 @@
     }
     var interValHandle = {
         isStartHandle: true,
-        handle: function(cb, time = 30) {
+        handle: function(cb, time) {
+            time = time || 30;
             var _this = this;
             if (this.isStartHandle) {
                 this.isStartHandle = false;

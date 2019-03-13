@@ -63,7 +63,7 @@
                     </div>
                     <div class="flex-con filter-lis-p">
                         <div class="small-state note-state" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
-                            <div class="small-img"></div>
+                            <div class="small-img small-img-hui"></div>
                             <p>短信</p>
                         </div>
                     </div>
@@ -276,14 +276,17 @@
                 },
                 // 跳转到短信模板页面
                 skipNoteTempate:function(e,id,phone){
-                    wHrefJs.openWin({
-                        name:"noteTemplate",
-                        path:"../note/note_template.html",
-                        param:{
-                            cusId:id,
-                            cusPhone:phone
-                        }
+                    wDialog.toast({
+                        msg:'暂不支持，敬请期待'
                     })
+                    // wHrefJs.openWin({
+                    //     name:"noteTemplate",
+                    //     path:"../note/note_template.html",
+                    //     param:{
+                    //         cusId:id,
+                    //         cusPhone:phone
+                    //     }
+                    // })
                 },
                 // 拨打电话
                 callPhone: function(e, cusId, phone) {
