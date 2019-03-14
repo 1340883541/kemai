@@ -65,7 +65,7 @@
                     <div class="cphone" @click.stop="openFollowChoosePopup($event)">去跟进</div>
                 </div>
                 <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status"></span></div>
+                    <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status||'无'"></span></div>
                     <div class="cfil-gj time lis"><i></i>跟进时间: <span v-if="khdata && khdata.followtime" v-text="khdata.followtime.split(' ')[0]||'暂未跟进'"></span></div>
                     <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
                 </div>

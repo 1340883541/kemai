@@ -200,7 +200,41 @@
             console.log('innnnnnnn')
             indexV.getMessageData();
         });
-
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: true,
+            loadAnimInterval:120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png'
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            indexV.fetchData(api.refreshHeaderLoadDone)
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            // nCustomerFrame.pageNo = 1;
+            // nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
+        });
+        api.setFrameAttr({
+            bounces:true
+        });
 
         indexV = new Vue({
             el: '#wrapper',
@@ -234,7 +268,7 @@
             mounted: function() {
                 this.netWorkStatus();
                 this.fetchData();
-                this.getMessageData();
+                // this.getMessageData();
             },
             filters:{
                 messageFilter:function(n){
@@ -270,7 +304,7 @@
                     })
                 },
                 // 获取消息提醒的数据
-                getMessageData:function(){
+                getMessageData:function(cb){
                     var _this = this;
                     wApiAjax({
                         url:"msgRemind/getAllNoticeCount",
@@ -304,10 +338,11 @@
                                     _this.subscriptionBook =  res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
                                 }
                             }
+                            cb && typeof cb === 'function' && cb();
                         }
                     })
                 },
-                fetchData:function(){
+                fetchData:function(cb){
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
@@ -330,6 +365,7 @@
                                 _this.todaynotefollow = res.todaynotefollow;
                                 _this.lookwechatcount = res.lookwechatcount;
                             }
+                            _this.getMessageData(cb);
                             wDialog.hideProgress();
                         },
                         fail:function(){

@@ -254,12 +254,9 @@
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                var phone = this.userInfo.phone;
-                if(phone){
-                    this.minePhone = this.userInfo.phone.substring(0,3)+'****'+this.userInfo.phone.substring(7);
-                }
             },
             mounted:function(){
+                this.getUserInfo();
                 this.fetchData();
             },
             watch:{
@@ -272,6 +269,33 @@
                 }
             },
             methods:{
+                getUserInfo: function() {
+                    var _this = this
+                    wApiAjax({
+                        method: "get",
+                        url: 'perCenter/info',
+                        withCredentials: true,
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if(res.code == 200){
+                                _this.minePhone = res.info.phone.substring(0,3)+'****'+res.info.phone.substring(7);
+                                if(_this.userInfo.phone != res.info.phone){
+                                    _this.userInfo.phone = res.info.phone;
+                                    wPref.setPrefs({
+                                        key:'userInfo',
+                                        value:_this.userInfo
+                                    })
+                                }
+                            }
+                        }
+                    })
+                },
                 fetchData:function(isLoadMore){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
