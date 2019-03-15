@@ -104,8 +104,8 @@
                             <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
                             <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
                                 <i class="top-icon"></i>
-                                <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime"></span></div>
-                                <div class="gj-plan gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow"></span></div>
+                                <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime||'暂未跟进'"></span></div>
+                                <div class="gj-plan gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow||'暂无计划'"></span></div>
                                 <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
                             </div>
                         </div>

@@ -79,10 +79,6 @@ function wApiAjax(par) {
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
             // console.log(JSON.stringify(err))
-            // 清除全局token
-            myLocalStorage.clearItem('token')
-            wPref.removePrefs({key:'userInfo'})
-            wPref.removePrefs({key:'isLogin'})
             // TOKEN_DATA = myLocalStorage.getItem('token')
             if (ret) {
                 par.success && typeof par.success === 'function' && par.success(ret);
@@ -90,6 +86,10 @@ function wApiAjax(par) {
                 wDialog.toast({
                     msg: '请求失败，请重试'
                 })
+                // 清除全局token
+                myLocalStorage.clearItem('token')
+                wPref.removePrefs({key:'userInfo'})
+                wPref.removePrefs({key:'isLogin'})
                 console.log(JSON.stringify(par.url))
                 console.log(JSON.stringify(err))
                 wDialog.hideProgress();
