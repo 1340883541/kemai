@@ -54,10 +54,10 @@
                 <div class="flex-con filter-lis lx" @click="clickFilterFn($event,1)">
                     <span v-text="khClassTxt"></span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,2)">
+                <div class="flex-con filter-lis fil curr follow-time1" @click="clickFilterFn($event,2)">
                     <span>跟进时间</span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,3)">
+                <div class="flex-con filter-lis fil curr follow-time2" @click="clickFilterFn($event,3)">
                     <span>计划跟进</span><i></i>
                 </div>
             </div>
@@ -141,24 +141,26 @@
                     // 跟进时间
                     else if(i == 2){
                         var tag = e.currentTarget;
-                        this.status2 = -1;
+                        this.status2 = 0;
+                        $(".follow-time2").addClass('curr');
                         if($(tag).hasClass('curr')){
                             this.status1 = 1;
                             $(tag).removeClass('curr');
                         }else{
-                            this.status1 = 2;
+                            this.status1 = 0;
                             $(tag).addClass('curr');
                         }
                     }
                     // 计划跟进时间
                     else{
                         var tag = e.currentTarget;
-                        this.status1 = -1;
+                        this.status1 = 0;
+                        $(".follow-time1").addClass('curr');
                         if($(tag).hasClass('curr')){
                             this.status2 = 1;
                             $(tag).removeClass('curr');
                         }else{
-                            this.status2 = 2;
+                            this.status2 = 0;
                             $(tag).addClass('curr');
                         }
                     }

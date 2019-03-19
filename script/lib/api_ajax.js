@@ -1,9 +1,9 @@
 var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.157:8081/', // 本地
-    // baseUrl:'https://192.168.0.222:8765/', // 本地
+    baseUrl:'https://192.168.0.222:9000/', // 本地
     // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    baseUrl: 'https://call.jindinghaiju.com/',  // 正式
+    // baseUrl: 'https://call.jindinghaiju.com/',  // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
@@ -58,7 +58,7 @@ function wApiAjax(par) {
         newHeaders = defaultHeader;
     }
     // console.log(JSON.stringify(newHeaders))
-    console.log(JSON.stringify(par.data))
+    console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
     // console.log(JSON.stringify(par.url))
     // if(true){
     //     wDialog.toast({
@@ -78,19 +78,34 @@ function wApiAjax(par) {
                 files: par.files || {}
             },
         }, function(ret, err) {
-            // console.log(JSON.stringify(ret))
+            console.log(JSON.stringify(ret))
             // console.log(JSON.stringify(err))
             // TOKEN_DATA = myLocalStorage.getItem('token')
             if (ret && ret.code != 500) {
-                par.success && typeof par.success === 'function' && par.success(ret);
+                if(ret.code == 1001 || ret.code == 1002){
+                    wDialog.hideProgress();
+                    // 清除全局token
+                    myLocalStorage.clearItem('token')
+                    wPref.removePrefs({key:'userInfo'})
+                    wPref.removePrefs({key:'isLogin'})
+                    wDialog.alert({
+                        msg:ret.message,
+                        cb:function(){
+                            api.openWin({
+                                name: 'login',
+                                url: '../login/login.html'
+                            });
+
+                        }
+                    })
+                }
+                else{
+                    par.success && typeof par.success === 'function' && par.success(ret);
+                }
             } else {
                 wDialog.toast({
                     msg: '请求失败，请重试'
                 })
-                // 清除全局token
-                myLocalStorage.clearItem('token')
-                wPref.removePrefs({key:'userInfo'})
-                wPref.removePrefs({key:'isLogin'})
                 console.log(JSON.stringify(par.url))
                 console.log(JSON.stringify(err))
                 wDialog.hideProgress();

@@ -259,7 +259,7 @@
                                 }
                             }else{
                                 wDialog.toast({
-                                    msg:res.message
+                                    msg:res.message||res.msg
                                 })
                             }
                             callback && typeof callback === 'function' && callback();
