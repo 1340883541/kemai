@@ -30,13 +30,12 @@
     margin-top: 0.41rem;
     width:6.9rem;
     padding:0 0.3rem;
-    height:3.16rem;
     margin:auto;
     background-color: white;
     position: relative;
-    top: -2.5rem;
-    height:3.16rem;
-    box-shadow: 0px 8px 12px 8px rgba(0, 0, 0, 0.03);
+    top: -2.4rem;
+    height:2.8rem;
+    box-shadow: 0px 4px 12px 8px rgba(0, 0, 0, 0.03);
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
@@ -44,7 +43,7 @@
     border-radius: 4px;
 }
 .header_text{
-    height:3.16rem;
+    height:100%;
     background-color: white;
     padding-left: 0.1rem;
     padding-top: 0.6rem;
@@ -128,9 +127,9 @@
 .person_center{
     display: flex;
     /*justify-content: space-between;*/
-    height: 1.12rem;
+    height: 1.2rem;
     align-items: center;
-    line-height: 1.12rem;
+    line-height: 1.2rem;
 }
 .account_left>div{
     width: 0.48rem;

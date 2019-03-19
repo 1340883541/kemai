@@ -229,7 +229,7 @@ Vue.component('follow-record',{
                         }else{
                             _this.preventMostClick = true;
                             wDialog.toast({
-                                msg:res.msg
+                                msg:res.msg||'电话拨打失败'
                             });
                         }
                     }
@@ -800,7 +800,7 @@ var jqueryDialog = {
 var wDialog = {
     toast: function(par) {
         par = par || {};
-        par.duration = par.duration ? isNaN(Number(par.duration)) == true ? 800 : par.duration : 800;
+        par.duration = par.duration ? isNaN(Number(par.duration)) == true ? 2000 : par.duration : 1600;
         par.location = par.location || 'bottom';
         // global 设置为 true 安卓手机上面弹出的位置将会固定在底部区域
         par.global = par.global || true;

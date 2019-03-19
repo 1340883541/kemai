@@ -157,6 +157,7 @@
                             self.sign = "登录"
                             self.login_hide = false
                         } else {
+                            console.log('login phone ----> '+self.phone);
                             wApiAjax({
                                 method: "post",
                                 url: 'loginapp/verifyLogin',

@@ -220,8 +220,8 @@
 }
 .msg-box .msg-icon-box .read-msg span{
     display: block;
-    padding-left:.1rem;
-    padding-right: .14rem;
+    padding-left:.12rem;
+    padding-right: .12rem;
     height: 100%;
     background-color: #ff3d00;
     -webkit-border-radius:16px;
@@ -236,6 +236,7 @@
     border-bottom-left-radius:0;
     color:#fff;
     font-size: .22rem;
+    text-align: center;
 }
 .msg-box .msg-icon-box .msg-txt{
     font-size: .28rem;

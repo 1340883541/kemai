@@ -1,8 +1,9 @@
 var __CONFIG__ = {
-    // baseUrl:'https://192.168.0.157:9000/',
-    // baseUrl:'https://192.168.0.157:8081/',
-    // baseUrl:'https://192.168.0.222:9000/',
-    baseUrl: 'https://calltest.jindinghaiju.com:9000/',
+    // baseUrl:'https://192.168.0.157:9000/', // 本地
+    // baseUrl:'https://192.168.0.157:8081/', // 本地
+    // baseUrl:'https://192.168.0.222:8765/', // 本地
+    // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
+    baseUrl: 'https://call.jindinghaiju.com/',  // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
@@ -80,7 +81,7 @@ function wApiAjax(par) {
             // console.log(JSON.stringify(ret))
             // console.log(JSON.stringify(err))
             // TOKEN_DATA = myLocalStorage.getItem('token')
-            if (ret) {
+            if (ret && ret.code != 500) {
                 par.success && typeof par.success === 'function' && par.success(ret);
             } else {
                 wDialog.toast({

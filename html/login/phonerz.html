@@ -82,7 +82,8 @@
                     const phoneExp = /^1[3456789]\d{9}$/;
                     if ((!phoneExp.test(_this.phone)) || _this.phone == "") {
                        wDialog.toast({
-                           msg:'请输入正确号码'
+                           msg:'请输入正确号码',
+                           duration:2000
                        })
                     } else {
                         const TIME_COUNT = 60;
