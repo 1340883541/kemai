@@ -13,9 +13,9 @@
 	<preference name="autoLaunch" value="true"/>
 	<preference name="fullScreen" value="false"/>
 	<preference name="autoUpdate" value="true" />
-	<preference name="smartUpdate" value="true" />    <preference name="softInputMode" value="resize"/>
-	<preference name="debug" value="true"/>
-	<preference name="statusBarAppearance" value="true"/>    <preference name="appCertificateVerify" value="false" />        <preference name="checkSslTrusted" value="false" />
+	<preference name="smartUpdate" value="true" />    <preference name="softInputMode" value="resize"/>    <preference name="softInputBarEnabled" value="false" />
+	<preference name="debug" value="false"/>
+	<preference name="statusBarAppearance" value="true"/>    <preference name="appCertificateVerify" value="false" />    <preference name="checkSslTrusted" value="false" />
 	<permission name="readPhoneState" />    <preference name="customRefreshHeader" value="UIPullRefreshFlash"/>
 	<permission name="camera" />
 	<permission name="record" />

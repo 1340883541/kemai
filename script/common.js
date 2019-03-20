@@ -258,8 +258,12 @@ Vue.component('follow-record',{
                 date: Date.now(),
                 title: '选择跟进时间'
             }, function(ret, err){
+                // console.log(JSON.stringify(ret))
                 if(ret){
-                    _this.followDate = ret.year + '-' + ret.month + '-' + ret.day;
+                    var month = (''+ret.month).length == 1 ? '0'+ret.month:ret.month;
+                    var day = (''+ret.day).length == 1 ? '0'+ret.day:ret.day;
+                    _this.followDate = ret.year + '-' + month + '-' + day;
+                    // console.log(_this.followDate)
                 }
             });
 

@@ -59,7 +59,8 @@
                 <div class="submit-btn space-between">
                     <div class="text-align" @click="login">
                         <span class="loading" v-show="login_hide"></span>
-                        <span v-html="sign"></span></div>
+                        <span v-html="sign"></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,7 +91,7 @@
         var param = api.pageParam;
         api.addEventListener({
             name: 'loginOutSuc'
-        }, function(ret, err){
+        }, function(ret, err) {
             param.origin = 'person';
         });
 
@@ -157,7 +158,7 @@
                             self.sign = "登录"
                             self.login_hide = false
                         } else {
-                            console.log('login phone ----> '+self.phone);
+                            console.log('login phone ----> ' + self.phone);
                             wApiAjax({
                                 method: "post",
                                 url: 'loginapp/verifyLogin',
@@ -190,43 +191,43 @@
                                                 key: 'userInfo',
                                                 value: JSON.stringify(res.data.platAccount[0])
                                             });
-                                            myLocalStorage.setItem('token',res.token);
+                                            myLocalStorage.setItem('token', res.token);
                                             wPref.setPrefs({
                                                 key: 'isLogin',
                                                 value: 1
                                             })
                                             self.sign = "登录中"
                                             self.login_hide = true
-                                            // console.log("-------login------------"+JSON.stringify(api.pageParam))
+                                                // console.log("-------login------------"+JSON.stringify(api.pageParam))
                                             console.log('-------------login-suc-----------------')
                                             api.sendEvent({
                                                 name: 'loginSuc',
-                                                extra:{
-                                                    origin:param.origin
+                                                extra: {
+                                                    origin: param.origin
                                                 }
                                             });
-                                            if(param.origin === 'index'){
-                                                setTimeout(function(){
+                                            if (param.origin === 'index') {
+                                                setTimeout(function() {
                                                     api.closeToWin({
                                                         name: 'root'
                                                     });
-                                                },400);
-                                            }else{
-                                                setTimeout(function(){
+                                                }, 400);
+                                            } else {
+                                                setTimeout(function() {
                                                     api.closeWin({});
-                                                },400);
+                                                }, 400);
                                             }
                                         }
                                         setTimeout(() => {
                                             self.sign = "登录"
                                             self.login_hide = false;
                                             self.phone = "";
-                                            self.pwd="";
+                                            self.pwd = "";
                                             self.defult_hide = false;
-                                            self.defult_hideImg =false;
+                                            self.defult_hideImg = false;
                                         }, 3000);
                                     }
-                                    if(res.code==7){
+                                    if (res.code == 7) {
                                         wPref.setPrefs({
                                             key: 'InfoPhone',
                                             value: res.data
@@ -234,7 +235,7 @@
                                         wDialog.toast({
                                             msg: res.msg
                                         })
-                                        myLocalStorage.setItem('token',res.token);
+                                        myLocalStorage.setItem('token', res.token);
                                         wHrefJs.openWin({
                                             name: 'phonerz',
                                             path: './phonerz.html'

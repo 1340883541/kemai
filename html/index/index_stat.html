@@ -36,7 +36,7 @@
                 </div>
                 <div class="stat-header-nav flex-wrap">
                     <div class="flex-con nav0 nav" @click="filterNav($event,0)" ><span v-text="typeList[type-1]"></span><i></i></div>
-                    <div class="flex-con nav1 nav" @click="filterNav($event,1)">日期筛选<i></i></div>
+                    <div class="flex-con nav1 nav" @click="filterNav($event,1)">日期<i></i></div>
                     <div class="stat-nav-box stat-nav-box0">
                         <ul>
                             <li v-for="(type,index) in typeList" :class="{'curr':index===currTypeIndex}" @click="switchType(index)"><span v-text="type"></span><i></i></li>
