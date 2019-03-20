@@ -73,7 +73,7 @@
             <div class="not-more-filter" id="not-more">没有更多数据</div>
         </div>
         <!-- 空页面 -->
-        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的客户"></empty-con>
+        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的资源客户"></empty-con>
         <!-- 跟进记录弹窗 -->
         <follow-record :is-show-follow.sync="isShowFollow" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" origin-view="originView" :is-work="isWork" @refresh-view="refreshView"></follow-record>
     </div>
@@ -130,6 +130,14 @@
                 $('#not-more').show();
             }
         });
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            nCustomerFrame.pageNo = 1;
+            nCustomerFrame.fetchNewAdd();
+        });
+
         var param = api.pageParam;
         nCustomerFrame = new Vue({
             el: '#wrap',
@@ -169,6 +177,7 @@
                             "token": TOKEN_DATA
                         },
                         success: function(res) {
+                            console.log(JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.khOriginList = res.data.customerSourceslist;
                                 res.data.customerSourceslist.forEach(function(v, i) {

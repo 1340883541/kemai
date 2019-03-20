@@ -210,6 +210,14 @@
                 }
             }
         });
+
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            cusDetailV.pageNo = 1;
+            cusDetailV.fetchData();
+        });
         cusDetailV = new Vue({
             el:'#wrapper',
             data:{

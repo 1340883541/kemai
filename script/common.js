@@ -290,6 +290,11 @@ Vue.component('follow-record',{
                             wDialog.toast({
                                 msg:'跟进记录成功'
                             });
+                            // 跟进成功推送
+                            api.sendEvent({
+                                name: 'followRecordSuccessRefresh'
+                            });
+
                             _this.clearData(true);
                         }
                         else if(res.code == 201){

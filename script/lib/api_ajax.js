@@ -78,7 +78,7 @@ function wApiAjax(par) {
                 files: par.files || {}
             },
         }, function(ret, err) {
-            console.log(JSON.stringify(ret))
+            // console.log(JSON.stringify(ret))
             // console.log(JSON.stringify(err))
             // TOKEN_DATA = myLocalStorage.getItem('token')
             if (ret && ret.code != 500) {

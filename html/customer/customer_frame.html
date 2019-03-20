@@ -150,6 +150,13 @@
         });
 
 
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            nCustomerFrame.pageNo = 1;
+            nCustomerFrame.fetchListData();
+        });
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',

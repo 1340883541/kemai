@@ -95,11 +95,18 @@
             }
         });
 
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            statV.page = 1;
+            statV.getData();
+        });
         statV = new Vue({
             el: '#wrapper',
             data: {
                 type:1,
-                typeList:['有效通话','未接听','短信跟进','查看微信'],
+                typeList:['客户通话','未接听','短信跟进','查看微信'],
                 currTypeIndex:0,
                 userInfo:{},
                 date:1,
