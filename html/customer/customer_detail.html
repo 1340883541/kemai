@@ -488,39 +488,41 @@
                 // 提交短信验证码，获取微信号
                 handleSubmit:function(){
                     var _this = this;
-                    this.isVerifyIng = true;
-                    wApiAjax({
-                        url:'phoneauth/bind',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        data:{
-                            account:_this.userInfo.account,
-                            employeeid:_this.userInfo.employeeid,
-                            phone:_this.userInfo.phone,
-                            type:2,
-                            authcode:_this.value,
-                            cusid:_this.cusId
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            if(res.code == 5 && res.wechat){
-                                // 认证成功
-                                _this.isShowVerify = false;
-                                _this.isShowWechat = true;
-                                _this.wechatCard = res.wechat;
-                                clearInterval(_this.downTimer);
-                            }else{
+                    if(this.isActive){
+                        this.isVerifyIng = true;
+                        wApiAjax({
+                            url:'phoneauth/bind',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                account:_this.userInfo.account,
+                                employeeid:_this.userInfo.employeeid,
+                                phone:_this.userInfo.phone,
+                                type:2,
+                                authcode:_this.value,
+                                cusid:_this.cusId
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                if(res.code == 5 && res.wechat){
+                                    // 认证成功
+                                    _this.isShowVerify = false;
+                                    _this.isShowWechat = true;
+                                    _this.wechatCard = res.wechat;
+                                    clearInterval(_this.downTimer);
+                                }else{
+                                    _this.isVerifyIng = false;
+                                    wDialog.toast({
+                                        msg:res.msg
+                                    })
+                                }
+                            },
+                            fail:function(){
                                 _this.isVerifyIng = false;
-                                wDialog.toast({
-                                    msg:res.msg
-                                })
                             }
-                        },
-                        fail:function(){
-                            _this.isVerifyIng = false;
-                        }
-                    })
+                        })
+                    }
                 },
                 // 复制微信号
                 copyWechatFn:function(){

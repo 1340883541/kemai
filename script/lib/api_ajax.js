@@ -58,7 +58,7 @@ function wApiAjax(par) {
         newHeaders = defaultHeader;
     }
     // console.log(JSON.stringify(newHeaders))
-    console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
+    // console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
     // console.log(JSON.stringify(par.url))
     // if(true){
     //     wDialog.toast({
@@ -79,10 +79,8 @@ function wApiAjax(par) {
             },
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
-            // console.log(JSON.stringify(err))
-            // TOKEN_DATA = myLocalStorage.getItem('token')
             if (ret && ret.code != 500) {
-                if(ret.code == 1001 || ret.code == 1002){
+                if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
                     wDialog.hideProgress();
                     // 清除全局token
                     myLocalStorage.clearItem('token')
