@@ -274,6 +274,11 @@
                         $('#back-box .header-txt').hide();
                         $('#back-box').removeClass('curr');
                     }
+                },
+                value:function(nv){
+                    if(nv.length >= 6){
+                        this.isActive = true;
+                    }
                 }
             },
             methods:{
@@ -466,7 +471,7 @@
                     },1000);
                 },
                 // 输入
-                handleInput(e) {
+                handleInput:function(e) {
                     this.$refs.input.value = this.value;
                     console.log(this.value)
                     var tag = e.currentTarget;
@@ -481,7 +486,7 @@
                     // this.handleSubmit()
                 },
                 // 输入完成隐藏键盘
-                hideKeyboard() {
+                hideKeyboard:function() {
                     // document.activeElement.blur() // ios隐藏键盘
                     // this.$refs.input.blur(); // android隐藏键盘
                 },

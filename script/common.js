@@ -49,45 +49,40 @@ Vue.component('empty-con', {
 });
 // 跟进记录组件
 Vue.component('follow-record',{
-    template:`<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc" @touchmove.prevent>
-        <div class="w-follow-bg"></div>
-        <div class="w-follow-popup-box">
-            <div class="w-follow-t">跟进记录</div>
-            <div class="w-follow-box">
-                <div class="w-follow-inp flex-wrap bor-1px-b">
-                    <div class="w-follow-inp-cap">客户名称：</div>
-                    <input type="text" class="flex-con" v-model="clientName" placeholder="请输入客户姓名">
-                </div>
-                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prevent="chooseFollowStateFunc">
-                    <div class="w-follow-inp-cap">客户状态：</div>
-                    <input type="text" class="flex-con" readonly placeholder="请选择客户状态" v-model="clientState">
-                    <div class="client-state-icon"></div>
-                    <div class="w-follow-inp-lis" v-show="isShowFollowState">
-                        <ul>
-                            <li class="bor-1px-b"
-                                v-for="state in clientStateList"
-                                :key="state.value"
-                                @click.stop="sureClientState(state.name,state.value)"
-                                v-text="state.name"
-                                ></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prenvent="chooseFollowDateFunc">
-                    <div class="w-follow-inp-cap">跟进时间：</div>
-                    <input type="text" placeholder="请选择下次跟进时间" class="flex-con"  readonly v-model="followDate">
-                    <div class="client-state-icon"></div>
-                </div>
-                <div class="w-follow-textarea flex-wrap">
-                    <textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>
-                </div>
-                <div class="w-follow-btn clear">
-                    <div class="fl one" @click.stop="callPhone($event)">拨打电话</div>
-                    <div class="fr two" id="call-finish-btn" @click.stop="fillFollowFunc">通话完成</div>
-                </div>
-            </div>
-        </div>
-    </div>`,
+    template:'<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc" @touchmove.prevent>'+
+        '<div class="w-follow-bg"></div>'+
+        '<div class="w-follow-popup-box">'+
+            '<div class="w-follow-t">跟进记录</div>'+
+            '<div class="w-follow-box">'+
+                '<div class="w-follow-inp flex-wrap bor-1px-b">'+
+                    '<div class="w-follow-inp-cap">客户名称：</div>'+
+                    '<input type="text" class="flex-con" v-model="clientName" placeholder="请输入客户姓名">'+
+                '</div>'+
+                '<div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prevent="chooseFollowStateFunc">'+
+                    '<div class="w-follow-inp-cap">客户状态：</div>'+
+                    '<input type="text" class="flex-con" readonly placeholder="请选择客户状态" v-model="clientState">'+
+                    '<div class="client-state-icon"></div>'+
+                    '<div class="w-follow-inp-lis" v-show="isShowFollowState">'+
+                        '<ul>'+
+                            '<li class="bor-1px-b" v-for="state in clientStateList" :key="state.value" @click.stop="sureClientState(state.name,state.value)" v-text="state.name"></li>'+
+                        '</ul>'+
+                    '</div>'+
+                '</div>'+
+                '<div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prenvent="chooseFollowDateFunc">'+
+                    '<div class="w-follow-inp-cap">跟进时间：</div>'+
+                    '<input type="text" placeholder="请选择下次跟进时间" class="flex-con"  readonly v-model="followDate">'+
+                    '<div class="client-state-icon"></div>'+
+                '</div>'+
+                '<div class="w-follow-textarea flex-wrap">'+
+                    '<textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>'+
+                '</div>'+
+                '<div class="w-follow-btn clear">'+
+                    '<div class="fl one" @click.stop="callPhone($event)">拨打电话</div>'+
+                    '<div class="fr two" id="call-finish-btn" @click.stop="fillFollowFunc">通话完成</div>'+
+                '</div>'+
+            '</div>'+
+        '</div>'+
+    '</div>',
     data:function(){
         return{
             clientName:'',

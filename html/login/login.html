@@ -106,22 +106,22 @@
                 login_hide: false,
             },
             methods: {
-                pwd_focus() {
+                pwd_focus:function() {
                     var _this = this;
                     var pwdExp = /^[a-zA-Z0-9]+$/;
                     if (!pwdExp.test(_this.pwd)) {};
                     _this.defult_hideImg = true;
                 },
-                tel_focus() {
+                tel_focus:function() {
                     var _this = this;;
                     _this.defult_hide = true;
                 },
-                empty_pwd() {
+                empty_pwd:function() {
                     var _this = this;
                     _this.pwd = "";
                     _this.defult_hideImg = false;
                 },
-                empty_tel() {
+                empty_tel:function() {
                     var _this = this;
                     _this.phone = "";
                     _this.defult_hide = false;
@@ -218,7 +218,7 @@
                                                 }, 400);
                                             }
                                         }
-                                        setTimeout(() => {
+                                        setTimeout(function() {
                                             self.sign = "登录"
                                             self.login_hide = false;
                                             self.phone = "";

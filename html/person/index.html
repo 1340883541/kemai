@@ -142,7 +142,7 @@
             created: function() {
                 this.init();
             },
-            mounted() {
+            mounted: function() {
                 this.getUserInfo();
             },
             methods: {
@@ -244,7 +244,7 @@
                                             name: 'loginOutSuc'
                                         });
 
-                                        setTimeout(() => {
+                                        setTimeout(function() {
                                             wHrefJs.openWin({
                                                 name: 'login',
                                                 path: '../login/login.html',
