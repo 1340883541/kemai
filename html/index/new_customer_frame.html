@@ -43,7 +43,7 @@
         </div>
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
             <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0"> -->
-            <div class="filter-lis clear" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipDetail(khdata.id)">
+            <div class="filter-lis clear" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipDetail(khdata.id,khdata.phone)">
                 <div class="fl left">
                     <div class="filter-t clear">
                         <span class="name fl w-elli" v-text="khdata.name"></span>
@@ -263,12 +263,13 @@
                     this.fetchNewAdd();
 
                 },
-                skipDetail: function(id) {
+                skipDetail: function(id,phone) {
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
                         param: {
-                            cusId: id
+                            cusId: id,
+                            cusPhone:phone
                         }
                     })
                 },

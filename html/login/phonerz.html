@@ -83,7 +83,8 @@
                     if ((!phoneExp.test(_this.phone)) || _this.phone == "") {
                        wDialog.toast({
                            msg:'请输入正确号码',
-                           duration:2000
+                           duration:2000,
+                           global:'false',
                        })
                     } else {
                         const TIME_COUNT = 60;
@@ -95,7 +96,7 @@
                                     _this.count--;
                                 } else {
                                     _this.default_obtain = true;
-                                    clearInterval(this.timer);
+                                    clearInterval(_this.timer);
                                     _this.timer = null;
                                 }
                             }, 1000)
@@ -115,12 +116,16 @@
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
                                 if(res.code==4){
                                     _this.verification = res.random
-                                }else{
-                                    wDialog.toast({
-                                        msg:res.msg
-                                    })
+                                }
+                                else if(res.code == 3){
+                                    _this.default_obtain = true;
+                                    clearInterval(_this.timer);
+                                    _this.timer = null;
                                 }
 
                             }

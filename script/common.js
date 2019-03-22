@@ -807,7 +807,7 @@ var wDialog = {
         par.duration = par.duration ? isNaN(Number(par.duration)) == true ? 2000 : par.duration : 1600;
         par.location = par.location || 'bottom';
         // global 设置为 true 安卓手机上面弹出的位置将会固定在底部区域
-        par.global = par.global || true;
+        par.global = par.global == 'false' ? false : true;
         api.toast({
             msg: par.msg,
             duration: par.duration,

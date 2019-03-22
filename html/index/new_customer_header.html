@@ -96,8 +96,8 @@
             data:{
                 searchVal:'',
                 khOriginTxt:'',
-                status1:2, // 联系状态
-                status2:2, // 分配时间
+                status1:0, // 联系状态
+                status2:0, // 分配时间
             },
             created:function(){
                 this.init();
@@ -137,24 +137,24 @@
                     // 联系状态
                     else if(i == 1){
                         var tag = e.currentTarget;
-                        this.status2 = 0;
+                        // this.status2 = 0;
                         if($(tag).hasClass('curr')){
                             this.status1 = 1;
                             $(tag).removeClass('curr');
                         }else{
-                            this.status1 = 2;
+                            this.status1 = 0;
                             $(tag).addClass('curr');
                         }
                     }
                     // 分配时间
                     else{
                         var tag = e.currentTarget;
-                        this.status1 = 0;
+                        // this.status1 = 0;
                         if($(tag).hasClass('curr')){
                             this.status2 = 1;
                             $(tag).removeClass('curr');
                         }else{
-                            this.status2 = 2;
+                            this.status2 = 0;
                             $(tag).addClass('curr');
                         }
                     }
