@@ -77,8 +77,14 @@
                 <div class="cd-ct w-inline-block" v-if="isShowWechat">
                     <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="copyWechatFn">复制</span>
                 </div>
-                <div class="cd-cb w-inline-block">
-                    <span v-if="cusInfo.markName">销售负责人：</span><span v-if="cusInfo.markName" v-text="cusInfo.markName"></span><span class="line"><em v-if="cusInfo.markName && cusInfo.chanName" style="font-style:normal;color:#eee;">|</em></span><span v-if="cusInfo.chanName">渠道负责人：</span><span v-if="cusInfo.chanName" v-text="cusInfo.chanName"></span>
+                <div class="cd-cb">
+                    <div class="cd-name" v-if="cusInfo.markName">
+                        <span v-if="cusInfo.markName">销售负责人：</span><span v-if="cusInfo.markName" v-text="cusInfo.markName"></span>
+                    </div>
+                    <!-- <span class="line"><em v-if="cusInfo.markName && cusInfo.chanName" style="font-style:normal;color:#eee;">|</em></span> -->
+                    <div class="cd-name" v-if="cusInfo.chanName">
+                        <span v-if="cusInfo.chanName">渠道负责人：</span><span v-if="cusInfo.chanName" v-text="cusInfo.chanName"></span>
+                    </div>
                 </div>
             </div>
             <div class="cd-contain">

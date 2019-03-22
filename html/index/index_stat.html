@@ -56,9 +56,10 @@
         <div class="stat-nav-bg" @click="closeFilterNav"  ontouchmove="event.preventDefault();"></div>
         <div class="stat-contain">
             <ul>
-                <li class="clear" v-for="info in infoList" @click="skipDetail(info.id,info.phone)">
+                <li class="clear" v-for="(info,index) in infoList" @click="skipDetail(info.id,info.phone,info.belongState)" :key="index">
                     <div class="fl name" v-text="info.name"></div>
                     <div class="fr time">{{info.time | dateFilter}}</div>
+                    <span v-if="info.belongState == 1"></span>
                 </li>
                 <!-- 无更多数据 -->
                 <div class="not-more-filter" id="not-more">没有更多数据</div>
@@ -233,15 +234,22 @@
                     }
                     this.closeFilterNav();
                 },
-                skipDetail:function(id,phone){
-                    wHrefJs.openWin({
-                        name:'customerDetail',
-                        path:'../customer/customer_detail.html',
-                        param:{
-                            cusId:id,
-                            cusPhone:phone
-                        }
-                    })
+                skipDetail:function(id,phone,state){
+                    // 不能查看
+                    if(state == 1){
+                        wDialog.toast({
+                            msg:'不能查看非自己负责的客户'
+                        })
+                    }else{
+                        wHrefJs.openWin({
+                            name:'customerDetail',
+                            path:'../customer/customer_detail.html',
+                            param:{
+                                cusId:id,
+                                cusPhone:phone
+                            }
+                        })
+                    }
                 }
             }
         })

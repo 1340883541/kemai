@@ -142,10 +142,12 @@
 .cd-caption .cd-cb {
     font-size: .28rem;
     color: #999999;
-    line-height: 1em;
-    margin-top: .32rem;
+    margin-top: .12rem;
+    padding-bottom: .2rem;
 }
-
+.cd-caption .cd-cb  .cd-name{
+    line-height: 1.4em;
+}
 .cd-caption .cd-cb>span.line {
     margin: 0 .3rem;
 }
