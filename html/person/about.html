@@ -39,7 +39,7 @@
                     <li class="about-lis" v-for="(about,index) in aboutList">
                         <div class="about-lis-t flex-wrap flex-between" :class="{'curr':index === currIndex}" @click="lookAboutMore(index)">
                             <div class="left">
-                                <div class="caption" >客脉{{about.version}}{{about.name}}</div>
+                                <div class="caption" >{{about.version}}{{about.name}}</div>
                                 <div class="time" v-text="about.release_time"></div>
                             </div>
                             <div class="right">
@@ -83,11 +83,11 @@
             el: '#wrap',
             data: {
                 page:1,
-                pageSize:10,
+                pageSize:300,
                 totalPage:1,
                 aboutList:[],
                 currIndex:'',
-                version:api.version
+                version:''
             },
             mounted:function(){
                 this.getData();
@@ -113,6 +113,15 @@
                                 if(!isLoadMore){
                                     _this.aboutList = res.data;
                                     _this.totalPage = Math.ceil(res.count / _this.pageSize);
+                                    if(res.data && res.data.length > 0){
+                                        res.data.filter(function(v,i){
+                                            if(i == res.data.length - 1){
+                                                _this.version = v.version;
+                                            }
+                                        });
+                                    }else{
+                                        _this.version = 'v1.0.0'
+                                    }
                                 }else{
                                     _this.aboutList = _this.aboutList.concat(res.data);
                                 }
