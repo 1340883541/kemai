@@ -607,6 +607,15 @@
     text-align: center;
 }
 
+.text_tel > span{
+    color:#D0021B;
+    padding:0 .1rem;
+}
+.text_tel > p{
+    font-size: .28rem;
+    color:#4C9FF8;
+    line-height: 1.4em;
+}
 .timer_r {
     color: #4c9ff8!important;
 }

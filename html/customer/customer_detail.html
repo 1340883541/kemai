@@ -159,9 +159,17 @@
            <div class="content">
                <div class="content_code">
                    <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
-                   <div class="short_message">短信验证</div>
+                   <div class="short_message">查看微信</div>
+                   <!-- <div class="text_tel">
+                       查看微信需要短信确认，验证码已发送至您的手机
+                       <span v-text="minePhone"></span>
+                       <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span>
+                       <span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
+                   </div> -->
                    <div class="text_tel">
-                       查看微信需要短信确认，验证码已发送至您的手机<span v-text="minePhone"></span> <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span><span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
+                        请在输入框输入此验证码<span v-text="codeText"></span>
+                        <br>
+                        <p v-text="getCodeText" @click="getCodeFn"></p>
                    </div>
                    <div class="tel_num">
                        <label for="code">
@@ -176,8 +184,8 @@
                           autocorrect="off" autocomplete="off" autocapitalize="off">
                     </div>
                     <div class="submit space-between">
-                        <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即验证</div>
-                        <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>验证中</div>
+                        <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即查看</div>
+                        <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>查看中</div>
                     </div>
                </div>
            </div>
@@ -252,6 +260,8 @@
 
                 isShowCodeDown:false,
                 getCodeText:'立即发送',
+                codeText:'',
+                checkId:'',
                 // 是否显示跟进弹窗
                 isShowFollow:false,
                 followCurrPhone:'',
@@ -423,59 +433,84 @@
                         return iconClass+'4';
                     }
                 },
-                // 发送验证码
                 getCodeFn:function(){
-                    var _this = this;
-                    clearInterval(_this.downTimer);
-                    this.downCountTime = 60;
-                    this.downCount();
-                    this.isShowCodeDown = true;
                     this.getCodeText = '再次发送';
+                    var _this = this;
                     wApiAjax({
-                        url:"phoneauth/authen",
+                        url:'phoneauth/sendInMsg',
                         headers:{
-                            token:TOKEN_DATA
+                            token:TOKEN_DATA,
                         },
                         data:{
                             account:_this.userInfo.account,
                             employeeid:_this.userInfo.employeeid,
-                            phone:_this.userInfo.phone,
-                            type:2
+                            phone:_this.userInfo.phone
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res));
-                            if(res.code == 4){
-                                wDialog.toast({
-                                    msg:'发送验证码成功'
-                                });
-                            }else{
-                                clearInterval(_this.downTimer);
-                                wDialog.toast({
-                                    msg:res.msg
-                                });
-                                _this.isShowCodeDown = false;
-                                _this.getCodeText = '再次发送';
+                            console.log(JSON.stringify(res))
+                            wDialog.toast({
+                                msg:res.msg
+                            })
+                            if(res && res.code == 4){
+                                _this.checkId = res.checkId;
+                                _this.codeText = res.random;
                             }
-                        },
-                        fail:function(){
-                            clearInterval(_this.downTimer);
-                            _this.isShowCodeDown = false;
-                            _this.getCodeText = '再次发送';
                         }
                     })
                 },
-                // 倒计时
-                downCount:function(){
-                    var _this = this;
-                    this.downTimer = setInterval(function(){
-                        --_this.downCountTime;
-                        if(_this.downCountTime <= 0){
-                            _this.downCountTime = 60;
-                            clearInterval(_this.downTimer);
-                            _this.isShowCodeDown = false;
-                        }
-                    },1000);
-                },
+                // // 发送验证码
+                // getCodeFn:function(){
+                //     var _this = this;
+                //     clearInterval(_this.downTimer);
+                //     this.downCountTime = 60;
+                //     this.downCount();
+                //     this.isShowCodeDown = true;
+                //     this.getCodeText = '再次发送';
+                //     wApiAjax({
+                //         url:"phoneauth/authen",
+                //         headers:{
+                //             token:TOKEN_DATA
+                //         },
+                //         data:{
+                //             account:_this.userInfo.account,
+                //             employeeid:_this.userInfo.employeeid,
+                //             phone:_this.userInfo.phone,
+                //             type:2
+                //         },
+                //         success:function(res){
+                //             console.log(JSON.stringify(res));
+                //             if(res.code == 4){
+                //                 wDialog.toast({
+                //                     msg:'发送验证码成功'
+                //                 });
+                //             }else{
+                //                 clearInterval(_this.downTimer);
+                //                 wDialog.toast({
+                //                     msg:res.msg
+                //                 });
+                //                 _this.isShowCodeDown = false;
+                //                 _this.getCodeText = '再次发送';
+                //             }
+                //         },
+                //         fail:function(){
+                //             clearInterval(_this.downTimer);
+                //             _this.isShowCodeDown = false;
+                //             _this.getCodeText = '再次发送';
+                //         }
+                //     })
+                // },
+                // // 倒计时
+                // downCount:function(){
+                //     var _this = this;
+                //     this.downTimer = setInterval(function(){
+                //         --_this.downCountTime;
+                //         if(_this.downCountTime <= 0){
+                //             _this.downCountTime = 60;
+                //             clearInterval(_this.downTimer);
+                //             _this.isShowCodeDown = false;
+                //         }
+                //     },1000);
+                // },
                 // 输入
                 handleInput:function(e) {
                     this.$refs.input.value = this.value;
@@ -502,7 +537,8 @@
                     if(this.isActive){
                         this.isVerifyIng = true;
                         wApiAjax({
-                            url:'phoneauth/bind',
+                            // url:'phoneauth/bind',
+                            url:'phoneauth/checkInMsg',
                             headers:{
                                 token:TOKEN_DATA
                             },
@@ -510,7 +546,8 @@
                                 account:_this.userInfo.account,
                                 employeeid:_this.userInfo.employeeid,
                                 phone:_this.userInfo.phone,
-                                type:2,
+                                checkId:_this.checkId,
+                                // type:2,
                                 authcode:_this.value,
                                 cusid:_this.cusId
                             },
@@ -547,7 +584,41 @@
                         if(ret.status){
                             wDialog.toast({
                                 msg:'复制成功'
-                            })
+                            });
+                            setTimeout(function(){
+                                var systemType = api.systemType;
+                                // android
+                                if(systemType === 'android'){
+                                    api.openApp({
+                                        androidPkg: 'com.tencent.mm',
+                                        mimeType: 'text/html',
+                                        uri: ''
+                                    }, function(ret, err) {
+                                        if (ret) {
+                                            // alert(JSON.stringify(ret));
+                                        } else {
+                                            alert('您还未安装微信');
+                                        }
+                                    });
+                                }
+                                // ios
+                                else if(systemType === 'ios'){
+                                    api.openApp({
+                                        iosUrl:'weixin://'
+                                    }, function(ret, err) {
+                                        if (ret) {
+                                            // alert(JSON.stringify(ret));
+                                        } else {
+                                            alert('您还未安装微信');
+                                        }
+                                    });
+
+                                }
+                                else{
+                                    return;
+                                }
+
+                            },500);
                         }
                     });
                 },
