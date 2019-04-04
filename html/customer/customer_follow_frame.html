@@ -283,6 +283,7 @@
     // 获取搜索的内容
     function getSearchValue(val){
         nCustomerFrame.search_cusName = val;
+        console.log(val)
         nCustomerFrame.pageNo = 1;
         nCustomerFrame.fetchListData();
     }

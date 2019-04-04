@@ -106,16 +106,14 @@
                 clearSearchVal:function(){
                     this.searchVal = '';
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        frameName: 'customerFollowFrame',
                         script: 'clearSearchValue();'
                     });
                 },
                 // 搜索
                 submitSeach:function(){
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        frameName: 'customerFollowFrame',
                         script: 'getSearchValue(\''+this.searchVal+'\');'
                     });
                 },
