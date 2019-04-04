@@ -75,7 +75,7 @@
                     <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="lookWechat">查看微信</span>
                 </div>
                 <div class="cd-ct w-inline-block" v-if="isShowWechat">
-                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="copyWechatFn">复制</span>
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="copyWechatFn">复制并打开微信</span>
                 </div>
                 <div class="cd-cb">
                     <div class="cd-name" v-if="cusInfo.markName">
