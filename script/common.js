@@ -293,8 +293,13 @@ Vue.component('follow-record',{
                             api.sendEvent({
                                 name: 'followRecordSuccessRefresh'
                             });
+                            api.sendEvent({
+                                name: 'refreshMessage'
+                            });
+
 
                             _this.clearData(true);
+
                         }
                         else if(res.code == 201){
                             wDialog.toast({
