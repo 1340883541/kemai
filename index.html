@@ -141,7 +141,63 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
-
+        // 推送
+        var ajpush = api.require('ajpush');
+        // function ajpushInit(){
+        //     return new Promise(function(resolve,reject){
+        //         ajpush.init(function(ret){
+        //             if(ret && ret.status){
+        //                 resolve();
+        //             }
+        //         })
+        //     })
+        // }
+        //
+        ajpush.init(function(ret){
+            if(ret && ret.status){
+                console.log(JSON.stringify(ret))
+                ajpush.getRegistrationId(function(res) {
+                    console.log(JSON.stringify(res))
+                });
+                var param = {alias:'myalias',tags:['tag1','tag2']};
+                ajpush.bindAliasAndTags(param,function(res) {
+                    console.log(JSON.stringify(res))
+                });
+            }
+        })
+        // ajpush.isPushStopped(function(ret) {
+        //     console.log(JSON.stringify(ret))
+        // });
+        var systemType = api.systemType;
+        // android
+        if(systemType === 'android'){
+            api.addEventListener({
+                name: 'appintent'
+            }, function(ret, err) {
+                console.log('andrios==='+JSON.stringify(ret))
+                console.log('andrios==='+JSON.stringify(err))
+                // if (ret && ret.appParam.ajpush) {
+                //     var ajpush = ret.appParam.ajpush;
+                //     var id = ajpush.id;
+                //     var title = ajpush.title;
+                //     var content = ajpush.content;
+                //     var extra = ajpush.extra;
+                // }
+            })
+        }
+        else{
+            api.addEventListener({
+                name: 'noticeclicked'
+            }, function(ret, err) {
+                console.log('ios==='+JSON.stringify(ret))
+                console.log('ios==='+JSON.stringify(err))
+                // if (ret && ret.value) {
+                //     var ajpush = ret.value;
+                //     var content = ajpush.content;
+                //     var extra = ajpush.extra;
+                // }
+            })
+        }
         // 全局token
         // myLocalStorage.clearItem('token')
         // wPref.removePrefs({key:'userInfo'})
