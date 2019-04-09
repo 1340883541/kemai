@@ -152,16 +152,22 @@
             }, function(ret, err) {
                 if (ret && ret.appParam.ajpush) {
                     var extra = ret.appParam.ajpush.extra;
+                    // ajpush.clearNotification( {id:-1},function() {});
+                    // alert(JSON.stringify(extra))
                     var id = extra.cusId,
-                        phone = extra.cusPhone;
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: './html/customer/customer_detail.html',
-                        param: {
-                            cusId: id,
-                            cusPhone:phone
-                        }
-                    })
+                        phone = extra.cusPhone,
+                        type = extra.type;
+                    // 跳转到详情
+                    if(type == 1){
+                        wHrefJs.openWin({
+                            name: 'customerDetail',
+                            path: './html/customer/customer_detail.html',
+                            param: {
+                                cusId: id,
+                                cusPhone:phone
+                            }
+                        })
+                    }
                 }
             })
         }
@@ -172,18 +178,23 @@
             api.addEventListener({
                 name: 'noticeclicked'
             }, function(ret, err) {
+                alert(JSON.stringify(ret))
                 if (ret && ret.value) {
                     var extra = ret.value.extra;
                     var id = extra.cusId,
-                        phone = extra.cusPhone;
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: './html/customer/customer_detail.html',
-                        param: {
-                            cusId: id,
-                            cusPhone:phone
-                        }
-                    })
+                        phone = extra.cusPhone,
+                        type = extra.type;
+                    // 跳转到详情
+                    if(type == 1){
+                        wHrefJs.openWin({
+                            name: 'customerDetail',
+                            path: './html/customer/customer_detail.html',
+                            param: {
+                                cusId: id,
+                                cusPhone:phone
+                            }
+                        })
+                    }
                 }
             })
         }

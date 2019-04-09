@@ -229,6 +229,16 @@
                                 success: function(res) {
                                     console.log(JSON.stringify(res))
                                     if (res.code == 200) {
+                                        // 推送的
+                                        var ajpush = api.require('ajpush');
+                                        ajpush.bindAliasAndTags({
+                                            alias:'',
+                                        },function(res){
+                                            // 设置别名
+                                            if(res.statusCode == 0){
+
+                                            }
+                                        })
                                         wPref.removePrefs({
                                             key: 'isLogin'
                                         })
