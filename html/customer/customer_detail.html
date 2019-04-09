@@ -273,7 +273,8 @@
             },
             created:function(){
                 this.cusId = param.cusId;
-                this.cusPhone = param.cusPhone
+                this.cusPhone = param.cusPhone;
+                console.log(JSON.stringify(param))
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });

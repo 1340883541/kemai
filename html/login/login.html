@@ -187,6 +187,25 @@
                                     }
                                     if (res.code == 4) {
                                         if (res.data.platAccount[0].isvalidate == 1) {
+                                            // 推送的
+                                            var ajpush = api.require('ajpush');
+                                            if(api.systemType === 'andriod'){
+                                                ajpush.init(function(ret) {
+                                                    if (ret && ret.status){
+                                                        //success
+                                                    }
+                                                });
+                                            }
+                                            console.log(JSON.stringify(ajpush))
+                                            ajpush.bindAliasAndTags({
+                                                alias:res.data.platAccount[0].account,
+                                            },function(res){
+                                                console.log(JSON.stringify(res))
+                                                // 设置别名
+                                                if(res.statusCode == 0){
+
+                                                }
+                                            })
                                             wPref.setPrefs({
                                                 key: 'userInfo',
                                                 value: JSON.stringify(res.data.platAccount[0])

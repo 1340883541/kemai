@@ -26,6 +26,6 @@
 	<permission name="hardware" />
     <feature name="ajpush">
         <param name="app_key" value="7546a8613a1b2064460c7ab6" />
-        <param name="channel" value="developer-apicloud" />
+        <param name="channel" value="com.jindingtimes.callcenter" />
     </feature>
 </widget>

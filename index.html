@@ -143,59 +143,48 @@
     apiready = function() {
         // 推送
         var ajpush = api.require('ajpush');
-        // function ajpushInit(){
-        //     return new Promise(function(resolve,reject){
-        //         ajpush.init(function(ret){
-        //             if(ret && ret.status){
-        //                 resolve();
-        //             }
-        //         })
-        //     })
-        // }
-        //
-        ajpush.init(function(ret){
-            if(ret && ret.status){
-                console.log(JSON.stringify(ret))
-                ajpush.getRegistrationId(function(res) {
-                    console.log(JSON.stringify(res))
-                });
-                var param = {alias:'myalias',tags:['tag1','tag2']};
-                ajpush.bindAliasAndTags(param,function(res) {
-                    console.log(JSON.stringify(res))
-                });
-            }
-        })
-        // ajpush.isPushStopped(function(ret) {
-        //     console.log(JSON.stringify(ret))
-        // });
+        // 点击通知
         var systemType = api.systemType;
         // android
         if(systemType === 'android'){
             api.addEventListener({
                 name: 'appintent'
             }, function(ret, err) {
-                console.log('andrios==='+JSON.stringify(ret))
-                console.log('andrios==='+JSON.stringify(err))
-                // if (ret && ret.appParam.ajpush) {
-                //     var ajpush = ret.appParam.ajpush;
-                //     var id = ajpush.id;
-                //     var title = ajpush.title;
-                //     var content = ajpush.content;
-                //     var extra = ajpush.extra;
-                // }
+                if (ret && ret.appParam.ajpush) {
+                    var extra = ret.appParam.ajpush.extra;
+                    var id = extra.cusId,
+                        phone = extra.cusPhone;
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: './html/customer/customer_detail.html',
+                        param: {
+                            cusId: id,
+                            cusPhone:phone
+                        }
+                    })
+                }
             })
         }
         else{
+            ajpush.setBadge({
+                badge:0
+            });
             api.addEventListener({
                 name: 'noticeclicked'
             }, function(ret, err) {
-                console.log('ios==='+JSON.stringify(ret))
-                console.log('ios==='+JSON.stringify(err))
-                // if (ret && ret.value) {
-                //     var ajpush = ret.value;
-                //     var content = ajpush.content;
-                //     var extra = ajpush.extra;
-                // }
+                if (ret && ret.value) {
+                    var extra = ret.value.extra;
+                    var id = extra.cusId,
+                        phone = extra.cusPhone;
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: './html/customer/customer_detail.html',
+                        param: {
+                            cusId: id,
+                            cusPhone:phone
+                        }
+                    })
+                }
             })
         }
         // 全局token
