@@ -196,15 +196,13 @@
                                                     }
                                                 });
                                             }
-                                            console.log(JSON.stringify(ajpush))
+                                            console.log('-------'+JSON.stringify(res.data.platAccount[0].employeeid))
                                             ajpush.bindAliasAndTags({
-                                                alias:res.data.platAccount[0].account,
+                                                alias:res.data.platAccount[0].employeeid+'',
                                             },function(res){
                                                 console.log(JSON.stringify(res))
                                                 // 设置别名
-                                                if(res.statusCode == 0){
-
-                                                }
+                                                if(res.statusCode == 0){}
                                             })
                                             wPref.setPrefs({
                                                 key: 'userInfo',
