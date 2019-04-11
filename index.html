@@ -150,7 +150,7 @@
             api.addEventListener({
                 name: 'appintent'
             }, function(ret, err) {
-                alert(JSON.stringify(ret))
+                // alert(JSON.stringify(ret))
                 if (ret && ret.appParam.ajpush) {
                     var extra = ret.appParam.ajpush.extra;
                     // ajpush.clearNotification( {id:-1},function() {});
@@ -176,10 +176,10 @@
             api.addEventListener({
                 name: 'noticeclicked'
             }, function(ret, err) {
-                ajpush.setBadge({
-                    badge:0
-                });
-                alert(JSON.stringify(ret))
+                // ajpush.setBadge({
+                //     badge:0
+                // });
+                // alert(JSON.stringify(ret))
                 if (ret && ret.value) {
                     var extra = ret.value.extra;
                     var id = extra.cusId,
