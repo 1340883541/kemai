@@ -63,6 +63,12 @@
                     <span :class="{'curr':!isShowDetailBox}" @click="switchTab(false)"><i></i>意向资料</span>
                 </div>
                 <div class="right"></div>
+                <div class="offline-box clear" id="follow-alert" style="display:none;" @click="callPhone(1)">
+                    <div class="fl off-left">
+                        <i></i>系统检测到，当前客户还有暂未跟进的记录。
+                    </div>
+                    <div class="fr off-right"></div>
+                </div>
             </div>
             <div class="hname" id="scroll-hname">
                 <span v-text="cusInfo.cusName"></span>
@@ -146,7 +152,7 @@
             </div>
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
-                    <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(event)"><i></i>电话跟进</div>
+                    <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(0)"><i></i>电话跟进</div>
                     <div class="flex-con note-follow-btn follow-btn disabled" @click="skipNoteList"><i></i>短信跟进</div>
                 </div>
             </div>
@@ -191,7 +197,7 @@
            </div>
         </div>
         <!-- 跟进记录弹窗 -->
-        <follow-record :is-show-follow.sync="isShowFollow" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" @refresh-view="refreshView"></follow-record>
+        <follow-record :is-show-follow.sync="isShowFollow" :is-not-follow="isNotFollow" :follow-root-id="followRootId" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" @refresh-view="refreshView"></follow-record>
 
     </div>
 </body>
@@ -266,10 +272,12 @@
                 isShowFollow:false,
                 followCurrPhone:'',
                 followCurrId:'',
+                followRootId:'', //跟进id
                 baseUrl:__CONFIG__.baseUrl,
                 // 当前播放的dom
                 currHandlePlayTag:null,
-                isHandlePlay:false
+                isHandlePlay:false,
+                isNotFollow:0
             },
             created:function(){
                 this.cusId = param.cusId;
@@ -343,11 +351,13 @@
                         },
 
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 if(!isLoadMore){
                                     _this.cusInfo = res.data.cusInfo;
+                                    _this.followRootId = res.data.cusInfo.followId || '';
+                                    res.data.cusInfo && res.data.cusInfo.existCallLogState == 0 ? $('#follow-alert').show() : $('#follow-alert').hide();
                                     if(res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1){
                                         _this.isShowWechat = false;
                                     }else{
@@ -646,7 +656,8 @@
                     // })
                 },
                 // 拨打电话
-                callPhone: function(e) {
+                callPhone: function(i) {
+                    this.isNotFollow = i;
                     this.isShowFollow = true;
                     this.followCurrId = this.cusId;
                     this.followCurrPhone = this.cusPhone;

@@ -76,9 +76,13 @@ Vue.component('follow-record',{
                 '<div class="w-follow-textarea flex-wrap">'+
                     '<textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>'+
                 '</div>'+
-                '<div class="w-follow-btn clear">'+
+                '<div class="w-follow-btn clear" v-if="isNotFollow === 0">'+
                     '<div class="fl one" @click.stop="callPhone($event)">拨打电话</div>'+
                     '<div class="fr two" id="call-finish-btn" @click.stop="fillFollowFunc">通话完成</div>'+
+                '</div>'+
+                '<div class="w-follow-btn clear" v-if="isNotFollow === 1">'+
+                    '<div class="fl one" @click.stop="cancelFollow">取消</div>'+
+                    '<div class="fr two" id="call-save-btn" @click.stop="saveFollowFunc">保存</div>'+
                 '</div>'+
             '</div>'+
         '</div>'+
@@ -121,6 +125,14 @@ Vue.component('follow-record',{
         isWork:{
             default:1,
             type:Number
+        },
+        isNotFollow:{
+            default:0,
+            type:Number
+        },
+        // 跟进id
+        followRootId:{
+            default:''
         }
     },
     mounted:function(){
@@ -170,7 +182,8 @@ Vue.component('follow-record',{
             wApiAjax({
                 url:'customer/getFollowRecordEchoData',
                 data:{
-                    customerid:_this.followCurrId
+                    customerid:_this.followCurrId,
+                    employeeid:_this.userInfo.employeeid,
                 },
                 headers:{
                     token:TOKEN_DATA
@@ -312,9 +325,71 @@ Vue.component('follow-record',{
                                 msg:res.msg
                             })
                         }
+                    },
+                    fail:function(){
+                        _this.isFollowHandle = true;
                     }
                 })
             }
+        },
+        saveFollowFunc:function(){
+            var _this = this;
+            if(this.isFollowHandle){
+                this.isFollowHandle = false;
+                wApiAjax({
+                    url:'customer/saveCallFollowPlus',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        employeeid:_this.userInfo.employeeid,
+                        customerid:_this.followCurrId,
+                        nextfollow:_this.followDate,
+                        estate:_this.clientStateCode,
+                        followResult:_this.followRemark,
+                        cusname:_this.clientName,
+                        followId:_this.followRootId
+                    },
+                    success:function(res){
+                        console.log(JSON.stringify(res))
+                        _this.isFollowHandle = true;
+                        if(res.code == 200){
+                            wDialog.toast({
+                                msg:'跟进记录成功'
+                            });
+                            // 跟进成功推送
+                            api.sendEvent({
+                                name: 'followRecordSuccessRefresh'
+                            });
+                            api.sendEvent({
+                                name: 'refreshMessage'
+                            });
+
+
+                            _this.clearData(true);
+
+                        }
+                        else if(res.code == 201){
+                            wDialog.toast({
+                                msg:'电话没有拨打成功'
+                            });
+                            _this.clearData(false);
+                        }
+                        else{
+                            wDialog.toast({
+                                msg:res.msg
+                            })
+                        }
+                    },
+                    fail:function(){
+                        _this.isFollowHandle = true;
+                    }
+                })
+            }
+        },
+        // 取消
+        cancelFollow:function(){
+            this.clearData();
         },
         clearData:function(isCallSuc){
             this.clientName = '';

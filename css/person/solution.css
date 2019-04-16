@@ -10,12 +10,12 @@
     justify-content: start;
     align-items: center;
     width: 100%;
+    box-sizing: content-box;
 }
 .header .back{
     width: 0.48rem;
 	height: 0.48rem;
     position: absolute;
-    margin-top: 0.15rem;
 }
 .header .back img{
     width:100%;
