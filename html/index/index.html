@@ -256,12 +256,6 @@
                 lookwechatcount:0, //短信跟进个数
                 userInfo:'',
             },
-            created:function(){
-                this.userInfo = wPref.getPrefs({
-                    key:'userInfo'
-                });
-                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-            },
             mounted: function() {
                 this.netWorkStatus();
                 this.fetchStatData();
@@ -311,6 +305,10 @@
                 // 获取消息提醒的数据
                 getMessageData:function(cb){
                     var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wApiAjax({
                         url:"msgRemind/getAllNoticeCount",
                         method:'get',
@@ -351,6 +349,10 @@
                 // 获取今日新增数据
                 fetchNewData:function(cb){
                     var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
                     wApiAjax({
                         url:'workbench/todayAdd',
@@ -378,6 +380,10 @@
                 // 获取今日统计数据
                 fetchStatData:function(){
                     var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
                     wApiAjax({
                         url:'workbench/todaySta',
