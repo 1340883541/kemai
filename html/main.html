@@ -126,7 +126,7 @@
         api.addEventListener({
             name: 'followShowPopup'
         }, function(ret, err){
-            console.log('-----------------')
+            // console.log('-----------------')
             if(ret.value.origin === 'frameList'){
                 $('#follow-p').show();
             }
@@ -151,7 +151,6 @@
     function setFootBar(_this, i) {
         if (!$(_this).hasClass('curr')) {
             $(_this).addClass('curr').siblings().removeClass('curr');
-            setFrameGroup(i, isReFreshLogin);
             if (i == 1) {
                 // 打开frame
                 api.sendEvent({
@@ -167,7 +166,14 @@
             }
             if(i == 0){
                 isReFreshLogin = false;
+                api.execScript({
+                    name: 'main',
+                    frameName: 'index',
+                    script: 'refrshIndexData();'
+                });
+
             }
+            setFrameGroup(i, isReFreshLogin);
         }
     }
     var frameList = [{

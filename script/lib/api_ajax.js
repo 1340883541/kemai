@@ -83,11 +83,11 @@ function wApiAjax(par) {
                 if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
                     wDialog.hideProgress();
                     // 清除全局token
-                    myLocalStorage.clearItem('token')
-                    wPref.removePrefs({key:'userInfo'})
-                    wPref.removePrefs({key:'isLogin'})
+                    myLocalStorage.clearItem('token');
+                    wPref.removePrefs({key:'userInfo'});
+                    wPref.removePrefs({key:'isLogin'});
                     wDialog.alert({
-                        msg:ret.message,
+                        msg:'用户信息过期，请重新登录',
                         cb:function(){
                             api.openWin({
                                 name: 'login',

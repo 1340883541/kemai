@@ -199,39 +199,39 @@
         }, function(ret, err){
             indexV.getMessageData();
         });
-        // 下拉刷新
-        api.setCustomRefreshHeaderInfo({
-            bgColor: '#f7f7f7',
-            isScale: true,
-            loadAnimInterval:120,
-            image: {
-                pull: [
-                    'widget://image/load-xl-s1.png',
-                    'widget://image/load-xl-s2.png'
-                ],
-                load: [
-                    'widget://image/load-xl-1.png',
-                    'widget://image/load-xl-2.png',
-                    'widget://image/load-xl-3.png',
-                    'widget://image/load-xl-4.png',
-                    'widget://image/load-xl-5.png',
-                    'widget://image/load-xl-6.png',
-                    'widget://image/load-xl-7.png',
-                    'widget://image/load-xl-8.png',
-                    'widget://image/load-xl-9.png',
-                    'widget://image/load-xl-10.png',
-                    'widget://image/load-xl-11.png',
-                    'widget://image/load-xl-12.png'
-                ]
-            }
-        }, function() {
-            indexV.fetchData(api.refreshHeaderLoadDone)
-            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
-            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
-        });
-        api.setFrameAttr({
-            bounces:true
-        });
+        // // 下拉刷新
+        // api.setCustomRefreshHeaderInfo({
+        //     bgColor: '#f7f7f7',
+        //     isScale: true,
+        //     loadAnimInterval:120,
+        //     image: {
+        //         pull: [
+        //             'widget://image/load-xl-s1.png',
+        //             'widget://image/load-xl-s2.png'
+        //         ],
+        //         load: [
+        //             'widget://image/load-xl-1.png',
+        //             'widget://image/load-xl-2.png',
+        //             'widget://image/load-xl-3.png',
+        //             'widget://image/load-xl-4.png',
+        //             'widget://image/load-xl-5.png',
+        //             'widget://image/load-xl-6.png',
+        //             'widget://image/load-xl-7.png',
+        //             'widget://image/load-xl-8.png',
+        //             'widget://image/load-xl-9.png',
+        //             'widget://image/load-xl-10.png',
+        //             'widget://image/load-xl-11.png',
+        //             'widget://image/load-xl-12.png'
+        //         ]
+        //     }
+        // }, function() {
+        //     indexV.fetchData(api.refreshHeaderLoadDone)
+        //     //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+        //     //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+        // });
+        // api.setFrameAttr({
+        //     bounces:true
+        // });
 
         indexV = new Vue({
             el: '#wrapper',
@@ -264,8 +264,9 @@
             },
             mounted: function() {
                 this.netWorkStatus();
-                this.fetchData();
-                // this.getMessageData();
+                this.fetchStatData();
+                this.getMessageData();
+                this.fetchNewData();
             },
             filters:{
                 messageFilter:function(n){
@@ -320,6 +321,7 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
+                            console.log('inn11111111111'+JSON.stringify(res))
                             if(res.code == 200){
                                 if(res.switch == 0){
                                     _this.resource = 0;
@@ -346,11 +348,12 @@
                         }
                     })
                 },
-                fetchData:function(cb){
+                // 获取今日新增数据
+                fetchNewData:function(cb){
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'workbench/datasta',
+                        url:'workbench/todayAdd',
                         headers:{
                             token:TOKEN_DATA
                         },
@@ -358,19 +361,40 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
+                            console.log('inn22222222222222'+JSON.stringify(res))
                             if(res.code == 1){
                                 _this.market = res.market;
                                 _this.network = res.network;
                                 _this.channel = res.channel;
                                 _this.respool = res.respool;
+                            }
+                            wDialog.hideProgress();
+                        },
+                        fail:function(){
+
+                        }
+                    })
+                },
+                // 获取今日统计数据
+                fetchStatData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'workbench/todaySta',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid
+                        },
+                        success:function(res){
+                            console.log('inn3333333333333333'+JSON.stringify(res))
+                            if(res.code == 1){
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;
                                 _this.todaynotefollow = res.todaynotefollow;
                                 _this.lookwechatcount = res.lookwechatcount;
                             }
-                            _this.getMessageData(cb);
-                            wDialog.hideProgress();
                         },
                         fail:function(){
 
@@ -402,6 +426,12 @@
                 }
             }
         })
+    }
+    // 刷新数据
+    function refrshIndexData(){
+        indexV.fetchNewData()
+        indexV.fetchStatData();
+        indexV.getMessageData();
     }
 </script>
 

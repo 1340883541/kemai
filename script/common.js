@@ -77,7 +77,7 @@ Vue.component('follow-record',{
                     '<textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>'+
                 '</div>'+
                 '<div class="w-follow-btn clear" v-if="isNotFollow === 0">'+
-                    '<div class="fl one" @click.stop="callPhone($event)">拨打电话</div>'+
+                    '<div class="fl one w-event-none gray-bg" id="call-phone-btn" @click.stop="callPhone($event)">拨打电话</div>'+
                     '<div class="fr two" id="call-finish-btn" @click.stop="fillFollowFunc">通话完成</div>'+
                 '</div>'+
                 '<div class="w-follow-btn clear" v-if="isNotFollow === 1">'+
@@ -200,6 +200,9 @@ Vue.component('follow-record',{
                         _this.clientStateCode = clientStateObj.value;
                         _this.followId = res.followId;
                         _this.isCanCall = true;
+                        setTimeout(function(){
+                            $('#call-phone-btn').removeClass('w-event-none gray-bg');
+                        },300)
                     }
                 }
             })
@@ -208,43 +211,49 @@ Vue.component('follow-record',{
         callPhone:function(e){
             var _this = this;
             var tag = e.currentTarget;
-            if(this.isCanCall && this.preventMostClick){
-                this.preventMostClick =  false;
-                wApiAjax({
-                    url:'ema/makeCall',
-                    headers:{
-                        token:TOKEN_DATA
-                    },
-                    data:{
-                        account:_this.userInfo.account,
-                        customerNumber:_this.followCurrPhone,
-                        cusid:_this.followCurrId,
-                        empid:_this.userInfo.employeeid,
-                        is_work:_this.isWork,
-                        followId:_this.followId
-                    },
-                    success:function(res){
-                        console.log(JSON.stringify(res))
-                        if(res.code == 200){
-                            $(tag).addClass('w-event-none gray-bg');
-                            $('#call-finish-btn').addClass('w-event-none gray-bg');
-                            setTimeout(function(){
-                                $('#call-finish-btn').removeClass('w-event-none gray-bg');
-                            },5000);
-                            wDialog.toast({
-                                msg: '拨打电话中，请注意接听'
-                            });
-                        }else{
-                            _this.preventMostClick = true;
-                            wDialog.toast({
-                                msg:res.msg||'电话拨打失败'
-                            });
+            if(this.isCanCall){
+                if(this.preventMostClick){
+                    this.preventMostClick =  false;
+                    wApiAjax({
+                        url:'ema/makeCall',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            account:_this.userInfo.account,
+                            customerNumber:_this.followCurrPhone,
+                            cusid:_this.followCurrId,
+                            empid:_this.userInfo.employeeid,
+                            is_work:_this.isWork,
+                            followId:_this.followId
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 200){
+                                $(tag).addClass('w-event-none gray-bg');
+                                $('#call-finish-btn').addClass('w-event-none gray-bg');
+                                setTimeout(function(){
+                                    $('#call-finish-btn').removeClass('w-event-none gray-bg');
+                                },5000);
+                                wDialog.toast({
+                                    msg: '拨打电话中，请注意接听'
+                                });
+                            }else{
+                                _this.preventMostClick = true;
+                                wDialog.toast({
+                                    msg:res.msg||'电话拨打失败'
+                                });
+                            }
                         }
-                    }
-                })
+                    })
+                }else{
+                    wDialog.toast({
+                        msg:"正在拨打电话中，请稍等.."
+                    })
+                }
             }else{
                 wDialog.toast({
-                    msg:"请稍等，再拨打电话"
+                    msg:"正在加载客户信息，请稍等.."
                 })
             }
         },

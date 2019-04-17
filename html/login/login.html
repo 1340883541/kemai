@@ -196,9 +196,8 @@
                                                     }
                                                 });
                                             }
-                                            console.log('-------'+JSON.stringify(res.data.platAccount[0].employeeid))
                                             ajpush.bindAliasAndTags({
-                                                alias:res.data.platAccount[0].employeeid+'',
+                                                alias:res.configEnv + '_' +res.data.platAccount[0].employeeid,
                                             },function(res){
                                                 console.log(JSON.stringify(res))
                                                 // 设置别名
