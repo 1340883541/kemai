@@ -143,6 +143,9 @@
     apiready = function() {
         // 推送
         var ajpush = api.require('ajpush');
+        ajpush.setBadge({
+            badge:0
+        });
         if(ajpush){
             // 点击通知
             var systemType = api.systemType;
