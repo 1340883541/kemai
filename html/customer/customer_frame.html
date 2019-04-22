@@ -21,6 +21,9 @@
             height: 100%;
             background-color: #f7f7f7;
         }
+        #wrap{
+            position: relative;
+        }
     </style>
 </head>
 
@@ -101,7 +104,8 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var nCustomerFrame = null;
+    var nCustomerFrame = null,
+        isFollowPopupFocus = false;
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
@@ -135,6 +139,17 @@
             nCustomerFrame.pageNo = 1;
             nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
         });
+
+        api.addEventListener({
+            name: 'followShowPopup'
+        }, function(ret, err){
+            isFollowPopupFocus = true;
+        });
+        api.addEventListener({
+            name: 'followHidePopup'
+        }, function(ret, err){
+            isFollowPopupFocus = false;
+        });
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom',
@@ -142,10 +157,12 @@
                 threshold:0
             }
         }, function(ret, err){
-            if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
-                nCustomerFrame.fetchListData(true);
-            }else{
-                $('#not-more').show();
+            if(!isFollowPopupFocus){
+                if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
+                    nCustomerFrame.fetchListData(true);
+                }else{
+                    $('#not-more').show();
+                }
             }
         });
 

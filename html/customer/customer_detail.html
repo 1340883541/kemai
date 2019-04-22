@@ -210,10 +210,21 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var cusDetailV = null;
+    var cusDetailV = null,
+        isFollowPopupFocus = false;
     apiready = function() {
         $api.fixStatusBar($('#cd-header')[0]);
         $api.fixStatusBar($('#back-box')[0]);
+        api.addEventListener({
+            name: 'followShowPopup'
+        }, function(ret, err){
+            isFollowPopupFocus = true;
+        });
+        api.addEventListener({
+            name: 'followHidePopup'
+        }, function(ret, err){
+            isFollowPopupFocus = false;
+        });
 
         var param = api.pageParam;
         // 下拉加载更多
@@ -224,9 +235,11 @@
             }
         }, function(ret, err){
             // console.log('-----------------------------------')
-            if(cusDetailV.isShowDetailBox){
-                if(++cusDetailV.pageNo <= cusDetailV.totalPage){
-                    cusDetailV.fetchData(true);
+            if(!isFollowPopupFocus){
+                if(cusDetailV.isShowDetailBox){
+                    if(++cusDetailV.pageNo <= cusDetailV.totalPage){
+                        cusDetailV.fetchData(true);
+                    }
                 }
             }
         });

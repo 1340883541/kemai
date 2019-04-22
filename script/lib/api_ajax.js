@@ -86,6 +86,17 @@ function wApiAjax(par) {
                     myLocalStorage.clearItem('token');
                     wPref.removePrefs({key:'userInfo'});
                     wPref.removePrefs({key:'isLogin'});
+
+                    // 清除推送
+                    var ajpush = api.require('ajpush');
+                    ajpush.bindAliasAndTags({
+                        alias:'',
+                    },function(res){
+                        // 设置别名
+                        if(res.statusCode == 0){
+
+                        }
+                    })
                     wDialog.alert({
                         msg:'用户信息过期，请重新登录',
                         cb:function(){

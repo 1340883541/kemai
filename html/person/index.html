@@ -75,7 +75,17 @@
 
                         </div>
                         <div class="account_rig" @click="message">
-                            <span>消息通知</span>
+                            <span>消息设置</span>
+                            <div><img src="../../image/icon-gr-jiantou.png"></div>
+                        </div>
+                    </div>
+                    <div class="person_center account_security">
+                        <div class="account_left">
+                            <div><img src="../../image/icon-gr-sz.png"></div>
+
+                        </div>
+                        <div class="account_rig" @click="skipMessageList">
+                            <span>消息中心</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
@@ -181,7 +191,14 @@
                     wHrefJs.openWin({
                         name: 'noteSet',
                         path: '../note/note_set.html',
-                    })
+                    });
+                },
+                // 跳转到消息中心
+                skipMessageList:function(){
+                    wHrefJs.openWin({
+                        name: 'messageList',
+                        path: './message_list.html',
+                    });
                 },
                 getUserInfo: function() {
                     var _this = this
@@ -229,7 +246,7 @@
                                 success: function(res) {
                                     console.log(JSON.stringify(res))
                                     if (res.code == 200) {
-                                        // 推送的
+                                        // 清除推送
                                         var ajpush = api.require('ajpush');
                                         ajpush.bindAliasAndTags({
                                             alias:'',

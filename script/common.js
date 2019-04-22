@@ -49,14 +49,14 @@ Vue.component('empty-con', {
 });
 // 跟进记录组件
 Vue.component('follow-record',{
-    template:'<div class="w-follow-popup" v-if="isShowFollow" @click="hideFollowInfoFunc" @touchmove.prevent>'+
+    template:'<div class="w-follow-popup flex-wrap flex-align-item flex-center" v-if="isShowFollow" @click="hideFollowInfoFunc">'+
         '<div class="w-follow-bg"></div>'+
         '<div class="w-follow-popup-box">'+
             '<div class="w-follow-t">跟进记录</div>'+
             '<div class="w-follow-box">'+
                 '<div class="w-follow-inp flex-wrap bor-1px-b">'+
                     '<div class="w-follow-inp-cap">客户名称：</div>'+
-                    '<input type="text" class="flex-con" v-model="clientName" placeholder="请输入客户姓名">'+
+                    '<input type="text" class="flex-con" @focus="handleFocus" @blur="handleBlur" v-model="clientName" placeholder="请输入客户姓名">'+
                 '</div>'+
                 '<div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prevent="chooseFollowStateFunc">'+
                     '<div class="w-follow-inp-cap">客户状态：</div>'+
@@ -68,13 +68,22 @@ Vue.component('follow-record',{
                         '</ul>'+
                     '</div>'+
                 '</div>'+
+                '<div class="w-follow-inp flex-wrap bor-1px-b">'+
+                    '<div class="w-follow-inp-cap">号码归属地：</div>'+
+                    '<input type="text" class="flex-con" readonly v-model="clientAddr" placeholder="请输入号码归属地">'+
+                '</div>'+
                 '<div class="w-follow-inp flex-wrap bor-1px-b" @click.stop.prenvent="chooseFollowDateFunc">'+
                     '<div class="w-follow-inp-cap">跟进时间：</div>'+
                     '<input type="text" placeholder="请选择下次跟进时间" class="flex-con"  readonly v-model="followDate">'+
                     '<div class="client-state-icon"></div>'+
                 '</div>'+
                 '<div class="w-follow-textarea flex-wrap">'+
-                    '<textarea class="flex-con" placeholder="请输入跟进备注" @touchmove.stop v-model="followRemark"></textarea>'+
+                    '<textarea class="flex-con" @focus="handleFocus" @blur="handleBlur" placeholder="请输入跟进备注" id="follow-remark" @touchmove.stop v-model="followRemark"></textarea>'+
+                '</div>'+
+                '<div class="shortcut-list">'+
+                    '<div class="shortcut-lis" id="shortcut-lis" v-cloak>'+
+                        '<span v-for="(shortcut,index) in shortcutFollowList" v-text="shortcut.content" @click="handleChooseFollow(shortcut.content)"></span>'+
+                    '</div>'+
                 '</div>'+
                 '<div class="w-follow-btn clear" v-if="isNotFollow === 0">'+
                     '<div class="fl one w-event-none gray-bg" id="call-phone-btn" @click.stop="callPhone($event)">拨打电话</div>'+
@@ -93,6 +102,7 @@ Vue.component('follow-record',{
             clientStateList:[],
             clientState:'',
             clientStateCode:'',
+            clientAddr:'',
             followDate:'',
             followRemark:'',
             isShowFollowState:false,
@@ -102,7 +112,9 @@ Vue.component('follow-record',{
             // 防止多次点击
             preventMostClick:true,
             followId:'',
-            isFollowHandle:true
+            isFollowHandle:true,
+            // 快捷跟进记录
+            shortcutFollowList:[],
         }
     },
     props:{
@@ -156,7 +168,6 @@ Vue.component('follow-record',{
                         origin: _this.originView
                     }
                 });
-
             }
             else{
                 api.setFrameAttr({
@@ -173,6 +184,21 @@ Vue.component('follow-record',{
         }
     },
     methods:{
+        // 获取输入框焦点
+        handleFocus:function(){
+            var isAnd = api.systemType === 'android' ? true : false;
+            if(!isAnd){
+                console.log('in')
+                $('body,html').css('overflow','hidden');
+            }
+        },
+        // 失去焦点
+        handleBlur:function(){
+            var isAnd = api.systemType === 'android' ? true : false;
+            if(!isAnd){
+                $('body,html').css('overflow','visible');
+            }
+        },
         hideFollowInfoFunc:function(){
             this.isShowFollowState = false;
         },
@@ -189,7 +215,7 @@ Vue.component('follow-record',{
                     token:TOKEN_DATA
                 },
                 success:function(res){
-                    console.log(JSON.stringify(res))
+                    // console.log(JSON.stringify(res))
                     if(res.code==0){
                         _this.clientStateList = res.estateList;
                         _this.clientName = res.data.name;
@@ -200,12 +226,51 @@ Vue.component('follow-record',{
                         _this.clientStateCode = clientStateObj.value;
                         _this.followId = res.followId;
                         _this.isCanCall = true;
+                        _this.clientAddr = res.attribution || '未知';
                         setTimeout(function(){
                             $('#call-phone-btn').removeClass('w-event-none gray-bg');
                         },300)
+                        _this.getShortcutFollow();
                     }
                 }
             })
+        },
+        // 获取快捷跟进记录
+        getShortcutFollow:function(){
+            var _this = this;
+            wApiAjax({
+                headers:{
+                    token:TOKEN_DATA
+                },
+                url:"customer/fastFollow",
+                method:'get',
+                success:function(res){
+                    // console.log(JSON.stringify(res))
+                    if(res.code == 1){
+                        _this.shortcutFollowList = res.data;
+                        _this.$nextTick(function(){
+                            var sWid = 0;
+                            var len = $('#shortcut-lis > span').length;
+                            $('#shortcut-lis > span').each(function(i,ele){
+                                sWid += $(ele).outerWidth() + 5;
+                                if(i === len-1){
+                                    $('#shortcut-lis').width(sWid);
+                                }
+                            });
+                        })
+                    }
+                }
+            })
+        },
+        // 选择跟进记录
+        handleChooseFollow:function(txt){
+            var eleRemark = document.getElementById('follow-remark');
+            var sStart = eleRemark.selectionStart;
+            this.followRemark = this.followRemark.slice(0,sStart) + txt + this.followRemark.substring(sStart);
+            eleRemark.focus();
+            setTimeout(function(){
+                eleRemark.selectionStart = eleRemark.selectionEnd = sStart + txt.length;
+            },10)
         },
         // 拨打电话
         callPhone:function(e){

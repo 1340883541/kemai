@@ -161,19 +161,21 @@
                         // alert(JSON.stringify(extra))
                         var id = extra.cusId,
                             phone = extra.phone,
-                            type = extra.msgType;
+                            type = extra.msgType,
+                            msgId = extra.msgId;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             setTimeout(function(){
                                 wHrefJs.openWin({
-                                    name: 'customerDetail',
-                                    path: './html/customer/customer_detail.html',
+                                    name: 'messageList',
+                                    path: './html/person/message_list.html',
                                     param: {
                                         cusId: id,
-                                        cusPhone:phone
+                                        cusPhone:phone,
+                                        msgId:msgId
                                     }
                                 })
-                            },500)
+                            },300)
                         }
                     }
                 })
@@ -190,15 +192,17 @@
                         var extra = ret.value.extra;
                         var id = extra.cusId,
                             phone = extra.phone,
-                            type = extra.msgType;
+                            type = extra.msgType,
+                            msgId = extra.msgId;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             wHrefJs.openWin({
-                                name: 'customerDetail',
-                                path: './html/customer/customer_detail.html',
+                                name: 'messageList',
+                                path: './html/person/message_list.html',
                                 param: {
                                     cusId: id,
-                                    cusPhone:phone
+                                    cusPhone:phone,
+                                    msgId:msgId
                                 }
                             })
                         }

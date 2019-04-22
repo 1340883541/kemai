@@ -319,7 +319,7 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            console.log('inn11111111111'+JSON.stringify(res))
+                            // console.log('inn11111111111'+JSON.stringify(res))
                             if(res.code == 200){
                                 if(res.switch == 0){
                                     _this.resource = 0;
@@ -363,7 +363,7 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            console.log('inn22222222222222'+JSON.stringify(res))
+                            // console.log('inn22222222222222'+JSON.stringify(res))
                             if(res.code == 1){
                                 _this.market = res.market;
                                 _this.network = res.network;
@@ -394,7 +394,7 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            console.log('inn3333333333333333'+JSON.stringify(res))
+                            // console.log('inn3333333333333333'+JSON.stringify(res))
                             if(res.code == 1){
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;
