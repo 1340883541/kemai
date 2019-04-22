@@ -197,7 +197,14 @@
            </div>
         </div>
         <!-- 跟进记录弹窗 -->
-        <follow-record :is-show-follow.sync="isShowFollow" :is-not-follow="isNotFollow" :follow-root-id="followRootId" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" @refresh-view="refreshView"></follow-record>
+        <follow-record
+            :is-show-follow.sync="isShowFollow"
+            :is-not-follow="isNotFollow"
+            :follow-root-id="followRootId"
+            :follow-curr-id="followCurrId"
+            :follow-curr-phone="followCurrPhone"
+            @refresh-view="refreshView"
+        ></follow-record>
 
     </div>
 </body>
@@ -674,6 +681,28 @@
                     this.isShowFollow = true;
                     this.followCurrId = this.cusId;
                     this.followCurrPhone = this.cusPhone;
+                    // var _this = this;
+                    // api.openFrame({
+                    //     name: 'followPopup',
+                    //     url: '../component/follow_popup.html',
+                    //     rect: {
+                    //         x: 0,
+                    //         y: 0,
+                    //         w: $(window).width(),
+                    //         h: $(window).height()
+                    //     },
+                    //     pageParam: {
+                    //         isNotFollow: i,
+                    //         isShowFollow:true,
+                    //         followCurrId:_this.cusId,
+                    //         followCurrPhone:_this.cusPhone
+                    //     },
+                    //     bounces: false,
+                    //     bgColor: 'rgba(0,0,0,0)',
+                    //     vScrollBarEnabled: true,
+                    //     hScrollBarEnabled: true
+                    // });
+
                 },
                 refreshView:function(){
                     this.pageNo = 1;
