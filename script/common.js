@@ -81,7 +81,7 @@ Vue.component('follow-record',{
                     '<textarea class="flex-con" @focus="handleFocus" @blur="handleBlur" placeholder="请输入跟进备注" id="follow-remark" @touchmove.stop v-model="followRemark"></textarea>'+
                 '</div>'+
                 '<div class="shortcut-list">'+
-                    '<div class="shortcut-lis" id="shortcut-lis" v-cloak>'+
+                    '<div class="shortcut-lis" id="shortcut-lis" style="opacity:0;" v-cloak>'+
                         '<span v-for="(shortcut,index) in shortcutFollowList" v-text="shortcut.content" @click="handleChooseFollow(shortcut.content)"></span>'+
                     '</div>'+
                 '</div>'+
@@ -226,7 +226,7 @@ Vue.component('follow-record',{
                         _this.clientStateCode = clientStateObj.value;
                         _this.followId = res.followId;
                         _this.isCanCall = true;
-                        _this.clientAddr = res.attribution || '未知';
+                        _this.clientAddr = res.data.attribution || '未知';
                         setTimeout(function(){
                             $('#call-phone-btn').removeClass('w-event-none gray-bg');
                         },300)
@@ -254,7 +254,7 @@ Vue.component('follow-record',{
                             $('#shortcut-lis > span').each(function(i,ele){
                                 sWid += $(ele).outerWidth() + 5;
                                 if(i === len-1){
-                                    $('#shortcut-lis').width(sWid);
+                                    $('#shortcut-lis').width(sWid).css('opacity',1);
                                 }
                             });
                         })
