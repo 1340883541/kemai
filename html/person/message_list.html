@@ -37,7 +37,7 @@
                         <span class="already" v-if="msg.readstate == 1">已读</span>
                         <span class="not-ready" v-else></span>
                     </div>
-                    <div  @click="setMsgAlready($event,msg.id,msg.readstate,index,msgShowStateList[index])">
+                    <div class="msg-contain"  @click="setMsgAlready($event,msg.id,msg.readstate,index,msgShowStateList[index])">
                         <div class="msg-lis-desc" v-text="msg.content"></div>
                         <div class="msg-btn" v-if="msgShowStateList[index] === 1">展开</div>
                     </div>
@@ -145,7 +145,17 @@
                 // 第一条消息已读
                 firstMsgAlready:function(){
                     if(this.msgId){
+                        var _this = this;
                         $('.msg-show-icon').eq(0).show();
+                        $('.msg-contain').eq(0).find('.msg-lis-desc').removeClass('w-elli-2');
+                        setTimeout(function(){
+                            $('.msg-contain').eq(0).find('.msg-btn').text('收起');
+                            var firstMsg = _this.msgList[0];
+                            if(firstMsg.readstate == 0){
+                                _this.msgAlreadyAjax(firstMsg.id,0);
+                            }
+                        },10)
+                        this.currClickELe = $('.msg-contain')[0];
                     }
                 },
                 getUserInfo:function(){
