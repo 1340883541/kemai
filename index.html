@@ -143,9 +143,6 @@
     apiready = function() {
         // 推送
         var ajpush = api.require('ajpush');
-        ajpush.setBadge({
-            badge:0
-        });
         if(ajpush){
             // 点击通知
             var systemType = api.systemType;
@@ -165,6 +162,15 @@
                             msgId = extra.msgId;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
+                            api.sendEvent({
+                                name: 'ajpushMessageList',
+                                extra: {
+                                    cusId: id,
+                                    cusPhone:phone,
+                                    msgId:msgId
+                                }
+                            });
+
                             setTimeout(function(){
                                 wHrefJs.openWin({
                                     name: 'messageList',
@@ -181,6 +187,9 @@
                 })
             }
             else{
+                ajpush.setBadge({
+                    badge:0
+                });
                 api.addEventListener({
                     name: 'noticeclicked'
                 }, function(ret, err) {
@@ -196,6 +205,14 @@
                             msgId = extra.msgId;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
+                            api.sendEvent({
+                                name: 'ajpushMessageList',
+                                extra: {
+                                    cusId: id,
+                                    cusPhone:phone,
+                                    msgId:msgId
+                                }
+                            });
                             wHrefJs.openWin({
                                 name: 'messageList',
                                 path: './html/person/message_list.html',

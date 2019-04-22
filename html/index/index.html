@@ -61,7 +61,7 @@
         </div>
         <div class="msg-box" v-cloak>
             <div class="msg-binner clear">
-                <div class="fl msg-lis" @click="skipMessage(0)">
+                <div class="fl msg-lis" @click="skipMessage(0,'change_principal')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-1">
                             <div class="read-msg" v-if="change_principal">
@@ -71,7 +71,7 @@
                     </div>
                     <div class="msg-txt">负责人变更</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(1)">
+                <div class="fl msg-lis" @click="skipMessage(1,'follow')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-2">
                             <div class="read-msg" v-if="follow">
@@ -81,7 +81,7 @@
                     </div>
                     <div class="msg-txt">跟进提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(2)">
+                <div class="fl msg-lis" @click="skipMessage(2,'recovery')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-3">
                             <div class="read-msg" v-if="recovery">
@@ -91,7 +91,7 @@
                     </div>
                     <div class="msg-txt">回收提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(3)">
+                <div class="fl msg-lis" @click="skipMessage(3,'resource')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-4">
                             <div class="read-msg" v-if="resource">
@@ -101,7 +101,7 @@
                     </div>
                     <div class="msg-txt">资源回收</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(4)">
+                <div class="fl msg-lis" @click="skipMessage(4,'subscription')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-5">
                             <div class="read-msg" v-if="subscription">
@@ -111,7 +111,7 @@
                     </div>
                     <div class="msg-txt">认购提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(5)">
+                <div class="fl msg-lis" @click="skipMessage(5,'sign')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-6">
                             <div class="read-msg" v-if="sign">
@@ -121,7 +121,7 @@
                     </div>
                     <div class="msg-txt">签约提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(6)">
+                <div class="fl msg-lis" @click="skipMessage(6,'pay')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-7">
                             <div class="read-msg" v-if="pay">
@@ -131,7 +131,7 @@
                     </div>
                     <div class="msg-txt">缴费提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(7)">
+                <div class="fl msg-lis" @click="skipMessage(7,'subscriptionBook')">
                     <div class="msg-icon-box">
                         <div class="msg-icon msg-icon-8">
                             <div class="read-msg" v-if="subscriptionBook">
@@ -197,7 +197,7 @@
         api.addEventListener({
             name: 'refreshMessage'
         }, function(ret, err){
-            indexV.getMessageData();
+            // indexV.getMessageData();
         });
         // // 下拉刷新
         // api.setCustomRefreshHeaderInfo({
@@ -255,6 +255,7 @@
                 todaynotefollow:0,  //微信次数
                 lookwechatcount:0, //短信跟进个数
                 userInfo:'',
+                notificationInfo:{}
             },
             mounted: function() {
                 this.netWorkStatus();
@@ -268,15 +269,33 @@
                 }
             },
             methods: {
-                skipMessage:function(i){
+                skipMessage:function(i,remindName){
                     if(i === 1){
-                        wHrefJs.openWin({
-                            name:'customerFollowHeader',
-                            path:'../customer/customer_follow_header.html'
-                        })
+                        // if(this.notificationInfo[remindName] === 'off'){
+                        //     wDialog.toast({
+                        //         msg:'当前的消息提醒还未开启通知。'
+                        //     })
+                        // }else{
+                            wHrefJs.openWin({
+                                name:'customerFollowHeader',
+                                path:'../customer/customer_follow_header.html'
+                            })
+                        // }
+                    }
+                    else if(i === 2){
+                        // if(this.notificationInfo[remindName] === 'off'){
+                        //     wDialog.toast({
+                        //         msg:'当前的消息提醒还未开启通知。'
+                        //     })
+                        // }else{
+                            wHrefJs.openWin({
+                                name:'customerRecycleHeader',
+                                path:'../customer/customer_recycle_header.html'
+                            })
+                        // }
                     }else{
                         wDialog.toast({
-                            msg:'暂不支持查看\n敬请期待'
+                            msg:'暂不支持查看，敬请期待'
                         })
                     }
                 },
@@ -319,8 +338,10 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            // console.log('inn11111111111'+JSON.stringify(res))
+                            console.log('inn11111111111'+JSON.stringify(res))
                             if(res.code == 200){
+                                _this.notificationInfo = res.info || {};
+                                _this.notificationInfo.switch = res.switch;
                                 if(res.switch == 0){
                                     _this.resource = 0;
                                     _this.sign = 0;
@@ -363,7 +384,6 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            // console.log('inn22222222222222'+JSON.stringify(res))
                             if(res.code == 1){
                                 _this.market = res.market;
                                 _this.network = res.network;
@@ -394,7 +414,6 @@
                             employeeid:_this.userInfo.employeeid
                         },
                         success:function(res){
-                            // console.log('inn3333333333333333'+JSON.stringify(res))
                             if(res.code == 1){
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;

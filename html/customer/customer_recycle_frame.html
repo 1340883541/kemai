@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>跟进客户-主页</title>
+    <title>回收客户-主页</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -175,7 +175,7 @@
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'customer/followCusList',
+                        url:'customer/recoveryCusList',
                         headers:{
                             token:TOKEN_DATA
                         },
@@ -186,6 +186,7 @@
                             pageSize:10,
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 if(!isLoadMore){

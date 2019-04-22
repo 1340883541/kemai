@@ -78,6 +78,15 @@
                 $('#not-more').show();
             }
         });
+        api.addEventListener({
+            name: 'ajpushMessageList'
+        }, function(ret, err){
+            if( ret ){
+                //  alert( JSON.stringify( ret ) );
+                 msgV.msgId = ret.value.msgId || '';
+                 msgV.getMsgData();
+            }
+        });
 
         msgV = new Vue({
             el:'#wrap',

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>回收客户-头部</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style media="screen">
+        html,body,#wrap{
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+        #follow-p{
+            position: fixed;
+            left: 0;
+            top:0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background-color: rgba(0,0,0,.4);
+            display: none;
+        }
+        .w-header{
+            overflow:hidden;
+        }
+        .search-box{
+            margin-bottom: .2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="follow-p"></div>
+        <div class="w-header">
+            <div class="search-box" id="header-search-box">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="search-inp">
+                    <form action="#" onsubmit="return false;">
+                        <i class="search" @click="submitSeach"></i>
+                        <i class="close" @click="clearSearchVal"></i>
+                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                    </form>
+                    <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
+                </div>
+                <div class="cancel-box" @click="cancelSearch">取消</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var ncusHeaderV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+        // 监听
+        api.addEventListener({
+            name: 'followShowPopup'
+        }, function(ret, err){
+            if(ret.value.origin === 'frameList'){
+                $('#follow-p').show();
+            }
+        });
+        api.addEventListener({
+            name: 'followHidePopup'
+        }, function(ret, err){
+            if(ret.value.origin === 'frameList'){
+                $('#follow-p').hide();
+            }
+        });
+        ncusHeaderV = new Vue({
+            el:"#wrap",
+            data:{
+                searchVal:''
+            },
+            methods:{
+                // 获取焦点
+                onFoucsInp:function(){
+                    $('#header-search-box').addClass('curr');
+                    setTimeout(function(){
+                        $('#search-inp').focus();
+                    },200);
+                },
+                // 取消搜索
+                cancelSearch:function(){
+                    $('#search-inp').blur();
+                    $('#header-search-box').removeClass('curr');
+                    this.clearSearchVal();
+                },
+                // 清空搜索框
+                clearSearchVal:function(){
+                    this.searchVal = '';
+                    api.execScript({
+                        frameName: 'customerRecycleFrame',
+                        script: 'clearSearchValue();'
+                    });
+                },
+                // 搜索
+                submitSeach:function(){
+                    api.execScript({
+                        frameName: 'customerRecycleFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
+                },
+            }
+        });
+        openCustomerFollowFrame();
+    }
+    // 跳转到frame
+    function openCustomerFollowFrame(){
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        wHrefJs.openFrame({
+            name:'customerRecycleFrame',
+            path:'./customer_recycle_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'#f7f7f7',
+            animation:{
+                type:'none'
+            }
+        })
+    }
+
+</script>
+
+</html>
