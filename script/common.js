@@ -115,6 +115,7 @@ Vue.component('follow-record',{
             isFollowHandle:true,
             // 快捷跟进记录
             shortcutFollowList:[],
+            isNeedRemarkFocus:false
         }
     },
     props:{
@@ -145,7 +146,7 @@ Vue.component('follow-record',{
         // 跟进id
         followRootId:{
             default:''
-        }
+        },
     },
     mounted:function(){
         this.userInfo = wPref.getPrefs({
@@ -186,6 +187,7 @@ Vue.component('follow-record',{
     methods:{
         // 获取输入框焦点
         handleFocus:function(){
+            this.isNeedRemarkFocus = true;
             var isAnd = api.systemType === 'android' ? true : false;
             if(!isAnd){
                 console.log('in')
@@ -267,7 +269,10 @@ Vue.component('follow-record',{
             var eleRemark = document.getElementById('follow-remark');
             var sStart = eleRemark.selectionStart;
             this.followRemark = this.followRemark.slice(0,sStart) + txt + this.followRemark.substring(sStart);
-            eleRemark.focus();
+            console.log(this.isNeedRemarkFocus)
+            if(this.isNeedRemarkFocus){
+                eleRemark.focus();
+            }
             setTimeout(function(){
                 eleRemark.selectionStart = eleRemark.selectionEnd = sStart + txt.length;
             },10)
@@ -474,6 +479,7 @@ Vue.component('follow-record',{
             this.isShowFollowState = false;
             this.preventMostClick = true;
             this.$emit('update:isShowFollow',false);
+            this.isNeedRemarkFocus = false;
             if(isCallSuc){
                 this.$emit('refresh-view');
             }
