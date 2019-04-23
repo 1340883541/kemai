@@ -149,9 +149,6 @@
                 userInfo: '',
                 answernum: '', // 接听号
             },
-            created: function() {
-                this.init();
-            },
             mounted: function() {
                 this.getUserInfo();
             },
@@ -201,7 +198,8 @@
                     });
                 },
                 getUserInfo: function() {
-                    var _this = this
+                    var _this = this;
+                    this.init();
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
