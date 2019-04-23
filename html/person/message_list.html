@@ -84,6 +84,7 @@
             if( ret ){
                 //  alert( JSON.stringify( ret ) );
                  msgV.msgId = ret.value.msgId || '';
+                 msgV.msgList = [];
                  msgV.getMsgData();
             }
         });
@@ -121,7 +122,6 @@
                             msgId:_this.msgId
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.msgList = _this.msgList.concat(res.data);
