@@ -797,17 +797,17 @@
     line-height: 20px;
 }
 .w-follow-popup .shortcut-list .shortcut-lis{
-    padding-top: 5px;
     width: auto;
     height: 32px;
 }
 .w-follow-popup .shortcut-list .shortcut-lis > span{
-    padding:5px 10px;
+    padding:5px 8px;
     margin-right: 5px;
     border:1px solid #eee;
     border-radius: 15px;
     font-size: 14px;
     color:#999;
+    text-align: center;
 }
 .w-follow-popup .w-follow-btn{
     margin-top: .48rem;

@@ -81,7 +81,7 @@ Vue.component('follow-record',{
                     '<textarea class="flex-con" @focus="handleFocus" @blur="handleBlur" placeholder="请输入跟进备注" id="follow-remark" @touchmove.stop v-model="followRemark"></textarea>'+
                 '</div>'+
                 '<div class="shortcut-list">'+
-                    '<div class="shortcut-lis" id="shortcut-lis" style="opacity:0;" v-cloak>'+
+                    '<div class="shortcut-lis w-inline-block" id="shortcut-lis" style="opacity:0;" v-cloak>'+
                         '<span v-for="(shortcut,index) in shortcutFollowList" v-text="shortcut.content" @click="handleChooseFollow(shortcut.content)"></span>'+
                     '</div>'+
                 '</div>'+
@@ -157,7 +157,7 @@ Vue.component('follow-record',{
     watch:{
         isShowFollow:function(n){
             var _this = this;
-            console.log('-----------'+this.originView)
+            // console.log('-----------'+this.originView)
             if(n){
                 api.setFrameAttr({
                     bounces: false
@@ -188,18 +188,18 @@ Vue.component('follow-record',{
         // 获取输入框焦点
         handleFocus:function(){
             this.isNeedRemarkFocus = true;
-            var isAnd = api.systemType === 'android' ? true : false;
-            if(!isAnd){
-                console.log('in')
-                $('body,html').css('overflow','hidden');
-            }
+            // var isAnd = api.systemType === 'android' ? true : false;
+            // if(!isAnd){
+            //     // console.log('in')
+            //     $('body,html').css('overflow','hidden');
+            // }
         },
         // 失去焦点
         handleBlur:function(){
-            var isAnd = api.systemType === 'android' ? true : false;
-            if(!isAnd){
-                $('body,html').css('overflow','visible');
-            }
+            // var isAnd = api.systemType === 'android' ? true : false;
+            // if(!isAnd){
+            //     $('body,html').css('overflow','visible');
+            // }
         },
         hideFollowInfoFunc:function(){
             this.isShowFollowState = false;
@@ -249,17 +249,20 @@ Vue.component('follow-record',{
                 success:function(res){
                     // console.log(JSON.stringify(res))
                     if(res.code == 1){
-                        _this.shortcutFollowList = res.data;
+                        // _this.shortcutFollowList = res.data;
+                        _this.shortcutFollowList = [{"id":1,"content":"无法接听客户号码好"},{"id":2,"content":"直接挂断"},{"id":3,"content":"客户号码"},{"id":4,"content":"客户号码好好"}]
                         _this.$nextTick(function(){
                             var sWid = 0;
                             var len = $('#shortcut-lis > span').length;
                             $('#shortcut-lis > span').each(function(i,ele){
-                                sWid += $(ele).outerWidth() + 5;
+                                console.log(i+'---------------'+$(ele).outerWidth())
+                                $(ele).width($(ele).outerWidth())
+                                sWid = sWid + ($(ele).outerWidth() + 5);
                                 if(i === len-1){
                                     $('#shortcut-lis').width(sWid).css('opacity',1);
                                 }
                             });
-                        })
+                    })
                     }
                 }
             })
@@ -269,7 +272,7 @@ Vue.component('follow-record',{
             var eleRemark = document.getElementById('follow-remark');
             var sStart = eleRemark.selectionStart;
             this.followRemark = this.followRemark.slice(0,sStart) + txt + this.followRemark.substring(sStart);
-            console.log(this.isNeedRemarkFocus)
+            // console.log(this.isNeedRemarkFocus)
             if(this.isNeedRemarkFocus){
                 eleRemark.focus();
             }
@@ -711,6 +714,24 @@ var wHrefJs = {
 // 只是关闭当前页面
 function wBackThisFunc() {
     wHrefJs.backWin();
+}
+function handleOpenFollowPopup(param){
+    param = param || {};
+    api.openFrame({
+        name: 'followPopup',
+        url: '../component/follow_popup.html',
+        rect: {
+            x: 0,
+            y: 0,
+            w: $(window).width(),
+            h: $(window).height()
+        },
+        pageParam: param,
+        bounces: false,
+        bgColor: 'rgba(0,0,0,0.4)',
+        vScrollBarEnabled: true,
+        hScrollBarEnabled: true
+    });
 }
 // 监听网络状态
 var listenOnline = {
