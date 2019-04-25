@@ -249,8 +249,7 @@ Vue.component('follow-record',{
                 success:function(res){
                     // console.log(JSON.stringify(res))
                     if(res.code == 1){
-                        // _this.shortcutFollowList = res.data;
-                        _this.shortcutFollowList = [{"id":1,"content":"无法接听客户号码好"},{"id":2,"content":"直接挂断"},{"id":3,"content":"客户号码"},{"id":4,"content":"客户号码好好"}]
+                        _this.shortcutFollowList = res.data;
                         _this.$nextTick(function(){
                             var sWid = 0;
                             var len = $('#shortcut-lis > span').length;
