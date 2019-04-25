@@ -277,30 +277,38 @@
                 methods: {
                     getSList: function() {
                         var _this = this;
-                        wApiAjax({
-                            url: 'appset/imglist',
-                            method: 'post',
-                            success: function(res) {
-                                console.log(JSON.stringify(res))
-                                if (res.code == 1) {
-                                    _this.sList = res.data || [];
-                                    _this.$nextTick(function() {
-                                        new Swiper('#qd-swiper', {
-                                            pagination: {
-                                                el: '.swiper-pagination'
-                                            },
-                                        });
-                                    });
-                                    if(_this.sList.length == 0){
-                                        goToLogin();
-                                    }
-                                } else {
-                                    wDialog.toast({
-                                        msg: res.msg
-                                    })
-                                }
-                            }
-                        })
+                        this.sList = ['./image/y_1.png','./image/y_2.png','./image/y_3.png'];
+                        _this.$nextTick(function() {
+                            new Swiper('#qd-swiper', {
+                                pagination: {
+                                    el: '.swiper-pagination'
+                                },
+                            });
+                        });
+                        // wApiAjax({
+                        //     url: 'appset/imglist',
+                        //     method: 'post',
+                        //     success: function(res) {
+                        //         console.log(JSON.stringify(res))
+                        //         if (res.code == 1) {
+                        //             _this.sList = res.data || [];
+                        //             _this.$nextTick(function() {
+                        //                 new Swiper('#qd-swiper', {
+                        //                     pagination: {
+                        //                         el: '.swiper-pagination'
+                        //                     },
+                        //                 });
+                        //             });
+                        //             if(_this.sList.length == 0){
+                        //                 goToLogin();
+                        //             }
+                        //         } else {
+                        //             wDialog.toast({
+                        //                 msg: res.msg
+                        //             })
+                        //         }
+                        //     }
+                        // })
                     }
                 }
             })
