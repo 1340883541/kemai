@@ -65,26 +65,12 @@
             <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="cfil-t flex-wrap flex-between">
                     <div class="cname w-elli" v-text="khdata.name"></div>
-                    <div class="cphone" @click.stop="openFollowChoosePopup($event)">去跟进</div>
+                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>
                 <div class="cfil-b">
                     <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status||'无'"></span></div>
                     <div class="cfil-gj time lis"><i></i>跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
                     <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
-                </div>
-                <div class="filter-lis-pop filter-lis-pop1 flex-wrap follow-record-pop hide" @click.stop="hideFollowChoosePopup($event)">
-                    <div class="flex-con filter-lis-p">
-                        <div class="small-state phone-state" @click.stop.prevent="callPhone($event,khdata.id,khdata.phone)">
-                            <div class="small-img"></div>
-                            <p>电话</p>
-                        </div>
-                    </div>
-                    <div class="flex-con filter-lis-p">
-                        <div class="small-state note-state" @click.stop.prevent="skipNoteTempate($event,khdata.id,khdata.phone)">
-                            <div class="small-img small-img-hui"></div>
-                            <p>短信</p>
-                        </div>
-                    </div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -92,8 +78,6 @@
         </div>
         <!-- 空页面 -->
         <empty-con :is-show="khDataList.length === 0" txt="暂无客户信息"></empty-con>
-        <!-- 跟进记录弹窗 -->
-        <follow-record :is-show-follow.sync="isShowFollow" :follow-curr-id="followCurrId" :follow-curr-phone="followCurrPhone" origin-view="frameList" @refresh-view="refreshView"></follow-record>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -104,8 +88,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var nCustomerFrame = null,
-        isFollowPopupFocus = false;
+    var nCustomerFrame = null;
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
@@ -139,17 +122,6 @@
             nCustomerFrame.pageNo = 1;
             nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
         });
-
-        api.addEventListener({
-            name: 'followShowPopup'
-        }, function(ret, err){
-            isFollowPopupFocus = true;
-        });
-        api.addEventListener({
-            name: 'followHidePopup'
-        }, function(ret, err){
-            isFollowPopupFocus = false;
-        });
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom',
@@ -157,12 +129,10 @@
                 threshold:0
             }
         }, function(ret, err){
-            if(!isFollowPopupFocus){
-                if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
-                    nCustomerFrame.fetchListData(true);
-                }else{
-                    $('#not-more').show();
-                }
+            if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
+                nCustomerFrame.fetchListData(true);
+            }else{
+                $('#not-more').show();
             }
         });
 
@@ -191,23 +161,20 @@
                 totalPage:1,
                 khDataList:[],  // 客户信息list
                 userInfo:'',
-                // 是否显示跟进弹窗
-                isShowFollow:false,
-                followCurrPhone:'',
-                followCurrId:''
-            },
-            created:function(){
-                this.userInfo = wPref.getPrefs({
-                    key:'userInfo'
-                });
-                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
             },
             mounted: function() {
+                this.init();
                 this.fetchKhClass();
                 this.fetchKhOrigin();
                 this.fetchListData();
             },
             methods: {
+                init:function(){
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
                 // 获取客户类型
                 fetchKhClass:function(){
                     var _this = this;
@@ -351,84 +318,23 @@
                         path: './customer_detail.html',
                         param: {
                             cusId: id,
-                            cusPhone:phone
+                            cusPhone:phone,
+                            isWork:1
                         }
                     })
                 },
-                // 打开跟进弹窗
-                openFollowChoosePopup:function(e){
-                    var tag = e.currentTarget;
-                    $('.follow-record-pop').addClass('hide');
-                    $(tag).parent().siblings('.follow-record-pop').removeClass('hide');
-                },
-                // 关闭跟进弹窗
-                hideFollowChoosePopup:function(e){
-                    var tag = e.currentTarget;
-                    $(tag).addClass('hide');
-                },
-                // 跳转到短信模板页面
-                skipNoteTempate:function(e,id,phone){
-                    wDialog.toast({
-                        msg:'暂不支持，敬请期待'
-                    })
-                    // wHrefJs.openWin({
-                    //     name:"noteTemplate",
-                    //     path:"../note/note_template.html",
-                    //     param:{
-                    //         cusId:id,
-                    //         cusPhone:phone
-                    //     }
-                    // })
-                },
-                // 拨打电话
-                callPhone: function(e,cusId,phone) {
-                    this.isShowFollow = true;
-                    this.followCurrId = cusId;
-                    this.followCurrPhone = phone;
-                    $('.filter-lis-pop').addClass('hide');
-                    // var _this = this;
-                    // var tag = e.currentTarget;
-                    // $(tag).addClass('w-event-none');
-                    // wApiAjax({
-                    //     url:'ema/makeCall',
-                    //     headers:{
-                    //         token:TOKEN_DATA
-                    //     },
-                    //     data:{
-                    //         account:_this.userInfo.account,
-                    //         customerNumber:phone,
-                    //         cusid:cusId,
-                    //         empid:_this.userInfo.employeeid,
-                    //         is_work:1
-                    //     },
-                    //     success:function(res){
-                    //         console.log(JSON.stringify(res))
-                    //         if(res.code == 200){
-                    //             wDialog.toast({
-                    //                 msg: '拨打电话中，请注意接听'
-                    //             });
-                    //         }else{
-                    //             wDialog.toast({
-                    //                 msg:res.msg
-                    //             });
-                    //         }
-                    //         setTimeout(function(){
-                    //             $(tag).removeClass('w-event-none');
-                    //         },2000);
-                    //     },
-                    //     fail:function(){
-                    //         setTimeout(function(){
-                    //             $(tag).removeClass('w-event-none');
-                    //         },2000);
-                    //     }
-                    // })
-                },
-                refreshView:function(){
-                    this.pageNo = 1;
-                    console.log('in----list')
-                    this.fetchKhClass();
-                    this.fetchKhOrigin();
-                    this.fetchListData();
+                // 跳转到跟进页面
+                handleSkipFollow:function(id,phone){
+                    api.openWin({
+                        name: 'followRecord',
+                        url: '../follow/follow_record.html',
+                        pageParam: {
+                            id:id,
+                            phone:phone,
+                            isWork:1
+                        },
+                        slidBackEnabled: false
+                    });
                 }
             }
         })
@@ -447,10 +353,16 @@
     // 隐藏客户来源的弹窗
     function hideOriginFilterPopup(){
         $('#filter-origin-popup').hide();
+        // api.sendEvent({
+        //     name: 'customerListFilterMainHidePopup'
+        // });
     }
     // 隐藏客户来源的弹窗
     function hideClassFilterPopup(){
         $('#filter-class-popup').hide();
+        // api.sendEvent({
+        //     name: 'customerListFilterMainHidePopup'
+        // });
     }
     // 隐藏弹窗框
     function hideFilterPopup(){

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>系统跟进-主页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+        #wrap{
+            position: relative;
+        }
+        .filter-lists .filter-lis{
+            height: auto;
+        }
+        .filter-lists .filter-lis .filter-call{
+            margin-top: 0;
+            top: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="filter-popup" id="filter-popup" ontouchmove="event.preventDefault();">
+            <div class="filter-popbg" onclick="hideFilterPopupBox();"></div>
+            <div class="filter-popbox">
+                <ul>
+                    <li v-for="(origin,index) in khClassifyList" :key="index" :class="{'curr':currClassifyIndex === index}" @click="switchTabFn($event,origin.name,origin.value)">
+                        <span v-text="origin.name"></span>
+                        <i></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
+            <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0"> -->
+            <div class="filter-lis clear" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipDetail(khdata.id,khdata.phone)">
+                <div class="fl left">
+                    <div class="filter-t clear">
+                        <span class="name fl w-elli" v-text="khdata.name"></span>
+                        <span class="state fl w-elli r-state" v-text="khdata.status"></span>
+                    </div>
+                    <div class="filter-b">跟进时间: <span v-text="khdata.followtime"></span></div>
+                    <div class="filter-b" style="margin-top:8px;">计划跟进时间: <span v-text="khdata.nextfollow"></span></div>
+                </div>
+                <div class="fr right" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">
+                    <div class="filter-call">去跟进</div>
+                </div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的资源客户"></empty-con>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var sCusListV = null;
+    apiready = function() {
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: false,
+            loadAnimInterval: 120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            $('#not-more').hide();
+            sCusListV.pageNo = 1;
+            sCusListV.fetchSystemData(false, api.refreshHeaderLoadDone);
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (++sCusListV.pageNo <= sCusListV.totalPage) {
+                sCusListV.fetchSystemData(true);
+            } else {
+                $('#not-more').show();
+            }
+        });
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            sCusListV.pageNo = 1;
+            sCusListV.fetchSystemData();
+        });
+
+        var param = api.pageParam;
+        sCusListV = new Vue({
+            el: '#wrap',
+            data: {
+                currClassifyIndex: '', //当前选中的客户来源
+                khClassifyList: [], //客户来源列表
+                search_cusName: '', // 搜索客户名
+                search_status: 0, // 联系状态
+                order_followtime: 0, // 跟进时间
+                order_nextfollow: 0, // 计划跟进时间
+                pageNo: 1,
+                totalPage: 1,
+                khDataList: [], // 客户数据列表
+                userInfo: ''
+            },
+            mounted: function() {
+                this.fetchCustomerClassify();
+            },
+            methods: {
+                // 获取客户类型
+                fetchCustomerClassify: function() {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    wApiAjax({
+                        url: 'workbench/syReFoCustomerSataus',
+                        headers: {
+                            "token": TOKEN_DATA
+                        },
+                        success: function(res) {
+                            // console.log('customerclassify ========   '+JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.khClassifyList = res.data.customerSatauslist;
+                                res.data.customerSatauslist.forEach(function(v, i) {
+                                    if (v.name === param.origin) {
+                                        _this.currClassifyIndex = i;
+                                        _this.search_status = v.value;
+                                    }
+                                })
+                                _this.fetchSystemData();
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 获取今日新增列表
+                fetchSystemData: function(isLoadMore, callback) {
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log('request data ====> '+JSON.stringify({
+                        employeeid: _this.userInfo.employeeid,
+                        search_cusName: _this.search_cusName,
+                        search_status: _this.search_status,
+                        order_followtime: _this.order_followtime,
+                        order_nextfollow:_this.order_nextfollow,
+                        pageNo: _this.pageNo,
+                        pageSize: 10
+                    }))
+                    wApiAjax({
+                        url: 'workbench/sysResourceFollList',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            search_cusName: _this.search_cusName,
+                            search_status: _this.search_status,
+                            order_followtime: _this.order_followtime,
+                            order_nextfollow:_this.order_nextfollow,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
+                        },
+                        success: function(res) {
+                            // console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
+                                    _this.khDataList = res.data ? res.data : [];
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                } else {
+                                    if (res.data) {
+                                        _this.khDataList = _this.khDataList.concat(res.data);
+                                    }
+                                }
+
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail: function() {
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                },
+                // 切换客户来源
+                switchTabFn: function(e, name, id) {
+                    var tag = e.currentTarget;
+                    hideFilterPopup();
+                    api.setFrameAttr({
+                        bounces: true,
+                    });
+                    if ($(tag).hasClass('curr')) {
+                        return;
+                    } else {
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                    }
+                    // 获取客户名字
+                    api.execScript({
+                        name: 'systemFollowHeader',
+                        script: 'getKhOriginName(\'' + name + '\')'
+                    });
+                    $('#not-more').hide();
+                    this.search_status = id;
+                    this.pageNo = 1;
+                    this.fetchSystemData();
+
+                },
+                // 跳转到详情
+                skipDetail: function(id,phone) {
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html',
+                        param: {
+                            cusId: id,
+                            cusPhone:phone,
+                            isWork:1
+                        }
+                    })
+                },
+                // 跳转到跟进页面
+                handleSkipFollow:function(id,phone){
+                    api.openWin({
+                        name: 'followRecord',
+                        url: '../follow/follow_record.html',
+                        pageParam: {
+                            id:id,
+                            phone:phone,
+                            isWork:1
+                        },
+                        slidBackEnabled: false
+                    });
+                }
+            }
+        });
+    }
+    // 显示客户来源的弹窗
+    function showFilterPopup() {
+        $('#filter-popup').show();
+    }
+    // 隐藏客户来源的弹窗
+    function hideFilterPopup() {
+        $('#filter-popup').hide();
+    }
+    // 隐藏弹窗框
+    function hideFilterPopupBox() {
+        hideFilterPopup();
+        api.setFrameAttr({
+            bounces: true
+        });
+    }
+    // 联系状态和分配时间 条件筛选
+    function filterCondition(data) {
+        var d = JSON.parse(data);
+        $('#not-more').hide();
+        sCusListV.order_followtime = d.status1;
+        sCusListV.order_nextfollow = d.status2;
+        sCusListV.pageNo = 1;
+        sCusListV.fetchSystemData();
+    }
+    // 获取搜索的内容
+    function getSearchValue(val) {
+        sCusListV.search_cusName = val;
+        sCusListV.pageNo = 1;
+        sCusListV.fetchSystemData();
+    }
+    // 清空搜索的内容
+    function clearSearchValue() {
+        sCusListV.search_cusName = '';
+    }
+</script>
+
+</html>

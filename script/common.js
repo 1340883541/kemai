@@ -163,12 +163,12 @@ Vue.component('follow-record',{
                     bounces: false
                 });
                 this.getClientInfo();
-                api.sendEvent({
-                    name: 'followShowPopup',
-                    extra: {
-                        origin: _this.originView
-                    }
-                });
+                // api.sendEvent({
+                //     name: 'followShowPopup',
+                //     extra: {
+                //         origin: _this.originView
+                //     }
+                // });
             }
             else{
                 api.setFrameAttr({
@@ -283,6 +283,7 @@ Vue.component('follow-record',{
         callPhone:function(e){
             var _this = this;
             var tag = e.currentTarget;
+            console.log(this.followCurrPhone)
             if(this.isCanCall){
                 if(this.preventMostClick){
                     this.preventMostClick =  false;
@@ -387,9 +388,6 @@ Vue.component('follow-record',{
                             api.sendEvent({
                                 name: 'followRecordSuccessRefresh'
                             });
-                            api.sendEvent({
-                                name: 'refreshMessage'
-                            });
 
 
                             _this.clearData(true);
@@ -442,9 +440,6 @@ Vue.component('follow-record',{
                             api.sendEvent({
                                 name: 'followRecordSuccessRefresh'
                             });
-                            api.sendEvent({
-                                name: 'refreshMessage'
-                            });
 
 
                             _this.clearData(true);
@@ -491,8 +486,10 @@ Vue.component('follow-record',{
         //     e.stopPropagation();
         // }
     }
-
 });
+function isIos(){
+    return api.systemType === 'ios'
+}
 // 再次封装 openWin openFrame
 // 页面跳转
 var wHrefJs = {
@@ -663,7 +660,7 @@ var wHrefJs = {
         par.y = typeof par.y === 'undefined' || par.y == false ? 0 : par.y;
         par.w = typeof par.w === 'undefined' || par.w == false ? 'auto' : par.w;
         par.h = typeof par.h === 'undefined' || par.h == false ? 'auto' : par.h;
-        par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.5)' : par.bgColor;
+        par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.4)' : par.bgColor;
         par.animation = typeof par.animation === 'undefined' || par.animation == false ? {} : par.animation;
         par.animation['type'] = par.animation['type'] || 'movein';
         par.animation['subType'] = par.animation['subType'] || 'from_right';

@@ -63,7 +63,7 @@
                     <span :class="{'curr':!isShowDetailBox}" @click="switchTab(false)"><i></i>意向资料</span>
                 </div>
                 <div class="right"></div>
-                <div class="offline-box clear" id="follow-alert" style="display:none;" @click="callPhone(1)">
+                <div class="offline-box clear" id="follow-alert" style="display:none;" @click.stop="handleSkipFollow(0)">
                     <div class="fl off-left">
                         <i></i>客户上次通话后未添加跟进记录，是否补录？
                     </div>
@@ -152,8 +152,9 @@
             </div>
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
-                    <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(0)"><i></i>电话跟进</div>
-                    <div class="flex-con note-follow-btn follow-btn disabled" @click="skipNoteList"><i></i>短信跟进</div>
+                    <div class="flex-con skip-follow-btn follow-btn" @click.stop.prevent="handleSkipFollow(1)">去跟进</div>
+                    <!-- <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(0)"><i></i>电话跟进</div> -->
+                    <!-- <div class="flex-con note-follow-btn follow-btn disabled" @click="skipNoteList"><i></i>短信跟进</div> -->
                 </div>
             </div>
             <input type="hidden" id="scroll-val" value="0">
@@ -166,12 +167,6 @@
                <div class="content_code">
                    <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
                    <div class="short_message">查看微信</div>
-                   <!-- <div class="text_tel">
-                       查看微信需要短信确认，验证码已发送至您的手机
-                       <span v-text="minePhone"></span>
-                       <span class="timer_r" v-show='!isShowCodeDown' @click="getCodeFn" v-text="getCodeText"></span>
-                       <span v-show="isShowCodeDown" class="timer_r">{{downCountTime}}s</span>
-                   </div> -->
                    <div class="text_tel">
                         请在输入框输入此验证码<span v-text="codeText"></span>
                         <br>
@@ -196,15 +191,6 @@
                </div>
            </div>
         </div>
-        <!-- 跟进记录弹窗 -->
-        <follow-record
-            :is-show-follow.sync="isShowFollow"
-            :is-not-follow="isNotFollow"
-            :follow-root-id="followRootId"
-            :follow-curr-id="followCurrId"
-            :follow-curr-phone="followCurrPhone"
-            @refresh-view="refreshView"
-        ></follow-record>
 
     </div>
 </body>
@@ -217,21 +203,10 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var cusDetailV = null,
-        isFollowPopupFocus = false;
+    var cusDetailV = null;
     apiready = function() {
         $api.fixStatusBar($('#cd-header')[0]);
         $api.fixStatusBar($('#back-box')[0]);
-        api.addEventListener({
-            name: 'followShowPopup'
-        }, function(ret, err){
-            isFollowPopupFocus = true;
-        });
-        api.addEventListener({
-            name: 'followHidePopup'
-        }, function(ret, err){
-            isFollowPopupFocus = false;
-        });
 
         var param = api.pageParam;
         // 下拉加载更多
@@ -241,12 +216,9 @@
                 threshold:8
             }
         }, function(ret, err){
-            // console.log('-----------------------------------')
-            if(!isFollowPopupFocus){
-                if(cusDetailV.isShowDetailBox){
-                    if(++cusDetailV.pageNo <= cusDetailV.totalPage){
-                        cusDetailV.fetchData(true);
-                    }
+            if(cusDetailV.isShowDetailBox){
+                if(++cusDetailV.pageNo <= cusDetailV.totalPage){
+                    cusDetailV.fetchData(true);
                 }
             }
         });
@@ -273,12 +245,10 @@
                 cusCount:0,
                 isShowWechat:false,
                 minePhone:'',
-                // 短信验证
+
+                // 信息验证
                 isShowVerify:false,
                 isActive:false,
-                // 倒计时
-                downCountTime:60,
-                downTimer:null,
                 number:6,
                 value:'',
                 isVerifyIng:false,
@@ -288,21 +258,17 @@
                 getCodeText:'立即发送',
                 codeText:'',
                 checkId:'',
-                // 是否显示跟进弹窗
-                isShowFollow:false,
-                followCurrPhone:'',
-                followCurrId:'',
-                followRootId:'', //跟进id
-                baseUrl:__CONFIG__.baseUrl,
                 // 当前播放的dom
+                baseUrl:__CONFIG__.baseUrl,
                 currHandlePlayTag:null,
                 isHandlePlay:false,
-                isNotFollow:0
+
+                // 存在补录的跟进id
+                followRootId:''
             },
             created:function(){
                 this.cusId = param.cusId;
                 this.cusPhone = param.cusPhone;
-                console.log(JSON.stringify(param))
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
@@ -340,7 +306,6 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
-                            console.log(JSON.stringify(res))
                             if(res.code == 200){
                                 _this.minePhone = res.info.phone.substring(0,3)+'****'+res.info.phone.substring(7);
                                 if(_this.userInfo.phone != res.info.phone){
@@ -369,13 +334,13 @@
                             pageNo:_this.pageNo,
                             pageSize:10
                         },
-
                         success:function(res){
                             // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 if(!isLoadMore){
                                     _this.cusInfo = res.data.cusInfo;
+                                    // 判断是否存在有未跟进的
                                     _this.followRootId = res.data.cusInfo.followId || '';
                                     res.data.cusInfo && res.data.cusInfo.existCallLogState == 0 ? $('#follow-alert').show() : $('#follow-alert').hide();
                                     if(res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1){
@@ -395,27 +360,17 @@
                                         var step = 80;
                                         var initStep = 0;
                                         if(caWid > 0){
-                                            // setInterval(function(){
-                                                // initStep += step
-                                                // if(initStep >= caWid){
-                                                //     initStep = 0;
-                                                //     $('#scroll-hname > span').css({
-                                                //         'margin-left':0
-                                                //     })
-                                                // }else{
+                                            xunhuanScroll();
+                                            function xunhuanScroll(){
+                                                $('#scroll-hname > span').animate({
+                                                    'margin-left':-caWid
+                                                },caWid * 12,'linear',function(){
+                                                    $('#scroll-hname > span').css({
+                                                        'margin-left':0
+                                                    });
                                                     xunhuanScroll();
-                                                    function xunhuanScroll(){
-                                                        $('#scroll-hname > span').animate({
-                                                            'margin-left':-caWid
-                                                        },caWid * 12,'linear',function(){
-                                                            $('#scroll-hname > span').css({
-                                                                'margin-left':0
-                                                            });
-                                                            xunhuanScroll();
-                                                        })
-                                                    }
-                                                // }
-                                            // },1);
+                                                })
+                                            }
                                         }
                                     })
                                 }
@@ -432,6 +387,21 @@
                             }
                         }
                     })
+                },
+                // 跳转到跟进页面
+                handleSkipFollow:function(i){
+                    var _this = this;
+                    api.openWin({
+                        name: 'followRecord',
+                        url: '../follow/follow_record.html',
+                        pageParam: {
+                            id:_this.cusId,
+                            phone:_this.cusPhone,
+                            followId:i == 0 ? _this.followRootId : '',
+                            isWork:param.isWork
+                        },
+                        slidBackEnabled: false
+                    });
                 },
                 // 切换 跟进信息 和 意向资料
                 switchTab:function(bool){
@@ -489,63 +459,9 @@
                         }
                     })
                 },
-                // // 发送验证码
-                // getCodeFn:function(){
-                //     var _this = this;
-                //     clearInterval(_this.downTimer);
-                //     this.downCountTime = 60;
-                //     this.downCount();
-                //     this.isShowCodeDown = true;
-                //     this.getCodeText = '再次发送';
-                //     wApiAjax({
-                //         url:"phoneauth/authen",
-                //         headers:{
-                //             token:TOKEN_DATA
-                //         },
-                //         data:{
-                //             account:_this.userInfo.account,
-                //             employeeid:_this.userInfo.employeeid,
-                //             phone:_this.userInfo.phone,
-                //             type:2
-                //         },
-                //         success:function(res){
-                //             console.log(JSON.stringify(res));
-                //             if(res.code == 4){
-                //                 wDialog.toast({
-                //                     msg:'发送验证码成功'
-                //                 });
-                //             }else{
-                //                 clearInterval(_this.downTimer);
-                //                 wDialog.toast({
-                //                     msg:res.msg
-                //                 });
-                //                 _this.isShowCodeDown = false;
-                //                 _this.getCodeText = '再次发送';
-                //             }
-                //         },
-                //         fail:function(){
-                //             clearInterval(_this.downTimer);
-                //             _this.isShowCodeDown = false;
-                //             _this.getCodeText = '再次发送';
-                //         }
-                //     })
-                // },
-                // // 倒计时
-                // downCount:function(){
-                //     var _this = this;
-                //     this.downTimer = setInterval(function(){
-                //         --_this.downCountTime;
-                //         if(_this.downCountTime <= 0){
-                //             _this.downCountTime = 60;
-                //             clearInterval(_this.downTimer);
-                //             _this.isShowCodeDown = false;
-                //         }
-                //     },1000);
-                // },
                 // 输入
                 handleInput:function(e) {
                     this.$refs.input.value = this.value;
-                    console.log(this.value)
                     var tag = e.currentTarget;
                     $(tag)[0].selectionStart = this.value.length;
                     $(tag)[0].selectionEnd = this.value.length;
@@ -562,7 +478,7 @@
                     // document.activeElement.blur() // ios隐藏键盘
                     // this.$refs.input.blur(); // android隐藏键盘
                 },
-                // 提交短信验证码，获取微信号
+                // 提交信息验证码，获取微信号
                 handleSubmit:function(){
                     var _this = this;
                     if(this.isActive){
@@ -589,7 +505,6 @@
                                     _this.isShowVerify = false;
                                     _this.isShowWechat = true;
                                     _this.wechatCard = res.wechat;
-                                    clearInterval(_this.downTimer);
                                 }else{
                                     _this.isVerifyIng = false;
                                     wDialog.toast({
@@ -657,68 +572,19 @@
                 lookWechat:function(){
                     this.isShowVerify = true;
                 },
+                // 关闭短信验证弹窗
                 closeCodeVerify:function(){
                     this.isShowVerify = false;
-                },
-                // 跳转到短信跟进列表
-                skipNoteList:function(){
-                    wDialog.toast({
-                        msg:'暂不支持，敬请期待'
-                    })
-                    // var _this = this;
-                    // wHrefJs.openWin({
-                    //     name:'noteTemplate',
-                    //     path:'../note/note_template.html',
-                    //     param:{
-                    //         cusId:_this.cusId,
-                    //         cusPhone:_this.cusPhone
-                    //     }
-                    // })
-                },
-                // 拨打电话
-                callPhone: function(i) {
-                    this.isNotFollow = i;
-                    this.isShowFollow = true;
-                    this.followCurrId = this.cusId;
-                    this.followCurrPhone = this.cusPhone;
-                    // var _this = this;
-                    // api.openFrame({
-                    //     name: 'followPopup',
-                    //     url: '../component/follow_popup.html',
-                    //     rect: {
-                    //         x: 0,
-                    //         y: 0,
-                    //         w: $(window).width(),
-                    //         h: $(window).height()
-                    //     },
-                    //     pageParam: {
-                    //         isNotFollow: i,
-                    //         isShowFollow:true,
-                    //         followCurrId:_this.cusId,
-                    //         followCurrPhone:_this.cusPhone
-                    //     },
-                    //     bounces: false,
-                    //     bgColor: 'rgba(0,0,0,0)',
-                    //     vScrollBarEnabled: true,
-                    //     hScrollBarEnabled: true
-                    // });
-
-                },
-                refreshView:function(){
-                    this.pageNo = 1;
-                    this.fetchData();
                 },
                 // 播放
                 handlePlayAudio:function(e){
                     var tag = e.currentTarget;
                     var _this = this;
-                    // console.log('----------------------')
                     if(!$(tag).hasClass('disabled')){
                         var audioEle = $(tag).find('.audio-box audio')[0];
                         var audioTxtEle = $(tag).find('.audio-txt')[0];
                         if(audioEle){
                             if(_this.currHandlePlayTag === audioEle){
-                                // console.log('innnnnnnnnn2222')
                                 if(_this.isHandlePlay = !_this.isHandlePlay){;
                                     $(audioTxtEle).removeClass('playing');
                                     audioEle.removeEventListener('ended',function(){})
@@ -727,7 +593,7 @@
                                     $(audioTxtEle).addClass('playing');
                                     audioEle.play();
                                     audioEle.addEventListener('ended',function(){
-                                        console.log('innnn-----------end1')
+                                        // console.log('innnn-----------end1')
                                         $(audioTxtEle).removeClass('playing');
                                     })
                                 }
@@ -738,11 +604,8 @@
                                             _this.isHandlePlay = false;
                                             audioEle.load();
                                             audioEle.play();
-                                            // if(_this.currHandlePlayTag){
-                                            //     _this.currHandlePlayTag.removeEventListener('ended',function(){})
-                                            // }
                                             audioEle.addEventListener('ended',function(){
-                                                console.log('innnn-----------end2')
+                                                // console.log('innnn-----------end2')
                                                 $(audioTxtEle).removeClass('playing');
                                             })
                                             _this.currHandlePlayTag = audioEle;

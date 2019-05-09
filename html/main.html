@@ -116,7 +116,6 @@
     function isIphoneX(){
         return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
     }
-    // console.log(isIphoneX())
     if(isIphoneX()){
         $('#footer').css('height','84px')
     }
@@ -129,22 +128,24 @@
                 });
             }
         });
-        // 监听
+        // 极光推送，消息列表跳转
         api.addEventListener({
-            name: 'followShowPopup'
+            name: 'ajpushSkipCustomerList'
         }, function(ret, err){
-            // console.log('-----------------')
-            if(ret.value.origin === 'frameList'){
-                $('#follow-p').show();
-            }
+            setFootBar($('#footer li').eq(1)[0],1);
         });
-        api.addEventListener({
-            name: 'followHidePopup'
-        }, function(ret, err){
-            if(ret.value.origin === 'frameList'){
-                $('#follow-p').hide();
-            }
-        });
+        // // 监听弹窗显示
+        // api.addEventListener({
+        //     name: 'customerListFilterMainShowPopup'
+        // }, function(ret, err){
+        //     $('#follow-p').show();
+        // });
+        // // 监听弹窗关闭
+        // api.addEventListener({
+        //     name: 'customerListFilterMainHidePopup'
+        // }, function(ret, err){
+        //     $('#follow-p').hide();
+        // });
 
         // 登录成功
         api.addEventListener({

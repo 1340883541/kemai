@@ -272,6 +272,10 @@
     background-image: linear-gradient(90deg, rgba(13, 100, 250, 0.95) 0%,  rgba(84, 203, 248, 0.95) 100%);
 
 }
+.cd-btm-btn .cd-btn .skip-follow-btn{
+    border-radius: .44rem;
+    background-image: linear-gradient(90deg, rgba(13, 100, 250, 0.95) 0%,  rgba(84, 203, 248, 0.95) 100%);
+}
 .cd-btm-btn .cd-btn .note-follow-btn{
     border-top-right-radius: .44rem;
     border-bottom-right-radius: .44rem;

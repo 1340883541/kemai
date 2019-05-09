@@ -44,7 +44,7 @@
                 </div>
                 <div class="msg-list-bottom flex-wrap flex-between">
                     <span class="time" v-text="msg.createdate"></span>
-                    <span class="skip" @click="skipCustomerDetail(msg.customerid,msg.cusphone,msg.id,index)">客户详情</span>
+                    <span class="skip" @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)">{{msg.serverType == 'SendNewCusMsg' ? '查看客户' : '客户详情'}}</span>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -135,6 +135,7 @@
                             msgId:_this.msgId
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.msgList = _this.msgList.concat(res.data);
@@ -209,15 +210,23 @@
                         this.msgAlreadyAjax(id,idx);
                     }
                 },
-                // 跳转到客户详情
-                skipCustomerDetail:function(cusId,cusPhone,id,idx){
+                // 跳转到查看客户
+                skipCustomerDetail:function(isList,cusId,cusPhone,id,idx){
                     var _this = this;
                     if(this.msgList[idx].readstate != 1){
                         this.msgAlreadyAjax(id,idx,function(){
-                            _this.skipDetail(cusId,cusPhone);
+                            if(isList == 'SendNewCusMsg'){
+                                _this.skipCusList();
+                            }else{
+                                _this.skipDetail(cusId,cusPhone);
+                            }
                         })
                     }else{
-                        this.skipDetail(cusId,cusPhone);
+                        if(isList == 'SendNewCusMsg'){
+                            _this.skipCusList();
+                        }else{
+                            _this.skipDetail(cusId,cusPhone);
+                        }
                     }
                 },
                 // 跳转到详情
@@ -230,6 +239,15 @@
                             cusPhone:cusPhone
                         }
                     })
+                },
+                // 跳转到客户列表
+                skipCusList:function(){
+                    api.sendEvent({
+                        name: 'ajpushSkipCustomerList'
+                    });
+                    api.closeToWin({
+                        name:'main'
+                    });
                 },
                 // 已读的请求
                 msgAlreadyAjax:function(id,idx,cb){

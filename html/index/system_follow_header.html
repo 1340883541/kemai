@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>系统跟进-头部</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style media="screen">
+        html,body,#wrap{
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="follow-p"></div>
+        <div class="w-header">
+            <div class="search-box" id="header-search-box">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="search-inp">
+                    <form action="#" onsubmit="return false;">
+                        <i class="search" @click="submitSeach"></i>
+                        <i class="close" @click="clearSearchVal"></i>
+                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                    </form>
+                    <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
+                </div>
+                <div class="cancel-box" @click="cancelSearch">取消</div>
+            </div>
+            <div class="filter-box flex-wrap">
+                <div class="flex-con filter-lis kh" @click="clickFilterFn($event,0)">
+                    <span v-text="khOriginTxt"></span><i></i>
+                </div>
+                <div class="flex-con filter-lis fil curr filter-time1" @click="clickFilterFn($event,1)">
+                    <span>跟进时间</span><i></i>
+                </div>
+                <div class="flex-con filter-lis fil curr filter-time2" @click="clickFilterFn($event,2)">
+                    <span>计划跟进</span><i></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var ncusHeaderV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+        var param = api.pageParam;
+        ncusHeaderV = new Vue({
+            el:"#wrap",
+            data:{
+                searchVal:'',
+                khOriginTxt:'',
+                status1:0, // 联系状态
+                status2:0, // 分配时间
+            },
+            mounted:function(){
+                this.init();
+            },
+            methods:{
+                init:function(){
+                    // if(param.origin == '全部'){
+                    //     this.khOriginTxt = '客户类型';
+                    // }else{
+                        this.khOriginTxt = param.origin;
+                    // }
+                },
+                // 获取焦点
+                onFoucsInp:function(){
+                    $('#header-search-box').addClass('curr');
+                    setTimeout(function(){
+                        $('#search-inp').focus();
+                    },200);
+                },
+                // 点击筛选
+                clickFilterFn:function(e,i){
+                    // 客户类型筛选
+                    if(i === 0){
+                        api.setFrameAttr({
+                            name: 'systemFollowFrame',
+                            bounces: false,
+                        });
+                        api.execScript({
+                            name: 'systemFollowHeader',
+                            frameName: 'systemFollowFrame',
+                            script: 'showFilterPopup();'
+                        });
+                        return;
+                    }
+                    // 跟进时间
+                    else if(i == 1){
+                        var tag = e.currentTarget;
+                        this.status2 = 0;
+                        $(".filter-time2").addClass('curr');
+                        if($(tag).hasClass('curr')){
+                            this.status1 = 1;
+                            $(tag).removeClass('curr');
+                        }else{
+                            this.status1 = 0;
+                            $(tag).addClass('curr');
+                        }
+                    }
+                    // 计划跟进时间
+                    else{
+                        var tag = e.currentTarget;
+                        this.status1 = 0;
+                        $(".filter-time1").addClass('curr');
+                        if($(tag).hasClass('curr')){
+                            this.status2 = 1;
+                            $(tag).removeClass('curr');
+                        }else{
+                            this.status2 = 0;
+                            $(tag).addClass('curr');
+                        }
+                    }
+                    this.filterCondition();
+                },
+                // 筛选 联系状态和分配时间
+                filterCondition:function(){
+                    var data = JSON.stringify({status1:this.status1,status2:this.status2});
+                    console.log(data)
+                    api.execScript({
+                        name:'systemFollowHeader',
+                        frameName: 'systemFollowFrame',
+                        script: 'filterCondition(\''+data+'\');'
+                    })
+                },
+                // 取消搜索
+                cancelSearch:function(){
+                    $('#search-inp').blur();
+                    $('#header-search-box').removeClass('curr');
+                    this.clearSearchVal();
+                },
+                // 提交搜索
+                submitSeach:function(){
+                    api.execScript({
+                        name:'systemFollowHeader',
+                        frameName: 'systemFollowFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
+                },
+                clearSearchVal:function(){
+                    this.searchVal = '';
+                    api.execScript({
+                        name:'systemFollowHeader',
+                        frameName: 'systemFollowFrame',
+                        script: 'clearSearchValue();'
+                    });
+                }
+            }
+
+        });
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        wHrefJs.openFrame({
+            name:'systemFollowFrame',
+            path:'./system_follow_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'#f7f7f7',
+            param:{
+                origin:param.origin
+            },
+            animation:{
+                type:'none'
+            }
+        })
+    }
+    // 获取客户类型的名字
+    function getKhOriginName(name){
+        if(name == '全部'){
+            name = '客户类型';
+        }
+        ncusHeaderV.khOriginTxt = name;
+    }
+</script>
+
+</html>

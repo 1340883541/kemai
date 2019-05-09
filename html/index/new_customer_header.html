@@ -19,22 +19,11 @@
             height: 100%;
             background-color: #f7f7f7;
         }
-        #follow-p{
-            position: fixed;
-            left: 0;
-            top:0;
-            width: 100%;
-            height: 100%;
-            z-index: 9;
-            background-color: rgba(0,0,0,.4);
-            display: none;
-        }
     </style>
 </head>
 
 <body>
     <div id="wrap">
-        <div id="follow-p"></div>
         <div class="w-header">
             <div class="search-box" id="header-search-box">
                 <div class="back" @click="back"></div>
@@ -74,23 +63,6 @@
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         var param = api.pageParam;
-        // 监听
-
-        // 监听
-        api.addEventListener({
-            name: 'followShowPopup'
-        }, function(ret, err){
-            if(ret.value.origin === 'frameList'){
-                $('#follow-p').show();
-            }
-        });
-        api.addEventListener({
-            name: 'followHidePopup'
-        }, function(ret, err){
-            if(ret.value.origin === 'frameList'){
-                $('#follow-p').hide();
-            }
-        });
         ncusHeaderV = new Vue({
             el:"#wrap",
             data:{

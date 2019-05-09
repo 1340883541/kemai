@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>跟进记录</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
+</head>
+<body>
+    <div id="follow-wrapper" class="follow-wrapper">
+        <div class="follow-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">跟进记录</div>
+                <div class="right">保存</div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+            <div class="follow-head-bg" id="fh-bg"></div>
+            <div class="follow-box follow-box1">
+                <div class="follow-b1-t bor-1px-b">
+                    <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
+                    <div class="addr">号码归属地：<span v-text="clientAddr"></span></div>
+                </div>
+                <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchCustomerState">
+                    <div class="left">客户状态</div>
+                    <div class="right"><span class="blue" v-text="clientState"></span><i class="follow-more"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="follow-box follow-box2">
+            <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchFollowWay">
+                <div class="left">跟进方式</div>
+                <div class="right"><span v-text="followWayState||'请选择'"></span><i class="follow-more"></i></div>
+            </div>
+            <div
+                class="follow-addr"
+                :class="{'default':followAddress===''}"
+                v-if="isHaveFollowAddress"
+                v-text="followAddress||'请输入跟进地址'"
+                @click.stop="handleEditDropAddress"
+            ></div>
+            <div class="bor-1px-t follow-time flex-wrap">
+                <div class="left">跟进时间</div>
+                <div class="right">
+                    <ul class="shortcut-time clear">
+                        <li
+                            class="fl"
+                            :class="{'curr':followDate === '明天'}"
+                            @click.stop="handleChooseDate('明天')"
+                        >明天</li>
+                        <li
+                            class="fl"
+                            :class="{'curr':followDate === '后天'}"
+                            @click.stop="handleChooseDate('后天')"
+                        >后天</li>
+                        <li
+                            class="fl"
+                            :class="{'curr':followDate === '下周'}"
+                            @click.stop="handleChooseDate('下周')"
+                        >下周</li>
+                    </ul>
+                    <div class="choose-time flex-wrap flex-between"  @click.stop="handleChooseDate('')">
+                        <span class="l" :class="{'default':showFollowDate == ''}" v-text="showFollowDate || '其他跟进时间'"></span>
+                        <span class="r"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="follow-box follow-box3">
+            <div
+                class="follow-content"
+                :class="{'default':followContent === ''}"
+                v-text="followContent || '跟进内容...'"
+                @click.stop="handleSkipInputFollowContent"
+            ></div>
+            <div class="follow-shortcut-choose-box">
+                <ul class="follow-shortcut-choose clear" id="shortcut-lis">
+                    <li
+                        class="fl"
+                        v-for="(scFollow,i) in shortcutFollowList"
+                        :key="i"
+                        v-text="scFollow.content"
+                        @click.stop="handleShortcutFollowContent(scFollow.content)"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 电话跟进 -->
+        <div class="call-phone-box">
+            <div class="call-phone-fixed w-event-none gray-bg" id="call-phone-btn" @click="handleCallFollow"><i></i>电话跟进</div>
+        </div>
+        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
+        <!-- 修改客户姓名 -->
+        <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-name-popup">
+            <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
+                <div class="left" @click.stop="funcHideAllPopup">取消</div>
+                <div class="right" @click.stop="handleSaveCustomerName">确认</div>
+            </div>
+            <div class="follow-addr-b">
+                <textarea placeholder="输入客户姓名" id="inp-textarea-name"></textarea>
+            </div>
+        </div>
+        <!-- 跟进拜访地址弹窗 -->
+        <div class="follow-addr-popup follow-popup" style="display:none;" id="follow-addr-popup">
+            <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
+                <div class="left" @click.stop="funcHideAllPopup">取消</div>
+                <div class="right" @click.stop="handleSaveDropAddress">确认</div>
+            </div>
+            <div class="follow-addr-b">
+                <textarea placeholder="输入拜访地址，如：成都市奥克斯广场666号星巴客店" id="inp-textarea-addr"></textarea>
+            </div>
+        </div>
+        <!-- 选择客户状态弹窗 -->
+        <div class="choose-follow-popup follow-popup choose-customer-status" style="display:none;" id="choose-customer-status">
+            <div class="choose-follow-t bor-1px-b">选择客户状态<i class="close" @click.stop="funcHideAllPopup"></i></div>
+            <div class="choose-follow-b">
+                <ul>
+                    <li
+                        v-for="(cState,index) in clientStateList"
+                        :key="index" v-text="cState.name"
+                        :class="{'curr':clientStateCode === cState.value}"
+                        @click.stop="handleChooseCustomerState(cState.name,cState.value)"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+        <!-- 选择客户状态弹窗 -->
+        <div class="choose-follow-popup follow-popup choose-follow-way" style="display:none;" id="choose-follow-way">
+            <div class="choose-follow-t bor-1px-b">选择跟进方式<i class="close" @click.stop="funcHideAllPopup"></i></div>
+            <div class="choose-follow-b">
+                <ul>
+                    <li
+                        v-for="(fWay,index) in followWayList"
+                        :key="index"
+                        v-text="fWay.value"
+                        @click.stop="handleChooseFollowWay(fWay.name,fWay.value)"
+                        :class="{'curr':followWayStateCode === fWay.name}"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var followRecordV = null;
+    apiready = function(){
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        $api.fixStatusBar($('#fh-bg')[0]);
+        var param = api.pageParam;
+        console.log('其他页面传入的值---> '+JSON.stringify(api.pageParam))
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            followRecordV.handleBack();
+        });
+
+        followRecordV = new Vue({
+            el:'#follow-wrapper',
+            data:{
+                isExistNoFollowRecord:false,
+                cusId:'',
+                cusPhone:'',
+                cusFollowId:'',
+                isWork:'', //是否资源客户1-我的客户，2-资源客户
+                userInfo:{},
+
+                clientStateList:[], // 客户状态列表
+                clientState:'',
+                clientStateCode:'',
+                clientName:'',
+                followId:'',
+                clientAddr:'', // 归属地
+                followWayList:[], // 跟进方式列表
+                followWayState:'',
+                followWayStateCode:'',
+                shortcutFollowList:[], // 快捷跟进列表
+
+                isHaveFollowAddress:false, //只有拜访才会跟进地址
+                followAddress:'',
+
+                followDate:'', //下次跟进的时间
+                showFollowDate:'', //显示个跟进时间
+                followContent:'', // 跟进内容
+                isCanCall:false,
+                // 防止打电话多次点击
+                isFirstCallClick:true,
+                // 是否保存成功
+                isSaveFollowSuccess:false,
+
+                initFollowData:{
+                    // 有回显
+                    clientName:'',
+                    clientStateCode:'',
+                    // 无回显
+                    followWayStateCode:'',
+                    followAddress:'',
+                    followDate:'',
+                    showFollowDate:'',
+                    followContent:''
+                }
+            },
+            mounted:function(){
+                this.init();
+                this.getClientInfo();
+                this.getFollowWay();
+            },
+            methods:{
+                init:function(){
+                    // 获取页面传入的值
+                    if(param.followId == '' || param.followId == undefined){
+                        this.isExistNoFollowRecord = false;
+                    }
+                    else{
+                        this.isExistNoFollowRecord = true;
+                        this.cusFollowId = param.followId;
+                    }
+                    this.cusId = param.id;
+                    this.cusPhone = param.phone;
+                    this.isWork = param.isWork;
+
+                    // 获取用户信息
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                // 获取客户信息
+                getClientInfo:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/getFollowRecordEchoData',
+                        data:{
+                            customerid:_this.cusId,
+                            employeeid:_this.userInfo.employeeid,
+                        },
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            console.log('follow record response ---> '+JSON.stringify(res))
+                            if(res.code==0){
+                                _this.clientStateList = res.estateList;
+                                _this.clientName = res.data.name;
+                                var clientStateObj = res.estateList.filter(function(v){
+                                    return v.value == res.data.estate
+                                })[0];
+                                _this.clientState = clientStateObj.name;
+                                _this.clientStateCode = clientStateObj.value;
+                                // 获取初始化数据
+                                _this.initFollowData.clientName = res.data.name;
+                                _this.initFollowData.clientStateCode = clientStateObj.value;
+
+                                _this.followId = res.followId;
+                                _this.clientAddr = res.data.attribution || '未知';
+                                setTimeout(function(){
+                                    _this.isCanCall = true;
+                                    $('#call-phone-btn').removeClass('w-event-none gray-bg');
+                                },300)
+                                _this.getShortcutFollow();
+                            }
+                        }
+                    })
+                },
+                // 获取跟进方式
+                getFollowWay:function(){
+                    var _this = this;
+                    wApiAjax({
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        url:"customer/followUpWay",
+                        method:'post',
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.followWayList = res.data ? res.data.followUpWay : [];
+                            }
+                        }
+                    })
+                },
+                // 获取快捷跟进信息
+                getShortcutFollow:function(){
+                    var _this = this;
+                    wApiAjax({
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        url:"customer/fastFollow",
+                        method:'get',
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.shortcutFollowList = res.data;
+                                _this.$nextTick(function(){
+                                    var sWid = 0;
+                                    var len = $('#shortcut-lis > li').length;
+                                    $('#shortcut-lis > li').each(function(i,ele){
+                                        $(ele).width($(ele).outerWidth())
+                                        sWid += ($(ele).outerWidth() + 10);
+                                        if(i === len-1){
+                                            $('#shortcut-lis').width(sWid).css('opacity',1);
+                                        }
+                                    });
+                            })
+                            }
+                        }
+                    })
+                },
+                // 编辑客户姓名
+                handleEditCustomerName:function(){
+                    var _this = this;
+                    if(isIos()){
+                        wHrefJs.openFrame({
+                            name:'followNamePop',
+                            path:'./follow_name_pop.html',
+                            animation:{
+                                type:"none",
+                                subType:"from_bottom",
+                                duration:100
+                            },
+                            param:{
+                                clientName:_this.clientName
+                            }
+                        })
+                    }else{
+                        this.funcHideAllPopup();
+                        $('#popup-bg,#customer-name-popup').show();
+                        setTimeout(function(){
+                            $('#inp-textarea-name').val(_this.clientName).focus();
+                        },10);
+                    }
+                },
+                // 保存客户姓名
+                handleSaveCustomerName:function(){
+                    var cusName = $('#inp-textarea-name').val().trim();
+                    if(cusName == ''){
+                        wDialog.toast({
+                            msg:'请输入客户姓名'
+                        })
+                    }
+                    else{
+                        this.clientName = cusName;
+                        this.funcHideAllPopup();
+                    }
+                },
+                // 切换客户状态
+                handleSwitchCustomerState:function(){
+                    this.funcHideAllPopup();
+                    $('#popup-bg,#choose-customer-status').show();
+                },
+                // 选择客户状态
+                handleChooseCustomerState:function(name,code){
+                    this.clientState = name;
+                    this.clientStateCode = code;
+                    this.funcHideAllPopup();
+                },
+                // 切换跟进方式
+                handleSwitchFollowWay:function(){
+                    this.funcHideAllPopup();
+                    $('#popup-bg,#choose-follow-way').show();
+                },
+                // 选择跟进方式
+                handleChooseFollowWay:function(code,name){
+                    this.followWayState = name;
+                    this.followWayStateCode = code;
+                    this.funcHideAllPopup();
+                    // 面访的，需要填写面访的地点
+                    if(code == 9){
+                        this.isHaveFollowAddress = true;
+                        this.handleEditDropAddress();
+                    }
+                    else{
+                        this.isHaveFollowAddress = false;
+                    }
+                },
+                // 编辑拜访的地址
+                handleEditDropAddress:function(){
+                    var _this = this;
+                    if(isIos()){
+                        wHrefJs.openFrame({
+                            name:'followAddrPop',
+                            path:'./follow_addr_pop.html',
+                            animation:{
+                                type:"none",
+                                subType:"from_bottom",
+                                duration:100
+                            },
+                            param:{
+                                followAddress:_this.followAddress
+                            }
+                        })
+                    }else{
+                        $('#popup-bg,#follow-addr-popup').show();
+                        setTimeout(function(){
+                            $('#inp-textarea-addr').val(_this.followAddress).focus();
+                            $('html,body').css('overflow','hidden');
+                        },10);
+                    }
+                },
+                // 保存拜访的地址
+                handleSaveDropAddress:function(){
+                    var cusAddr = $('#inp-textarea-addr').val().trim();
+                    if(cusAddr == ''){
+                        wDialog.toast({
+                            msg:'请输入面访的地址'
+                        })
+                    }
+                    else{
+                        this.followAddress = cusAddr;
+                        this.funcHideAllPopup();
+                    }
+                },
+                // 选择跟进时间
+                handleChooseDate:function(date){
+                    if(date == '' || date == undefined){
+                        var _this = this;
+                        api.openPicker({
+                            type: 'date',
+                            date: Date.now(),
+                            title: '选择跟进时间'
+                        }, function(ret, err){
+                            if(ret){
+                                var month = (''+ret.month).length == 1 ? '0'+ret.month:ret.month;
+                                var day = (''+ret.day).length == 1 ? '0'+ret.day:ret.day;
+                                _this.followDate = ret.year + '-' + month + '-' + day;
+                                _this.showFollowDate = ret.year + '-' + month + '-' + day;
+                            }
+                        });
+                    }else{
+                        this.followDate = date;
+                        var now = new Date().getTime(),
+                            mt = 24 * 60 * 60 * 1000,
+                            ht = 2 * mt,
+                            xz = 7 * mt,
+                            mtDate = new Date(now + mt),
+                            htDate = new Date(now + ht),
+                            xzDate = new Date(now + xz);
+                        var fDate = date === '明天' ? this.funcFormatDate(mtDate) : date === '后天' ? this.funcFormatDate(htDate) : this.funcFormatDate(xzDate);
+                        this.showFollowDate = fDate;
+                    }
+                },
+                // 格式化日期
+                funcFormatDate:function(date){
+                    var year = date.getFullYear(),
+                        month = ((date.getMonth()+1)+'').length == 1 ? '0' + (date.getMonth()+1) :  (date.getMonth() + 1),
+                        day = (date.getDate()+'').length == 1 ? '0' + date.getDate() :  date.getDate();
+                    return year + '-' + month + '-' + day;
+                },
+                // 跳转到输入跟进的内容
+                handleSkipInputFollowContent:function(){
+                    var content = this.followContent,
+                        shortcutList = this.shortcutFollowList;
+                    api.openWin({
+                        name: 'followRecordTxt',
+                        url: './follow_record_txt.html',
+                        pageParam: {
+                            content: content,
+                            shortcutList:shortcutList
+                        },
+                        slidBackEnabled: false
+                    });
+
+                },
+                // 快捷跟进内容
+                handleShortcutFollowContent:function(content){
+                    this.followContent = content;
+                },
+                // 电话跟进
+                handleCallFollow:function(){
+                    if(this.isCanCall){
+                        if(this.isFirstCallClick){
+                            this.isFirstCallClick =  false;
+                            var _this = this;
+                            console.log('call phone request ---> ' + JSON.stringify({
+                                account:_this.userInfo.account,
+                                customerNumber:_this.cusPhone,
+                                cusid:_this.cusId,
+                                empid:_this.userInfo.employeeid,
+                                is_work:_this.isWork,
+                                followId:_this.followId
+                            }))
+                            wApiAjax({
+                                url:'ema/makeCall',
+                                headers:{
+                                    token:TOKEN_DATA
+                                },
+                                data:{
+                                    account:_this.userInfo.account,
+                                    customerNumber:_this.cusPhone,
+                                    cusid:_this.cusId,
+                                    empid:_this.userInfo.employeeid,
+                                    is_work:_this.isWork,
+                                    followId:_this.followId
+                                },
+                                success:function(res){
+                                    console.log('call phone response ----> '+JSON.stringify(res))
+                                    if(res.code == 200){
+                                        // $(tag).addClass('w-event-none gray-bg');
+                                        // 跟进方式变成电话
+                                        _this.followWayState = '电话';
+                                        _this.followWayStateCode = 1;
+                                        wDialog.toast({
+                                            msg: '拨打电话中，请注意接听'
+                                        });
+                                    }else{
+                                        _this.isFirstCallClick = true;
+                                        wDialog.toast({
+                                            msg:res.msg||'电话拨打失败'
+                                        });
+                                    }
+                                },
+                                fail:function(err){
+                                    _this.isFirstCallClick = true;
+                                    wDialog.toast({
+                                        msg:'电话拨打失败'
+                                    });
+                                }
+                            })
+                        }else{
+                            wDialog.toast({
+                                msg:"正在拨打电话中，请稍等.."
+                            })
+                        }
+                    }else{
+                        wDialog.toast({
+                            msg:"正在加载客户信息，请稍等.."
+                        })
+                    }
+                },
+                // 返回,判断数据改变没有给出提示
+                handleBack:function(){
+                    // 没有保存
+                    if(!this.isSaveFollowSuccess){
+                        var isCanDirectBack = true;
+                        for(var k in this.initFollowData){
+                            if(this.initFollowData[k] !== this[k]){
+                                isCanDirectBack = false;
+                                break;
+                            }
+                        }
+                        if(!isCanDirectBack){
+                            wDialog.confirm({
+                                msg:'检查到你编辑了客户跟进信息，还没有保存，是否确认退出？',
+                                button:['是','否'],
+                                sureCb:function(){
+                                    api.closeWin();
+                                }
+                            })
+                        }else{
+                            api.closeWin();
+                        }
+                    }
+                },
+                funcHideAllPopup:function(){
+                    $('.follow-popup').hide();
+                }
+            }
+        });
+    }
+    // ios 填写客户姓名
+    function funcSaveCustomerName(name){
+        followRecordV.clientName = name;
+    }
+    // ios 填写拜访地址
+    function funcSaveDropAddress(addr){
+        followRecordV.followAddress = addr;
+    }
+    // 确认编辑的内容
+    function funcSureFollowContent(content){
+        followRecordV.followContent = content;
+    }
+</script>
+</html>

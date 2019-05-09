@@ -12,171 +12,124 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/swiper.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
 </head>
 
 <body>
     <div id="wrapper">
-        <div class="fixed-header"></div>
-        <div class="header">
-            <div class="i-title">工作台</div>
-            <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
-                <div class="fl left">
-                    <i></i>网络不给力，请检查您的网络设置
+        <!-- header -->
+        <div class="swiper-container index-header" id="banner-swiper">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <!-- 断网 -->
+                    <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
+                        <div class="fl left">
+                            <i></i>网络不给力，请检查您的网络设置
+                        </div>
+                        <div class="fr right"></div>
+                    </div>
+                    <div class="head-bg head-bluebg"></div>
+                    <div class="head-box head-bluebox">
+                        <div class="head-bt clear">
+                            <div class="fl left">新增资源跟进</div>
+                            <div class="fr right" onclick="handleSwitchFollow(0)"><i></i>系统资源跟进</div>
+                        </div>
+                        <div class="head-bb flex-wrap">
+                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('网络客户')">
+                                <div class="head-bb-t head-bb-t1">网络客户</div>
+                                <div class="head-bb-b" v-text="network"></div>
+                            </div>
+                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('渠道客户')">
+                                <div class="head-bb-t head-bb-t2">渠道客户</div>
+                                <div class="head-bb-b" v-text="channel"></div>
+                            </div>
+                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('资源池客户')">
+                                <div class="head-bb-t head-bb-t3">资源池客户</div>
+                                <div class="head-bb-b" v-text="respool"></div>
+                            </div>
+                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('其他客户')">
+                                <div class="head-bb-t head-bb-t4">其他</div>
+                                <div class="head-bb-b" v-text="otherCus"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="fr right"></div>
-            </div>
-        </div>
-        <!-- 客户 -->
-        <div class="kh-box">
-            <div class="kh-binner">
-                <div class="kh-add" @click="skipNewCustomer('全部')">今日新增</div>
-                <div class="kh-nav">
-                    <ul class="clear">
-                        <li class="fl bor-r" @click="skipNewCustomer('网络客户')">
-                            <p class="kh-t">网络客户</p>
-                            <p class="kh-c" v-text="network"></p>
-                        </li>
-                        <li class="fl" @click="skipNewCustomer('渠道客户')">
-                            <p class="kh-t">渠道客户</p>
-                            <p class="kh-c" v-text="channel"></p>
-                        </li>
-                        <li class="fl bor-r" @click="skipNewCustomer('资源池客户')">
-                            <p class="kh-t">资源池客户</p>
-                            <p class="kh-c" v-text="respool"></p>
-                        </li>
-                        <li class="fl" @click="skipNewCustomer('销售客户')">
-                            <p class="kh-t">销售客户</p>
-                            <p class="kh-c" v-text="market"></p>
-                        </li>
-                    </ul>
-                    <div class="kh-hline"></div>
-                    <div class="kh-vline"></div>
+                <div class="swiper-slide">
+                    <!-- 断网 -->
+                    <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
+                        <div class="fl left">
+                            <i></i>网络不给力，请检查您的网络设置
+                        </div>
+                        <div class="fr right"></div>
+                    </div>
+                    <div class="head-bg head-greenbg"></div>
+                    <div class="head-box head-greenbox">
+                        <div class="head-bt clear">
+                            <div class="fl left">系统资源跟进</div>
+                            <div class="fr right" onclick="handleSwitchFollow(1)"><i></i>新增资源跟进</div>
+                        </div>
+                        <div class="head-bb flex-wrap">
+                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('长期')">
+                                <div class="head-bb-t head-bb-t5">长期</div>
+                                <div class="head-bb-b" v-text="longTerm"></div>
+                            </div>
+                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('中期')">
+                                <div class="head-bb-t head-bb-t6">中期</div>
+                                <div class="head-bb-b" v-text="metTerm"></div>
+                            </div>
+                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('短期')">
+                                <div class="head-bb-t head-bb-t7">短期</div>
+                                <div class="head-bb-b" v-text="shortTerm"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <!-- 消息提醒 -->
-        <div class="msg-title">
-            <div class="i-title">消息提醒</div>
-        </div>
-        <div class="msg-box" v-cloak>
-            <div class="msg-binner clear">
-                <div class="fl msg-lis" @click="skipMessage(0,'change_principal')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-1">
-                            <div class="read-msg" v-if="change_principal">
-                                <span>{{change_principal|messageFilter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="msg-txt">负责人变更</div>
-                </div>
-                <div class="fl msg-lis" @click="skipMessage(1,'follow')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-2">
-                            <div class="read-msg" v-if="follow">
-                                <span>{{follow|messageFilter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="msg-txt">跟进提醒</div>
-                </div>
-                <div class="fl msg-lis" @click="skipMessage(2,'recovery')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-3">
-                            <div class="read-msg" v-if="recovery">
-                                <span>{{recovery|messageFilter}}</span>
-                            </div>
-                        </div>
+        <div class="message-box">
+            <div class="index-cap">消息提醒</div>
+            <div class="message-lis flex-wrap flex-center">
+                <div class="flex-con message-ls" @click="skipMessage(2,'recovery')">
+                    <div class="msg-icon msg-icon1">
+                        <span class="msg-count" v-if="recovery" v-cloak>{{recovery|messageFilter}}</span>
                     </div>
                     <div class="msg-txt">回收提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(3,'resource')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-4">
-                            <div class="read-msg" v-if="resource">
-                                <span>{{resource|messageFilter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="msg-txt">资源回收</div>
-                </div>
-                <div class="fl msg-lis" @click="skipMessage(4,'subscription')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-5">
-                            <div class="read-msg" v-if="subscription">
-                                <span>{{subscription|messageFilter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="msg-txt">认购提醒</div>
-                </div>
-                <div class="fl msg-lis" @click="skipMessage(5,'sign')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-6">
-                            <div class="read-msg" v-if="sign">
-                                <span>{{sign|messageFilter}}</span>
-                            </div>
-                        </div>
+                <div class="flex-con message-ls" @click="skipMessage(5,'sign')">
+                    <div class="msg-icon msg-icon2">
+                        <span class="msg-count" v-if="sign" v-cloak>{{sign|messageFilter}}</span>
                     </div>
                     <div class="msg-txt">签约提醒</div>
                 </div>
-                <div class="fl msg-lis" @click="skipMessage(6,'pay')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-7">
-                            <div class="read-msg" v-if="pay">
-                                <span>{{pay|messageFilter}}</span>
-                            </div>
-                        </div>
+                <div class="flex-con message-ls" @click="skipMessage(6,'pay')">
+                    <div class="msg-icon msg-icon3">
+                        <span class="msg-count" v-if="pay" v-cloak>{{pay|messageFilter}}</span>
                     </div>
                     <div class="msg-txt">缴费提醒</div>
-                </div>
-                <div class="fl msg-lis" @click="skipMessage(7,'subscriptionBook')">
-                    <div class="msg-icon-box">
-                        <div class="msg-icon msg-icon-8">
-                            <div class="read-msg" v-if="subscriptionBook">
-                                <span>{{subscriptionBook|messageFilter}}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="msg-txt">认购书提醒</div>
                 </div>
             </div>
         </div>
         <!-- 今日统计 -->
-
-        <div class="tj-title">
-            <div class="i-title">今日统计</div>
-        </div>
-        <div class="tj-box">
-            <div class="tj-binner clear">
-                <div class="tj-lis fl" @click="skipStat(1)">
-                    <div class="tj-icon tj-icon-1"></div>
-                    <div class="tj-txt">
-                        <p class="p-t" v-text="vaildcall"></p>
-                        <p class="p-d">客户通话(个)</p>
-                    </div>
+        <div class="stat-box">
+            <div class="index-cap">今日统计</div>
+            <div class="stat-lis flex-wrap">
+                <div class="flex-con stat-ls bor-r" @click="skipStat(1)">
+                    <div class="stat-ls-t stat-ls-t1">客户通话(个)</div>
+                    <div class="stat-ls-b" v-text="vaildcall"></div>
                 </div>
-                <div class="tj-lis fr" @click="skipStat(2)">
-                    <div class="tj-icon tj-icon-2"></div>
-                    <div class="tj-txt">
-                        <p class="p-t" v-text="noanscall"></p>
-                        <p class="p-d">未接听(个)</p>
-                    </div>
+                <div class="flex-con stat-ls" @click="skipStat(2)">
+                    <div class="stat-ls-t stat-ls-t2">未接听(个)</div>
+                    <div class="stat-ls-b" v-text="noanscall"></div>
                 </div>
-                <div class="tj-lis fl" @click="skipStat(3)">
-                    <div class="tj-icon tj-icon-3"></div>
-                    <div class="tj-txt">
-                        <p class="p-t" v-text="todaynotefollow"></p>
-                        <p class="p-d">短信跟进(个)</p>
-                    </div>
+                <div class="flex-con stat-ls bor-r" @click="skipStat(3)">
+                    <div class="stat-ls-t stat-ls-t3">短信(个)</div>
+                    <div class="stat-ls-b" v-text="todaynotefollow"></div>
                 </div>
-                <div class="tj-lis fr" @click="skipStat(4)">
-                    <div class="tj-icon tj-icon-4"></div>
-                    <div class="tj-txt">
-                        <p class="p-t" v-text="lookwechatcount"></p>
-                        <p class="p-d">查看微信(个)</p>
-                    </div>
+                <div class="flex-con stat-ls" @click="skipStat(4)">
+                    <div class="stat-ls-t stat-ls-t4">查看微信(个)</div>
+                    <div class="stat-ls-b" v-text="lookwechatcount"></div>
                 </div>
             </div>
         </div>
@@ -184,165 +137,85 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var indexV = null;
+    var indexV = null,
+        bnrSwiper = null;
     apiready = function() {
-        $api.fixStatusBar($('.header')[0]);
-        $api.fixStatusBar($('.fixed-header')[0]);
-        api.addEventListener({
-            name: 'refreshMessage'
-        }, function(ret, err){
-            // indexV.getMessageData();
-        });
-        // // 下拉刷新
-        // api.setCustomRefreshHeaderInfo({
-        //     bgColor: '#f7f7f7',
-        //     isScale: true,
-        //     loadAnimInterval:120,
-        //     image: {
-        //         pull: [
-        //             'widget://image/load-xl-s1.png',
-        //             'widget://image/load-xl-s2.png'
-        //         ],
-        //         load: [
-        //             'widget://image/load-xl-1.png',
-        //             'widget://image/load-xl-2.png',
-        //             'widget://image/load-xl-3.png',
-        //             'widget://image/load-xl-4.png',
-        //             'widget://image/load-xl-5.png',
-        //             'widget://image/load-xl-6.png',
-        //             'widget://image/load-xl-7.png',
-        //             'widget://image/load-xl-8.png',
-        //             'widget://image/load-xl-9.png',
-        //             'widget://image/load-xl-10.png',
-        //             'widget://image/load-xl-11.png',
-        //             'widget://image/load-xl-12.png'
-        //         ]
-        //     }
-        // }, function() {
-        //     indexV.fetchData(api.refreshHeaderLoadDone)
-        //     //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
-        //     //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
-        // });
-        // api.setFrameAttr({
-        //     bounces:true
-        // });
-
+        $api.fixStatusBar($('.head-bg')[0]);
+        var top = api.safeArea.top;
+        $('.index-header .head-box').css('padding-top',top+40);
+        $('#offline-box').css('top',top);
         indexV = new Vue({
             el: '#wrapper',
             data: {
                 employeeid: '',
                 account: '',
-                market:0,  //今日新增销售客户
-                network:0, //今日新增网络客户
-                channel:0, //今日新增渠道客户
-                respool:0, //今日新增资源池客户
-                vaildcall:0, //今日统计有效通话
-                noanscall:0, //今日统计未接听通话
-                resource:0, //资源回收
-                sign:0,  //签约消息
-                pay:0,  //缴费消息
-                change_principal:0,//负责人变更
-                recovery:0, //回收提醒
-                subscription:0,//认购消息
-                follow:0, //跟进提醒
-                subscriptionBook:0, //认购书提醒
-                todaynotefollow:0,  //微信次数
-                lookwechatcount:0, //短信跟进个数
-                userInfo:'',
-                notificationInfo:{}
+                otherCus: 0, //今日新增其他
+                network: 0, //今日新增网络客户
+                channel: 0, //今日新增渠道客户
+                respool: 0, //今日新增资源池客户
+
+                resource: 0, //资源回收
+                sign: 0, //签约消息
+                pay: 0, //缴费消息
+                change_principal: 0, //负责人变更
+                recovery: 0, //回收提醒
+                subscription: 0, //认购消息
+                follow: 0, //跟进提醒
+                subscriptionBook: 0, //认购书提醒
+
+                vaildcall: 0, //今日统计有效通话
+                noanscall: 0, //今日统计未接听通话
+                todaynotefollow: 0, //微信次数
+                lookwechatcount: 0, //短信跟进个数
+
+                shortTerm:0, //短期客户数量
+                metTerm:0, //中期客户数量
+                longTerm:0, //长期客户数量
+                userInfo: '',
+                notificationInfo: {}
             },
             mounted: function() {
                 this.netWorkStatus();
+                // 获取数据
                 this.fetchStatData();
                 this.getMessageData();
                 this.fetchNewData();
+                this.fetchSystemFollowData();
             },
-            filters:{
-                messageFilter:function(n){
+            filters: {
+                messageFilter: function(n) {
                     return n > 99 ? '99+' : n;
                 }
             },
-            methods: {
-                skipMessage:function(i,remindName){
-                    if(i === 1){
-                        // if(this.notificationInfo[remindName] === 'off'){
-                        //     wDialog.toast({
-                        //         msg:'当前的消息提醒还未开启通知。'
-                        //     })
-                        // }else{
-                            wHrefJs.openWin({
-                                name:'customerFollowHeader',
-                                path:'../customer/customer_follow_header.html'
-                            })
-                        // }
-                    }
-                    else if(i === 2){
-                        // if(this.notificationInfo[remindName] === 'off'){
-                        //     wDialog.toast({
-                        //         msg:'当前的消息提醒还未开启通知。'
-                        //     })
-                        // }else{
-                            wHrefJs.openWin({
-                                name:'customerRecycleHeader',
-                                path:'../customer/customer_recycle_header.html'
-                            })
-                        // }
-                    }else{
-                        wDialog.toast({
-                            msg:'暂不支持查看，敬请期待'
-                        })
-                    }
-                },
-                // 判断网络状态
-                netWorkStatus:function(){
-                    listenOnline.offline(function(){
-                        $('#offline-box').show();
-                    });
-                    listenOnline.online(function(){
-                        $('#offline-box').hide();
-                    });
-                    var lineStatus = listenOnline.lineStatus();
-                    if(lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g'){
-                        $('#offline-box').show();
-                    }else{
-                        $('#offline-box').hide();
-                    }
-                },
-                // 跳转到offline
-                skipOfflinePage:function(){
-                    wHrefJs.openWin({
-                        name:'offline',
-                        path:'../person/solution.html'
-                    })
-                },
-                // 获取消息提醒的数据
-                getMessageData:function(cb){
+            methods: {// 获取消息提醒的数据
+                getMessageData: function(cb) {
                     var _this = this;
                     this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                        key: 'userInfo'
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wApiAjax({
-                        url:"msgRemind/getAllNoticeCount",
-                        method:'get',
-                        headers:{
-                            token:TOKEN_DATA
+                        url: "msgRemind/getAllNoticeCount",
+                        method: 'get',
+                        headers: {
+                            token: TOKEN_DATA
                         },
-                        data:{
-                            employeeid:_this.userInfo.employeeid
+                        data: {
+                            employeeid: _this.userInfo.employeeid
                         },
-                        success:function(res){
-                            console.log('inn11111111111'+JSON.stringify(res))
-                            if(res.code == 200){
+                        success: function(res) {
+                            // console.log('inn11111111111'+JSON.stringify(res))
+                            if (res.code == 200) {
                                 _this.notificationInfo = res.info || {};
                                 _this.notificationInfo.switch = res.switch;
-                                if(res.switch == 0){
+                                if (res.switch == 0) {
                                     _this.resource = 0;
                                     _this.sign = 0;
                                     _this.pay = 0;
@@ -351,16 +224,16 @@
                                     _this.subscription = 0;
                                     _this.follow = 0;
                                     _this.subscriptionBook = 0;
-                                }else{
+                                } else {
                                     res.info = res.info || {};
                                     _this.resource = res.info.resource == 'off' ? 0 : res.info.resource;
                                     _this.sign = res.info.sign == 'off' ? 0 : res.info.sign;
                                     _this.pay = res.info.pay == 'off' ? 0 : res.info.pay;
                                     _this.change_principal = res.info.change_principal == 'off' ? 0 : res.info.change_principal;
-                                    _this.recovery =  res.info.recovery == 'off' ? 0 : res.info.recovery;
-                                    _this.subscription =  res.info.subscription == 'off' ? 0 : res.info.subscription;
-                                    _this.follow =  res.info.follow == 'off' ? 0 : res.info.follow;
-                                    _this.subscriptionBook =  res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
+                                    _this.recovery = res.info.recovery == 'off' ? 0 : res.info.recovery;
+                                    _this.subscription = res.info.subscription == 'off' ? 0 : res.info.subscription;
+                                    _this.follow = res.info.follow == 'off' ? 0 : res.info.follow;
+                                    _this.subscriptionBook = res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
                                 }
                             }
                             cb && typeof cb === 'function' && cb();
@@ -368,62 +241,150 @@
                     })
                 },
                 // 获取今日新增数据
-                fetchNewData:function(cb){
+                fetchNewData: function(cb) {
                     var _this = this;
                     this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                        key: 'userInfo'
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'workbench/todayAdd',
-                        headers:{
-                            token:TOKEN_DATA
+                        url: 'workbench/newAddResourceFoll',
+                        headers: {
+                            token: TOKEN_DATA
                         },
-                        data:{
-                            employeeid:_this.userInfo.employeeid
+                        data: {
+                            employeeid: _this.userInfo.employeeid
                         },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.market = res.market;
+                        success: function(res) {
+                            // console.log('inn2222222'+JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.otherCus = res.otherCus;
                                 _this.network = res.network;
                                 _this.channel = res.channel;
                                 _this.respool = res.respool;
                             }
                             wDialog.hideProgress();
+                            _this.$nextTick(function(){
+                                bnrSwiper = new Swiper({
+                                    el: '#banner-swiper',
+                                    loop:true
+                                })
+                            })
                         },
-                        fail:function(){
+                        fail: function() {
 
                         }
                     })
                 },
                 // 获取今日统计数据
-                fetchStatData:function(){
+                fetchStatData: function() {
                     var _this = this;
                     this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                        key: 'userInfo'
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'workbench/todaySta',
-                        headers:{
-                            token:TOKEN_DATA
+                        url: 'workbench/todaySta',
+                        headers: {
+                            token: TOKEN_DATA
                         },
-                        data:{
-                            employeeid:_this.userInfo.employeeid
+                        data: {
+                            employeeid: _this.userInfo.employeeid
                         },
-                        success:function(res){
-                            if(res.code == 1){
+                        success: function(res) {
+                            // console.log('inn3333333333333'+JSON.stringify(res))
+                            if (res.code == 1) {
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;
                                 _this.todaynotefollow = res.todaynotefollow;
                                 _this.lookwechatcount = res.lookwechatcount;
                             }
                         },
-                        fail:function(){
+                        fail: function() {
 
                         }
+                    })
+                },
+                // 获取系统跟进
+                fetchSystemFollowData:function(){
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url: 'workbench/sysResourceFoll',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid
+                        },
+                        success: function(res) {
+                            // console.log('inn444444444444'+JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.shortTerm = res.shortTerm;
+                                _this.metTerm = res.metTerm;
+                                _this.longTerm = res.longTerm;
+                            }
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+                // 跳转到提醒列表
+                skipMessage: function(i, remindName) {
+                    if (i === 1) {
+                        wHrefJs.openWin({
+                            name: 'customerFollowHeader',
+                            path: '../customer/customer_follow_header.html'
+                        })
+                    } else if (i === 2) {
+                        wHrefJs.openWin({
+                            name: 'customerRecycleHeader',
+                            path: '../customer/customer_recycle_header.html'
+                        })
+                    } else {
+                        wDialog.toast({
+                            msg: '暂不支持查看，敬请期待'
+                        })
+                    }
+                },
+                // 判断网络状态
+                netWorkStatus: function() {
+                    listenOnline.offline(function() {
+                        $('#offline-box').show();
+                    });
+                    listenOnline.online(function() {
+                        $('#offline-box').hide();
+                    });
+                    var lineStatus = listenOnline.lineStatus();
+                    if (lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g') {
+                        $('#offline-box').show();
+                    } else {
+                        $('#offline-box').hide();
+                    }
+                },
+                // 跳转到offline
+                skipOfflinePage: function() {
+                    wHrefJs.openWin({
+                        name: 'offline',
+                        path: '../person/solution.html'
+                    })
+                },
+                // 跳转到系统跟进列表
+                handleSkipSystemList:function(origin){
+                    wHrefJs.openWin({
+                        name: 'systemFollowHeader',
+                        path: './system_follow_header.html',
+                        param: {
+                            origin: origin
+                        },
+                        bgColor: '#f7f7f7'
                     })
                 },
                 // 跳转新增
@@ -439,21 +400,27 @@
                     })
                 },
                 // 跳转到今日统计
-                skipStat:function(i){
+                skipStat: function(i) {
                     var _this = this;
                     wHrefJs.openWin({
-                        name:'indexStat',
-                        path:'./index_stat.html',
-                        param:{
-                            statType:i
+                        name: 'indexStat',
+                        path: './index_stat.html',
+                        param: {
+                            statType: i
                         }
                     })
                 }
             }
         })
     }
+    // 切换swiper
+    function handleSwitchFollow(i){
+        if(bnrSwiper){
+            i === 0 ? bnrSwiper.slideToLoop(1, 600, false) : bnrSwiper.slideToLoop(0, 600, false);
+        }
+    }
     // 刷新数据
-    function refrshIndexData(){
+    function refrshIndexData() {
         indexV.fetchNewData()
         indexV.fetchStatData();
         indexV.getMessageData();

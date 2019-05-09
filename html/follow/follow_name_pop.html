@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>跟进记录</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
+    <style>
+        .follow-wrapper{
+            width:100%;
+            height: 100vh;
+            overflow: hidden;
+            background-color:transparent;
+        }
+    </style>
+</head>
+<body>
+    <div id="follow-name-pop" class="follow-wrapper" @touchstart.prenvent @touchmove.prenvent >
+        <!-- 修改客户姓名 -->
+        <div class="follow-addr-popup follow-popup">
+            <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
+                <div class="left" @click.stop="handleCancelCustomerName">取消</div>
+                <div class="right" @click.stop="handleSaveCustomerName">确认</div>
+            </div>
+            <div class="follow-addr-b">
+                <textarea placeholder="输入客户姓名" id="inp-textarea-name" v-model="clientName"></textarea>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+apiready = function(){
+    new Vue({
+        el:'#follow-name-pop',
+        data:{
+            clientName:''
+        },
+        mounted:function(){
+            this.init();
+        },
+        methods:{
+            init:function(){
+                this.clientName = api.pageParam.clientName;
+                this.$nextTick(function(){
+                    setTimeout(function(){
+                        $('#inp-textarea-name').focus();
+                    },100)
+                })
+            },
+            handleCancelCustomerName:function(){
+                api.closeFrame();
+            },
+            handleSaveCustomerName:function(){
+                var _this = this;
+                api.execScript({
+                    name: 'followRecord',
+                    script: "funcSaveCustomerName(\'"+_this.clientName+"\');"
+                });
+                this.handleCancelCustomerName();
+
+            }
+        }
+    })
+}
+</script>
+</html>
