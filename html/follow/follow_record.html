@@ -19,7 +19,7 @@
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
                 <div class="center">跟进记录</div>
-                <div class="right">保存</div>
+                <div class="right  w-event-none" id="follow-save-btn" @click="handleSaveFollowRecord">保存</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
             <div class="follow-head-bg" id="fh-bg"></div>
@@ -37,7 +37,7 @@
         <div class="follow-box follow-box2">
             <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchFollowWay">
                 <div class="left">跟进方式</div>
-                <div class="right"><span v-text="followWayState||'请选择'"></span><i class="follow-more"></i></div>
+                <div class="right"><span v-text="followWayState||'请选择'"></span><i class="follow-more" v-if="!isExistNoFollowRecord"></i></div>
             </div>
             <div
                 class="follow-addr"
@@ -94,7 +94,7 @@
         </div>
 
         <!-- 电话跟进 -->
-        <div class="call-phone-box">
+        <div class="call-phone-box" v-if="!isExistNoFollowRecord">
             <div class="call-phone-fixed w-event-none gray-bg" id="call-phone-btn" @click="handleCallFollow"><i></i>电话跟进</div>
         </div>
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
@@ -163,7 +163,7 @@
         $api.fixStatusBar($('#fh-place')[0]);
         $api.fixStatusBar($('#fh-bg')[0]);
         var param = api.pageParam;
-        console.log('其他页面传入的值---> '+JSON.stringify(api.pageParam))
+
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err){
@@ -184,6 +184,7 @@
                 clientState:'',
                 clientStateCode:'',
                 clientName:'',
+
                 followId:'',
                 clientAddr:'', // 归属地
                 followWayList:[], // 跟进方式列表
@@ -213,7 +214,8 @@
                     followDate:'',
                     showFollowDate:'',
                     followContent:''
-                }
+                },
+                isCanSaveFollowRecord:true, //是否能够保存记录
             },
             mounted:function(){
                 this.init();
@@ -229,6 +231,8 @@
                     else{
                         this.isExistNoFollowRecord = true;
                         this.cusFollowId = param.followId;
+                        this.followWayState = '电话';
+                        this.initFollowData.followWayStateCode = this.followWayStateCode = 1;
                     }
                     this.cusId = param.id;
                     this.cusPhone = param.phone;
@@ -271,6 +275,7 @@
                                 setTimeout(function(){
                                     _this.isCanCall = true;
                                     $('#call-phone-btn').removeClass('w-event-none gray-bg');
+                                    $('#follow-save-btn').removeClass('w-event-none');
                                 },300)
                                 _this.getShortcutFollow();
                             }
@@ -370,8 +375,10 @@
                 },
                 // 切换跟进方式
                 handleSwitchFollowWay:function(){
-                    this.funcHideAllPopup();
-                    $('#popup-bg,#choose-follow-way').show();
+                    if(!this.isExistNoFollowRecord){
+                        this.funcHideAllPopup();
+                        $('#popup-bg,#choose-follow-way').show();
+                    }
                 },
                 // 选择跟进方式
                 handleChooseFollowWay:function(code,name){
@@ -471,6 +478,7 @@
                             content: content,
                             shortcutList:shortcutList
                         },
+                        allowEdit:true,
                         slidBackEnabled: false
                     });
 
@@ -507,9 +515,9 @@
                                     followId:_this.followId
                                 },
                                 success:function(res){
-                                    console.log('call phone response ----> '+JSON.stringify(res))
+                                    // console.log('call phone response ----> '+JSON.stringify(res))
                                     if(res.code == 200){
-                                        // $(tag).addClass('w-event-none gray-bg');
+                                        $('#call-phone-btn').addClass('w-event-none gray-bg');
                                         // 跟进方式变成电话
                                         _this.followWayState = '电话';
                                         _this.followWayStateCode = 1;
@@ -538,6 +546,65 @@
                     }else{
                         wDialog.toast({
                             msg:"正在加载客户信息，请稍等.."
+                        })
+                    }
+                },
+                // 保存跟进记录
+                handleSaveFollowRecord:function(){
+                    var _this = this;
+                    if(this.isCanSaveFollowRecord){
+                        this.isCanSaveFollowRecord = false;
+                        // console.log(_this.showFollowDate)
+                        wDialog.showProgress({
+                            msg:'正在保存中，请稍等...'
+                        })
+                        wApiAjax({
+                            url:'customer/saveCallFollowPlus',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                employeeid:_this.userInfo.employeeid,
+                                customerid:_this.cusId,
+                                nextfollow:_this.showFollowDate,
+                                estate:_this.clientStateCode,
+                                followResult:_this.followContent,
+                                cusname:_this.clientName,
+                                followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                                meetaddress:_this.followAddress,
+                                followUpWay:_this.followWayStateCode
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                wDialog.hideProgress();
+                                _this.isCanSaveFollowRecord = true;
+                                if(res.code == 200){
+                                    wDialog.toast({
+                                        msg:'跟进记录成功'
+                                    });
+                                    setTimeout(function(){
+                                        api.closeWin();
+                                    },200);
+                                    // 跟进成功推送
+                                    api.sendEvent({
+                                        name: 'followRecordSuccessRefresh'
+                                    });
+
+                                }
+                                else{
+                                    wDialog.toast({
+                                        msg:res.msg
+                                    })
+                                }
+                            },
+                            fail:function(){
+                                wDialog.hideProgress();
+                                _this.isCanSaveFollowRecord = true;
+                            }
+                        })
+                    }else{
+                        wDialog.toast({
+                            msg:'正在保存中,请稍等'
                         })
                     }
                 },

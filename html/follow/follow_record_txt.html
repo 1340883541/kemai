@@ -14,23 +14,36 @@
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
     <style>
         .follow-wrapper{
+            position: fixed;
+            left: 0;
+            top:0;
+            width:100%;
             min-height: 0;
-            height: 100%;
+            height: 100vh;
         }
     </style>
 </head>
 <body>
-    <div id="follow-wrapper" class="follow-wrapper" v-cloak>
+    <div id="follow-wrapper" class="follow-wrapper" v-cloak @click.stop.prevent="handleGlobalClick">
         <div class="follow-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click="handleBack"></div>
+                <div class="left back" @click.stop.prevent="handleBack"></div>
                 <div class="center">跟进记录</div>
-                <div class="right" @click.stop="handleSaveFollowContent">确认</div>
+                <div class="right" @click.stop.prevent="handleSaveFollowContent">确认</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
         <div class="follow-box follow-box4">
-            <div class="follow-content default"><textarea placeholder="跟进内容..." @focus.stop="handleFollowContentFocus" v-model="followContent" id="inp-textarea"></textarea><span v-if="isShowContentDelete" class="del-icon" @click.stop="handleCleanFollowContent"></span></div>
+            <div class="follow-content default">
+                <textarea placeholder="跟进内容..."
+                    @focus.stop.prevent="handleFollowContentFocus"
+                    v-model="followContent"
+                    id="inp-textarea"
+                    @blur.stop.prevent="handleFollowContentBlur"
+                    ref="followTextarea"
+                ></textarea>
+                <span v-if="isShowContentDelete" class="del-icon" @click.stop.prevent="handleCleanFollowContent"></span>
+            </div>
             <div class="follow-shortcut-choose-box">
                 <ul class="follow-shortcut-choose clear">
                     <li
@@ -46,14 +59,15 @@
         <!-- 语音和文字输入按钮 -->
         <div class="footer-box">
             <div class="foot-t clear" id="foot-t">
-                <div class="left fl" :class="{'curr':isKeyboardCurr}" id="keyboard-input" @click="handleSwitchInputWay($event,0)">
+                <div class="left fl" :class="{'curr':isKeyboardCurr}" id="keyboard-input" @click.stop.prevent="handleSwitchInputWay($event,0)">
                     <span></span>
                 </div>
-                <div class="right fr" :class="{'curr':isAudioCurr}" id="audio-input" @click="handleSwitchInputWay($event,1)">
+                <div class="right fr" :class="{'curr':isAudioCurr}" id="audio-input" @click.stop.prevent="handleSwitchInputWay($event,1)">
                     <span></span>
                 </div>
             </div>
-            <div class="foot-b  follow-popup" id="foot-b" v-show="isAudioCurr">
+            <div class="foot-b follow-popup" id="foot-keyboard" v-if="isShowPlaceBg && isKeyboardCurr && isIos"></div>
+            <div class="foot-b follow-popup" id="foot-b" v-show="isAudioCurr">
                 <div class="start-talk " id="start-talk" v-show="!isRunningAudio">
                     <div class="st-txt">
                         点击说话
@@ -61,37 +75,12 @@
                     <div class="st-icon" @click.stop="handleStartTalk"></div>
                 </div>
                 <div class="run-talk" id="run-talk" v-show="isRunningAudio">
-                    <div class="rt-time flex-wrap flex-center">
-                        <span class="start-taste-line mr">
-                          <hr class="hr hr1">
-                          <hr class="hr hr2">
-                          <hr class="hr hr3">
-                          <hr class="hr hr4">
-                          <hr class="hr hr5">
-                          <hr class="hr hr6">
-                          <hr class="hr hr7">
-                          <hr class="hr hr8">
-                          <hr class="hr hr9">
-                          <hr class="hr hr10">
-                        </span>
-                        <b>{{audioTime|audioTimeFilter}}</b>
-                        <span class="start-taste-line ml">
-                          <hr class="hr hr1">
-                          <hr class="hr hr2">
-                          <hr class="hr hr3">
-                          <hr class="hr hr4">
-                          <hr class="hr hr5">
-                          <hr class="hr hr6">
-                          <hr class="hr hr7">
-                          <hr class="hr hr8">
-                          <hr class="hr hr9">
-                          <hr class="hr hr10">
-                        </span>
+                    <div class="st-txt"></div>
+                    <div class="rt-icon">
+                        <span><i :style="'height:'+volumeHeight*2+'px'"></i></span>
                     </div>
-                    <div class="rt-icon"></div>
                     <div class="rt-btn bor-1px-t flex-wrap flex-center">
-                        <div class="again-btn bor-1px-r" @click="handleAgainAudio">重录</div>
-                        <div class="finish-btn" @click="handleSureAudio">确定</div>
+                        <div class="finish-btn" @click="handleTalkFinsihAudio">说完了</div>
                     </div>
                 </div>
             </div>
@@ -99,8 +88,8 @@
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
         <div class="delete-popup follow-popup" id="delete-popup" style="display:none;">
             <div class="delete-cap bor-1px-b">确认清空吗？</div>
-            <div class="delete-clean bor-1px-b" @click.stop="handleSureCleanFollowContent">清空</div>
-            <div class="delete-cancel bor-1px-t" @click.stop="funcHideAllPopup">取消</div>
+            <div class="delete-clean bor-1px-b" @click.stop.prevent="handleSureCleanFollowContent">清空</div>
+            <div class="delete-cancel bor-1px-t" @click.stop.prevent="funcHideAllPopup">取消</div>
         </div>
     </div>
 </body>
@@ -114,6 +103,17 @@
 <script type="text/javascript">
     var followRecordV = null;
     apiready = function(){
+        var iflyRecognition = api.require('iflyRecognition');
+        if(iflyRecognition){
+            iflyRecognition.createUtility({
+                ios_appid: '5cd380b9',
+                android_appid: '5cd3806f'
+            }, function(ret, err) {
+                if(ret.status){
+                    console.log('讯飞语音识别初始化成功')
+                }
+            });
+        }
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
         api.addEventListener({
@@ -132,23 +132,16 @@
                 isKeyboardCurr:false,
                 isAudioCurr:false,
                 isRunningAudio:false,
-                audioTime:0,
-                audioIntervalTimer:null
+                volumeHeight:0, // 声音大小,高度
+                selectionStart:0,
+                selectionEnd:0,
+                wordStr:'', //识别的文字
+                isHandStopVoiceDiscern:false, //是否手动结束语音识别
+                isIos:isIos(),
+                isShowPlaceBg:false
             },
             mounted:function(){
                 this.init();
-            },
-            filters:{
-                audioTimeFilter:function(n){
-                    if(n == 0){
-                        return '0:00'
-                    }
-                    else{
-                        var m = Math.floor(n / 60);
-                        var s = ((n % 60) + '').length == 1 ? '0'+(n % 60) : (n % 60);
-                        return m + ':' + s;
-                    }
-                }
             },
             methods:{
                 init:function(){
@@ -177,15 +170,26 @@
                 // 确认清空内容
                 handleSureCleanFollowContent:function(){
                     this.followContent = '';
+                    this.wordStr = '';
                     this.funcHideAllPopup();
                 },
                 // 输入框获取焦点
                 handleFollowContentFocus:function(){
                     var _this = this;
                     this.isAudioCurr = false;
+                    this.funcStopRecord();
                     setTimeout(function(){
                         _this.isKeyboardCurr = true;
                     },80)
+                },
+                // 失去焦点，获取光标位置
+                handleFollowContentBlur:function(){
+                    var eleText = this.$refs.followTextarea;
+                    this.selectionStart = eleText.selectionStart;
+                    this.selectionEnd = eleText.selectionEnd;
+                },
+                handleGlobalClick:function(){
+                    this.isShowPlaceBg = false;
                 },
                 // 切换输入方式
                 handleSwitchInputWay:function(e,i){
@@ -195,14 +199,16 @@
                     if(i === 0){
                         if(!$(tag).hasClass('curr')){
                             $('#inp-textarea').focus();
-                            this.isAudioCurr = false;
-                            setTimeout(function(){
-                                _this.isKeyboardCurr = true;
-                            },80)
+                            // this.isAudioCurr = false;
+                            // this.funcStopRecord();
+                            // setTimeout(function(){
+                            //     _this.isKeyboardCurr = true;
+                            // },80)
                         }
                     }
                     // 语音输入
                     else{
+                        this.isShowPlaceBg = true;
                         this.isKeyboardCurr = false;
                         setTimeout(function(){
                             _this.isAudioCurr = true;
@@ -213,17 +219,103 @@
                 handleStartTalk:function(){
                     var _this = this;
                     this.isRunningAudio = true;
-                    this.audioIntervalTimer = setInterval(function(){
-                        _this.audioTime++;
-                    },1000);
+                    this.funcStartVoiceText();
+                    this.funcGetVolume();
                 },
-                // 重录
-                handleAgainAudio:function(){
-
+                // 说完了
+                handleTalkFinsihAudio:function(){
+                    this.funcStopRecord();
                 },
-                // 确定
-                handleSureAudio:function(){
-
+                // 开始语音识别
+                funcStartVoiceText:function(){
+                    var _this = this;
+                    this.volumeHeight = 0;
+                    var fContentFront = _this.followContent.slice(0,_this.selectionStart);
+                    var fContentBehind = _this.followContent.slice(_this.selectionEnd)
+                    iflyRecognition.record({
+                        vadbos: 5000,
+                        vadeos: 5000,
+                        rate: 16000,
+                        asrptt: 1,
+                        audioPath: 'fs://speechRecogniser/speech.pcm'
+                    }, function(ret, err) {
+                        console.log('状态：'+ret.status+'语音识别结果：'+ret.wordStr)
+                        if(isIos()){
+                            if(ret.status){
+                                var fContent = '';
+                                // 自动结束
+                                if(~ret.wordStr.indexOf('。') || ~ret.wordStr.indexOf('？') || ~ret.wordStr.indexOf('！')){
+                                    fContent = fContentFront + _this.wordStr + ret.wordStr + fContentBehind;
+                                    _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + ret.wordStr).length;
+                                    _this.followContent = fContent;
+                                    _this.funcStopRecord();
+                                }else{
+                                    if(_this.isHandStopVoiceDiscern){
+                                        _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + 1).length;
+                                        _this.isHandStopVoiceDiscern = false;
+                                    }
+                                    // // 手动触发结束
+                                    // _this.wordStr = ret.wordStr;
+                                    // fContent = fContentFront + ret.wordStr + fContentBehind;
+                                }
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:'语音识别失败'
+                                })
+                                _this.funcStopRecord();
+                            }
+                        }
+                        else{
+                            if(ret.status){
+                                var fContent = '';
+                                // 自动结束
+                                if(ret.wordStr == '。' || ret.wordStr == '？' || ret.wordStr == '！'){
+                                    fContent = fContentFront + _this.wordStr + ret.wordStr + fContentBehind;
+                                    _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + ret.wordStr).length;
+                                    _this.funcStopRecord();
+                                }else{
+                                    if(_this.isHandStopVoiceDiscern){
+                                        _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + 1).length;
+                                        _this.isHandStopVoiceDiscern = false;
+                                    }
+                                    // 手动触发结束
+                                    _this.wordStr = ret.wordStr;
+                                    fContent = fContentFront + ret.wordStr + fContentBehind;
+                                }
+                                _this.followContent = fContent;
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:'语音识别失败'
+                                })
+                                _this.funcStopRecord();
+                            }
+                        }
+                    });
+                },
+                //获取到声音的大小
+                funcGetVolume:function(){
+                    var _this = this;
+                    iflyRecognition.addRecordHUD({
+                        centerX: 0,
+                        centerY: 0,
+                        radius: 0,
+                        transparentR: 0,
+                        bg: 'rgba(0,0,0,0)',
+                        fixedOn: api.frameName,
+                        fixed: false
+                    }, function(ret, err) {
+                        if(ret.volume){
+                            _this.volumeHeight = ret.volume;
+                        }
+                    });
+                },
+                // 停止录音
+                funcStopRecord:function(){
+                    this.isRunningAudio = false;
+                    this.isHandStopVoiceDiscern = true;
+                    iflyRecognition.stopRecord();
                 },
                 // 返回
                 handleBack:function(){
