@@ -24,7 +24,7 @@
     </style>
 </head>
 <body>
-    <div id="follow-wrapper" class="follow-wrapper" v-cloak @click.stop.prevent="handleGlobalClick">
+    <div id="follow-wrapper" class="follow-wrapper" v-cloak>
         <div class="follow-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop.prevent="handleBack"></div>
@@ -66,7 +66,6 @@
                     <span></span>
                 </div>
             </div>
-            <div class="foot-b follow-popup" id="foot-keyboard" v-if="isShowPlaceBg && isKeyboardCurr && isIos"></div>
             <div class="foot-b follow-popup" id="foot-b" v-show="isAudioCurr">
                 <div class="start-talk " id="start-talk" v-show="!isRunningAudio">
                     <div class="st-txt">
@@ -137,8 +136,6 @@
                 selectionEnd:0,
                 wordStr:'', //识别的文字
                 isHandStopVoiceDiscern:false, //是否手动结束语音识别
-                isIos:isIos(),
-                isShowPlaceBg:false
             },
             mounted:function(){
                 this.init();
@@ -149,11 +146,6 @@
                     this.followContent = param.content;
                     this.initFollowContent = param.content;
                     this.shortcutList = param.shortcutList;
-                    // this.$nextTick(function(){
-                    //     setTimeout(function(){
-                    //         $('#inp-textarea').focus();
-                    //     },100)
-                    // })
                 },
                 // 选择快捷跟进
                 handleChooseShortCutFollowContent:function(content){
@@ -188,9 +180,6 @@
                     this.selectionStart = eleText.selectionStart;
                     this.selectionEnd = eleText.selectionEnd;
                 },
-                handleGlobalClick:function(){
-                    this.isShowPlaceBg = false;
-                },
                 // 切换输入方式
                 handleSwitchInputWay:function(e,i){
                     var tag = e.currentTarget,
@@ -199,16 +188,10 @@
                     if(i === 0){
                         if(!$(tag).hasClass('curr')){
                             $('#inp-textarea').focus();
-                            // this.isAudioCurr = false;
-                            // this.funcStopRecord();
-                            // setTimeout(function(){
-                            //     _this.isKeyboardCurr = true;
-                            // },80)
                         }
                     }
                     // 语音输入
                     else{
-                        this.isShowPlaceBg = true;
                         this.isKeyboardCurr = false;
                         setTimeout(function(){
                             _this.isAudioCurr = true;
