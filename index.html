@@ -141,6 +141,18 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
+        // 讯飞语音识别
+        var iflyRecognition = api.require('iflyRecognition');
+        if(iflyRecognition){
+            iflyRecognition.createUtility({
+                ios_appid: '5cd380b9',
+                android_appid: '5cd3806f'
+            }, function(ret, err) {
+                if(ret.status){
+                    console.log('讯飞语音识别初始化成功')
+                }
+            });
+        }
         // 推送
         var ajpush = api.require('ajpush');
         if(ajpush){

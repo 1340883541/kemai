@@ -17,9 +17,9 @@
     <div id="follow-wrapper" class="follow-wrapper">
         <div class="follow-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop="handleBack"></div>
+                <div class="left back" @click.stop.prevent="handleBack"></div>
                 <div class="center">跟进记录</div>
-                <div class="right  w-event-none" id="follow-save-btn" @click="handleSaveFollowRecord">保存</div>
+                <div class="right  w-event-none" id="follow-save-btn" @click.stop.prevent="handleSaveFollowRecord">保存</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
             <div class="follow-head-bg" id="fh-bg"></div>
@@ -76,7 +76,7 @@
         <div class="follow-box follow-box3">
             <div
                 class="follow-content"
-                :class="{'default':followContent === ''}"
+                :class="[{'default':followContent === ''}, {'w-event-none':isInitFollowContent}]"
                 v-text="followContent || '跟进内容...'"
                 @click.stop="handleSkipInputFollowContent"
             ></div>
@@ -201,8 +201,6 @@
                 isCanCall:false,
                 // 防止打电话多次点击
                 isFirstCallClick:true,
-                // 是否保存成功
-                isSaveFollowSuccess:false,
 
                 initFollowData:{
                     // 有回显
@@ -216,6 +214,8 @@
                     followContent:''
                 },
                 isCanSaveFollowRecord:true, //是否能够保存记录
+                isCanBack:true,
+                isInitFollowContent:isIos()
             },
             mounted:function(){
                 this.init();
@@ -276,6 +276,7 @@
                                     _this.isCanCall = true;
                                     $('#call-phone-btn').removeClass('w-event-none gray-bg');
                                     $('#follow-save-btn').removeClass('w-event-none');
+                                    _this.isInitFollowContent = false;
                                 },300)
                                 _this.getShortcutFollow();
                             }
@@ -610,8 +611,10 @@
                 },
                 // 返回,判断数据改变没有给出提示
                 handleBack:function(){
-                    // 没有保存
-                    if(!this.isSaveFollowSuccess){
+                    if(this.isCanBack){
+                        var _this = this;
+                        this.isCanBack = false;
+                        // 没有保存
                         var isCanDirectBack = true;
                         for(var k in this.initFollowData){
                             if(this.initFollowData[k] !== this[k]){
@@ -625,6 +628,9 @@
                                 button:['是','否'],
                                 sureCb:function(){
                                     api.closeWin();
+                                },
+                                cancelCb:function(){
+                                    _this.isCanBack = true;;
                                 }
                             })
                         }else{

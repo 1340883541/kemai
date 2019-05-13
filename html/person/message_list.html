@@ -33,7 +33,8 @@
                 <div class="msg-show-icon" style="display:none;"></div>
                 <div class="msg-lis-top bor-1px-b">
                     <div class="msg-lis-cap flex-wrap flex-between">
-                        <span>CRM编号 <span v-text="msg.customerid"></span></span>
+                        <span v-if="msg.serverType == 'SendMsgByPhone'">CRM编号 <span v-text="msg.customerid"></span></span>
+                        <span v-if="msg.serverType != 'SendMsgByPhone'">新增资源</span>
                         <span class="already" v-if="msg.readstate == 1">已读</span>
                         <span class="not-ready" v-else></span>
                     </div>
@@ -44,7 +45,11 @@
                 </div>
                 <div class="msg-list-bottom flex-wrap flex-between">
                     <span class="time" v-text="msg.createdate"></span>
-                    <span class="skip" @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)">{{msg.serverType == 'SendNewCusMsg' ? '查看客户' : '客户详情'}}</span>
+                    <span
+                        class="skip"
+                        v-if="msg.serverType"
+                        @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)"
+                    >{{msg.serverType == 'SendNewCusMsg' ? '查看客户' : '客户详情'}}</span>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -217,14 +222,14 @@
                         this.msgAlreadyAjax(id,idx,function(){
                             if(isList == 'SendNewCusMsg'){
                                 _this.skipCusList();
-                            }else{
+                            }else if(isList == 'SendMsgByPhone'){
                                 _this.skipDetail(cusId,cusPhone);
                             }
                         })
                     }else{
                         if(isList == 'SendNewCusMsg'){
                             _this.skipCusList();
-                        }else{
+                        }else if(isList == 'SendMsgByPhone'){
                             _this.skipDetail(cusId,cusPhone);
                         }
                     }

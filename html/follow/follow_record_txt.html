@@ -103,16 +103,6 @@
     var followRecordV = null;
     apiready = function(){
         var iflyRecognition = api.require('iflyRecognition');
-        if(iflyRecognition){
-            iflyRecognition.createUtility({
-                ios_appid: '5cd380b9',
-                android_appid: '5cd3806f'
-            }, function(ret, err) {
-                if(ret.status){
-                    console.log('讯飞语音识别初始化成功')
-                }
-            });
-        }
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
         api.addEventListener({
@@ -129,13 +119,14 @@
                 initFollowContent:'',
                 shortcutList:[],
                 isKeyboardCurr:false,
-                isAudioCurr:false,
+                isAudioCurr:true,
                 isRunningAudio:false,
                 volumeHeight:0, // 声音大小,高度
                 selectionStart:0,
                 selectionEnd:0,
                 wordStr:'', //识别的文字
                 isHandStopVoiceDiscern:false, //是否手动结束语音识别
+                userInfo:{}
             },
             mounted:function(){
                 this.init();
@@ -146,6 +137,11 @@
                     this.followContent = param.content;
                     this.initFollowContent = param.content;
                     this.shortcutList = param.shortcutList;
+                    // 获取用户信息
+                    this.userInfo = wPref.getPrefs({
+                        key:'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 },
                 // 选择快捷跟进
                 handleChooseShortCutFollowContent:function(content){
@@ -220,18 +216,20 @@
                         vadeos: 5000,
                         rate: 16000,
                         asrptt: 1,
-                        audioPath: 'fs://speechRecogniser/speech.pcm'
+                        audioPath: 'fs://speechRecogniser/'+_this.userInfo.employeeid+Date.now()+'speech.pcm'
                     }, function(ret, err) {
                         console.log('状态：'+ret.status+'语音识别结果：'+ret.wordStr)
                         if(isIos()){
                             if(ret.status){
                                 var fContent = '';
-                                // 自动结束
+                                // 结束
                                 if(~ret.wordStr.indexOf('。') || ~ret.wordStr.indexOf('？') || ~ret.wordStr.indexOf('！')){
                                     fContent = fContentFront + _this.wordStr + ret.wordStr + fContentBehind;
                                     _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + ret.wordStr).length;
                                     _this.followContent = fContent;
-                                    _this.funcStopRecord();
+                                    // 切换弹窗
+                                    _this.isRunningAudio = false;
+                                    _this.isHandStopVoiceDiscern = true;
                                 }else{
                                     if(_this.isHandStopVoiceDiscern){
                                         _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + 1).length;
@@ -304,6 +302,7 @@
                 handleBack:function(){
                     if(this.followContent === this.initFollowContent){
                         api.closeWin();
+                        iflyRecognition.cancelRecord();
                     }
                     else{
                         wDialog.confirm({
@@ -311,6 +310,7 @@
                             button:['是','否'],
                             sureCb:function(){
                                 api.closeWin();
+                                iflyRecognition.cancelRecord();
                             }
                         })
                     }
@@ -321,7 +321,10 @@
                         name: 'followRecord',
                         script: 'funcSureFollowContent(\''+this.followContent+'\');'
                     });
-                    api.closeWin();
+                    setTimeout(function(){
+                        api.closeWin();
+                        iflyRecognition.cancelRecord();
+                    },200);
                 }
             },
             computed:{
