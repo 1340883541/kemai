@@ -3,7 +3,7 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:8081/', // 本地
     // baseUrl:'https://192.168.0.222:9000/', // 本地
     // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    baseUrl: 'https://call.jindinghaiju.com/',  // 正式
+    baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
