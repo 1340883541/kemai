@@ -147,8 +147,9 @@
     var indexV = null,
         bnrSwiper = null;
     apiready = function() {
-        $api.fixStatusBar($('.head-bg')[0]);
+        // $api.fixStatusBar($('.head-bg')[0]);
         var top = api.safeArea.top;
+        $('.head-bg').css('padding-top',top);
         $('.index-header .head-box').css('padding-top',top+40);
         $('#offline-box').css('top',top);
         indexV = new Vue({

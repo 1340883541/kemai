@@ -95,8 +95,8 @@
         var voiceRecognizer = api.require('voiceRecognizer');
         if(!isIos()){
             voiceRecognizer.createUtility({
-                android_appid:'5cd3806f',
-                ios_appid:'5cd380b9'
+                android_appid:'5cd92221',
+                ios_appid:'5cd9220a'
             }, function(ret, err) {
                 if(ret.status){
                     console.log('讯飞语音识别初始化成功')
@@ -110,7 +110,7 @@
                 dot: true
             }
         }, function(ret) {
-            console.log(JSON.stringify(ret))
+            // console.log(JSON.stringify(ret))
             if (ret.status) {
                 console.log('语音识别配置成功')
             } else {
@@ -136,7 +136,7 @@
             target: 'recognizer',
             bg: 'rgba(0,0,0,0)',
         }, function(ret) {
-            console.log(JSON.stringify(ret))
+            // console.log(JSON.stringify(ret))
         });
         // 监听
         voiceRecognizer.addEventListener({

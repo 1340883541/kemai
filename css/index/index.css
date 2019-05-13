@@ -100,10 +100,10 @@
 }
 
 .index-header .head-bluebox .head-bb{
-    box-shadow: 0px 1px 10px 0 rgba(32,137,249,.16);
+    box-shadow: 0px 0px 30px 0 rgba(32,137,249,.1);
 }
 .index-header .head-greenbox .head-bb{
-    box-shadow: 0px 1px 10px 0 rgba(104,189,120,.2);
+    box-shadow: 0px 0px 30px 0 rgba(104,189,120,.15);
 }
 .index-header .head-box .head-bb::before{
     content: '';
@@ -177,7 +177,7 @@
     margin-left: 15px;
     height: 140px;
     background: #fff;
-    box-shadow: 0 0 40px 0 rgba(0,0,0,.1);
+    box-shadow: 0 0 40px 0 rgba(0,0,0,.06);
     margin-bottom: 10px;
     border-radius: 4px;
 }
@@ -249,8 +249,8 @@
     margin-left: 15px;
     height: 228px;
     background: #fff;
-    box-shadow: 0 0 40px 0 rgba(0,0,0,.1);
-    margin-bottom: 10px;
+    box-shadow: 0 0 40px 0 rgba(0,0,0,.06);
+    margin-bottom: 15px;
     border-radius: 4px;
 }
 .stat-lis{
