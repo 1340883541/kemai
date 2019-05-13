@@ -49,7 +49,7 @@
                         class="skip"
                         v-if="msg.serverType"
                         @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)"
-                    >{{msg.serverType == 'SendNewCusMsg' ? '查看客户' : '客户详情'}}</span>
+                    >{{msg.serverType == 'SendMsgByPhone' ? '客户详情' : '查看客户'}}</span>
                 </div>
             </div>
             <!-- 无更多数据 -->

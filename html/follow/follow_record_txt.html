@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
@@ -13,16 +14,17 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
     <style>
-        .follow-wrapper{
+        .follow-wrapper {
             position: fixed;
             left: 0;
-            top:0;
-            width:100%;
+            top: 0;
+            width: 100%;
             min-height: 0;
             height: 100vh;
         }
     </style>
 </head>
+
 <body>
     <div id="follow-wrapper" class="follow-wrapper" v-cloak>
         <div class="follow-header">
@@ -35,34 +37,22 @@
         </div>
         <div class="follow-box follow-box4">
             <div class="follow-content default">
-                <textarea placeholder="跟进内容..."
-                    @focus.stop.prevent="handleFollowContentFocus"
-                    v-model="followContent"
-                    id="inp-textarea"
-                    @blur.stop.prevent="handleFollowContentBlur"
-                    ref="followTextarea"
-                ></textarea>
+                <textarea placeholder="跟进内容..." @focus.stop.prevent="handleFollowContentFocus" v-model="followContent" id="inp-textarea" @blur.stop.prevent="handleFollowContentBlur" ref="followTextarea"></textarea>
                 <span v-if="isShowContentDelete" class="del-icon" @click.stop.prevent="handleCleanFollowContent"></span>
             </div>
             <div class="follow-shortcut-choose-box">
                 <ul class="follow-shortcut-choose clear">
-                    <li
-                        class="fl"
-                        v-for="(scLis,i) in shortcutList"
-                        :key="i"
-                        @click="handleChooseShortCutFollowContent(scLis.content)"
-                        v-text="scLis.content"
-                    ></li>
+                    <li class="fl" v-for="(scLis,i) in shortcutList" :key="i" @click="handleChooseShortCutFollowContent(scLis.content)" v-text="scLis.content"></li>
                 </ul>
             </div>
         </div>
         <!-- 语音和文字输入按钮 -->
         <div class="footer-box">
-            <div class="foot-t clear" id="foot-t">
-                <div class="left fl" :class="{'curr':isKeyboardCurr}" id="keyboard-input" @click.stop.prevent="handleSwitchInputWay($event,0)">
+            <div class="foot-t flex-wrap" id="foot-t">
+                <div class="left flex-con" :class="{'curr':isKeyboardCurr}" id="keyboard-input" @click.stop.prevent="handleSwitchInputWay($event,0)">
                     <span></span>
                 </div>
-                <div class="right fr" :class="{'curr':isAudioCurr}" id="audio-input" @click.stop.prevent="handleSwitchInputWay($event,1)">
+                <div class="right flex-con" :class="{'curr':isAudioCurr}" id="audio-input" @click.stop.prevent="handleSwitchInputWay($event,1)">
                     <span></span>
                 </div>
             </div>
@@ -101,238 +91,256 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var followRecordV = null;
-    apiready = function(){
-        var iflyRecognition = api.require('iflyRecognition');
+    apiready = function() {
+        var voiceRecognizer = api.require('voiceRecognizer');
+        if(!isIos()){
+            voiceRecognizer.createUtility({
+                android_appid:'5cd3806f',
+                ios_appid:'5cd380b9'
+            }, function(ret, err) {
+                if(ret.status){
+                    console.log('讯飞语音识别初始化成功')
+                }
+            });
+        }
+        // 语音识别配置
+        voiceRecognizer.recognizeConfig({
+            config: {
+                timeout: '60000',
+                dot: true
+            }
+        }, function(ret) {
+            console.log(JSON.stringify(ret))
+            if (ret.status) {
+                console.log('语音识别配置成功')
+            } else {
+                wDialog.toast({
+                    msg: '语音初始化失败'
+                });
+                $('#audio-input').hide();
+                $('#keyboard-input').css('padding', 0);
+                followRecordV.isAudioCurr = false;
+            }
+        });
+        // 添加监听音量
+        voiceRecognizer.addHUD({
+            center: {
+                x: -200,
+                y: -200
+            },
+            gradientColor: {
+                top: 'rgba(0,0,0,0)',
+                bottom: 'rgba(0,0,0,0)'
+            },
+            orientation: 'left_right',
+            target: 'recognizer',
+            bg: 'rgba(0,0,0,0)',
+        }, function(ret) {
+            console.log(JSON.stringify(ret))
+        });
+        // 监听
+        voiceRecognizer.addEventListener({
+            name: 'recognizeResult',
+            realTime: true
+        }, function(ret) {
+            console.log('recognizeResult--------->' + JSON.stringify(ret))
+            if (ret.recognizeResult) {
+                followRecordV.funcListenerRecord(ret.recognizeResult.result || '', ret.recognizeResult.isLast)
+            } else {
+                followRecordV.funcListenerRecord('', false)
+            }
+        });
+        // 监听
+        voiceRecognizer.addEventListener({
+            name: 'beginOfSpeech',
+            realTime: true
+        }, function(ret) {
+            console.log('beginOfSpeech--------->' + JSON.stringify(ret))
+        });
+        // 监听 自动录音结束
+        voiceRecognizer.addEventListener({
+            name: 'onEndOfSpeech',
+            realTime: true
+        }, function(ret) {
+            followRecordV.funcListenerRecord('', true)
+        });
+        // 监听
+        voiceRecognizer.addEventListener({
+            name: 'volume'
+        }, function(ret) {
+            followRecordV.volumeHeight = ret.volume;
+        });
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
         api.addEventListener({
             name: 'keyback'
-        }, function(ret, err){
+        }, function(ret, err) {
             followRecordV.handleBack();
         });
 
         var param = api.pageParam;
         followRecordV = new Vue({
-            el:'#follow-wrapper',
-            data:{
-                followContent:'',
-                initFollowContent:'',
-                shortcutList:[],
-                isKeyboardCurr:false,
-                isAudioCurr:true,
-                isRunningAudio:false,
-                volumeHeight:0, // 声音大小,高度
-                selectionStart:0,
-                selectionEnd:0,
-                wordStr:'', //识别的文字
-                isHandStopVoiceDiscern:false, //是否手动结束语音识别
-                userInfo:{}
+            el: '#follow-wrapper',
+            data: {
+                followContent: '',
+                initFollowContent: '',
+                shortcutList: [],
+                isKeyboardCurr: false,
+                isAudioCurr: true,
+                isRunningAudio: false,
+                volumeHeight: 0, // 声音大小,高度
+                selectionStart: 0,
+                selectionEnd: 0,
+                wordStr: '', //识别的文字
+                userInfo: {},
+                fContentFront: '',
+                fContentBehind: ''
             },
-            mounted:function(){
+            mounted: function() {
                 this.init();
             },
-            methods:{
-                init:function(){
+            methods: {
+                init: function() {
                     var _this = this;
                     this.followContent = param.content;
                     this.initFollowContent = param.content;
                     this.shortcutList = param.shortcutList;
                     // 获取用户信息
                     this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
+                        key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 },
                 // 选择快捷跟进
-                handleChooseShortCutFollowContent:function(content){
+                handleChooseShortCutFollowContent: function(content) {
                     this.followContent += content;
                 },
-                funcHideAllPopup:function(){
+                funcHideAllPopup: function() {
                     $('.follow-popup').hide();
                 },
                 // 情况编辑的内容
-                handleCleanFollowContent:function(){
+                handleCleanFollowContent: function() {
                     $('#popup-bg,#delete-popup').show();
                     this.isAudioCurr = false;
                 },
                 // 确认清空内容
-                handleSureCleanFollowContent:function(){
+                handleSureCleanFollowContent: function() {
                     this.followContent = '';
                     this.wordStr = '';
                     this.funcHideAllPopup();
                 },
                 // 输入框获取焦点
-                handleFollowContentFocus:function(){
+                handleFollowContentFocus: function() {
                     var _this = this;
                     this.isAudioCurr = false;
-                    this.funcStopRecord();
-                    setTimeout(function(){
+                    setTimeout(function() {
                         _this.isKeyboardCurr = true;
-                    },80)
+                        _this.funcStopRecord();
+                    }, 80)
                 },
                 // 失去焦点，获取光标位置
-                handleFollowContentBlur:function(){
+                handleFollowContentBlur: function() {
                     var eleText = this.$refs.followTextarea;
                     this.selectionStart = eleText.selectionStart;
                     this.selectionEnd = eleText.selectionEnd;
                 },
                 // 切换输入方式
-                handleSwitchInputWay:function(e,i){
+                handleSwitchInputWay: function(e, i) {
                     var tag = e.currentTarget,
                         _this = this;
                     // 点击的文字输入
-                    if(i === 0){
-                        if(!$(tag).hasClass('curr')){
+                    if (i === 0) {
+                        if (!$(tag).hasClass('curr')) {
                             $('#inp-textarea').focus();
                         }
                     }
                     // 语音输入
-                    else{
+                    else {
                         this.isKeyboardCurr = false;
-                        setTimeout(function(){
+                        setTimeout(function() {
                             _this.isAudioCurr = true;
-                        },100)
+                        }, 100)
                     }
                 },
                 // 点击说话
-                handleStartTalk:function(){
+                handleStartTalk: function() {
                     var _this = this;
                     this.isRunningAudio = true;
                     this.funcStartVoiceText();
                     this.funcGetVolume();
                 },
                 // 说完了
-                handleTalkFinsihAudio:function(){
+                handleTalkFinsihAudio: function() {
                     this.funcStopRecord();
                 },
                 // 开始语音识别
-                funcStartVoiceText:function(){
+                funcStartVoiceText: function() {
                     var _this = this;
                     this.volumeHeight = 0;
-                    var fContentFront = _this.followContent.slice(0,_this.selectionStart);
-                    var fContentBehind = _this.followContent.slice(_this.selectionEnd)
-                    iflyRecognition.record({
-                        vadbos: 5000,
-                        vadeos: 5000,
-                        rate: 16000,
-                        asrptt: 1,
-                        audioPath: 'fs://speechRecogniser/'+_this.userInfo.employeeid+Date.now()+'speech.pcm'
-                    }, function(ret, err) {
-                        console.log('状态：'+ret.status+'语音识别结果：'+ret.wordStr)
-                        if(isIos()){
-                            if(ret.status){
-                                var fContent = '';
-                                // 结束
-                                if(~ret.wordStr.indexOf('。') || ~ret.wordStr.indexOf('？') || ~ret.wordStr.indexOf('！')){
-                                    fContent = fContentFront + _this.wordStr + ret.wordStr + fContentBehind;
-                                    _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + ret.wordStr).length;
-                                    _this.followContent = fContent;
-                                    // 切换弹窗
-                                    _this.isRunningAudio = false;
-                                    _this.isHandStopVoiceDiscern = true;
-                                }else{
-                                    if(_this.isHandStopVoiceDiscern){
-                                        _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + 1).length;
-                                        _this.isHandStopVoiceDiscern = false;
-                                    }
-                                    // // 手动触发结束
-                                    // _this.wordStr = ret.wordStr;
-                                    // fContent = fContentFront + ret.wordStr + fContentBehind;
-                                }
-                            }
-                            else{
-                                wDialog.toast({
-                                    msg:'语音识别失败'
-                                })
-                                _this.funcStopRecord();
-                            }
-                        }
-                        else{
-                            if(ret.status){
-                                var fContent = '';
-                                // 自动结束
-                                if(ret.wordStr == '。' || ret.wordStr == '？' || ret.wordStr == '！'){
-                                    fContent = fContentFront + _this.wordStr + ret.wordStr + fContentBehind;
-                                    _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + ret.wordStr).length;
-                                    _this.funcStopRecord();
-                                }else{
-                                    if(_this.isHandStopVoiceDiscern){
-                                        _this.selectionStart = _this.selectionEnd = (fContentFront + _this.wordStr + 1).length;
-                                        _this.isHandStopVoiceDiscern = false;
-                                    }
-                                    // 手动触发结束
-                                    _this.wordStr = ret.wordStr;
-                                    fContent = fContentFront + ret.wordStr + fContentBehind;
-                                }
-                                _this.followContent = fContent;
-                            }
-                            else{
-                                wDialog.toast({
-                                    msg:'语音识别失败'
-                                })
-                                _this.funcStopRecord();
-                            }
+                    voiceRecognizer.recognizeStart(function(ret) {
+                        if (ret.status) {
+                            console.log('语音识别开始成功')
                         }
                     });
+                    this.fContentFront = this.followContent.slice(0, this.selectionStart);
+                    this.fContentBehind = this.followContent.slice(this.selectionEnd)
+                },
+                // 于是记录
+                funcListenerRecord(txt, isLast) {
+                    this.fContentFront = this.followContent.slice(0, this.selectionStart);
+                    this.fContentBehind = this.followContent.slice(this.selectionEnd);
+                    this.followContent = this.fContentFront + txt + this.fContentBehind;
+                    this.selectionStart = this.selectionEnd = (this.fContentFront + txt).length;
+                    if (isLast) {
+                        this.funcStopRecord();
+                    } else {}
                 },
                 //获取到声音的大小
-                funcGetVolume:function(){
+                funcGetVolume: function() {
                     var _this = this;
-                    iflyRecognition.addRecordHUD({
-                        centerX: 0,
-                        centerY: 0,
-                        radius: 0,
-                        transparentR: 0,
-                        bg: 'rgba(0,0,0,0)',
-                        fixedOn: api.frameName,
-                        fixed: false
-                    }, function(ret, err) {
-                        if(ret.volume){
-                            _this.volumeHeight = ret.volume;
-                        }
-                    });
+                    voiceRecognizer.hideHUD();
+                    voiceRecognizer.closeHUD();
                 },
                 // 停止录音
-                funcStopRecord:function(){
+                funcStopRecord: function() {
                     this.isRunningAudio = false;
-                    this.isHandStopVoiceDiscern = true;
-                    iflyRecognition.stopRecord();
+                    voiceRecognizer.recognizeStop();
                 },
                 // 返回
-                handleBack:function(){
-                    if(this.followContent === this.initFollowContent){
+                handleBack: function() {
+                    if (this.followContent === this.initFollowContent) {
                         api.closeWin();
-                        iflyRecognition.cancelRecord();
-                    }
-                    else{
+                        voiceRecognizer.recognizeStop();
+                    } else {
                         wDialog.confirm({
-                            msg:'检测到你编辑了当前的内容，确定是否要退出？',
-                            button:['是','否'],
-                            sureCb:function(){
+                            msg: '检测到你编辑了当前的内容，确定是否要退出？',
+                            button: ['是', '否'],
+                            sureCb: function() {
                                 api.closeWin();
-                                iflyRecognition.cancelRecord();
+                                voiceRecognizer.recognizeStop();
                             }
                         })
                     }
                 },
                 // 确认编辑的内容
-                handleSaveFollowContent:function(){
+                handleSaveFollowContent: function() {
                     api.execScript({
                         name: 'followRecord',
-                        script: 'funcSureFollowContent(\''+this.followContent+'\');'
+                        script: 'funcSureFollowContent(\'' + this.followContent + '\');'
                     });
-                    setTimeout(function(){
+                    setTimeout(function() {
                         api.closeWin();
-                        iflyRecognition.cancelRecord();
-                    },200);
+                        voiceRecognizer.recognizeStop();
+                    }, 200);
                 }
             },
-            computed:{
-                isShowContentDelete:function(){
+            computed: {
+                isShowContentDelete: function() {
                     return this.followContent != '';
                 }
             }
         });
     }
 </script>
+
 </html>
