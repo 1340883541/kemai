@@ -29,7 +29,7 @@
                         </div>
                         <div class="fr right"></div>
                     </div>
-                    <div class="head-bg head-bluebg"></div>
+                    <!-- <div class="head-bg head-bluebg"></div> -->
                     <div class="head-box head-bluebox">
                         <div class="head-bt clear">
                             <div class="fl left">新增资源跟进</div>
@@ -63,7 +63,7 @@
                         </div>
                         <div class="fr right"></div>
                     </div>
-                    <div class="head-bg head-greenbg"></div>
+                    <!-- <div class="head-bg head-greenbg"></div> -->
                     <div class="head-box head-greenbox">
                         <div class="head-bt clear">
                             <div class="fl left">系统资源跟进</div>
@@ -86,6 +86,7 @@
                     </div>
                 </div>
             </div>
+            <div class="head-bg head-bluebg" id='head-bg'></div>
         </div>
         <!-- 消息提醒 -->
         <div class="message-box">
@@ -147,9 +148,8 @@
     var indexV = null,
         bnrSwiper = null;
     apiready = function() {
-        // $api.fixStatusBar($('.head-bg')[0]);
         var top = api.safeArea.top;
-        $('.head-bg').css('padding-top',top);
+        $('#head-bg').css('padding-top',top);
         $('.index-header .head-box').css('padding-top',top+40);
         $('#offline-box').css('top',top);
         indexV = new Vue({
@@ -269,7 +269,12 @@
                             _this.$nextTick(function(){
                                 bnrSwiper = new Swiper({
                                     el: '#banner-swiper',
-                                    loop:true
+                                    loop:true,
+                                    on: {
+                                        slideChangeTransitionStart: function(){
+                                          this.activeIndex % 2 ? $('#head-bg').addClass('head-bluebg').removeClass('head-greenbg') : $('#head-bg').addClass('head-greenbg').removeClass('head-bluebg');
+                                        },
+                                    },
                                 })
                             })
                         },
@@ -418,6 +423,7 @@
     function handleSwitchFollow(i){
         if(bnrSwiper){
             i === 0 ? bnrSwiper.slideToLoop(1, 600, false) : bnrSwiper.slideToLoop(0, 600, false);
+            i === 0 ? $('#head-bg').addClass('head-greenbg').removeClass('head-bluebg') : $('#head-bg').addClass('head-bluebg').removeClass('head-greenbg');
         }
     }
     // 刷新数据

@@ -17,6 +17,7 @@
     width:100%;
     height: 200px;
     box-sizing: content-box;
+    transition: all .2s ease;
 }
 .index-header .head-bg.head-bluebg{
     background: url('../../image/bannerbg-blue.png') no-repeat center;
