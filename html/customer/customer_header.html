@@ -47,9 +47,10 @@
                 <div class="flex-con filter-lis fil curr follow-time1" @click="clickFilterFn($event,2)">
                     <span>跟进时间</span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil curr follow-time2" @click="clickFilterFn($event,3)">
+                <!-- <div class="flex-con filter-lis fil curr follow-time2" @click="clickFilterFn($event,3)">
                     <span>计划跟进</span><i></i>
-                </div>
+                </div> -->
+                <div class="flex-con" onclick="test()">test</div>
             </div>
         </div>
     </div>
@@ -63,6 +64,28 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var ncusHeaderV = null;
+    function test(){
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei;
+        var wWid = $(window).width(),
+            x = 0.1 * wWid,
+            w = 0.9 * wWid;
+        wHrefJs.openFrame({
+            name:'customerFollowFrame',
+            path:'./customer_follow_frame.html',
+            x:x,
+            y:0,
+            w:w,
+            h:wHei,
+            bounces:true,
+            bgColor:'#f7f7f7',
+            animation:{
+                type:'from_right'
+            }
+        })
+    }
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         api.addEventListener({

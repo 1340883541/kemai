@@ -6,12 +6,11 @@
     background: linear-gradient(90deg, #54cbf8 0%, #0d64fa 100%);
 }
 
-.w-header .search-box {
+.w-header .w-header-cap{
     position: relative;
-    height: .84rem;
+    height: 40px;
 }
-
-.w-header .search-box .back {
+.w-header .w-header-cap .back {
     position: absolute;
     left: 0;
     top: 0;
@@ -22,17 +21,37 @@
     background-size: .48rem;
     opacity: 1;
 }
-
-.w-header .search-box.curr .back {
-    opacity: 0;
+.w-header .w-header-cap .w-hcap-txt{
+    height: 40px;
+    line-height: 40px;
+    color:#fff;
+    font-size: 18px;
+    font-weight: bold;
 }
-
+.w-header .w-header-cap .w-hcap-txt > span{
+    padding:0 15px;
+    overflow:hidden;
+}
+.w-header .w-header-cap .w-hcap-txt > span > i{
+    width:0;
+    height: 0;
+    border-top: 8px solid #fff;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    margin-left: 6px;
+    margin-top: 16px;
+    display: none;
+}
+.w-header .search-box {
+    position: relative;
+    height:44px;
+}
 .w-header .search-box .search-inp {
     position: absolute;
-    left: .8rem;
+    left: 0.3rem;
+    right:.3rem;
     top: 0;
     z-index: 10;
-    width: 6.4rem;
     height: 100%;
     padding: 4px 0;
     -webkit-transition: all .3s ease-in;
@@ -46,8 +65,7 @@
     width: 6.9rem;
 }
 .w-header .search-box.curr .search-inp {
-    left: .3rem;
-    width: 6rem;
+    right:1.2rem;
 }
 
 .w-header .search-box .search-inp>form {
@@ -161,46 +179,33 @@
     opacity: 1;
 }
 
-.w-header .filter-box {
+.w-header .w-filter-lists {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: .84rem;
     line-height: .84rem;
     text-align: center;
-    color: #fff;
+    color: #333;
+    background-color: #fff;
     font-size: .28rem;
+    overflow:hidden;
 }
-
-.w-header .filter-box .kh>i,.w-header .filter-box .lx>i {
-    display: inline-block;
-    width: .2rem;
-    height: .2rem;
-    background: url('../image/icon-jiantou-sx2.png') no-repeat center;
-    background-size: .2rem;
-    vertical-align: middle;
+.w-header .w-filter-lists .w-filter-lis{
+    overflow: hidden;
 }
-
-.w-header .filter-box .kh.curr,.w-header .filter-box .lx.curr{
+.w-header .w-filter-lists .w-filter-lis.curr{
     font-weight: bold;
 }
-.w-header .filter-box .kh.curr>i,.w-header .filter-box .lx.curr>i {
-    background-image: url('../image/icon-jiantou-sx1.png');
+.w-header .w-filter-lists .w-filter-lis > i{
+    width:0;
+    height: 0;
+    border-top:6px solid #d8d8d8;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    margin-left: 6px;
 }
-
-.w-header .filter-box .fil>i {
-    position: relative;
-    top: -1px;
-    display: inline-block;
-    width: .24rem;
-    height: .24rem;
-    background: url('../image/icon-jiantou-sx3.png') no-repeat center;
-    background-size: .24rem;
-    vertical-align: middle;
-}
-
-.w-header .filter-box .fil.curr>i {
-    background-image: url('../image/icon-jiantou-sx4.png');
-}
-
+/*筛选列表*/
 .filter-lists {
     padding-top: .3rem;
 }
@@ -370,16 +375,16 @@
     background-color: #dddddd;
 }
 /*客户列表*/
-.filter-lists .cfil-lis{
-    height: 2.84rem;
-    padding:0 .34rem;
+.filter-lists .filter-lis{
+    height: auto;
+    padding:0 10px;
 }
-.filter-lists .cfil-lis .cfil-t{
+.filter-lists .filter-lis .filter-lt{
     position: relative;
-    height: 1rem;
-    line-height: 1rem;
+    height: 50px;
+    line-height: 50px;
 }
-.filter-lists .cfil-lis .cfil-t:after{
+.filter-lists .filter-lis .filter-lt:after{
     content: '';
     position: absolute;
     left: 0;
@@ -393,77 +398,92 @@
     -o-transform:scaleY(0.5);
     transform:scaleY(0.5);
 }
-.filter-lists .cfil-lis .cfil-t .cname{
-    max-width: 4.78rem;
+.filter-lists .filter-lis .filter-lt .cname{
+    max-width: 44vw;
     color:#333;
-    font-size: .36rem;
+    font-size: 18px;
 }
-.filter-lists .cfil-lis .cfil-t .cphone{
-    width: 1.2rem;
-    height: .64rem;
-    line-height: .66rem;
-    background-image: linear-gradient(90deg,
-     rgba(84, 203, 248, 0.95) 0%,
-     rgba(13, 100, 250, 0.95) 100%);
-    text-align: center;
-    line-height: .68rem;
+.filter-lists .filter-lis .filter-lt .filter-lcap{
+    width:calc(100% - 60px);
+    padding-right: 10px;
+}
+.filter-lists .filter-lis .filter-lt .rela-state{
+    height: 16px;
+    padding:0 4px;
+    font-size: 13px;
     color:#fff;
-    font-size: .28rem;
+    line-height: 16px;
+    text-align: center;
+    margin-top: 17px;
+    margin-left: 4px;
+}
+.filter-lists .filter-lis .filter-lt .red-bg{
+    background-color: rgb(243,161,53);
+}
+.filter-lists .filter-lis .filter-lt .green-bg{
+    background-color: rgb(0,191,109);
+}
+.filter-lists .filter-lis .filter-lt .cphone{
+    width: 60px;
+    height: 32px;
+    line-height: 32px;
+    background-image: linear-gradient(90deg,
+    rgba(8, 94, 255, 0.95) 0%,
+    rgba(12, 126, 249, 0.95) 100%);
+    text-align: center;
+    color:#fff;
+    font-size: 14px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
     border-radius: 4px;
-    margin-top: .18rem;
+    margin-top: 9px;
     overflow:hidden;
 }
-.filter-lists .cfil-lis .cfil-b{
-    color:#666;
-    font-size: .28rem;
+.filter-lists .filter-lis .filter-lb{
+    padding-top: 5px;
+    padding-bottom: 10px;
+    font-size: 14px;
 }
-.filter-lists .cfil-lis .cfil-b .lis{
-    position: relative;
-    padding-left: .36rem;
+.filter-lists .filter-lis .filter-lb .lis{
+    overflow:hidden;
 }
-.filter-lists .cfil-lis .cfil-b .lis > span{
+.filter-lists .filter-lis .filter-lb .lis.flb-cls1{
     color:#333;
-}
-.filter-lists .cfil-lis .cfil-b .cfil-bt{
-    margin-top: .28rem;
     line-height: 1em;
-    margin-bottom: .26rem;
+    padding: 10px 0;
 }
-.filter-lists .cfil-lis .cfil-b .cfil-bt > i{
-    position: absolute;
-    left: 0;
-    top:50%;
-    width: .24rem;
-    height: .24rem;
-    margin-top: -.16rem;
-    background: url('../image/icon-leixing.png') no-repeat center;
-    background-size: .24rem;
+.filter-lists .filter-lis .filter-lb .lis.flb-cls2{
+    color:#999;
+    line-height: 1em;
+    padding: 5px 0;
 }
-.filter-lists .cfil-lis .cfil-b .time > i{
-    position: absolute;
-    left: .06rem;
-    top:50%;
-    width: 6px;
-    height: 6px;
-    margin-top: -4px;
-    -webkit-border-radius:100%;
-    -moz-border-radius:100%;
-    -ms-border-radius:100%;
-    -o-border-radius:100%;
-    border-radius:100%;
+.filter-lists .filter-lis .filter-lb .lis.flb-cls2 > span{
+    color:#666;
 }
-.filter-lists .cfil-lis .cfil-b .cfil-gj{
-    margin-bottom: .12rem;
+.filter-lists .filter-lis .filter-lb1{
+    flex-wrap: wrap;
+    font-size: 14px;
+    margin-left: -10px;
+    margin-right: -10px;
 }
-.filter-lists .cfil-lis .cfil-b .cfil-gj > i{
-    background-color: #00bf6d;
+@media screen and (max-width:320px) {
+    .filter-lists .filter-lis .filter-lb1{
+        font-size: 12px;
+    }
 }
-.filter-lists .cfil-lis .cfil-b .cfil-jh > i{
-    background-color: #f5a623;
+@media screen and (min-width:321px) and (max-width:360px) {
+    .filter-lists .filter-lis .filter-lb1{
+        font-size: 13px;
+    }
+}
+.filter-lists .filter-lis .filter-lb1 .lis{
+    max-width:50%;
+    min-width: 50%;
+    width: 50%;
+    overflow: hidden;
+    padding-left: 10px !important;
 }
 /*筛选弹窗*/
 .filter-popup{

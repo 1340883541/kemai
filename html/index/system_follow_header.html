@@ -24,10 +24,12 @@
 
 <body>
     <div id="wrap">
-        <div id="follow-p"></div>
         <div class="w-header">
-            <div class="search-box" id="header-search-box">
+            <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">系统跟进资源<i></i></span></div>
+            </div>
+            <div class="search-box" id="header-search-box">
                 <div class="search-inp">
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
@@ -38,15 +40,18 @@
                 </div>
                 <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
-            <div class="filter-box flex-wrap">
-                <div class="flex-con filter-lis kh" @click="clickFilterFn($event,0)">
-                    <span v-text="khOriginTxt"></span><i></i>
-                </div>
-                <div class="flex-con filter-lis fil curr filter-time1" @click="clickFilterFn($event,1)">
-                    <span>跟进时间</span><i></i>
-                </div>
-                <div class="flex-con filter-lis fil curr filter-time2" @click="clickFilterFn($event,2)">
+            <div class="w-filter-lists flex-wrap">
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
                     <span>计划跟进</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
+                    <span>客户来源</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
+                    <span>更多</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
+                    <span>排序</span><i></i>
                 </div>
             </div>
         </div>

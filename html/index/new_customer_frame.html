@@ -44,18 +44,17 @@
                 </ul>
             </div>
         </div>
-        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
-            <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0"> -->
-            <div class="filter-lis clear" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipDetail(khdata.id,khdata.phone)">
-                <div class="fl left">
-                    <div class="filter-t clear">
-                        <span class="name fl w-elli" v-text="khdata.name"></span>
-                        <span class="state fl w-elli" :class="[khdata.status === '未联系' ? 'n-state' : 'r-state']" v-text="khdata.status"></span>
-                    </div>
-                    <div class="filter-b">分配时间: <span v-text="khdata.createtime"></span></div>
+        <div class="filter-lists">
+        <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
+            <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
+                <div class="filter-lt flex-wrap flex-between">
+                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name">和哈哈哈哈哈哈哈哈哈哈哈哈</span><span class="red-bg green-bg rela-state">未联系</span></div>
+                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>
-                <div class="fr right" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">
-                    <div class="filter-call">去跟进</div>
+                <div class="filter-lb">
+                    <div class="lis flb-cls1">客户类型: <span v-text="khdata.status||'无'">少的地方</span></div>
+                    <div class="lis flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'">是多少发顺丰</span></div>
+                    <div class="lis flb-cls2">计划跟进: <span v-text="khdata.nextfollow||'暂无计划'">盛世嫡妃顺丰到付f</span></div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -142,7 +141,7 @@
                 userInfo: ''
             },
             mounted: function() {
-                this.fetchKhOrigin();
+                // this.fetchKhOrigin();
             },
             methods: {
                 init:function(){

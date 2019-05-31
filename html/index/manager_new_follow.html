@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>管理者新增资源跟进</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/manager.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+
+        #wrap {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="mger-header-box">
+            <div class="mger-header-fix">
+                <div class="mger-header">
+                    <div class="mger-back"></div>
+                    <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
+                        <div class="cap">新增跟进资源</div>
+                        <div class="desc">333</div>
+                    </div>
+                </div>
+                <div class="mger-nav flex-wrap">
+                    <div class="flex-con curr">大区</div>
+                    <div class="flex-con">团队</div>
+                    <div class="flex-con">小组</div>
+                </div>
+                <div class="mger-filter flex-wrap">
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                        <span>时间范围</span><i></i>
+                    </div>
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                        <span>客户来源</span><i></i>
+                    </div>
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                        <span>排序</span><i></i>
+                    </div>
+                </div>
+            </div>
+            <div class="mger-header-place"></div>
+        </div>
+        <div class="mger-container">
+            <ul class="mger-lists clear mger-area" id="mger-area" style="display:none">
+                <li class="mger-lis fl flex-wrap">
+                    <div class="left flex-wrap flex-vertical flex-center">
+                        <p class="mger-cap">天津</p>
+                        <p class="mger-desc">
+                            <span>5000</span>/<span>5000</span>
+                        </p>
+                    </div>
+                    <div class="right" id="circle-0">
+                    </div>
+                </li>
+            </ul>
+            <ul class="mger-lists mger-team" id="mger-team" style="display:none">
+                <li class="mger-lis">
+                    <div class="mger-lt">销售一组</div>
+                    <div class="mger-lpro">
+                        <div class="mger-lpro-curr">
+                            <span class="left">90%</span>
+                        </div>
+                    </div>
+                    <div class="mger-ldesc">
+                        <span>430</span>/<span>1000</span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="mger-lists mger-team" id="mger-group" style="display:none">
+                <li class="mger-lis">
+                    <div class="mger-lt">销售一组1队</div>
+                    <div class="mger-lpro">
+                        <div class="mger-lpro-curr">
+                            <span class="right">90%</span>
+                        </div>
+                    </div>
+                    <div class="mger-ldesc">
+                        <span>430</span>/<span>1000</span>
+                    </div>
+                </li>
+            </ul>
+            <ul class="mger-lists mger-crew" id="mger-crew">
+                <li class="mger-lis">
+                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
+                    <div class="mger-lnum-box flex-wrap">
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">新增数</p>
+                        </div>
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">已跟进</p>
+                        </div>
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">未跟进</p>
+                        </div>
+                    </div>
+                </li>
+                <li class="mger-lis">
+                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
+                    <div class="mger-lnum-box flex-wrap">
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">新增数</p>
+                        </div>
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">已跟进</p>
+                        </div>
+                        <div class="flex-con mger-lnum">
+                            <p class="num">200</p>
+                            <p class="txt">未跟进</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/circles.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($('.mger-header-fix')[0]);
+        $api.fixStatusBar($('.mger-header-place')[0]);
+        new Vue({
+            el: "#wrapper",
+            data: {
+
+            },
+            mounted: function() {
+                var _this = this;
+                this.$nextTick(function(){
+
+                    _this.renderCircle();
+                })
+            },
+            methods: {
+                renderCircle:function(){
+                    var circleWid = $('#circle-0').outerWidth()/2;
+                    console.log(circleWid)
+                    Circles.create({
+                        id: 'circle-0',
+                        value: 100,
+                        radius: circleWid,
+                        width: 3,
+                        colors: ['#eee', '#0c7ff9'],
+                        isPercent:1
+                    })
+                }
+            },
+        });
+    }
+</script>
+
+</html>

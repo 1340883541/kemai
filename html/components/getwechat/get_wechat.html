@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客户-详情</title>
+    <script src="../../../script/lib/rem.js"></script>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./get_wechat.css" />
+    <style media="screen">
+        body,html{
+            height: 100%;
+        }
+        #wrapper{
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling:touch;
+        }
+        .loading {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+            margin-right: 6px;
+            /*固定loading*/
+            width: 0.28rem;
+            height: 0.28rem;
+            border: 2px solid;
+            border-color: #fff #fff transparent;
+            border-radius: 50%;
+            box-sizing: border-box;
+            /*动画时间1s，线性变化，无限循环*/
+            animation: loading 1s linear infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wechat-wrapper" v-cloak>
+        <!-- 短信验证码 -->
+        <div class="verification_code">
+           <div class="shade" ontouchmove="event.preventDefault();"></div>
+           <div class="content">
+               <div class="content_code">
+                   <div class="close right" @click="closeCodeVerify"><img src="../../../image/icon-dh-guanbi.png"></div>
+                   <div class="short_message">查看微信</div>
+                   <div class="text_tel">
+                        请在输入框输入此验证码<span v-text="codeText"></span>
+                        <br>
+                        <p v-text="getCodeText" @click="getCodeFn"></p>
+                   </div>
+                   <div class="tel_num">
+                       <label for="code">
+                         <ul class="security-code-container">
+                             <li class="field-wrap" :class="{'active':index<value.length}" v-for="(item, index) in number" :key="index">
+                              <i class="char-field">{{value[index]}}</i>
+                             </li>
+                         </ul>
+                        </label>
+                        <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
+                          id="code" name="code" type="tel" minlength="6" maxlength="6"
+                          autocorrect="off" autocomplete="off" autocapitalize="off">
+                    </div>
+                    <div class="submit space-between">
+                        <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即查看</div>
+                        <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>查看中</div>
+                    </div>
+               </div>
+           </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/dialog.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script>
+    apiready = function(){
+        new Vue({
+            el:"#wechat-wrapper",
+            data:{
+                // 信息验证
+                isActive:false,
+                number:6,
+                value:'',
+                isVerifyIng:false,
+                userInfo:{},
+
+                isShowCodeDown:false,
+                getCodeText:'立即发送',
+                codeText:'',
+                checkId:'',
+
+                cusId:''
+            },
+            mounted:function(){
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.cusId = api.pageParam.cusId;
+                console.log(JSON.stringify(this.userInfo))
+            },
+            methods:{
+                getCodeFn:function(){
+                    this.getCodeText = '再次发送';
+                    var _this = this;
+                    wApiAjax({
+                        url:'phoneauth/sendInMsg',
+                        headers:{
+                            token:TOKEN_DATA,
+                        },
+                        data:{
+                            account:_this.userInfo.account,
+                            employeeid:_this.userInfo.employeeid,
+                            phone:_this.userInfo.phone
+                        },
+                        success:function(res){
+                            // console.log(JSON.stringify(res))
+                            wDialog.toast({
+                                msg:res.msg
+                            })
+                            if(res && res.code == 4){
+                                _this.checkId = res.checkId;
+                                _this.codeText = res.random;
+                            }
+                        }
+                    })
+                },
+                // 输入
+                handleInput:function(e) {
+                    this.$refs.input.value = this.value;
+                    var tag = e.currentTarget;
+                    $(tag)[0].selectionStart = this.value.length;
+                    $(tag)[0].selectionEnd = this.value.length;
+                    if (this.value.length >= this.number) {
+                        this.isActive = true;
+                    }else{
+                        this.isActive = false;
+                    }
+                },
+                // 提交信息验证码，获取微信号
+                handleSubmit:function(){
+                    var _this = this;
+                    if(this.isActive){
+                        this.isVerifyIng = true;
+                        wApiAjax({
+                            url:'phoneauth/checkInMsg',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                account:_this.userInfo.account,
+                                employeeid:_this.userInfo.employeeid,
+                                phone:_this.userInfo.phone,
+                                checkId:_this.checkId,
+                                authcode:_this.value,
+                                cusid:_this.cusId
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                if(res.code == 5){
+                                    _this.closeCodeVerify();
+                                    api.sendEvent({
+                                        name: 'lookWechatSuccess',
+                                        extra: {
+                                            wechat:res.wechat
+                                        }
+                                    });
+                                }else{
+                                    _this.isVerifyIng = false;
+                                    wDialog.toast({
+                                        msg:res.msg
+                                    })
+                                }
+                            },
+                            fail:function(){
+                                _this.isVerifyIng = false;
+                            }
+                        })
+                    }
+                },
+                // 关闭短信验证弹窗
+                closeCodeVerify:function(){
+                    setTimeout(function(){
+                        api.closeFrame();
+                    },300);
+                }
+            }
+        })
+    }
+</script>
+</html>

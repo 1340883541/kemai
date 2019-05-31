@@ -25,8 +25,11 @@
 <body>
     <div id="wrap">
         <div class="w-header">
+            <div class="w-header-cap">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">新增跟进资源<i></i></span></div>
+            </div>
             <div class="search-box" id="header-search-box">
-                <div class="back" @click="back"></div>
                 <div class="search-inp">
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
@@ -37,15 +40,18 @@
                 </div>
                 <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
-            <div class="filter-box flex-wrap">
-                <div class="flex-con filter-lis kh" @click="clickFilterFn($event,0)">
-                    <span v-text="khOriginTxt"></span><i></i>
+            <div class="w-filter-lists flex-wrap">
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
+                    <span>来源归类</span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,1)">
-                    <span>联系状态</span><i></i>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
+                    <span>客户来源</span><i></i>
                 </div>
-                <div class="flex-con filter-lis fil curr" @click="clickFilterFn($event,2)">
-                    <span>分配时间</span><i></i>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
+                    <span>归属地</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
+                    <span>排序</span><i></i>
                 </div>
             </div>
         </div>
@@ -161,11 +167,6 @@
                         name:'newCustomerHeader',
                         frameName: 'newCustomerFrame',
                         script: 'clearSearchValue();'
-                    });
-                },
-                back:function(){
-                    api.closeWin({
-                        name: 'newCustomerHeader'
                     });
                 }
             }
