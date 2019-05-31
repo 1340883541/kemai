@@ -43,6 +43,7 @@
             <div class="follow-shortcut-choose-box">
                 <ul class="follow-shortcut-choose clear">
                     <li class="fl" v-for="(scLis,i) in shortcutList" :key="i" @click="handleChooseShortCutFollowContent(scLis.content)" v-text="scLis.content"></li>
+                    <li class="fl follow-choose-more" @click.stop="handleSkipFollowMore">更多<i></i></li>
                 </ul>
             </div>
         </div>
@@ -210,6 +211,15 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                // 跳转快捷用语
+                handleSkipFollowMore:function(){
+                  api.openWin({
+                      name: 'followRecordMore',
+                      url: './follow_record_more.html',
+                      allowEdit:true,
+                      slidBackEnabled: false
+                  });
                 },
                 // 选择快捷跟进
                 handleChooseShortCutFollowContent: function(content) {

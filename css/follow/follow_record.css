@@ -243,7 +243,7 @@ body,html{
     background-size: 16px;
 }
 .follow-box3{
-    height: 166px;
+    /*height: 166px;*/
     border-radius: 4px;
     padding:15px;
 }
@@ -263,18 +263,20 @@ body,html{
 }
 .follow-box3 .follow-shortcut-choose-box{
     width: 100%;
-    overflow-x: scroll;
+    /*overflow-x: scroll;
     -webkit-overflow-scrolling:touch;
-    overflow-y: hidden;
+    overflow-y: hidden;*/
 }
 .follow-box3 .follow-shortcut-choose{
-    width:1000px;
+    width:100%;
     padding:15px 0;
     margin-left: -10px;
-    opacity: 0;
+    opacity: 1;
 }
 .follow-box3 .follow-shortcut-choose li{
-    margin-left: 10px;
+    /*margin-left: 10px;*/
+    margin-bottom: 10px;
+    margin-right: 10px;
     padding:0 10px;
     height: 30px;
     line-height: 30px;
@@ -283,6 +285,25 @@ body,html{
     text-align: center;
     background-color: rgb(243,247,248);
     border-radius: 15px;
+}
+.follow-box3 .follow-choose-more,
+.follow-box4 .follow-choose-more{
+  color: #1b78f9 !important;
+  text-align: center;
+  position: relative;
+  padding-right: 20px !important;
+  padding-left: 12px !important;
+}
+.follow-box3 .follow-choose-more i,
+.follow-box4 .follow-choose-more i{
+  display: block;
+  position: absolute;
+  z-index: 0;
+  right: 2px;
+  top: 8px;
+  border-width:7px;
+  border-style:solid;
+  border-color:transparent transparent transparent #1b78f9;
 }
 .call-phone-box{
     width: 100%;
@@ -674,4 +695,194 @@ body,html{
     font-size: 18px;
     color:#0c7ff9;
     background-color: #fff;
+}
+
+/*快捷用语*/
+.follow-r-m-header .fh-fixed{
+  background: #fff;
+  color: #666666;
+  font-size: 16px;
+}
+.follow-r-m-header .fh-fixed .left{
+    width: 54px;
+    height: 40px;
+    background: url('../../image/icon-gl-jiantou.png') no-repeat 8px center;
+    background-size: 13px;
+    text-align: right;
+}
+.follow-r-m-header .fh-fixed .right{
+  font-weight: normal;
+}
+.follow-r-m-header .fh-fixed .center{
+  font-weight: 600;
+  color: #222;
+}
+
+.quick_lag_content{
+  padding: 10px 10px 70px 10px;
+}
+.quick_lag_ul{
+  background: #fff;
+}
+.quick_lag_ul .quick_lag_li{
+  display: box;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  width: 100%;
+}
+.quick_lag_li.border-1px:after{
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background-color: #e9e9e9;
+  -webkit-transform:scaleY(0.5);
+  -moz-transform:scaleY(0.5);
+  -ms-transform:scaleY(0.5);
+  -o-transform:scaleY(0.5);
+  transform:scaleY(0.5);
+}
+.quick_lag_li .quick_lag_libox{
+    display: box;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    width: 100%;
+    /* min-height: 50px; */
+    /* max-height: 114px; */
+    /* line-height: 50px; */
+    /* overflow: hidden; */
+    /* padding-bottom: 14px; */
+}
+.quick_lag_ul .quick_lag_li .li_radio{
+  width: 40px;
+  height: 100%;
+}
+.uncheck{
+  width: 18px;
+  height: 18px;
+  display: block;
+  border-radius: 18px;
+  border:1px solid #c9c9c9;
+  margin: auto;
+  margin-top: 15px;
+}
+.check{
+  width: 18px;
+	height: 18px;
+	background: url(../../image/icon-xz-gouxuan.png) no-repeat center center;
+	background-size: cover;
+	border: 0px;
+    border:1px solid #4c9ff8;
+}
+.quick_lag_ul .quick_lag_li .li_text{
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  font-size: 14px;
+  color: #222222;
+}
+.quick_lag_ul .quick_lag_li .li_text .li_t_mun{
+    width: 12px;
+    height: 100%;
+    display: block;
+    float: left;
+    text-align: center;
+    padding-top: 17px;
+    padding-bottom: 17px;
+}
+.quick_lag_ul .quick_lag_li .li_text .li_t_info{
+    float: left;
+    width: calc(100% - 12px);
+    line-height: 24px;
+    padding-top: 14px;
+    padding-left: 4px;
+    padding-right: 10px;
+    padding-bottom: 14px;
+    overflow: hidden;
+    max-height: 115px;
+}
+
+
+
+
+
+
+
+.quick_language .quick_lag_footer{
+  height: 60px;
+  width: 100%;
+  background: #fff;
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  display: box;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+.quick_lag_footer.border-1px:after{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #e9e9e9;
+    -webkit-transform:scaleY(0.5);
+    -moz-transform:scaleY(0.5);
+    -ms-transform:scaleY(0.5);
+    -o-transform:scaleY(0.5);
+    transform:scaleY(0.5);
+}
+.quick_language .quick_lag_footer .quick_lag_f_left{
+  width: 70px;
+}
+.quick_language .quick_lag_footer .quick_lag_f_right{
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  height: 100%;
+  font-size: 16px;
+  padding-top: 12px;
+  text-align: right;
+}
+.quick_language .quick_lag_footer .quick_lag_f_left .quick_lag_f_l_info{
+  width: 70px;
+  height: 100%;
+  background: url('../../image/qk_icon.png') no-repeat 22px center;
+  background-size: 14px;
+  text-align: right;
+  color: #666;
+  line-height: 60px;
+}
+.quick_language .quick_lag_footer .quick_lag_f_right button{
+  width: 79px;
+  height: 35px;
+  border-radius: 2px;
+  margin-right: 20px;
+}
+.quick_language .quick_lag_footer .quick_lag_delbtn{
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  color: #ff9402;
+}
+.quick_language .quick_lag_footer .quick_lag_querbtn{
+  border: 1px solid #0c7ff9;
+  background: #0c7ff9;
+  color: #fff;
 }

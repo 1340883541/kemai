@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>跟进记录</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
+    <style>
+        .follow-wrapper {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            min-height: 0;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="follow-wrapper" class="follow-wrapper quick_language">
+        <div class="follow-header follow-r-m-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop.prevent="handleBack">返回</div>
+                <div class="center">快捷用语</div>
+                <div class="right"  @click.stop="handleEditCustomerName">添加</div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <!-- 快捷用语内容 -->
+        <div class="quick_lag_content">
+            <ul class="quick_lag_ul">
+                <li class="quick_lag_li border-1px">
+                    <div class="li_radio" @click="selectedProduct(item)"><i class="uncheck check"></i></div>
+                    <div class="li_text clear">
+                        <div class="li_t_mun">1.</div>
+                        <div class="li_t_info w-elli-4">
+                            最后一班也就是临门一脚,很多新人看到几天后,就是心动而没有行动,最后一班也非常重要,也是要老练的人,要从观念方面去讲, 要结合高起点的6大灌输“做比不做好，做快比做慢好，做做比不做好，做快比做慢好，做
+                        </div>
+                    </div>
+                </li>
+                <li class="quick_lag_li border-1px">
+                    <div class="li_radio" @click="selectedProduct(item)"><i class="uncheck"></i></div>
+                    <div class="li_text clear">
+                        <div class="li_t_mun">2.</div>
+                        <div class="li_t_info w-elli-4">
+                            最后一班也就是临门一脚,很多新人看到几天后</div>
+                    </div>
+                </li>
+                <li class="quick_lag_li border-1px">
+                    <div class="li_radio" @click="selectedProduct(item)"><i class="uncheck"></i></div>
+                    <div class="li_text clear">
+                        <div class="li_t_mun">3.</div>
+                        <div class="li_t_info w-elli-4">
+                            最后一班也就是临门一脚.</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- 快捷用语footer -->
+        <div class="quick_lag_footer border-1px">
+            <div class="quick_lag_f_left" @click.stop="handleCleanFollowChoose">
+                <div class="quick_lag_f_l_info">清空</div>
+            </div>
+            <div class="quick_lag_f_right"><button class="quick_lag_delbtn">删除</button><button class="quick_lag_querbtn">确认</button></div>
+        </div>
+        <!-- 背景遮罩 -->
+        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
+        <!-- 添加快捷用语 -->
+        <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-name-popup">
+            <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
+                <div class="left" @click.stop="funcHideAllPopup">取消</div>
+                <div class="right" @click.stop="handleSaveCustomerName">确认</div>
+            </div>
+            <div class="follow-addr-b">
+                <textarea placeholder="输入快捷用语" id="inp-textarea-name"></textarea>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var vuedata;
+    apiready = function() {
+
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        // 监听返回按钮
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err) {
+            vuedata.handleBack();
+        });
+
+    }
+    vuedata = new Vue({
+        el: '#follow-wrapper',
+        data: {
+
+        },
+        mounted: function() {},
+        methods: {
+            // 返回
+            handleBack: function() {
+                api.closeWin();
+            },
+            // 添加快捷用语
+            handleEditCustomerName:function(){
+                var _this = this;
+                if(isIos()){
+                    wHrefJs.openFrame({
+                        name:'followNamePop',
+                        path:'./follow_name_pop.html',
+                        animation:{
+                            type:"none",
+                            subType:"from_bottom",
+                            duration:100
+                        }
+                    })
+                }else{
+                    this.funcHideAllPopup();
+                    $('#popup-bg,#customer-name-popup').show();
+                    setTimeout(function(){
+                        $('#inp-textarea-name').focus();
+                    },10);
+                }
+            },
+            funcHideAllPopup:function(){
+                $('.follow-popup').hide();
+            },
+            // 切换多选选中样式
+            selectedProduct: function(item) {
+                console.log(555)
+                    // if (typeof item.checked == 'undefined') { //判断是否未定义，如果没点击过按钮是没有注册的，则需要先注册checked属性
+                    //     this.$set(item, "checked", true); //局部注册
+                    // } else {
+                    //     item.checked = !item.checked;
+                    // }
+                    // this.calcTotalClose();
+            },
+            // 计算多选选中
+            calcTotalClose: function() {},
+
+            //清空选中快捷用语
+            handleCleanFollowChoose: function() {
+                wDialog.confirm({
+                    msg: '确定清空所有？',
+                    button: ['取消', '确定'],
+                    sureCb: function() {
+                        // api.closeWin();
+                    }
+                })
+            },
+        }
+    })
+</script>
+
+</html>

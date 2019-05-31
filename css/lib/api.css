@@ -597,3 +597,10 @@ textarea:input-placeholder{
     color:#fff;
     font-size: .28rem;
 }
+
+/*border 1px*/
+.border-1px{
+  position: relative;
+  /*height: 1rem;
+  line-height: 1rem;*/
+}

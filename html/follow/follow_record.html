@@ -97,16 +97,17 @@
                 @click.stop="handleSkipInputFollowContent"
             ></div>
                 <div class="follow-shortcut-choose-box">
-                <ul class="follow-shortcut-choose clear" id="shortcut-lis">
-                    <li
-                        class="fl"
-                        v-for="(scFollow,i) in shortcutFollowList"
-                        :key="i"
-                        v-text="scFollow.content"
-                        @click.stop="handleShortcutFollowContent(scFollow.content)"
-                    ></li>
-                </ul>
-            </div>
+                  <ul class="follow-shortcut-choose clear" id="shortcut-lis">
+                      <li
+                          class="fl"
+                          v-for="(scFollow,i) in shortcutFollowList"
+                          :key="i"
+                          v-text="scFollow.content"
+                          @click.stop="handleShortcutFollowContent(scFollow.content)"
+                      ></li>
+                      <li class="fl follow-choose-more" @click.stop="handleSkipFollowMore">更多<i></i></li>
+                  </ul>
+              </div>
         </div>
 
         <!-- 电话跟进 -->
@@ -399,15 +400,15 @@
                             if(res.code == 1){
                                 _this.shortcutFollowList = res.data;
                                 _this.$nextTick(function(){
-                                    var sWid = 0;
-                                    var len = $('#shortcut-lis > li').length;
-                                    $('#shortcut-lis > li').each(function(i,ele){
-                                        $(ele).width($(ele).outerWidth())
-                                        sWid += ($(ele).outerWidth() + 10);
-                                        if(i === len-1){
-                                            $('#shortcut-lis').width(sWid).css('opacity',1);
-                                        }
-                                    });
+                                    // var sWid = 0;
+                                    // var len = $('#shortcut-lis > li').length;
+                                    // $('#shortcut-lis > li').each(function(i,ele){
+                                    //     $(ele).width($(ele).outerWidth())
+                                    //     sWid += ($(ele).outerWidth() + 10);
+                                    //     if(i === len-1){
+                                    //         $('#shortcut-lis').width(sWid).css('opacity',1);
+                                    //     }
+                                    // });
                                 })
                             }
                         }
@@ -593,6 +594,15 @@
                 // 快捷跟进内容
                 handleShortcutFollowContent:function(content){
                     this.followContent = content;
+                },
+                // 跳转快捷用语
+                handleSkipFollowMore:function(){
+                  api.openWin({
+                      name: 'followRecordMore',
+                      url: './follow_record_more.html',
+                      allowEdit:true,
+                      slidBackEnabled: false
+                  });
                 },
                 // 电话跟进
                 handleCallFollow:function(){
