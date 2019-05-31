@@ -5,6 +5,7 @@ body,html{
     width: 100%;
     min-height: 100vh;
     background-color: rgb(244,244,244);
+    overflow-x: hidden;
 }
 .follow-header{
     position: relative;
@@ -58,12 +59,12 @@ body,html{
 }
 .follow-box1{
     position: relative;
-    height: 154px;
+    height: auto;
     border-radius: 4px;
 }
 .follow-box1 .follow-b1-t{
     padding-top: 20px;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
 }
 .follow-box1 .follow-b1-t .name{
     height: 30px;
@@ -88,9 +89,47 @@ body,html{
     background: url('../../image/icon-bianji1.png') no-repeat center;
     background-size: 16px;
 }
-.follow-box1 .follow-b1-t .addr{
-    height: 28px;
+.follow-box1 .follow-b1-t .wechat{
+    height: auto;
     line-height: 28px;
+    color:#333;
+    font-size: 16px;
+}
+.follow-box1 .follow-b1-t .wechat .w-btn{
+    position: relative;
+    top: -1px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 15px;
+    font-size: 12px;
+    color:#333;
+    text-align: center;
+    padding:0 6px;
+    line-height: 18px;
+
+}
+.follow-box1 .follow-b1-t .wechat .w-btn:after {
+    content: " ";
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    width: 200%;
+    height: 200%;
+    border: 1px solid #999;
+    -webkit-transform-origin: left top;
+    transform-origin: left top;
+    -webkit-transform: scale(0.5);
+    transform: scale(0.5);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    border-radius: 4px;
+}
+.follow-box1 .follow-b1-t .addr{
+    height: 24px;
+    line-height: 24px;
     color:#999;
     font-size: 14px;
 }
@@ -149,11 +188,22 @@ body,html{
 .follow-box2 .follow-time .right{
     width:calc(100% - 90px);
 }
+.follow-box2 .follow-time .shortcut-time-box{
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling:touch;
+}
+.follow-box2 .follow-time ul.shortcut-time{
+    width:360px;
+    opacity: 0;
+}
 .follow-box2 .follow-time .shortcut-time li{
     width: 48px;
     height: 28px;
     line-height: 26px;
-    border:1px solid #e9e9e9;
+    border:1px solid #f1f1f1;
+    background-color: #f1f1f1;
     font-size: 13px;
     text-align: center;
     color:#666;
@@ -163,8 +213,18 @@ body,html{
 .follow-box2 .follow-time .shortcut-time li.curr{
     border:1px solid #0c7ff9;
     color:#0c7ff9;
+    background-color: rgb(236,245,255);
+}
+#choose-time{
+    position: absolute;
+    left: 0;top:0;
+    width:100%;
+    height: 100%;
+    background-color: transparent;
+    opacity: 0;
 }
 .follow-box2 .follow-time .choose-time{
+    position: relative;
     padding:20px 0;
 }
 .follow-box2 .follow-time .choose-time > .l{

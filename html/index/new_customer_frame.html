@@ -161,11 +161,11 @@
                             "token": TOKEN_DATA
                         },
                         success: function(res) {
-                            // console.log(JSON.stringify(res))
+                            console.log('customer origin response data: '+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.khOriginList = res.data.customerSourceslist;
                                 res.data.customerSourceslist.forEach(function(v, i) {
-                                    if (v.name === param.origin) {
+                                    if (v.name.trim() === param.origin.trim()) {
                                         _this.currOriginIndex = i;
                                         _this.search_source = v.value;
                                     }

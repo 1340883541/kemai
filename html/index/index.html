@@ -19,74 +19,80 @@
 <body>
     <div id="wrapper">
         <!-- header -->
-        <div class="swiper-container index-header" id="banner-swiper">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <!-- 断网 -->
-                    <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
-                        <div class="fl left">
-                            <i></i>网络不给力，请检查您的网络设置
-                        </div>
-                        <div class="fr right"></div>
+        <div class="index-header">
+            <div class="index-title" id="index-title">
+                <div class="index-tilte-txt">工作台</div>
+                <!-- 断网 -->
+                <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
+                    <div class="fl left">
+                        <i></i>网络不给力，请检查您的网络设置
                     </div>
-                    <!-- <div class="head-bg head-bluebg"></div> -->
-                    <div class="head-box head-bluebox">
-                        <div class="head-bt clear">
-                            <div class="fl left">新增资源跟进</div>
-                            <div class="fr right" onclick="handleSwitchFollow(0)"><i></i>系统资源跟进</div>
-                        </div>
-                        <div class="head-bb flex-wrap">
-                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('网络客户')">
-                                <div class="head-bb-t head-bb-t1">网络客户</div>
-                                <div class="head-bb-b" v-text="network"></div>
-                            </div>
-                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('渠道客户')">
-                                <div class="head-bb-t head-bb-t2">渠道客户</div>
-                                <div class="head-bb-b" v-text="channel"></div>
-                            </div>
-                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('资源池客户')">
-                                <div class="head-bb-t head-bb-t3">资源池客户</div>
-                                <div class="head-bb-b" v-text="respool"></div>
-                            </div>
-                            <div class="flex-con head-bb-lis" @click="skipNewCustomer('其他客户')">
-                                <div class="head-bb-t head-bb-t4">其他</div>
-                                <div class="head-bb-b" v-text="otherCus"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="fr right"></div>
                 </div>
-                <div class="swiper-slide">
-                    <!-- 断网 -->
-                    <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
-                        <div class="fl left">
-                            <i></i>网络不给力，请检查您的网络设置
+            </div>
+            <div class="head-bg head-bluebg" id="head-bg"></div>
+            <div class="head-box head-bluebox">
+                <div class="head-bt clear">
+                    <div class="fl left"></div>
+                </div>
+                <div class="new-follow-box">
+                    <div class="index-cap">新增资源跟进</div>
+                    <div class="head-bb flex-wrap">
+                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('公司资源')">
+                            <div class="head-bb-t head-bb-t1">公司资源</div>
+                            <div class="head-bb-b" v-text="corSour"></div>
                         </div>
-                        <div class="fr right"></div>
-                    </div>
-                    <!-- <div class="head-bg head-greenbg"></div> -->
-                    <div class="head-box head-greenbox">
-                        <div class="head-bt clear">
-                            <div class="fl left">系统资源跟进</div>
-                            <div class="fr right" onclick="handleSwitchFollow(1)"><i></i>新增资源跟进</div>
+                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('销售资源')">
+                            <div class="head-bb-t head-bb-t2">销售资源</div>
+                            <div class="head-bb-b" v-text="market"></div>
                         </div>
-                        <div class="head-bb flex-wrap">
-                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('长期')">
-                                <div class="head-bb-t head-bb-t5">长期</div>
-                                <div class="head-bb-b" v-text="longTerm"></div>
-                            </div>
-                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('中期')">
-                                <div class="head-bb-t head-bb-t6">中期</div>
-                                <div class="head-bb-b" v-text="metTerm"></div>
-                            </div>
-                            <div class="flex-con head-bb-lis" @click="handleSkipSystemList('短期')">
-                                <div class="head-bb-t head-bb-t7">短期</div>
-                                <div class="head-bb-b" v-text="shortTerm"></div>
-                            </div>
+                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('渠道资源')">
+                            <div class="head-bb-t head-bb-t3">渠道资源</div>
+                            <div class="head-bb-b" v-text="channel"></div>
+                        </div>
+                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('资源池')">
+                            <div class="head-bb-t head-bb-t3">资源池</div>
+                            <div class="head-bb-b" v-text="respool"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="head-bg head-bluebg" id='head-bg'></div>
+        </div>
+        <div class="system-follow-box">
+            <div class="index-cap">系统资源跟进</div>
+            <div class="system-follow flex-wrap">
+                <div class="flex-con system-lis" @click="handleSkipSystemList('长期')">
+                    <div class="sys-lbox sys-lbox5">
+                        <div class="system-t">长期</div>
+                        <div class="system-b" v-text="longTerm">2</div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis" @click="handleSkipSystemList('中期')">
+                    <div class="sys-lbox sys-lbox6">
+                        <div class="system-t">中期</div>
+                        <div class="system-b" v-text="funcFormateSystemCount(metTerm)">2</div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis" @click="handleSkipSystemList('短期')">
+                    <div class="sys-lbox sys-lbox7">
+                        <div class="system-t">短期</div>
+                        <div class="system-b" v-text="funcFormateSystemCount(shortTerm)">2</div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis" @click="handleSkipSystemList('未接')">
+                    <div class="sys-lbox sys-lbox5">
+                        <div class="system-t">未接</div>
+                        <div class="system-b" v-text="funcFormateSystemCount(unansweredCus)"></div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis" @click="handleSkipSystemList('成交')">
+                    <div class="sys-lbox sys-lbox6">
+                        <div class="system-t">成交</div>
+                        <div class="system-b" v-text="funcFormateSystemCount(dealCus)"></div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis"></div>
+            </div>
         </div>
         <!-- 消息提醒 -->
         <div class="message-box">
@@ -116,23 +122,34 @@
         <div class="stat-box">
             <div class="index-cap">今日统计</div>
             <div class="stat-lis flex-wrap">
-                <div class="flex-con stat-ls bor-r" @click="skipStat(1)">
-                    <div class="stat-ls-t stat-ls-t1">客户通话(个)</div>
-                    <div class="stat-ls-b" v-text="vaildcall"></div>
+                <div class="flex-con stat-ls bor-r" @click="skipStat('拨号')">
+                    <div class="stat-ls-t stat-ls-t1">拨号(次)</div>
+                    <div class="stat-ls-b" v-text="allCallTimes"></div>
                 </div>
-                <div class="flex-con stat-ls" @click="skipStat(2)">
-                    <div class="stat-ls-t stat-ls-t2">未接听(个)</div>
-                    <div class="stat-ls-b" v-text="noanscall"></div>
-                </div>
-                <div class="flex-con stat-ls bor-r" @click="skipStat(3)">
-                    <div class="stat-ls-t stat-ls-t3">短信(个)</div>
-                    <div class="stat-ls-b" v-text="todaynotefollow"></div>
-                </div>
-                <div class="flex-con stat-ls" @click="skipStat(4)">
+                <div class="flex-con stat-ls" @click="skipStat('查看微信')">
                     <div class="stat-ls-t stat-ls-t4">查看微信(个)</div>
                     <div class="stat-ls-b" v-text="lookwechatcount"></div>
                 </div>
+                <div class="flex-con stat-ls bor-r" @click="skipStat('未接')">
+                    <div class="stat-ls-t stat-ls-t2">未接(次)</div>
+                    <div class="stat-ls-b" v-text="noanscall"></div>
+                </div>
+                <div class="flex-con stat-ls" @click="skipStat('号码异常')">
+                    <div class="stat-ls-t stat-ls-t2">号码异常(个)</div>
+                    <div class="stat-ls-b" v-text="abnormalNum"></div>
+                </div>
+                <div class="flex-con stat-ls bor-r" @click="skipStat('接通')">
+                    <div class="stat-ls-t stat-ls-t1">接通(次)</div>
+                    <div class="stat-ls-b" v-text="vaildcall"></div>
+                </div>
+                <div class="flex-con stat-ls">
+                </div>
             </div>
+        </div>
+        <!-- 跳转到新增客户页面 -->
+        <div class="skip-add" @click.stop="handleSkipAddCustomer">
+            <i></i>
+            <!-- <i></i><span>新增客户</span> -->
         </div>
     </div>
 </body>
@@ -145,22 +162,22 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var indexV = null,
-        bnrSwiper = null;
+    var indexV = null;
     apiready = function() {
         var top = api.safeArea.top;
         $('#head-bg').css('padding-top',top);
-        $('.index-header .head-box').css('padding-top',top+40);
-        $('#offline-box').css('top',top);
+        $('.index-header .head-box').css('padding-top',top);
+        $('#index-title').css('padding-top',top);
+        $('#offline-box').css('top',top+48);
         indexV = new Vue({
             el: '#wrapper',
             data: {
                 employeeid: '',
                 account: '',
-                otherCus: 0, //今日新增其他
-                network: 0, //今日新增网络客户
-                channel: 0, //今日新增渠道客户
-                respool: 0, //今日新增资源池客户
+                market: 0, //今日销售渠道
+                channel: 0, //今日渠道客户
+                corSour: 0, //今日公司资源
+                respool: 0, //今日资源池客户
 
                 resource: 0, //资源回收
                 sign: 0, //签约消息
@@ -170,15 +187,20 @@
                 subscription: 0, //认购消息
                 follow: 0, //跟进提醒
                 subscriptionBook: 0, //认购书提醒
-
-                vaildcall: 0, //今日统计有效通话
+                // 今日统计
+                vaildcall: 0, //今日接通通话
                 noanscall: 0, //今日统计未接听通话
-                todaynotefollow: 0, //微信次数
-                lookwechatcount: 0, //短信跟进个数
-
+                lookwechatcount: 0, //查看微信次数
+                allCallTimes: 0, //拨号
+                abnormalNum:0, // 拨号异常
+                // 系统资源跟进
                 shortTerm:0, //短期客户数量
                 metTerm:0, //中期客户数量
                 longTerm:0, //长期客户数量
+                unansweredCus:0,//未接客户
+                dealCus:0, //成交
+
+
                 userInfo: '',
                 notificationInfo: {}
             },
@@ -189,13 +211,24 @@
                 this.getMessageData();
                 this.fetchNewData();
                 this.fetchSystemFollowData();
+                this.$nextTick(function(){
+                    $(window).on('scroll',function(){
+                        var sTop = $(window).scrollTop()
+                        if(sTop <= 9){
+                            $('#index-title').removeClass('fixbg')
+                        }else{
+                            $('#index-title').addClass('fixbg')
+                        }
+                    })
+                })
             },
             filters: {
                 messageFilter: function(n) {
                     return n > 99 ? '99+' : n;
                 }
             },
-            methods: {// 获取消息提醒的数据
+            methods: {
+                // 获取消息提醒的数据
                 getMessageData: function(cb) {
                     var _this = this;
                     this.userInfo = wPref.getPrefs({
@@ -258,25 +291,14 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            // console.log('inn2222222'+JSON.stringify(res))
+                            console.log('today new data: '+JSON.stringify(res))
                             if (res.code == 1) {
-                                _this.otherCus = res.otherCus;
-                                _this.network = res.network;
+                                _this.market = res.market;
                                 _this.channel = res.channel;
+                                _this.corSour = res.corSour;
                                 _this.respool = res.respool;
                             }
                             wDialog.hideProgress();
-                            _this.$nextTick(function(){
-                                bnrSwiper = new Swiper({
-                                    el: '#banner-swiper',
-                                    loop:true,
-                                    on: {
-                                        slideChangeTransitionStart: function(){
-                                          this.activeIndex % 2 ? $('#head-bg').addClass('head-bluebg').removeClass('head-greenbg') : $('#head-bg').addClass('head-greenbg').removeClass('head-bluebg');
-                                        },
-                                    },
-                                })
-                            })
                         },
                         fail: function() {
 
@@ -292,7 +314,7 @@
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
                     wApiAjax({
-                        url: 'workbench/todaySta',
+                            url: 'workbench/todaySta',
                         headers: {
                             token: TOKEN_DATA
                         },
@@ -300,12 +322,12 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            // console.log('inn3333333333333'+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.vaildcall = res.vaildcall;
                                 _this.noanscall = res.noanscall;
-                                _this.todaynotefollow = res.todaynotefollow;
+                                _this.abnormalNum = res.abnormalNum;
                                 _this.lookwechatcount = res.lookwechatcount;
+                                _this.allCallTimes = res.allCallTimes;
                             }
                         },
                         fail: function() {
@@ -330,17 +352,22 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            // console.log('inn444444444444'+JSON.stringify(res))
+                            // console.log('system response data: '+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.shortTerm = res.shortTerm;
                                 _this.metTerm = res.metTerm;
                                 _this.longTerm = res.longTerm;
+                                _this.dealCus = res.dealCus;
+                                _this.unansweredCus = res.unansweredCus;
                             }
                         },
                         fail: function() {
 
                         }
                     })
+                },
+                funcFormateSystemCount:function(num){
+                    return num > 99 ? '99+' : num;
                 },
                 // 跳转到提醒列表
                 skipMessage: function(i, remindName) {
@@ -406,25 +433,25 @@
                     })
                 },
                 // 跳转到今日统计
-                skipStat: function(i) {
+                skipStat: function(txt) {
                     var _this = this;
                     wHrefJs.openWin({
                         name: 'indexStat',
                         path: './index_stat.html',
                         param: {
-                            statType: i
+                            statTypeTxt:txt
                         }
+                    })
+                },
+                // 跳转到新增客户
+                handleSkipAddCustomer:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomer',
+                        path:'./add_customer.html',
                     })
                 }
             }
         })
-    }
-    // 切换swiper
-    function handleSwitchFollow(i){
-        if(bnrSwiper){
-            i === 0 ? bnrSwiper.slideToLoop(1, 600, false) : bnrSwiper.slideToLoop(0, 600, false);
-            i === 0 ? $('#head-bg').addClass('head-greenbg').removeClass('head-bluebg') : $('#head-bg').addClass('head-bluebg').removeClass('head-greenbg');
-        }
     }
     // 刷新数据
     function refrshIndexData() {

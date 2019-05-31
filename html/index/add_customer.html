@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增客户-首页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+</head>
+
+<body>
+    <div id="add-wrapper" class="add-wrapper" v-cloak>
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop.prevent="handleBack"></div>
+                <div class="center">新增客户</div>
+                <div class="right"></div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="add-box">
+            <div class="add-form">
+                <div class="add-lis">
+                    <div class="add-cap">客户姓名</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" placeholder="请输入客户姓名" maxlength="6" v-model="saveFormData.customerName">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">手机号码</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
+                        <span class="phone-addr bor-1px-l" v-if="isShowPhoneAddr">号码归属地: {{saveFormData.customerPhoneAddrTxt}}</span>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">来源归类</div>
+                    <div class="add-switch">
+                        <ul class="clear" id="customer-classify">
+                            <li
+                                v-for="(cusClass,idx) in customerClassList"
+                                :key="idx"
+                                @click.stop="handleSwitchCustomerClass(idx,cusClass.value)"
+                                v-text="cusClass.name"
+                                :class="{'curr':idx === customerClassCurrIndex}"
+                            ></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">客户来源</div>
+                    <div class="add-switch">
+                        <ul class="clear" id="customer-origin">
+                            <li
+                                v-for="(cusOrigin,idx) in customerOriginList"
+                                :key="idx"
+                                @click.stop="handleSwitchCustomerOrigin(idx,cusOrigin.value)"
+                                v-text="cusOrigin.name"
+                                :class="{'curr':idx === customerOriginCurrIndex}"
+                            ></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">客户备注</div>
+                    <div class="add-textarea">
+                        <textarea placeholder="描述客户的购买意向、购房需求、沟通内容等" v-model="saveFormData.customerRemark"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="add-save">
+            <div class="save-btn":class="{'no-event':!isCanSaveFormData}" @click.stop="handleSaveAddCustomer($event)">保存</div>
+        </div>
+        <div class="add-save-place"></div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var addV = null;
+    apiready = function(){
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        addV = new Vue({
+            el:'#add-wrapper',
+            data:{
+                // saveFormData
+                saveFormData:{
+                    customerName:'',
+                    customerPhone:'',
+                    customerPhoneAddr:'',
+                    customerPhoneAddrTxt:'',
+                    customerClassifyId:'',
+                    customerOriginId:'',
+                    customerRemark:'',
+                },
+                isCanSaveFormData:false,
+                // customer switch
+                customerClassCurrIndex:'',
+                customerOriginCurrIndex:'',
+                customerClassList:[],
+                customerOriginList:[],
+                isShowPhoneAddr:false,
+
+                userInfo:{}
+            },
+            mounted:function(){
+
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.fetchCustomerData();
+            },
+            watch:{
+                saveFormData:{
+                    handler:function(nv){
+                        for(var k in nv){
+                            if((nv[k]+'').trim() == ''){
+                                this.isCanSaveFormData = false;
+                                return;
+                                break;
+                            }
+                        }
+                        this.isCanSaveFormData = true;
+                    },
+                    deep:true
+                }
+            },
+            methods:{
+                // 获取客户来源数据
+                fetchCustomerData:function(){
+                    let _this = this;
+                    wApiAjax({
+                        url:'customer/addNewCusSourse',
+                        method:'get',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.customerOriginList = res.cusSource || [];
+                                _this.customerClassList = res.classifySource || [];
+                                // 客户来源滚动
+                                _this.$nextTick(function(){
+                                    var sWid = 0;
+                                    var len = $('#customer-origin > li').length;
+                                    $('#customer-origin > li').each(function(i,ele){
+                                        // $(ele).width($(ele).outerWidth())
+                                        sWid += ($(ele).outerWidth() + 15);
+                                        if(i === len-1){
+                                            $('#customer-origin').width(sWid).css('opacity',1);
+                                        }
+                                    });
+                                });
+                                // 来源归类滚动
+                                _this.$nextTick(function(){
+                                    var sWid = 0;
+                                    var len = $('#customer-classify > li').length;
+                                    $('#customer-classify > li').each(function(i,ele){
+                                        // $(ele).width($(ele).outerWidth())
+                                        sWid += ($(ele).outerWidth() + 15);
+                                        if(i === len-1){
+                                            $('#customer-classify').width(sWid).css('opacity',1);
+                                        }
+                                    });
+                                });
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
+                },
+                // 失去焦点获取号码归属地
+                handleBlurGetPhoneAddr:function(){
+                    let _this = this;
+                    if(this.saveFormData.customerPhone.trim() == ''){
+                        wDialog.toast({
+                            msg:'请输入手机号码'
+                        })
+                        this.isShowPhoneAddr = false;
+                        return false;
+                    }
+                    var phoneExp = /^1[345789]\d{9}$/;
+                    if(!phoneExp.test(this.saveFormData.customerPhone.trim())){
+                        wDialog.toast({
+                            msg:'请输入正确的手机号码'
+                        })
+                        this.isShowPhoneAddr = false;
+                        return false;
+                    }
+                    wApiAjax({
+                        url:'phoneauth/cellPhoneHome',
+                        headers:{
+                            'token':TOKEN_DATA
+                        },
+                        data:{
+                            cellPhone:_this.saveFormData.customerPhone
+                        },
+                        success:function(res){
+                            if(res.code == 200){
+                                _this.saveFormData.customerPhoneAddrTxt = res.data;
+                                _this.saveFormData.customerPhoneAddr = res.provinceAndcity;
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg||'号码归属地获取失败'
+                                })
+                            }
+                        }
+                    })
+                    _this.isShowPhoneAddr = true;
+                },
+                // 切换来源归类
+                handleSwitchCustomerClass:function(i,id){
+                    this.customerClassCurrIndex = i;
+                    this.saveFormData.customerClassifyId = id;
+                },
+                // 切换客户来源
+                handleSwitchCustomerOrigin:function(i,id){
+                    this.customerOriginCurrIndex = i;
+                    this.saveFormData.customerOriginId = id;
+                },
+                // 保存新增
+                handleSaveAddCustomer:function(e){
+                    var saveData = this.saveFormData;
+                    if(saveData.customerName.trim() == ''){
+                        wDialog.toast({
+                            msg:'请输入客户姓名'
+                        });
+                        return false;
+                    }
+                    if(saveData.customerClassifyId == ''){
+                        wDialog.toast({
+                            msg:'请选择来源归类'
+                        });
+                        return false;
+                    }
+                    if(saveData.customerOriginId == ''){
+                        wDialog.toast({
+                            msg:'请选择客户来源'
+                        });
+                        return false;
+                    }
+                    if(saveData.customerRemark.trim() == ''){
+                        wDialog.toast({
+                            msg:'请输入备注'
+                        });
+                        return false;
+                    }
+                    this.funcSaveAddCustomer();
+                },
+                // 保存新增客户
+                funcSaveAddCustomer:function(){
+                    var _this = this;
+                    wDialog.showProgress({
+                        msg:'正在保存中'
+                    })
+                    wApiAjax({
+                        url:'customer/addNewCus',
+                        headers:{
+                            'token':TOKEN_DATA
+                        },
+                        data:{
+                            cusName:_this.saveFormData.customerName,
+                            cellphoneNum:_this.saveFormData.customerPhone,
+                            provinceAndcity:_this.saveFormData.customerPhoneAddr,
+                            cusSourceId:_this.saveFormData.customerOriginId,
+                            classifySourceId:_this.saveFormData.customerClassifyId,
+                            comment:_this.saveFormData.customerRemark,
+                            empId:_this.userInfo.employeeid,
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 200){
+                                wDialog.toast({
+                                    msg:'新增客户成功'
+                                });
+                                setTimeout(function(){
+                                    api.closeWin();
+                                },400);
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg||'新增客户保存失败'
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+</html>

@@ -326,7 +326,7 @@
                 handleSaveFollowContent: function() {
                     api.execScript({
                         name: 'followRecord',
-                        script: 'funcSureFollowContent(\'' + this.followContent + '\');'
+                        script: 'funcSureFollowContent(\'' + encodeURI(this.followContent) + '\');'
                     });
                     setTimeout(function() {
                         api.closeWin();

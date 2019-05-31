@@ -2,7 +2,8 @@
 .cd-header {
     position: relative;
     width: 100%;
-    height: 4.4rem;
+    height: auto;
+    min-height: 5.1rem;
     background: url('../../image/img-xq-bg.png') no-repeat center;
     background-size: cover;
     color: #fff;
@@ -111,13 +112,14 @@
 .cd-header .horigin {
     font-size: .3rem;
     line-height: .3rem;
+    padding:.08rem 0;
 }
 
 .cd-caption {
     position: relative;
     top: -.8rem;
     width: 6.9rem;
-    height: 1.8rem;
+    height: auto;
     margin: 0 auto;
     background-color: #fff;
     -webkit-border-radius: 5px;
@@ -130,7 +132,7 @@
     -ms-box-shadow:0px 8px 12px 8px rgba(0, 0, 0, 0.03);
     -o-box-shadow:0px 8px 12px 8px rgba(0, 0, 0, 0.03);
     box-shadow:0px 8px 12px 8px rgba(0, 0, 0, 0.03);
-    padding: .4rem .3rem 0;
+    padding: .4rem .3rem .16rem;
 }
 
 .cd-caption .cd-ct {
@@ -358,12 +360,35 @@
     background-image: url('../../image/icon-xq-6duanxin.png');
 }
 
+.cd-contain .cd-flow .cd-flow-tit{
+    position: relative;
+    font-size: 16px;
+    color: #333;
+    width:100%;
+    height: 24px;
+    line-height:24px;;
+    overflow: hidden;
+}
+.cd-contain .cd-flow .cd-flow-tit > i{
+    position: absolute;
+    top:0;
+    right:0;
+    width:auto;
+    height: 24px;
+    text-align: center;
+    padding-left: 13px;
+    background:url('../../image/icon-bianji2.png') no-repeat left center;
+    background-size: 12.5px;
+    color:#ccc;
+    font-size: 14px;
+    font-style: normal;
+}
 .cd-contain .cd-flow .cd-flow-t {
     font-size: .28rem;
     color: #333;
     line-height: .48rem;
-    max-height: 2.4rem;
-    overflow: hidden;
+    /*max-height: 2.4rem;
+    overflow: hidden;*/
 }
 
 .cd-contain .cd-flow .cd-flow-t.all {

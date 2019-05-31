@@ -2,14 +2,6 @@
     position: relative;
     height: auto;
 }
-.index-header.swiper-container{
-    width:100%;
-    padding-bottom: 10px;
-}
-.index-header .swiper-slide{
-    position: relative;
-    padding:0 15px;
-}
 .index-header .head-bg{
     position: absolute;
     left:0;top:0;
@@ -27,9 +19,27 @@
     background: url('../../image/bannerbg-green.png') no-repeat center;
     background-size: cover;
 }
+.index-header .index-title{
+    position: fixed;
+    left: 0;
+    top:0;
+    z-index: 10000;
+    width:100%;
+    height: auto;
+    line-height: 36px;
+    padding:12px 15px 15px;
+    color:#fff;
+    font-size: 25px;
+    transition: all .2s ease;
+}
+.index-header .index-title.fixbg{
+    background-image: -webkit-linear-gradient(left, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
+    background-image: -o-linear-gradient(left, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
+    background-image: linear-gradient(to right, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
+}
 .index-header .offline-box{
     position: absolute;
-    left: 0;top:40px;
+    left: 0;top:48px;
     width: 100%;
     height: .76rem;
     background-color: #fff4e1;
@@ -58,13 +68,14 @@
     background-size: .28rem;
 }
 .index-header .head-box{
-    padding-top: 40px;
+    padding-top: 12px;
 }
 .index-header .head-box .head-bt{
     height: 36px;
     line-height: 36px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     color:#fff;
+    padding:0 15px;
 }
 .index-header .head-box .head-bt .left{
     font-size: 25px;
@@ -100,12 +111,6 @@
     flex-wrap: wrap;
 }
 
-.index-header .head-bluebox .head-bb{
-    box-shadow: 0px 0px 30px 0 rgba(32,137,249,.1);
-}
-.index-header .head-greenbox .head-bb{
-    box-shadow: 0px 0px 30px 0 rgba(104,189,120,.15);
-}
 .index-header .head-box .head-bb::before{
     content: '';
     position: absolute;
@@ -160,16 +165,83 @@
     background: url('../../image/icon-xz-04.png') no-repeat left center;
     background-size: 16px;
 }
-.index-header .head-box .head-bb .head-bb-lis .head-bb-t5{
-    background: url('../../image/icon-xt-01.png') no-repeat left center;
+/*新增跟进*/
+.new-follow-box{
+    width:calc(100% - 30px);
+    margin-left: 15px;
+    height: auto;
+    background: #fff;
+    box-shadow: 0 0 40px 0 rgba(0,0,0,.06);
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+.system-follow-box{
+    width:calc(100% - 30px);
+    margin-left: 15px;
+    height: auto;
+    background: #fff;
+    box-shadow: 0 0 40px 0 rgba(0,0,0,.06);
+    margin-bottom: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.system-follow-box .system-follow{
+    position: relative;
+    flex-wrap: wrap;
+}
+.system-follow-box .system-follow:after{
+    content: '';
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    top: 50%;
+    height: 1px;
+    background-color: #f1f1f1;
+    transform: scaleY(.5);
+}
+.system-follow-box .system-follow .system-lis{
+    position: relative;
+    min-width: 33.333%;
+    width:33.3333%;
+    padding: 16px 0;
+    padding-left: 16px;
+}
+.system-follow-box .system-follow .system-lis .sys-lbox{
+    padding-left: 25px;
+    position: relative;
+}
+.system-follow-box .system-follow .system-lis .sys-lbox:after{
+    content: '';
+    position: absolute;
+    right: 0;
+    top:0;
+    bottom:0;
+    z-index: 1;
+    width:1px;
+    background-color: #f1f1f1;
+    transform: scaleX(.5);
+}
+.system-follow-box .system-follow .system-lis .system-t{
+    font-size: 14px;
+    color:#333;
+    line-height: 16px;
+}
+.system-follow-box .system-follow .system-lis .system-b{
+    font-size: 20px;
+    margin-top: 9px;
+    color:#333;
+    font-weight: bold;
+}
+.system-follow-box .system-follow .system-lis .sys-lbox5{
+    background: url('../../image/icon-xt-01.png') no-repeat left top;
     background-size: 16px;
 }
-.index-header .head-box .head-bb .head-bb-lis .head-bb-t6{
-    background: url('../../image/icon-xt-02.png') no-repeat left center;
+.system-follow-box .system-follow .system-lis .sys-lbox6{
+    background: url('../../image/icon-xt-02.png') no-repeat left top;
     background-size: 17px;
 }
-.index-header .head-box .head-bb .head-bb-lis .head-bb-t7{
-    background: url('../../image/icon-xt-03.png') no-repeat left center;
+.system-follow-box .system-follow .system-lis .sys-lbox7{
+    background: url('../../image/icon-xt-03.png') no-repeat left top;
     background-size: 16px;
 }
 /*消息提醒*/
@@ -248,7 +320,7 @@
 .stat-box{
     width:calc(100% - 30px);
     margin-left: 15px;
-    height: 228px;
+    height: auto;
     background: #fff;
     box-shadow: 0 0 40px 0 rgba(0,0,0,.06);
     margin-bottom: 15px;
@@ -259,17 +331,34 @@
     margin-top: -9px;
     flex-wrap: wrap;
 }
-.stat-lis:after{
+.stat-lis .stat-ls:nth-child(even):before{
     content: '';
     position: absolute;
-    left: 20px;
+    left: 0;
     right: 20px;
-    top: 50%;
+    bottom:0;
     height: 1px;
     background-color: rgba(238,238,238);
     transform: scaleY(.5);
 }
+.stat-lis .stat-ls:nth-child(odd):before{
+    content: '';
+    position: absolute;
+    left: 20px;
+    right: 0;
+    bottom:0;
+    height: 1px;
+    background-color: rgba(238,238,238);
+    transform: scaleY(.5);
+}
+.stat-lis .stat-ls:nth-child(5):before{
+    display: none;
+}
+.stat-lis .stat-ls:nth-child(6):before{
+    display: none;
+}
 .stat-lis .stat-ls{
+    position: relative;
     min-width: 50%;
     padding: 24px 15px 20px;
 }
@@ -478,4 +567,43 @@
 .stat-contain li > .time{
     color:#999;
     font-size: .3rem;
+}
+/*跳转到新增客户*/
+.skip-add{
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    z-index: 9999;
+    width:50px;
+    height: 50px;
+    border-radius: 50%;
+    background-image: linear-gradient(90deg, rgba(33, 110, 255, 0.95) 0%,  rgba(36, 140, 250, 0.95) 100%);
+    text-align: center;
+    line-height: 50px;
+    box-shadow: 0 6px 20px 0 rgba(33, 110, 255, 0.2);
+    /*background:rgba(33, 110, 255, 0.95) url('../../image/icon-xinzeng.png') no-repeat center;;*/
+    /*left:50%;
+    bottom: 10px;
+    margin-left: -60px;
+    width:120px;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    background-image: linear-gradient(90deg, rgba(33, 110, 255, 0.95) 0%,  rgba(36, 140, 250, 0.95) 100%);
+    color:#fff;
+    font-size: 16px;
+    border-radius: 20px;*/
+}
+.skip-add > i{
+    /*padding-left: 16px;*/
+    position: absolute;
+    left: 50%;top:50%;
+    margin-left: -12px;
+    margin-top: -12px;
+    width:24px;
+    height: 24px;
+    /*margin-right: 2px;*/
+    /*background: url('../../image/icon-xinzeng.png') no-repeat center;*/
+    background: url('../../image/icon-xinzeng1.png') no-repeat center;
+    background-size: contain;
 }

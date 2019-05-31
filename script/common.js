@@ -49,6 +49,41 @@ Vue.component('empty-con', {
         }
     }
 });
+// 自定义指令，长按
+Vue.directive('longpress', {
+    bind: function(el, binding, vNode) {
+        var pressTimer = null,
+            startY;
+        var start = function(e){
+            if (e.type === 'click' && e.button !== 0) {
+                return;
+            }
+            startY = e.changedTouches[0].pageY;
+            if (pressTimer === null) {
+                pressTimer = setTimeout(function(){
+                    handler(el)
+                }, 800)
+            }
+        }
+        let move = function(e){
+        	if(Math.abs(e.changedTouches[0].pageY - startY) > 20){
+        		cancel();
+        	}
+        }
+        var cancel = function(e){
+            if (pressTimer !== null) {
+                clearTimeout(pressTimer)
+                pressTimer = null
+            }
+        }
+        var handler = function(e){
+            binding.value(e)
+        }
+        el.addEventListener("touchstart", start);
+        el.addEventListener('touchmove', move);
+        el.addEventListener("touchend", cancel);
+    }
+});
 function isIos(){
     return api.systemType === 'ios'
 }
@@ -624,7 +659,7 @@ var wDialog = {
         api.showProgress({
             style: 'default',
             animationType: par.animateType || 'fade',
-            title: par.title || '努力加载中...',
+            title: par.msg || '努力加载中...',
             text: par.text || '请稍等...',
             modal: par.modal || true
         });

@@ -35,16 +35,16 @@
                     <div class="place"></div>
                 </div>
                 <div class="stat-header-nav flex-wrap">
-                    <div class="flex-con nav0 nav" @click="filterNav($event,0)" ><span v-text="typeList[type-1]"></span><i></i></div>
-                    <div class="flex-con nav1 nav" @click="filterNav($event,1)">日期<i></i></div>
+                    <div class="flex-con nav0 nav" @click="filterNav($event,0)" ><span v-text="currTypeTxt"></span><i></i></div>
+                    <div class="flex-con nav1 nav" @click="filterNav($event,1)"><span v-text="currDateTxt"></span><i></i></div>
                     <div class="stat-nav-box stat-nav-box0">
                         <ul>
-                            <li v-for="(type,index) in typeList" :class="{'curr':index===currTypeIndex}" @click="switchType(index)"><span v-text="type"></span><i></i></li>
+                            <li v-for="(type,index) in typeList" :class="{'curr':index===currTypeIndex}" @click.stop="handleSwitchType(index,type.value,type.name)"><span v-text="type.name"></span><i></i></li>
                         </ul>
                     </div>
                     <div class="stat-nav-box stat-nav-box1">
                         <ul>
-                            <li v-for="(date,index) in dateList" :class="{'curr':index===currDateIndex}" @click="switchDate(index)"><span v-text="date"></span><i></i></li>
+                            <li v-for="(date,index) in dateList" :class="{'curr':index===currDateIndex}" @click.stop="handleSwitchDate(index,date.value,date.name)"><span v-text="date.name"></span><i></i></li>
                         </ul>
                     </div>
                 </div>
@@ -82,7 +82,6 @@
         $api.fixStatusBar($('.stat-header')[0]);
         $api.fixStatusBar($('.stat-fixed-header')[0]);
         var param = api.pageParam;
-        console.log(JSON.stringify(param))
         // 下拉加载更多
         api.addEventListener({
             name: 'scrolltobottom'
@@ -106,28 +105,33 @@
         statV = new Vue({
             el: '#wrapper',
             data: {
-                type:1,
-                typeList:['客户通话','未接听','短信跟进','查看微信'],
+                // 统计类型
+                typeList:[],
+                currTypeTxt:'',
+                currTypeValue:'',
                 currTypeIndex:0,
+
                 userInfo:{},
-                date:1,
-                dateList:['全部','今日'],
-                currDateIndex:1,
+                // 日期
+                dateList:[],
+                currDateValue:1,
+                currDateTxt:'今日',
+                currDateIndex:0,
+                // 分页数据
                 page:1,
                 totalPage:1,
                 pageSize:10,
                 infoList:[]
             },
             created:function(){
-                this.type = param.statType;
-                this.currTypeIndex = this.type - 1;
+                this.currTypeTxt = param.statTypeTxt;
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
             },
             mounted: function() {
-                this.getData();
+                this.fetchStatData();
             },
             filters:{
                 dateFilter:function(d){
@@ -141,10 +145,40 @@
                 }
             },
             methods: {
+                // 获取统计数据来源
+                fetchStatData:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'workbench/select',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            if(res && res.code == 1){
+                                _this.typeList = res.data.customerSourceslist;
+                                _this.dateList = res.data.customerSatauslist;
+                                res.data.customerSourceslist.forEach(function(v,i){
+                                    if(v.name === _this.currTypeTxt){
+                                        _this.currTypeIndex = i;
+                                        _this.currTypeValue = v.value;
+                                    }
+                                })
+                                _this.getData();
+                            }
+                        }
+                    })
+                },
                 getData:function(isLoadMore){
                     isLoadMore = isLoadMore || false;
                     var _this = this;
                     wDialog.showProgress();
+                    console.log('stat request data: '+JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        search_type:_this.currTypeValue,
+                        search_date:_this.currDateValue,
+                        pageNo:_this.page,
+                        pageSize:_this.pageSize
+                    }))
                     wApiAjax({
                         url:"workbench/statislist",
                         method:'post',
@@ -153,8 +187,8 @@
                         },
                         data:{
                             employeeid:_this.userInfo.employeeid,
-                            search_type:_this.type,
-                            search_date:_this.date,
+                            search_type:_this.currTypeValue,
+                            search_date:_this.currDateValue,
                             pageNo:_this.page,
                             pageSize:_this.pageSize
                         },
@@ -211,24 +245,26 @@
                     $('.stat-contain').removeClass('fixed');
                 },
                 // 切换
-                switchType:function(type){
-                    if(this.type === type+1){
+                handleSwitchType:function(idx,value,name){
+                    if(this.currTypeIndex === idx){
                         console.log('已经被选中')
                     }else{
-                        this.type = type + 1;
-                        this.currTypeIndex = type;
+                        this.currTypeValue = value;
+                        this.currTypeTxt = name;
+                        this.currTypeIndex = idx;
                         this.page = 1;
                         this.getData();
                     }
                     this.closeFilterNav();
                 },
                 // 日期
-                switchDate:function(date){
-                    if(this.date === date){
+                handleSwitchDate:function(idx,value,name){
+                    if(this.currDateIndex === idx){
                         console.log('已经被选中')
                     }else{
-                        this.date = date;
-                        this.currDateIndex = date;
+                        this.currDateTxt = name;
+                        this.currDateValue = value;
+                        this.currDateIndex = idx;
                         this.page = 1;
                         this.getData();
                     }

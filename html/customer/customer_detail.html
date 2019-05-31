@@ -74,14 +74,15 @@
                 <span v-text="cusInfo.cusName"></span>
             </div>
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
+            <div class="horigin">号码归属地：<span v-text="cusInfo.attribution||'未知'"></span></div>
         </div>
         <section>
             <div class="cd-caption" id="js_cd_cap">
                 <div class="cd-ct w-inline-block" v-if="!isShowWechat">
-                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="lookWechat">查看微信</span>
+                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="handleLookWechat">查看微信</span>
                 </div>
                 <div class="cd-ct w-inline-block" v-if="isShowWechat">
-                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="copyWechatFn">复制并打开微信</span>
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
                 </div>
                 <div class="cd-cb">
                     <div class="cd-name" v-if="cusInfo.markName">
@@ -105,7 +106,11 @@
                     <div class="cd-box cd-box0" v-show="isShowDetailBox">
                         <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
                             <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
-                            <div class="cd-flow-t" v-if="flow.result" v-text="flow.result"></div>
+                            <div class="cd-flow-tit">
+                                <span v-text="returnFollowResultTitle(flow.contactway_vaule)"></span>
+                                <i @click.stop="handleEditFollowRecord(flow.id)">编辑</i>
+                            </div>
+                            <div class="cd-flow-t" v-if="flow.result" v-text="flow.result" v-longpress="handleLongpressClipTxt" :data-followtxt="flow.result"></div>
                             <!-- <div class="cd-flow-all">全文</div> -->
                             <div class="cd-flow-audio" v-if="flow.callStatus" :class="{'disabled':flow.callStatus&&!flow.callStatusUrl}" @click="handlePlayAudio($event)">
                                 <div class="audio audio-box" v-if="flow.callStatus && flow.callStatusUrl">
@@ -159,39 +164,6 @@
             </div>
             <input type="hidden" id="scroll-val" value="0">
         </section>
-
-        <!-- 短信验证码 -->
-        <div class="verification_code" v-if="isShowVerify">
-           <div class="shade" ontouchmove="event.preventDefault();"></div>
-           <div class="content">
-               <div class="content_code">
-                   <div class="close right" @click="closeCodeVerify"><img src="../../image/icon-dh-guanbi.png"></div>
-                   <div class="short_message">查看微信</div>
-                   <div class="text_tel">
-                        请在输入框输入此验证码<span v-text="codeText"></span>
-                        <br>
-                        <p v-text="getCodeText" @click="getCodeFn"></p>
-                   </div>
-                   <div class="tel_num">
-                       <label for="code">
-                         <ul class="security-code-container">
-                             <li class="field-wrap" :class="{'active':index<value.length}" v-for="(item, index) in number" :key="index">
-                              <i class="char-field">{{value[index]}}</i>
-                             </li>
-                         </ul>
-                        </label>
-                        <input ref="input" class="input-code" @keyup="handleInput($event)" v-model="value"
-                          id="code" name="code" type="tel" minlength="6" maxlength="6"
-                          autocorrect="off" autocomplete="off" autocapitalize="off">
-                    </div>
-                    <div class="submit space-between">
-                        <div class="text-align" v-show="!isVerifyIng" :class="{'submitClick' : isActive}" @click="handleSubmit">立即查看</div>
-                        <div class="text-align submitClick" v-show="isVerifyIng"><span class="loading"></span>查看中</div>
-                    </div>
-               </div>
-           </div>
-        </div>
-
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -230,6 +202,15 @@
             cusDetailV.pageNo = 1;
             cusDetailV.fetchData();
         });
+        // 查看微信成功
+        api.addEventListener({
+            name: 'lookWechatSuccess'
+        }, function(ret, err){
+            if( ret ){
+                cusDetailV.isShowWechat = true;
+                cusDetailV.wechatCard = ret.value.wechat;
+            }
+        });
         cusDetailV = new Vue({
             el:'#wrapper',
             data:{
@@ -246,18 +227,7 @@
                 isShowWechat:false,
                 minePhone:'',
 
-                // 信息验证
-                isShowVerify:false,
-                isActive:false,
-                number:6,
-                value:'',
-                isVerifyIng:false,
-                userInfo:{},
 
-                isShowCodeDown:false,
-                getCodeText:'立即发送',
-                codeText:'',
-                checkId:'',
                 // 当前播放的dom
                 baseUrl:__CONFIG__.baseUrl,
                 currHandlePlayTag:null,
@@ -306,6 +276,7 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
+                            // console.log(JSON.stringify(res))
                             if(res.code == 200){
                                 _this.minePhone = res.info.phone.substring(0,3)+'****'+res.info.phone.substring(7);
                                 if(_this.userInfo.phone != res.info.phone){
@@ -335,7 +306,7 @@
                             pageSize:10
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
+                            console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 if(!isLoadMore){
@@ -388,6 +359,47 @@
                         }
                     })
                 },
+                // 跟进内容题目
+                returnFollowResultTitle:function(i){
+                    // 电话
+                    if(i === 1){
+                        return '通过电话联系客户';
+                    }
+                    // 短信
+                    else if(i === 2){
+                        return '通过短信联系客户';
+                    }
+                    // 邮箱
+                    else if(i === 3){
+                        return '通过邮箱联系客户';
+                    }
+                    // 微信、qq
+                    else if(i === 4){
+                        return '通过微信和QQ联系客户';
+                    }
+                    // 面访
+                    else if(i === 9){
+                        return '通过面访联系客户';
+                    }
+                    else{
+                        return '通过微信和QQ联系客户';
+                    }
+                },
+                // 复制跟进内容
+                handleLongpressClipTxt:function(el){
+                    var followTxt = el.getAttribute('data-followtxt');
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: followTxt
+                    }, function(ret, err) {
+                        if(ret.status){
+                            wDialog.toast({
+                                msg:'复制成功'
+                            });
+                        }
+                    });
+                },
                 // 跳转到跟进页面
                 handleSkipFollow:function(i){
                     var _this = this;
@@ -398,6 +410,22 @@
                             id:_this.cusId,
                             phone:_this.cusPhone,
                             followId:i == 0 ? _this.followRootId : '',
+                            isWork:param.isWork
+                        },
+                        slidBackEnabled: false
+                    });
+                },
+                // 编辑跟进记录
+                handleEditFollowRecord:function(id){
+                    var _this = this;
+                    api.openWin({
+                        name: 'followRecord',
+                        url: '../follow/follow_record.html',
+                        pageParam: {
+                            id:_this.cusId,
+                            phone:_this.cusPhone,
+                            followId:id,
+                            isEditFollow:true,
                             isWork:param.isWork
                         },
                         slidBackEnabled: false
@@ -434,99 +462,29 @@
                         return iconClass+'4';
                     }
                 },
-                getCodeFn:function(){
-                    this.getCodeText = '再次发送';
+                // 查看微信
+                handleLookWechat:function(){
                     var _this = this;
-                    wApiAjax({
-                        url:'phoneauth/sendInMsg',
-                        headers:{
-                            token:TOKEN_DATA,
+                    wHrefJs.openFrame({
+                        name:'getWechat',
+                        path:'../components/get_wechat.html',
+                        bgColor:'rgba(0,0,0,.2)',
+                        animation:{
+                            type:'none',
+                            subType:'from_bottom'
                         },
-                        data:{
-                            account:_this.userInfo.account,
-                            employeeid:_this.userInfo.employeeid,
-                            phone:_this.userInfo.phone
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            wDialog.toast({
-                                msg:res.msg
-                            })
-                            if(res && res.code == 4){
-                                _this.checkId = res.checkId;
-                                _this.codeText = res.random;
-                            }
+                        param:{
+                            cusId:_this.cusId
                         }
                     })
                 },
-                // 输入
-                handleInput:function(e) {
-                    this.$refs.input.value = this.value;
-                    var tag = e.currentTarget;
-                    $(tag)[0].selectionStart = this.value.length;
-                    $(tag)[0].selectionEnd = this.value.length;
-                    if (this.value.length >= this.number) {
-                        // this.hideKeyboard();
-                        this.isActive = true;
-                    }else{
-                        this.isActive = false;
-                    }
-                    // this.handleSubmit()
-                },
-                // 输入完成隐藏键盘
-                hideKeyboard:function() {
-                    // document.activeElement.blur() // ios隐藏键盘
-                    // this.$refs.input.blur(); // android隐藏键盘
-                },
-                // 提交信息验证码，获取微信号
-                handleSubmit:function(){
-                    var _this = this;
-                    if(this.isActive){
-                        this.isVerifyIng = true;
-                        wApiAjax({
-                            // url:'phoneauth/bind',
-                            url:'phoneauth/checkInMsg',
-                            headers:{
-                                token:TOKEN_DATA
-                            },
-                            data:{
-                                account:_this.userInfo.account,
-                                employeeid:_this.userInfo.employeeid,
-                                phone:_this.userInfo.phone,
-                                checkId:_this.checkId,
-                                // type:2,
-                                authcode:_this.value,
-                                cusid:_this.cusId
-                            },
-                            success:function(res){
-                                console.log(JSON.stringify(res))
-                                if(res.code == 5 && res.wechat){
-                                    // 认证成功
-                                    _this.isShowVerify = false;
-                                    _this.isShowWechat = true;
-                                    _this.wechatCard = res.wechat;
-                                }else{
-                                    _this.isVerifyIng = false;
-                                    wDialog.toast({
-                                        msg:res.msg
-                                    })
-                                }
-                            },
-                            fail:function(){
-                                _this.isVerifyIng = false;
-                            }
-                        })
-                    }
-                },
-                // 复制微信号
-                copyWechatFn:function(){
+                // 复制并打开微信
+                handleClipOpenWechat:function(){
                     var clipBoard = api.require('clipBoard'),
                         _this = this;
                     clipBoard.set({
                         value: _this.wechatCard
                     }, function(ret, err) {
-                        console.log(JSON.stringify(ret));
-                        console.log(JSON.stringify(err));
                         if(ret.status){
                             wDialog.toast({
                                 msg:'复制成功'
@@ -561,20 +519,13 @@
 
                                 }
                                 else{
+                                    console.log('不是android或ios机型')
                                     return;
                                 }
 
                             },500);
                         }
                     });
-                },
-                // 查看微信号
-                lookWechat:function(){
-                    this.isShowVerify = true;
-                },
-                // 关闭短信验证弹窗
-                closeCodeVerify:function(){
-                    this.isShowVerify = false;
                 },
                 // 播放
                 handlePlayAudio:function(e){
@@ -659,7 +610,7 @@
                 }
                 setTimeout(function(){
                     isEventScroll = true;
-                },30);
+                },10);
             }
         })
     }

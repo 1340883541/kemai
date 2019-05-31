@@ -11,6 +11,7 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/mdater.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
 </head>
 <body>
@@ -26,6 +27,8 @@
             <div class="follow-box follow-box1">
                 <div class="follow-b1-t bor-1px-b">
                     <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
+                    <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
+                    <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div>
                     <div class="addr">号码归属地：<span v-text="clientAddr"></span></div>
                 </div>
                 <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchCustomerState">
@@ -49,24 +52,37 @@
             <div class="bor-1px-t follow-time flex-wrap">
                 <div class="left">下次跟进</div>
                 <div class="right">
-                    <ul class="shortcut-time clear">
-                        <li
-                            class="fl"
-                            :class="{'curr':followDate === '明天'}"
-                            @click.stop="handleChooseDate('明天')"
-                        >明天</li>
-                        <li
-                            class="fl"
-                            :class="{'curr':followDate === '后天'}"
-                            @click.stop="handleChooseDate('后天')"
-                        >后天</li>
-                        <li
-                            class="fl"
-                            :class="{'curr':followDate === '下周'}"
-                            @click.stop="handleChooseDate('下周')"
-                        >下周</li>
-                    </ul>
+                    <div class="shortcut-time-box">
+                        <ul class="shortcut-time clear" id="shortcut-time">
+                            <li
+                                class="fl"
+                                :class="{'curr':followDate === '明天'}"
+                                @click.stop="handleChooseDate('明天')"
+                            >明天</li>
+                            <li
+                                class="fl"
+                                :class="{'curr':followDate === '后天'}"
+                                @click.stop="handleChooseDate('后天')"
+                            >后天</li>
+                            <li
+                                class="fl"
+                                :class="{'curr':followDate === '下周'}"
+                                @click.stop="handleChooseDate('下周')"
+                            >下周</li>
+                            <li
+                                class="fl"
+                                :class="{'curr':followDate === '两周后'}"
+                                @click.stop="handleChooseDate('两周后')"
+                            >两周后</li>
+                            <li
+                                class="fl"
+                                :class="{'curr':followDate === '下月'}"
+                                @click.stop="handleChooseDate('下月')"
+                            >下月</li>
+                        </ul>
+                    </div>
                     <div class="choose-time flex-wrap flex-between"  @click.stop="handleChooseDate('')">
+                        <input type="text" id="choose-time" readonly="true">
                         <span class="l" :class="{'default':showFollowDate == ''}" v-text="showFollowDate || '其他跟进时间'"></span>
                         <span class="r"></span>
                     </div>
@@ -80,7 +96,7 @@
                 v-text="followContent || '跟进内容...'"
                 @click.stop="handleSkipInputFollowContent"
             ></div>
-            <div class="follow-shortcut-choose-box">
+                <div class="follow-shortcut-choose-box">
                 <ul class="follow-shortcut-choose clear" id="shortcut-lis">
                     <li
                         class="fl"
@@ -94,7 +110,7 @@
         </div>
 
         <!-- 电话跟进 -->
-        <div class="call-phone-box" v-if="!isExistNoFollowRecord">
+        <div class="call-phone-box" v-if="!isExistNoFollowRecord && !isEditFollow">
             <div class="call-phone-fixed w-event-none gray-bg" id="call-phone-btn" @click="handleCallFollow"><i></i>电话跟进</div>
         </div>
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
@@ -151,6 +167,7 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/mdater.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -169,11 +186,22 @@
         }, function(ret, err){
             followRecordV.handleBack();
         });
+        // 查看微信成功
+        api.addEventListener({
+            name: 'lookWechatSuccess'
+        }, function(ret, err){
+            if( ret ){
+                followRecordV.isNotLookWechat = false;
+                followRecordV.wechatCard = ret.value.wechat;
+            }
+        });
 
         followRecordV = new Vue({
             el:'#follow-wrapper',
             data:{
+                // 上一次电话跟进
                 isExistNoFollowRecord:false,
+                isEditFollow:false,
                 cusId:'',
                 cusPhone:'',
                 cusFollowId:'',
@@ -196,7 +224,7 @@
                 followAddress:'',
 
                 followDate:'', //下次跟进的时间
-                showFollowDate:'', //显示个跟进时间
+                showFollowDate:'', //显示跟进时间
                 followContent:'', // 跟进内容
                 isCanCall:false,
                 // 防止打电话多次点击
@@ -215,11 +243,14 @@
                 },
                 isCanSaveFollowRecord:true, //是否能够保存记录
                 isCanBack:true,
-                isInitFollowContent:isIos()
+                isInitFollowContent:isIos(),
+
+                // 获取微信号码
+                isNotLookWechat:true,
+                wechatCard:'',
             },
             mounted:function(){
                 this.init();
-                this.getClientInfo();
                 this.getFollowWay();
             },
             methods:{
@@ -229,10 +260,16 @@
                         this.isExistNoFollowRecord = false;
                     }
                     else{
-                        this.isExistNoFollowRecord = true;
-                        this.cusFollowId = param.followId;
-                        this.followWayState = '电话';
-                        this.initFollowData.followWayStateCode = this.followWayStateCode = 1;
+                        if(param.isEditFollow){
+                            this.isExistNoFollowRecord = false;
+                            this.isEditFollow = true;
+                            this.cusFollowId = param.followId;
+                        }else{
+                            this.isExistNoFollowRecord = true;
+                            this.cusFollowId = param.followId;
+                            this.followWayState = '电话';
+                            this.initFollowData.followWayStateCode = this.followWayStateCode = 1;
+                        }
                     }
                     this.cusId = param.id;
                     this.cusPhone = param.phone;
@@ -245,13 +282,14 @@
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 },
                 // 获取客户信息
-                getClientInfo:function(){
+                getClientInfo:function(isEdit,url){
                     var _this = this;
                     wApiAjax({
-                        url:'customer/getFollowRecordEchoData',
+                        url:url,
                         data:{
                             customerid:_this.cusId,
                             employeeid:_this.userInfo.employeeid,
+                            followId:isEdit?_this.cusFollowId:''
                         },
                         headers:{
                             token:TOKEN_DATA
@@ -259,6 +297,26 @@
                         success:function(res){
                             // console.log('follow record response ---> '+JSON.stringify(res))
                             if(res.code==0){
+                                if(_this.isEditFollow){
+                                    _this.followWayList.forEach(function(v){
+                                        if(v.name == res.data.contactway){
+                                            _this.followWayState = v.value;
+                                        }
+                                    })
+
+                                    if( res.data.contactway == 9){
+                                        _this.isHaveFollowAddress = true;
+                                    }
+                                    _this.followWayStateCode = res.data.contactway;
+                                    _this.followAddress = res.data.meetaddress;
+                                    _this.showFollowDate = res.data.nextfollow;
+                                    _this.followContent = res.data.result;
+
+                                    _this.initFollowData.followWayStateCode = res.data.contactway;
+                                    _this.initFollowData.followAddress = res.data.meetaddress;
+                                    _this.initFollowData.showFollowDate = res.data.nextfollow;
+                                    _this.initFollowData.followContent = res.data.result;
+                                }
                                 _this.clientStateList = res.estateList;
                                 _this.clientName = res.data.name;
                                 var clientStateObj = res.estateList.filter(function(v){
@@ -269,7 +327,9 @@
                                 // 获取初始化数据
                                 _this.initFollowData.clientName = res.data.name;
                                 _this.initFollowData.clientStateCode = clientStateObj.value;
-
+                                // 微信号
+                                _this.isNotLookWechat = Boolean(~res.data.wechat.indexOf('****'));
+                                _this.wechatCard = res.data.wechat;
                                 _this.followId = res.followId;
                                 _this.clientAddr = res.data.attribution || '未知';
                                 setTimeout(function(){
@@ -278,6 +338,28 @@
                                     $('#follow-save-btn').removeClass('w-event-none');
                                     _this.isInitFollowContent = false;
                                 },300)
+
+                                _this.$nextTick(function(){
+                                    var sWid = 0;
+                                    var len = $('#shortcut-time > li').length;
+                                    $('#shortcut-time > li').each(function(i,ele){
+                                        $(ele).width($(ele).outerWidth())
+                                        sWid += ($(ele).outerWidth() + 15);
+                                        if(i === len-1){
+                                            $('#shortcut-time').width(sWid).css('opacity',1);
+                                        }
+                                    });
+                                    // 初始化日历
+                                    $('#choose-time').mdater({
+                                		minDate : new Date('2008-01-01'),
+                                		sureCb(date){
+                                            console.log(date)
+                                            _this.followDate = date;
+                                            _this.showFollowDate = date;
+                                            $(this).val(date);
+                                		}
+                                	});
+                                })
                                 _this.getShortcutFollow();
                             }
                         }
@@ -295,6 +377,8 @@
                         success:function(res){
                             if(res.code == 1){
                                 _this.followWayList = res.data ? res.data.followUpWay : [];
+                                var url = _this.isEditFollow ? 'customer/cusFollowEditInfo' : 'customer/getFollowRecordEchoData';
+                                _this.getClientInfo(_this.isEditFollow,url);
                             }
                         }
                     })
@@ -307,6 +391,9 @@
                             token:TOKEN_DATA
                         },
                         url:"customer/fastFollow",
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                        },
                         method:'get',
                         success:function(res){
                             if(res.code == 1){
@@ -321,7 +408,7 @@
                                             $('#shortcut-lis').width(sWid).css('opacity',1);
                                         }
                                     });
-                            })
+                                })
                             }
                         }
                     })
@@ -436,28 +523,47 @@
                 handleChooseDate:function(date){
                     if(date == '' || date == undefined){
                         var _this = this;
-                        api.openPicker({
-                            type: 'date',
-                            date: Date.now(),
-                            title: '选择跟进时间'
-                        }, function(ret, err){
-                            if(ret){
-                                var month = (''+ret.month).length == 1 ? '0'+ret.month:ret.month;
-                                var day = (''+ret.day).length == 1 ? '0'+ret.day:ret.day;
-                                _this.followDate = ret.year + '-' + month + '-' + day;
-                                _this.showFollowDate = ret.year + '-' + month + '-' + day;
-                            }
-                        });
+                        // api.openPicker({
+                        //     type: 'date',
+                        //     date: Date.now(),
+                        //     title: '选择跟进时间'
+                        // }, function(ret, err){
+                        //     if(ret){
+                        //         var month = (''+ret.month).length == 1 ? '0'+ret.month:ret.month;
+                        //         var day = (''+ret.day).length == 1 ? '0'+ret.day:ret.day;
+                        //         _this.followDate = ret.year + '-' + month + '-' + day;
+                        //         _this.showFollowDate = ret.year + '-' + month + '-' + day;
+                        //     }
+                        // });
                     }else{
                         this.followDate = date;
                         var now = new Date().getTime(),
                             mt = 24 * 60 * 60 * 1000,
                             ht = 2 * mt,
                             xz = 7 * mt,
+                            x2z = 14 * mt,
+                            xy = 30 * mt,
                             mtDate = new Date(now + mt),
                             htDate = new Date(now + ht),
-                            xzDate = new Date(now + xz);
-                        var fDate = date === '明天' ? this.funcFormatDate(mtDate) : date === '后天' ? this.funcFormatDate(htDate) : this.funcFormatDate(xzDate);
+                            xzDate = new Date(now + xz),
+                            x2zDate = new Date(now + x2z),
+                            xyDate = new Date(now + xy);
+                        var fDate;
+                        if(date === '明天'){
+                            fDate = this.funcFormatDate(mtDate);
+                        }
+                        else if(date === '后天'){
+                            fDate = this.funcFormatDate(htDate);
+                        }
+                        else if(date === '下周'){
+                            fDate = this.funcFormatDate(xzDate);
+                        }
+                        else if(date === '两周后'){
+                            fDate = this.funcFormatDate(x2zDate);
+                        }
+                        else{
+                            fDate = this.funcFormatDate(xyDate);
+                        }
                         this.showFollowDate = fDate;
                     }
                 },
@@ -555,59 +661,80 @@
                     var _this = this;
                     if(this.isCanSaveFollowRecord){
                         this.isCanSaveFollowRecord = false;
-                        // console.log(_this.showFollowDate)
                         wDialog.showProgress({
                             msg:'正在保存中，请稍等...'
                         })
-                        wApiAjax({
-                            url:'customer/saveCallFollowPlus',
-                            headers:{
-                                token:TOKEN_DATA
-                            },
-                            data:{
-                                employeeid:_this.userInfo.employeeid,
-                                customerid:_this.cusId,
-                                nextfollow:_this.showFollowDate,
-                                estate:_this.clientStateCode,
-                                followResult:_this.followContent,
-                                cusname:_this.clientName,
-                                followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
-                                meetaddress:_this.followAddress,
-                                followUpWay:_this.followWayStateCode
-                            },
-                            success:function(res){
-                                console.log(JSON.stringify(res))
-                                wDialog.hideProgress();
-                                _this.isCanSaveFollowRecord = true;
-                                if(res.code == 200){
-                                    wDialog.toast({
-                                        msg:'跟进记录成功'
-                                    });
-                                    setTimeout(function(){
-                                        api.closeWin();
-                                    },200);
-                                    // 跟进成功推送
-                                    api.sendEvent({
-                                        name: 'followRecordSuccessRefresh'
-                                    });
-
-                                }
-                                else{
-                                    wDialog.toast({
-                                        msg:res.msg
-                                    })
-                                }
-                            },
-                            fail:function(){
-                                wDialog.hideProgress();
-                                _this.isCanSaveFollowRecord = true;
-                            }
-                        })
+                        var url = this.isEditFollow ? 'customer/cusFollowEdit' : 'customer/saveCallFollowPlus';
+                        this.funcSaveFollowRecord(url);
                     }else{
                         wDialog.toast({
                             msg:'正在保存中,请稍等'
                         })
                     }
+                },
+                // 保存跟进的两种方式
+                funcSaveFollowRecord:function(url){
+                    var _this = this;
+                    console.log('save or edit follow record request data: ' + JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        customerid:_this.cusId,
+                        followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                        nextfollow:_this.showFollowDate,
+                        estate:_this.clientStateCode,
+                        followResult:_this.followContent,
+                        cusname:_this.clientName,
+                        meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
+                        followUpWay:_this.followWayStateCode
+                    }))
+                    wApiAjax({
+                        url:url,
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:_this.cusId,
+                            followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                            nextfollow:_this.showFollowDate,
+                            estate:_this.clientStateCode,
+                            followResult:_this.followContent,
+                            cusname:_this.clientName,
+                            meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
+                            followUpWay:_this.followWayStateCode
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            _this.isCanSaveFollowRecord = true;
+                            if(res.code == 200){
+                                if(_this.isEditFollow){
+                                    wDialog.toast({
+                                        msg:'修改跟进记录成功'
+                                    });
+                                }else{
+                                    wDialog.toast({
+                                        msg:'保存跟进记录成功'
+                                    });
+                                }
+                                setTimeout(function(){
+                                    api.closeWin();
+                                },200);
+                                // 跟进成功推送
+                                api.sendEvent({
+                                    name: 'followRecordSuccessRefresh'
+                                });
+
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        },
+                        fail:function(){
+                            _this.isCanSaveFollowRecord = true;
+                        }
+                    })
                 },
                 // 返回,判断数据改变没有给出提示
                 handleBack:function(){
@@ -630,7 +757,7 @@
                                     api.closeWin();
                                 },
                                 cancelCb:function(){
-                                    _this.isCanBack = true;;
+                                    _this.isCanBack = true;
                                 }
                             })
                         }else{
@@ -640,6 +767,71 @@
                 },
                 funcHideAllPopup:function(){
                     $('.follow-popup').hide();
+                },
+                // 查看微信
+                handleLookWechat:function(){
+                    var _this = this;
+                    wHrefJs.openFrame({
+                        name:'getWechat',
+                        path:'../components/get_wechat.html',
+                        bgColor:'rgba(0,0,0,.2)',
+                        animation:{
+                            type:'none',
+                            subType:'from_bottom'
+                        },
+                        param:{
+                            cusId:_this.cusId
+                        }
+                    })
+                },
+                // 复制并打开微信
+                handleClipOpenWechat:function(){
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: _this.wechatCard
+                    }, function(ret, err) {
+                        if(ret.status){
+                            wDialog.toast({
+                                msg:'复制成功'
+                            });
+                            setTimeout(function(){
+                                var systemType = api.systemType;
+                                // android
+                                if(systemType === 'android'){
+                                    api.openApp({
+                                        androidPkg: 'com.tencent.mm',
+                                        mimeType: 'text/html',
+                                        uri: ''
+                                    }, function(ret, err) {
+                                        if (ret) {
+                                            // alert(JSON.stringify(ret));
+                                        } else {
+                                            alert('您还未安装微信');
+                                        }
+                                    });
+                                }
+                                // ios
+                                else if(systemType === 'ios'){
+                                    api.openApp({
+                                        iosUrl:'weixin://'
+                                    }, function(ret, err) {
+                                        if (ret) {
+                                            // alert(JSON.stringify(ret));
+                                        } else {
+                                            alert('您还未安装微信');
+                                        }
+                                    });
+
+                                }
+                                else{
+                                    console.log('不是android或ios机型')
+                                    return;
+                                }
+
+                            },500);
+                        }
+                    });
                 }
             }
         });
@@ -654,7 +846,7 @@
     }
     // 确认编辑的内容
     function funcSureFollowContent(content){
-        followRecordV.followContent = content;
+        followRecordV.followContent = decodeURI(content);
     }
 </script>
 </html>
