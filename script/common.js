@@ -49,6 +49,39 @@ Vue.component('empty-con', {
         }
     }
 });
+// 打开客户来源筛选框
+function wOpenCustomerOriginFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_customer_origin.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 打开客户来源筛选框
+function wOpenCustomerStatusFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_customer_status.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 打开客户来源筛选框
+function wOpenCustomerSortFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_sort.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
 // 自定义指令，长按
 Vue.directive('longpress', {
     bind: function(el, binding, vNode) {
@@ -259,7 +292,7 @@ var wHrefJs = {
         par.h = typeof par.h === 'undefined' || par.h == false ? 'auto' : par.h;
         par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.4)' : par.bgColor;
         par.animation = typeof par.animation === 'undefined' || par.animation == false ? {} : par.animation;
-        par.animation['type'] = par.animation['type'] || 'movein';
+        par.animation['type'] = par.animation['type'] || 'none';
         par.animation['subType'] = par.animation['subType'] || 'from_right';
         par.animation['duration'] = par.animation['duration'] || 300;
         /**

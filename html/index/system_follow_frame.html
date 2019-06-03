@@ -36,17 +36,6 @@
 
 <body>
     <div id="wrap">
-        <div class="filter-popup" id="filter-popup" ontouchmove="event.preventDefault();">
-            <div class="filter-popbg" onclick="hideFilterPopupBox();"></div>
-            <div class="filter-popbox">
-                <ul>
-                    <li v-for="(origin,index) in khClassifyList" :key="index" :class="{'curr':currClassifyIndex === index}" @click="switchTabFn($event,origin.name,origin.value)">
-                        <span v-text="origin.name"></span>
-                        <i></i>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="filter-lists">
             <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
             <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
@@ -135,7 +124,6 @@
         sCusListV = new Vue({
             el: '#wrap',
             data: {
-                currClassifyIndex: '', //当前选中的客户来源
                 khClassifyList: [], //客户来源列表
                 search_cusName: '', // 搜索客户名
                 search_status: 0, // 联系状态
@@ -148,6 +136,7 @@
             },
             mounted: function() {
                 // this.fetchCustomerClassify();
+                this.fetchSystemData();
             },
             methods: {
                 // 获取客户类型
@@ -210,7 +199,7 @@
                             pageSize: 10
                         },
                         success: function(res) {
-                            // console.log(JSON.stringify(res))
+                            console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
                                 if (!isLoadMore) {
@@ -233,29 +222,6 @@
                             callback && typeof callback === 'function' && callback();
                         }
                     })
-                },
-                // 切换客户来源
-                switchTabFn: function(e, name, id) {
-                    var tag = e.currentTarget;
-                    hideFilterPopup();
-                    api.setFrameAttr({
-                        bounces: true,
-                    });
-                    if ($(tag).hasClass('curr')) {
-                        return;
-                    } else {
-                        $(tag).addClass('curr').siblings().removeClass('curr');
-                    }
-                    // 获取客户名字
-                    api.execScript({
-                        name: 'systemFollowHeader',
-                        script: 'getKhOriginName(\'' + name + '\')'
-                    });
-                    $('#not-more').hide();
-                    this.search_status = id;
-                    this.pageNo = 1;
-                    this.fetchSystemData();
-
                 },
                 // 跳转到详情
                 skipDetail: function(id,phone) {

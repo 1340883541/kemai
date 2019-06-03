@@ -158,6 +158,9 @@
     // 底部按钮切换
     function setFootBar(_this, i) {
         if (!$(_this).hasClass('curr')) {
+            api.sendEvent({
+                name: 'switchBottomButton'
+            });
             $(_this).addClass('curr').siblings().removeClass('curr');
             if (i == 1) {
                 // 打开frame
@@ -167,9 +170,6 @@
             } else {
                 api.sendEvent({
                     name: 'closeCustomerFrame'
-                });
-                api.sendEvent({
-                    name: 'switchFootTab'
                 });
             }
             if(i == 0){

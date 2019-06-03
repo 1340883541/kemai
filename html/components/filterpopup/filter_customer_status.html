@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客户状态筛选</title>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop1">
+                <ul>
+                    <li :class="{'curr':currSelected==''}" @click.stop="handlePitchStatus('')">全部</li>
+                    <li
+                        v-for="(status,index) in customerStatusList"
+                        :key="index"
+                        :class="{'curr':currSelected===status.value}"
+                        v-text="status.name"
+                        @click.stop="handlePitchStatus(status.value)"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script>
+    apiready = function(){
+        var param = api.pageParam;
+        new Vue({
+            el:'#wrapper',
+            data:{
+                customerStatusList:[],
+                currSelected:'',
+                sendOrigin:''
+            },
+            mounted:function(){
+                this.sendOrigin = param.origin;
+                this.customerStatusList = JSON.parse(param.classifyData);
+                this.currSelected = param.currSelected;
+            },
+            methods:{
+                // 筛选客户状态
+                handlePitchStatus:function(val){
+                    var _this = this;
+                    this.currSelected = val;
+                    api.sendEvent({
+                        name: _this.sendOrigin,
+                        extra: {
+                            status:val
+                        }
+                    });
+                    api.closeFrame();
+                },
+                handleCloseFilterPopup:function(){
+                    var _this = this;
+                    api.sendEvent({
+                        name: _this.sendOrigin
+                    });
+                    api.closeFrame();
+                }
+            }
+        })
+    }
+</script>
+</html>

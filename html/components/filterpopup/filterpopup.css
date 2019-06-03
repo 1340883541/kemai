@@ -1,0 +1,211 @@
+.w-filter-popup{
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0,0,0,0);
+}
+.w-filter-pop1{
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:tocuh;
+    background-color: #fff;
+}
+.w-filter-pop1 > ul{
+    position: relative;
+    padding:0 15px;
+}
+.w-filter-pop1 > ul:before{
+    content:'';
+    position: absolute;
+    left: 0;
+    top:0;
+    width:100%;
+    height: 1px;
+    background-color: #e9e9e9;
+    transform: scaleY(.5);
+}
+.w-filter-pop1 > ul > li{
+    position: relative;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 15px;
+    color:#333;
+}
+.w-filter-pop1 > ul > li:before{
+    content:'';
+    position: absolute;
+    left: 0;
+    top:0;
+    width:100%;
+    height: 1px;
+    background-color: #e9e9e9;
+    transform: scaleY(.5);
+}
+.w-filter-pop1 > ul > li.first-child,
+.w-filter-pop1 > ul > li.last-child{
+    display: none;
+}
+.w-filter-pop1 > ul > li.curr{
+    color:#0c7ff9;
+    font-weight: bold;
+}
+/*筛选2*/
+.w-filter-pop2{
+    position: relative;
+    background-color: #e9e9e9;
+}
+.w-filter-pop2:before{
+    content:'';
+    position: absolute;
+    left: 0;
+    top:0;
+    width:100%;
+    height: 1px;
+    background-color: #e9e9e9;
+    transform: scaleY(.5);
+}
+.w-filter-pop2 .left{
+    width:100px;
+    text-align: center;
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:touch;
+}
+.w-filter-pop2 .left li{
+    position: relative;
+    width:100%;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 15px;
+    font-size: 15px;
+    color:#333;
+    text-align: left;
+}
+.w-filter-pop2 .left li:before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top:17px;
+    width:3px;
+    height: 16px;
+    background-color: #0c7ff9;
+    display: none;
+}
+.w-filter-pop2 .left li:after{
+    content:'';
+    left: 0;
+    bottom: 0;
+    width:100%;
+    height: 1px;
+    background-color: #d8d8d8;
+    transform: scaleY(.5);
+    display: none;
+}
+.w-filter-pop2 .left li.curr{
+    background-color: #fff;
+    color:#0c7ff9;
+    font-weight: bold;
+}
+.w-filter-pop2 .left li.curr:before,
+.w-filter-pop2 .left li.curr:after{
+    display: block;
+}
+.w-filter-pop2 .right{
+    width:calc(100% - 100px);
+    text-align: center;
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:touch;
+    text-align: left;
+}
+.w-filter-pop2 .right li{
+    padding-left: 30px;
+    background-color: #fff;
+    height: 50px;
+    line-height: 50px;
+    color:#333;
+}
+.w-filter-pop2 .right li.curr{
+    color:#0c7ff9;
+    font-weight: bold;
+}
+/*筛选时间*/
+.w-filter-pop3{
+    width:100%;
+    height: auto;
+    background-color: #fff;
+}
+.w-filter-pop3 > .top{
+    padding:30px 15px 20px;
+}
+.w-filter-pop3 > .top .time-se{
+    width: 100%;
+    height: 36px;
+    line-height: 36px;
+    margin-bottom: 30px;
+}
+.w-filter-pop3 > .top .time-se input{
+    display: block;
+    width:100%;
+    height: 100%;
+    text-align: center;
+    color:#333;
+    font-size: 15px;
+    border-bottom: 1px solid #e9e9e9;
+    margin:0;
+}
+.w-filter-pop3 > .top .time-se > input::placeholder{
+    text-align: center;
+    color:#ccc;
+    font-size: 15px;
+}
+.w-filter-pop3 > .top .time-se > span{
+    display: block;
+    text-align: center;
+    padding:0 4px;
+}
+.w-filter-pop3 > .top .time-shortcut .time-shortcut-lis{
+    width:25vw;
+    height: 36px;
+    text-align: center;
+    line-height: 34px;
+    background-color: #f6f6f6;
+    color:#666;
+    border-radius: 6px;
+    border:1px solid #f6f6f6;
+}
+.w-filter-pop3 > .top .time-shortcut .time-shortcut-lis.curr{
+    border:1px solid #0c7ff9;
+    color:#0c7ff8;
+    background-color: #ecf5ff;
+}
+.w-filter-pop3 > .bottom{
+    height: 64px;
+    padding:12px 15px;
+}
+.w-filter-pop3 > .bottom .clear-btn{
+    width:48.5%;
+    margin-right: 3%;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color:#666;
+    font-size: 17px;
+    border-radius: 4px;
+    background-color: #f6f6f6;
+}
+.w-filter-pop3 > .bottom .sure-btn{
+    width:48.5%;
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    color:#fff;
+    font-size: 17px;
+    border-radius: 4px;
+    background-image: -webkit-linear-gradient(left, #0d64fa 0%, #0c7ff9 100%);
+    background-image: -o-linear-gradient(left, #0d64fa 0%, #0c7ff9 100%);
+    background-image: linear-gradient(to right, #0d64fa 0%, #0c7ff9 100%);
+}

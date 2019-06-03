@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>时间筛选</title>
+    <script src="../../../script/lib/rem.js"></script>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-popup">
+            <div class="w-filter-pop3">
+                <div class="top">
+                    <div class="flex-wrap time-se flex-between">
+                        <div class="flex-con">
+                            <input type="text" placeholder="开始时间" readonly="true">
+                        </div>
+                        <span>至</span>
+                        <div class="flex-con">
+                            <input type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                    <div class="flex-wrap time-shortcut flex-between">
+                        <div class="time-shortcut-lis">今日</div>
+                        <div class="time-shortcut-lis curr">本周</div>
+                        <div class="time-shortcut-lis">本月</div>
+                    </div>
+                </div>
+                <div class="bottom bor-1px-t flex-wrap">
+                    <div class="clear-btn">清空</div>
+                    <div class="sure-btn">确定</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+
+</html>

@@ -316,6 +316,7 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     wDialog.showProgress();
+                    console.log(TOKEN_DATA)
                     wApiAjax({
                             url: 'workbench/todaySta',
                         headers: {
@@ -375,10 +376,7 @@
                 // 跳转到提醒列表
                 skipMessage: function(i, remindName) {
                     if (i === 1) {
-                        wHrefJs.openWin({
-                            name: 'customerFollowHeader',
-                            path: '../customer/customer_follow_header.html'
-                        })
+                        console.log('暂没有')
                     } else if (i === 2) {
                         wHrefJs.openWin({
                             name: 'customerRecycleHeader',

@@ -33,7 +33,7 @@
         <div class="mger-header-box">
             <div class="mger-header-fix">
                 <div class="mger-header">
-                    <div class="mger-back"></div>
+                    <div class="mger-back" onclick="api.closeWin();"></div>
                     <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
                         <div class="cap">新增跟进资源</div>
                         <div class="desc">333</div>
@@ -59,7 +59,7 @@
             <div class="mger-header-place"></div>
         </div>
         <div class="mger-container">
-            <ul class="mger-lists clear mger-area" id="mger-area" style="display:none">
+            <ul class="mger-lists clear mger-area" id="mger-area">
                 <li class="mger-lis fl flex-wrap">
                     <div class="left flex-wrap flex-vertical flex-center">
                         <p class="mger-cap">天津</p>
@@ -97,7 +97,7 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew">
+            <ul class="mger-lists mger-crew" id="mger-crew" style="display:none">
                 <li class="mger-lis">
                     <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
                     <div class="mger-lnum-box flex-wrap">
@@ -151,10 +151,19 @@
         new Vue({
             el: "#wrapper",
             data: {
+                userInfo:{},
+                // 职位
 
+                jobTitle:'',
             },
             mounted: function() {
                 var _this = this;
+
+                this.userInfo = wPref.getPrefs({
+                    key: 'userInfo'
+                });
+                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                console.log(JSON.stringify(this.userInfo))
                 this.$nextTick(function(){
 
                     _this.renderCircle();
@@ -163,7 +172,6 @@
             methods: {
                 renderCircle:function(){
                     var circleWid = $('#circle-0').outerWidth()/2;
-                    console.log(circleWid)
                     Circles.create({
                         id: 'circle-0',
                         value: 100,

@@ -205,6 +205,9 @@
     border-right: 5px solid transparent;
     margin-left: 6px;
 }
+.w-header .w-filter-lists .w-filter-lis.curr > i{
+    border-top:6px solid #0c7ff9;
+}
 /*筛选列表*/
 .filter-lists {
     padding-top: .3rem;

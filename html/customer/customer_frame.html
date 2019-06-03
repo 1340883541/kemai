@@ -29,48 +29,20 @@
 
 <body>
     <div id="wrap" v-cloak>
-        <!-- 客户来源列表 -->
-        <div class="filter-popup" id="filter-origin-popup">
-            <div class="filter-popbg" onclick="hideFilterPopup()"></div>
-            <div class="filter-popbox">
-                <ul>
-                    <li :class="{'curr':currOriginIndex === ''}" @click="originSwitchTab($event,'全部',0)">
-                        <span>全部</span>
-                        <i></i>
-                    </li>
-                    <li v-for="(khorigin,index) in khOriginList" :key="index" :class="{'curr':currOriginIndex === index}" @click="originSwitchTab($event,khorigin.name,khorigin.value)">
-                        <span v-text="khorigin.name"></span>
-                        <i></i>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- 客户类型列表 -->
-        <div class="filter-popup" id="filter-class-popup">
-            <div class="filter-popbg" onclick="hideFilterPopup()"></div>
-            <div class="filter-popbox">
-                <ul>
-                    <li :class="{'curr':currClassIndex === ''}" @click="classSwitchTab($event,'全部',0)">
-                        <span>全部</span>
-                        <i></i>
-                    </li>
-                    <li v-for="(khclass,index) in khClassList" :key="index" :class="{'curr':currClassIndex === index}" @click="classSwitchTab($event,khclass.name,khclass.value)">
-                        <span v-text="khclass.name"></span>
-                        <i></i>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
-            <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
-                <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname w-elli" v-text="khdata.name"></div>
+            <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
+                <div class="filter-lt flex-wrap flex-between">
+                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name"></span></div>
                     <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>
-                <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status||'无'"></span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                <div class="filter-lb">
+                    <div class="lis flb-cls1">客户类型: <span v-text="khdata.status||'无'"></span></div>
+                    <div class="flex-wrap filter-lb1">
+                        <div class="lis flex-con flb-cls2">号码归属地: <span>成都成都成</span></div>
+                        <div class="lis flex-con flb-cls2">客户类型: <span v-text="khdata.status||'无'"></span></div>
+                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
+                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                    </div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -145,17 +117,36 @@
             nCustomerFrame.pageNo = 1;
             nCustomerFrame.fetchListData();
         });
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterCustomerList'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(typeof obj.status != 'undefined'){
+                nCustomerFrame.search_status = obj.status;
+                nCustomerFrame.pageNo = 1;
+                nCustomerFrame.fetchListData();
+            }
+            if(typeof obj.origin != 'undefined'){
+                nCustomerFrame.search_source = obj.origin;
+                nCustomerFrame.pageNo = 1;
+                nCustomerFrame.fetchListData();
+            }
+            if(typeof obj.sort != 'undefined'){
+                console.log(JSON.stringify(obj.sort))
+                // nCustomerFrame.search_status = obj.status;
+                // nCustomerFrame.pageNo = 1;
+                // nCustomerFrame.fetchListData();
+            }
+        });
+
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',
             data: {
-                khClassList:[],
-                khOriginList:[],
-                currOriginIndex:'',
-                currClassIndex:'',
                 search_cusName:'', // 搜索客户名
                 search_source:'',  // 客户来源
-                search_status:'',  // 客户类型
+                search_status:'',  // 客户状态
                 order_followtime:0,     // 跟进时间
                 order_nextfollow:0,     // 计划跟进时间
                 pageNo:1,
@@ -166,8 +157,6 @@
             },
             mounted: function() {
                 this.init();
-                this.fetchKhClass();
-                this.fetchKhOrigin();
                 this.fetchListData();
             },
             methods: {
@@ -177,51 +166,21 @@
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 },
-                // 获取客户类型
-                fetchKhClass:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/sourceAndType',
-                        headers:{
-                            "token":TOKEN_DATA
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            if(res.code == 1){
-                                _this.khClassList = res.data.customerSatauslist;
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
-                // 获取客户来源
-                fetchKhOrigin:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/allSource',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        success:function(res){
-                            // console.log(JSON.stringify(res))
-                            if(res.code == 1){
-                                _this.khOriginList = res.data.allsrorcelist
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
                     wDialog.showProgress();
+                    console.log(JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        search_cusName:_this.search_cusName,
+                        search_source:_this.search_source,
+                        search_status:_this.search_status,
+                        order_followtime:_this.order_followtime,
+                        order_nextfollow:_this.order_nextfollow,
+                        pageNo:_this.pageNo,
+                        pageSize:10,
+                    }))
                     wApiAjax({
                         url:'customer/datalist',
                         headers:{
@@ -238,7 +197,7 @@
                             pageSize:10,
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
+                            console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
@@ -262,57 +221,6 @@
                             callback && typeof callback === 'function' && callback();
                         }
                     });
-                },
-                // 切换客户来源筛选
-                originSwitchTab:function(e,name,id){
-                    var tag = e.currentTarget;
-                    hideOriginFilterPopup();
-                    api.setFrameAttr({
-                        bounces: true,
-                    });
-                    if($(tag).hasClass('curr')){
-                        return;
-                    }
-                    else{
-                        $(tag).addClass('curr').siblings().removeClass('curr');
-                    }
-                    // 获取客户来源名字
-                    api.sendEvent({
-                        name: 'getKhOriginName',
-                        extra: {
-                            name: name
-                        }
-                    });
-                    $('#not-more').hide();
-                    this.search_source = id;
-                    this.pageNo = 1;
-                    this.fetchListData();
-                },
-                // 切换客户类型筛选
-                classSwitchTab:function(e,name,id){
-                    var tag = e.currentTarget;
-                    hideClassFilterPopup();
-                    api.setFrameAttr({
-                        bounces: true,
-                    });
-                    if($(tag).hasClass('curr')){
-                        return;
-                    }
-                    else{
-                        $(tag).addClass('curr').siblings().removeClass('curr');
-                    }
-                    // 获取客户类型名字
-                    api.sendEvent({
-                        name: 'getKhClassName',
-                        extra: {
-                            name: name
-                        }
-                    });
-
-                    $('#not-more').hide();
-                    this.search_status = id;
-                    this.pageNo = 1;
-                    this.fetchListData();
                 },
                 // 跳转客户详情
                 skipCustomerDetail: function(id,phone) {
@@ -343,38 +251,6 @@
         })
     }
 
-    // 显示客户来源的弹窗
-    function showOriginFilterPopup(){
-        $('#filter-class-popup').hide();
-        $('#filter-origin-popup').show();
-    }
-    // 显示客户类型的弹窗
-    function showClassFilterPopup(){
-        $('#filter-origin-popup').hide();
-        $('#filter-class-popup').show();
-    }
-    // 隐藏客户来源的弹窗
-    function hideOriginFilterPopup(){
-        $('#filter-origin-popup').hide();
-        // api.sendEvent({
-        //     name: 'customerListFilterMainHidePopup'
-        // });
-    }
-    // 隐藏客户来源的弹窗
-    function hideClassFilterPopup(){
-        $('#filter-class-popup').hide();
-        // api.sendEvent({
-        //     name: 'customerListFilterMainHidePopup'
-        // });
-    }
-    // 隐藏弹窗框
-    function hideFilterPopup(){
-        hideOriginFilterPopup();
-        hideClassFilterPopup();
-        api.setFrameAttr({
-            bounces: true
-        });
-    }
     // 跟进时间&计划跟进时间 条件筛选
     function filterCondition(data){
         var d = JSON.parse(data);
