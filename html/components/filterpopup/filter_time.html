@@ -9,36 +9,36 @@
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>时间筛选</title>
-    <script src="../../../script/lib/rem.js"></script>
     <script src="../../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/mdater.css" />
     <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
 </head>
 
 <body>
     <div id="wrapper">
-        <div class="w-filter-popup">
-            <div class="w-filter-pop3">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop3 bor-1px-t">
                 <div class="top">
                     <div class="flex-wrap time-se flex-between">
                         <div class="flex-con">
-                            <input type="text" placeholder="开始时间" readonly="true">
+                            <input type="text" class="choose-date" placeholder="开始时间" @click.stop="isGetStartDate = true" readonly="true" v-model="startDate">
                         </div>
                         <span>至</span>
                         <div class="flex-con">
-                            <input type="text" placeholder="结束时间" readonly="true">
+                            <input type="text" class="choose-date" placeholder="结束时间" @click.stop="isGetStartDate = false" readonly="true" v-model="endDate">
                         </div>
                     </div>
                     <div class="flex-wrap time-shortcut flex-between">
-                        <div class="time-shortcut-lis">今日</div>
-                        <div class="time-shortcut-lis curr">本周</div>
-                        <div class="time-shortcut-lis">本月</div>
+                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,0)">今日</div>
+                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,1)">本周</div>
+                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,2)">本月</div>
                     </div>
                 </div>
                 <div class="bottom bor-1px-t flex-wrap">
-                    <div class="clear-btn">清空</div>
-                    <div class="sure-btn">确定</div>
+                    <div class="clear-btn" @click.stop="handleClearChooseDate">清空</div>
+                    <div class="sure-btn" @click.stop="handleSureChooseDate">确定</div>
                 </div>
             </div>
         </div>
@@ -46,10 +46,86 @@
 </body>
 <script type="text/javascript" src="../../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
-<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/mdater.js"></script>
 <script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
-<script type="text/javascript" src="../../../script/lib/vue_lazyload.min.js"></script>
-<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../../script/common.js"></script>
-
+<script>
+    var filterTimeV = null;
+    apiready = function(){
+        var param = api.pageParam;
+        filterTimeV = new Vue({
+            el:'#wrapper',
+            data:{
+                startDate:'',
+                endDate:'',
+                isGetStartDate:true
+            },
+            created:function(){
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
+            },
+            mounted:function(){
+                var _this = this;
+                this.$nextTick(function(){
+                    // 初始化日历
+                    $('.choose-date').mdater({
+                        minDate : new Date('2008-01-01'),
+                        sureCb(date){
+                            if(_this.isGetStartDate){
+                                _this.startDate = date;
+                            }else{
+                                _this.endDate = date;
+                            }
+                        }
+                    });
+                })
+            },
+            methods:{
+                handleChooseShortcatDate:function(e,i){
+                    var tag = e.currentTarget;
+                    if(!$(tag).hasClass('curr')){
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                    }
+                    if(i === 0){
+                        this.startDate = funcGetThisToday().startDate;
+                        this.endDate = funcGetThisToday().endDate;
+                    }
+                    else if(i === 1){
+                        this.startDate = funcGetThisWeek().startDate;
+                        this.endDate = funcGetThisWeek().endDate;
+                    }
+                    else{
+                        this.startDate = funcGetThisMonth().startDate;
+                        this.endDate = funcGetThisMonth().endDate;
+                    }
+                },
+                // 清空
+                handleClearChooseDate:function(){
+                    this.startDate = '';
+                    this.endDate = '';
+                    $('.time-shortcut-lis').removeClass('curr');
+                },
+                // 确认
+                handleSureChooseDate:function(){
+                    var _this = this;
+                    api.sendEvent({
+                        name: param.origin,
+                        extra: {
+                            startDate: _this.startDate,
+                            endDate: _this.endDate
+                        }
+                    });
+                    api.closeFrame();
+                },
+                handleCloseFilterPopup: function() {
+                    var _this = this;
+                    api.sendEvent({
+                        name: param.origin
+                    });
+                    api.closeFrame();
+                }
+            }
+        })
+    }
+</script>
 </html>

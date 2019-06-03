@@ -45,13 +45,13 @@
                     <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
-                    <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,1)">
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
                         <span>时间范围</span><i></i>
                     </div>
-                    <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,2)">
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
                         <span>客户来源</span><i></i>
                     </div>
-                    <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,3)">
+                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
                         <span>排序</span><i></i>
                     </div>
                 </div>
@@ -145,32 +145,10 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var managerNewFollowV = null;
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
-        api.addEventListener({
-            name: 'filterManagerNewFollow'
-        }, function(ret, err){
-            var obj = ret.value;
-            if(obj){
-                if(typeof obj.origin != 'undefined'){
-                    managerNewFollowV.currOriginSelected = obj.origin;
-                }
-                if(typeof obj.sort != 'undefined'){
-                    managerNewFollowV.currSortSelected = obj.sort;
-                }
-                if(typeof obj.startDate != 'undefined'){
-                    managerNewFollowV.startDate = obj.startDate;
-                }
-                if(typeof obj.endDate != 'undefined'){
-                    managerNewFollowV.endDate = obj.endDate;
-                }
-            }
-            $('.filter-lis').removeClass('curr');
-        });
-
-        managerNewFollowV = new Vue({
+        new Vue({
             el: "#wrapper",
             data: {
                 userInfo:{},
@@ -181,12 +159,6 @@
                 // yg   国内员工
                 // zz  组长
                 jobTitle:'gngly',
-
-                currOriginSelected:'',
-                currSortSelected:1,
-
-                startDate:'',
-                endDate:''
             },
             mounted: function() {
                 var _this = this;
@@ -211,59 +183,6 @@
                         colors: ['#eee', '#0c7ff9'],
                         isPercent:1
                     })
-                },
-                handleChooseFilter:function(e,i){
-                    var tag = e.currentTarget,
-                        _this = this;
-                    // 1.客户来源 2客户状态  3 更多 4排序
-                    // 跳转到frame
-                    var wHei = $(window).height(),
-                        y = $('.mger-header-box').height(),
-                        h = wHei - y;
-                    if(!$(tag).hasClass('curr')){
-                        $(tag).addClass('curr').siblings().removeClass('curr');
-                        if(i === 1){
-                            wOpenCustomerTimeFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterManagerStat',
-                                    startDate:_this.startDate,
-                                    endDate:_this.endDate
-                                }
-                            });
-                        }
-                        else if(i === 2){
-                            wOpenCustomerOriginFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterManagerStat',
-                                    classifyData:JSON.stringify(_this.khOriginList),
-                                    currSelected:_this.currOriginSelected
-                                }
-                            });
-                        }
-                        else if(i == 3){
-                            wOpenCustomerSortFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterManagerStat',
-                                    currSelected:_this.currSortSelected,
-                                    sortClass:'class2'
-                                }
-                            })
-                        }
-                        else{
-                            console.log('筛选页面参数错误')
-                        }
-                    }else{
-                        $(tag).removeClass('curr');
-                        api.closeFrame({
-                            name:'filterCustomerFrame'
-                        });
-                    }
                 }
             },
         });

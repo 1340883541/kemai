@@ -17,7 +17,7 @@
 
 <body>
     <div id="wrapper">
-        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup" id="filter-sort" style="display:none;">
             <div class="w-filter-pop1" v-if="sortClass === 'class1'">
                 <ul>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从近到远</li>
@@ -57,18 +57,18 @@
 <script>
     apiready = function() {
         var param = api.pageParam;
-        console.log(JSON.stringify(param))
         new Vue({
             el: '#wrapper',
             data: {
                 currSelected: '',
-                sendOrigin: '',
                 sortClass: ''
             },
             mounted: function() {
-                this.sendOrigin = param.origin;
                 this.currSelected = param.currSelected;
                 this.sortClass = param.sortClass;
+                this.$nextTick(function(){
+                    $('#filter-sort').show();
+                })
             },
             methods: {
                 // 筛选排序
@@ -76,7 +76,7 @@
                     var _this = this;
                     this.currSelected = val;
                     api.sendEvent({
-                        name: _this.sendOrigin,
+                        name: param.origin,
                         extra: {
                             sort: val
                         }
@@ -86,7 +86,7 @@
                 handleCloseFilterPopup: function() {
                     var _this = this;
                     api.sendEvent({
-                        name: _this.sendOrigin
+                        name: param.origin
                     });
                     api.closeFrame();
                 }

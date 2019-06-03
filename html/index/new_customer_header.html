@@ -84,11 +84,7 @@
             },
             methods:{
                 init:function(){
-                    if(param.origin == '全部'){
-                        this.khOriginTxt = '客户来源';
-                    }else{
-                        this.khOriginTxt = param.origin;
-                    }
+                    this.khOriginTxt = param.value;
                 },
                 // 获取焦点
                 onFoucsInp:function(){

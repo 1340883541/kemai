@@ -38,22 +38,22 @@
                 <div class="new-follow-box">
                     <div class="index-cap">新增资源跟进</div>
                     <div class="head-bb flex-wrap">
-                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('公司资源')">
-                            <div class="head-bb-t head-bb-t1">公司资源</div>
-                            <div class="head-bb-b" v-text="corSour"></div>
+                        <div class="flex-con head-bb-lis" v-for="i in 4" v-if="newResourceFollow[i-1]" @click.stop="skipNewCustomer(newResourceFollow[i-1].value)" :key="i">
+                            <div class="head-bb-t" :class="'head-bb-t'+i" v-text="newResourceFollow[i-1].name"></div>
+                            <div class="head-bb-b" v-text="newResourceFollow[i-1].num"></div>
                         </div>
-                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('销售资源')">
-                            <div class="head-bb-t head-bb-t2">销售资源</div>
-                            <div class="head-bb-b" v-text="market"></div>
+                        <!-- <div class="flex-con head-bb-lis" v-if="newResourceFollow[1]" @click.stop="skipNewCustomer(newResourceFollow[1].value)">
+                            <div class="head-bb-t head-bb-t2" v-text="newResourceFollow[1].name"></div>
+                            <div class="head-bb-b" v-text="newResourceFollow[1].num"></div>
                         </div>
-                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('渠道资源')">
-                            <div class="head-bb-t head-bb-t3">渠道资源</div>
-                            <div class="head-bb-b" v-text="channel"></div>
+                        <div class="flex-con head-bb-lis" v-if="newResourceFollow[2]" @click.stop="skipNewCustomer(newResourceFollow[2].value)">
+                            <div class="head-bb-t head-bb-t3" v-text="newResourceFollow[2].name"></div>
+                            <div class="head-bb-b" v-text="newResourceFollow[2].num"></div>
                         </div>
-                        <div class="flex-con head-bb-lis" @click="skipNewCustomer('资源池')">
-                            <div class="head-bb-t head-bb-t3">资源池</div>
-                            <div class="head-bb-b" v-text="respool"></div>
-                        </div>
+                        <div class="flex-con head-bb-lis" v-if="newResourceFollow[3]" @click.stop="skipNewCustomer(newResourceFollow[3].value)">
+                            <div class="head-bb-t head-bb-t3" v-text="newResourceFollow[3].name"></div>
+                            <div class="head-bb-b" v-text="newResourceFollow[3].num"></div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -126,15 +126,15 @@
                     <div class="stat-ls-t stat-ls-t1">拨号(次)</div>
                     <div class="stat-ls-b" v-text="allCallTimes"></div>
                 </div>
-                <div class="flex-con stat-ls" @click="skipStat('查看微信')">
+                <!-- <div class="flex-con stat-ls" @click="skipStat('查看微信')">
                     <div class="stat-ls-t stat-ls-t4">查看微信(个)</div>
                     <div class="stat-ls-b" v-text="lookwechatcount"></div>
-                </div>
-                <div class="flex-con stat-ls bor-r" @click="skipStat('未接')">
+                </div> -->
+                <div class="flex-con stat-ls" @click="skipStat('未接')">
                     <div class="stat-ls-t stat-ls-t2">未接(次)</div>
                     <div class="stat-ls-b" v-text="noanscall"></div>
                 </div>
-                <div class="flex-con stat-ls" @click="skipStat('号码异常')">
+                <div class="flex-con stat-ls bor-r" @click="skipStat('号码异常')">
                     <div class="stat-ls-t stat-ls-t2">号码异常(个)</div>
                     <div class="stat-ls-b" v-text="abnormalNum"></div>
                 </div>
@@ -142,17 +142,14 @@
                     <div class="stat-ls-t stat-ls-t1">接通(次)</div>
                     <div class="stat-ls-b" v-text="vaildcall"></div>
                 </div>
-                <div class="flex-con stat-ls">
-                </div>
+                <!-- <div class="flex-con stat-ls">
+                </div> -->
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
         <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
             <!-- <i></i><span>新增客户</span> -->
-        </div>
-        <div onclick="api.openWin({name:'managerNewFollow',url:'manager_new_follow.html'})">
-            hhhh
         </div>
     </div>
 </body>
@@ -167,294 +164,322 @@
 <script>
     var indexV = null;
     apiready = function() {
-        var top = api.safeArea.top;
-        $('#head-bg').css('padding-top',top);
-        $('.index-header .head-box').css('padding-top',top);
-        $('#index-title').css('padding-top',top);
-        $('#offline-box').css('top',top+48);
-        indexV = new Vue({
-            el: '#wrapper',
-            data: {
-                employeeid: '',
-                account: '',
-                market: 0, //今日销售渠道
-                channel: 0, //今日渠道客户
-                corSour: 0, //今日公司资源
-                respool: 0, //今日资源池客户
+            var top = api.safeArea.top;
+            $('#head-bg').css('padding-top', top);
+            $('.index-header .head-box').css('padding-top', top);
+            $('#index-title').css('padding-top', top);
+            $('#offline-box').css('top', top + 48);
+            indexV = new Vue({
+                el: '#wrapper',
+                data: {
+                    employeeid: '',
+                    account: '',
+                    newResourceFollow: [], //新增资源跟进
+                    systemResourceFollow: [], //系统资源跟进
 
-                resource: 0, //资源回收
-                sign: 0, //签约消息
-                pay: 0, //缴费消息
-                change_principal: 0, //负责人变更
-                recovery: 0, //回收提醒
-                subscription: 0, //认购消息
-                follow: 0, //跟进提醒
-                subscriptionBook: 0, //认购书提醒
-                // 今日统计
-                vaildcall: 0, //今日接通通话
-                noanscall: 0, //今日统计未接听通话
-                lookwechatcount: 0, //查看微信次数
-                allCallTimes: 0, //拨号
-                abnormalNum:0, // 拨号异常
-                // 系统资源跟进
-                shortTerm:0, //短期客户数量
-                metTerm:0, //中期客户数量
-                longTerm:0, //长期客户数量
-                unansweredCus:0,//未接客户
-                dealCus:0, //成交
+                    resource: 0, //资源回收
+                    sign: 0, //签约消息
+                    pay: 0, //缴费消息
+                    change_principal: 0, //负责人变更
+                    recovery: 0, //回收提醒
+                    subscription: 0, //认购消息
+                    follow: 0, //跟进提醒
+                    subscriptionBook: 0, //认购书提醒
+                    // 今日统计
+                    vaildcall: 0, //今日接通通话
+                    noanscall: 0, //今日统计未接听通话
+                    // lookwechatcount: 0, //查看微信次数
+                    allCallTimes: 0, //拨号
+                    abnormalNum: 0, // 拨号异常
+                    // 系统资源跟进
+                    shortTerm: 0, //短期客户数量
+                    metTerm: 0, //中期客户数量
+                    longTerm: 0, //长期客户数量
+                    unansweredCus: 0, //未接客户
+                    dealCus: 0, //成交
 
 
-                userInfo: '',
-                notificationInfo: {}
-            },
-            mounted: function() {
-                this.netWorkStatus();
-                // 获取数据
-                this.fetchStatData();
-                this.getMessageData();
-                this.fetchNewData();
-                this.fetchSystemFollowData();
-                this.$nextTick(function(){
-                    $(window).on('scroll',function(){
-                        var sTop = $(window).scrollTop()
-                        if(sTop <= 9){
-                            $('#index-title').removeClass('fixbg')
-                        }else{
-                            $('#index-title').addClass('fixbg')
-                        }
-                    })
-                })
-            },
-            filters: {
-                messageFilter: function(n) {
-                    return n > 99 ? '99+' : n;
-                }
-            },
-            methods: {
-                // 获取消息提醒的数据
-                getMessageData: function(cb) {
-                    var _this = this;
+                    userInfo: {},
+                    notificationInfo: {}
+                },
+                mounted: function() {
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                    wApiAjax({
-                        url: "msgRemind/getAllNoticeCount",
-                        method: 'get',
-                        headers: {
-                            token: TOKEN_DATA
-                        },
-                        data: {
-                            employeeid: _this.userInfo.employeeid
-                        },
-                        success: function(res) {
-                            // console.log('inn11111111111'+JSON.stringify(res))
-                            if (res.code == 200) {
-                                _this.notificationInfo = res.info || {};
-                                _this.notificationInfo.switch = res.switch;
-                                if (res.switch == 0) {
-                                    _this.resource = 0;
-                                    _this.sign = 0;
-                                    _this.pay = 0;
-                                    _this.change_principal = 0;
-                                    _this.recovery = 0;
-                                    _this.subscription = 0;
-                                    _this.follow = 0;
-                                    _this.subscriptionBook = 0;
-                                } else {
-                                    res.info = res.info || {};
-                                    _this.resource = res.info.resource == 'off' ? 0 : res.info.resource;
-                                    _this.sign = res.info.sign == 'off' ? 0 : res.info.sign;
-                                    _this.pay = res.info.pay == 'off' ? 0 : res.info.pay;
-                                    _this.change_principal = res.info.change_principal == 'off' ? 0 : res.info.change_principal;
-                                    _this.recovery = res.info.recovery == 'off' ? 0 : res.info.recovery;
-                                    _this.subscription = res.info.subscription == 'off' ? 0 : res.info.subscription;
-                                    _this.follow = res.info.follow == 'off' ? 0 : res.info.follow;
-                                    _this.subscriptionBook = res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
+
+                    this.netWorkStatus();
+                    // 获取数据
+                    this.fetchStatData();
+                    this.getMessageData();
+                    this.fetchNewData();
+                    this.fetchSystemFollowData();
+                    this.$nextTick(function() {
+                        $(window).on('scroll', function() {
+                            var sTop = $(window).scrollTop()
+                            if (sTop <= 9) {
+                                $('#index-title').removeClass('fixbg')
+                            } else {
+                                $('#index-title').addClass('fixbg')
+                            }
+                        })
+                    })
+                },
+                filters: {
+                    messageFilter: function(n) {
+                        return n > 99 ? '99+' : n;
+                    }
+                },
+                methods: {
+                    // 获取消息提醒的数据
+                    getMessageData: function(cb) {
+                        var _this = this;
+                        this.userInfo = wPref.getPrefs({
+                            key: 'userInfo'
+                        });
+                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        wApiAjax({
+                            url: "msgRemind/getAllNoticeCount",
+                            method: 'get',
+                            headers: {
+                                token: TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid
+                            },
+                            success: function(res) {
+                                // console.log('inn11111111111'+JSON.stringify(res))
+                                if (res.code == 200) {
+                                    _this.notificationInfo = res.info || {};
+                                    _this.notificationInfo.switch = res.switch;
+                                    if (res.switch == 0) {
+                                        _this.resource = 0;
+                                        _this.sign = 0;
+                                        _this.pay = 0;
+                                        _this.change_principal = 0;
+                                        _this.recovery = 0;
+                                        _this.subscription = 0;
+                                        _this.follow = 0;
+                                        _this.subscriptionBook = 0;
+                                    } else {
+                                        res.info = res.info || {};
+                                        _this.resource = res.info.resource == 'off' ? 0 : res.info.resource;
+                                        _this.sign = res.info.sign == 'off' ? 0 : res.info.sign;
+                                        _this.pay = res.info.pay == 'off' ? 0 : res.info.pay;
+                                        _this.change_principal = res.info.change_principal == 'off' ? 0 : res.info.change_principal;
+                                        _this.recovery = res.info.recovery == 'off' ? 0 : res.info.recovery;
+                                        _this.subscription = res.info.subscription == 'off' ? 0 : res.info.subscription;
+                                        _this.follow = res.info.follow == 'off' ? 0 : res.info.follow;
+                                        _this.subscriptionBook = res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
+                                    }
                                 }
+                                cb && typeof cb === 'function' && cb();
                             }
-                            cb && typeof cb === 'function' && cb();
-                        }
-                    })
-                },
-                // 获取今日新增数据
-                fetchNewData: function(cb) {
-                    var _this = this;
-                    this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    });
-                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                    wDialog.showProgress();
-                    wApiAjax({
-                        url: 'workbench/newAddResourceFoll',
-                        headers: {
-                            token: TOKEN_DATA
-                        },
-                        data: {
-                            employeeid: _this.userInfo.employeeid
-                        },
-                        success: function(res) {
-                            console.log('today new data: '+JSON.stringify(res))
-                            if (res.code == 1) {
-                                _this.market = res.market;
-                                _this.channel = res.channel;
-                                _this.corSour = res.corSour;
-                                _this.respool = res.respool;
-                            }
-                            wDialog.hideProgress();
-                        },
-                        fail: function() {
+                        })
+                    },
+                    // 获取今日新增数据
+                    fetchNewData: function(cb) {
+                        var _this = this;
+                        this.userInfo = wPref.getPrefs({
+                            key: 'userInfo'
+                        });
+                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        wDialog.showProgress();
+                        wApiAjax({
+                            url: 'workbench/newAddResourceFoll',
+                            headers: {
+                                token: TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid
+                            },
+                            success: function(res) {
+                                console.log('today new data: ' + JSON.stringify(res))
+                                if (res.code == 1) {
+                                    _this.newResourceFollow = res.data || [];
+                                }
+                                wDialog.hideProgress();
+                            },
+                            fail: function() {
 
-                        }
-                    })
-                },
-                // 获取今日统计数据
-                fetchStatData: function() {
-                    var _this = this;
-                    this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    });
-                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                    wDialog.showProgress();
-                    console.log(TOKEN_DATA)
-                    wApiAjax({
+                            }
+                        })
+                    },
+                    // 获取今日统计数据
+                    fetchStatData: function() {
+                        var _this = this;
+                        this.userInfo = wPref.getPrefs({
+                            key: 'userInfo'
+                        });
+                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        wDialog.showProgress();
+                        wApiAjax({
                             url: 'workbench/todaySta',
-                        headers: {
-                            token: TOKEN_DATA
-                        },
-                        data: {
-                            employeeid: _this.userInfo.employeeid
-                        },
-                        success: function(res) {
-                            if (res.code == 1) {
-                                _this.vaildcall = res.vaildcall;
-                                _this.noanscall = res.noanscall;
-                                _this.abnormalNum = res.abnormalNum;
-                                _this.lookwechatcount = res.lookwechatcount;
-                                _this.allCallTimes = res.allCallTimes;
-                            }
-                        },
-                        fail: function() {
+                            headers: {
+                                token: TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 1) {
+                                    _this.vaildcall = res.vaildcall;
+                                    _this.noanscall = res.noanscall;
+                                    _this.abnormalNum = res.abnormalNum;
+                                    // _this.lookwechatcount = res.lookwechatcount;
+                                    _this.allCallTimes = res.allCallTimes;
+                                }
+                            },
+                            fail: function() {
 
-                        }
-                    })
-                },
-                // 获取系统跟进
-                fetchSystemFollowData:function(){
-                    var _this = this;
-                    this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    });
-                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                    wDialog.showProgress();
-                    wApiAjax({
-                        url: 'workbench/sysResourceFoll',
-                        headers: {
-                            token: TOKEN_DATA
-                        },
-                        data: {
-                            employeeid: _this.userInfo.employeeid
-                        },
-                        success: function(res) {
-                            // console.log('system response data: '+JSON.stringify(res))
-                            if (res.code == 1) {
-                                _this.shortTerm = res.shortTerm;
-                                _this.metTerm = res.metTerm;
-                                _this.longTerm = res.longTerm;
-                                _this.dealCus = res.dealCus;
-                                _this.unansweredCus = res.unansweredCus;
                             }
-                        },
-                        fail: function() {
+                        })
+                    },
+                    // 获取系统跟进
+                    fetchSystemFollowData: function() {
+                        var _this = this;
+                        this.userInfo = wPref.getPrefs({
+                            key: 'userInfo'
+                        });
+                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        wDialog.showProgress();
+                        wApiAjax({
+                            url: 'workbench/sysResourceFoll',
+                            headers: {
+                                token: TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid
+                            },
+                            success: function(res) {
+                                // console.log('system response data: ' + JSON.stringify(res))
+                                if (res.code == 1) {
+                                    _this.shortTerm = res.shortTerm;
+                                    _this.metTerm = res.metTerm;
+                                    _this.longTerm = res.longTerm;
+                                    _this.dealCus = res.dealCus;
+                                    _this.unansweredCus = res.unansweredCus;
+                                }
+                            },
+                            fail: function() {
 
+                            }
+                        })
+                    },
+                    funcFormateSystemCount: function(num) {
+                        return num > 99 ? '99+' : num;
+                    },
+                    // 跳转到提醒列表
+                    skipMessage: function(i, remindName) {
+                        if (i === 1) {
+                            console.log('暂没有')
+                        } else if (i === 2) {
+                            wHrefJs.openWin({
+                                name: 'customerRecycleHeader',
+                                path: '../customer/customer_recycle_header.html'
+                            })
+                        } else {
+                            wDialog.toast({
+                                msg: '暂不支持查看，敬请期待'
+                            })
                         }
-                    })
-                },
-                funcFormateSystemCount:function(num){
-                    return num > 99 ? '99+' : num;
-                },
-                // 跳转到提醒列表
-                skipMessage: function(i, remindName) {
-                    if (i === 1) {
-                        console.log('暂没有')
-                    } else if (i === 2) {
+                    },
+                    // 判断网络状态
+                    netWorkStatus: function() {
+                        listenOnline.offline(function() {
+                            $('#offline-box').show();
+                        });
+                        listenOnline.online(function() {
+                            $('#offline-box').hide();
+                        });
+                        var lineStatus = listenOnline.lineStatus();
+                        if (lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g') {
+                            $('#offline-box').show();
+                        } else {
+                            $('#offline-box').hide();
+                        }
+                    },
+                    // 跳转到offline
+                    skipOfflinePage: function() {
                         wHrefJs.openWin({
-                            name: 'customerRecycleHeader',
-                            path: '../customer/customer_recycle_header.html'
+                            name: 'offline',
+                            path: '../person/solution.html'
                         })
-                    } else {
-                        wDialog.toast({
-                            msg: '暂不支持查看，敬请期待'
-                        })
-                    }
-                },
-                // 判断网络状态
-                netWorkStatus: function() {
-                    listenOnline.offline(function() {
-                        $('#offline-box').show();
-                    });
-                    listenOnline.online(function() {
-                        $('#offline-box').hide();
-                    });
-                    var lineStatus = listenOnline.lineStatus();
-                    if (lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g') {
-                        $('#offline-box').show();
-                    } else {
-                        $('#offline-box').hide();
-                    }
-                },
-                // 跳转到offline
-                skipOfflinePage: function() {
-                    wHrefJs.openWin({
-                        name: 'offline',
-                        path: '../person/solution.html'
-                    })
-                },
-                // 跳转到系统跟进列表
-                handleSkipSystemList:function(origin){
-                    wHrefJs.openWin({
-                        name: 'systemFollowHeader',
-                        path: './system_follow_header.html',
-                        param: {
-                            origin: origin
-                        },
-                        bgColor: '#f7f7f7'
-                    })
-                },
-                // 跳转新增
-                skipNewCustomer: function(val) {
-                    var self = this;
-                    wHrefJs.openWin({
-                        name: 'newCustomerHeader',
-                        path: './new_customer_header.html',
-                        param: {
-                            origin: val
-                        },
-                        bgColor: '#f7f7f7'
-                    })
-                },
-                // 跳转到今日统计
-                skipStat: function(txt) {
-                    var _this = this;
-                    wHrefJs.openWin({
-                        name: 'indexStat',
-                        path: './index_stat.html',
-                        param: {
-                            statTypeTxt:txt
+                    },
+                    // 跳转到系统跟进列表
+                    handleSkipSystemList: function(origin) {
+                        if (this.userInfo.xxx == 'yg') {
+                            wHrefJs.openWin({
+                                name: 'systemFollowHeader',
+                                path: './system_follow_header.html',
+                                param: {
+                                    origin: origin
+                                },
+                                bgColor: '#f7f7f7'
+                            })
+                        } else {
+                            api.openWin({
+                                name: 'managerNewFollow',
+                                url: 'manager_new_follow.html'
+                            })
                         }
-                    })
-                },
-                // 跳转到新增客户
-                handleSkipAddCustomer:function(){
-                    wHrefJs.openWin({
-                        name:'addCustomer',
-                        path:'./add_customer.html',
-                    })
+                    },
+                    // 跳转新增
+                    skipNewCustomer: function(val) {
+                        var self = this;
+                        if (this.userInfo.xxx == 'yg') {
+                            wHrefJs.openWin({
+                                name: 'newCustomerHeader',
+                                path: './new_customer_header.html',
+                                param: {
+                                    value: val
+                                },
+                                bgColor: '#f7f7f7'
+                            })
+                        } else {
+                            api.openWin({
+                                name: 'managerNewFollow',
+                                url: 'manager_new_follow.html',
+                                param: {
+                                    value: val
+                                },
+                            })
+                        }
+
+                    },
+                    // 跳转到今日统计
+                    skipStat: function(val) {
+                        var _this = this;
+                        if(this.userInfo.xxx == 'yg'){
+                            wHrefJs.openWin({
+                                name: 'indexStat',
+                                path: './index_stat.html',
+                                param: {
+                                    statTypeTxt: val
+                                }
+                            })
+                        }else{
+                            wHrefJs.openWin({
+                                name:'managerStat',
+                                path:'./manager_stat.html',
+                                pararm:{
+                                    value:''
+                                }
+                            })
+                        }
+                    },
+                    // 跳转到新增客户
+                    handleSkipAddCustomer: function() {
+                        wHrefJs.openWin({
+                            name: 'addCustomer',
+                            path: './add_customer.html',
+                        })
+                    }
                 }
-            }
-        })
-    }
-    // 刷新数据
+            })
+        }
+        // 刷新数据
     function refrshIndexData() {
         indexV.fetchNewData()
         indexV.fetchStatData();

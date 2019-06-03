@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>管理者新增资源跟进</title>
+    <title>管理者统计跟进</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -46,10 +46,10 @@
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,1)">
-                        <span>时间范围</span><i></i>
+                        <span>通话时间</span><i></i>
                     </div>
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,2)">
-                        <span>客户来源</span><i></i>
+                        <span>通话状态</span><i></i>
                     </div>
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,3)">
                         <span>排序</span><i></i>
@@ -145,32 +145,32 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var managerNewFollowV = null;
+    var managerStatV = null;
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
         api.addEventListener({
-            name: 'filterManagerNewFollow'
+            name: 'filterManagerStat'
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
                 if(typeof obj.origin != 'undefined'){
-                    managerNewFollowV.currOriginSelected = obj.origin;
+                    managerStatV.currOriginSelected = obj.origin;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    managerNewFollowV.currSortSelected = obj.sort;
+                    managerStatV.currSortSelected = obj.sort;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    managerNewFollowV.startDate = obj.startDate;
+                    managerStatV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    managerNewFollowV.endDate = obj.endDate;
+                    managerStatV.endDate = obj.endDate;
                 }
             }
             $('.filter-lis').removeClass('curr');
         });
 
-        managerNewFollowV = new Vue({
+        managerStatV = new Vue({
             el: "#wrapper",
             data: {
                 userInfo:{},
@@ -251,7 +251,7 @@
                                 param:{
                                     origin:'filterManagerStat',
                                     currSelected:_this.currSortSelected,
-                                    sortClass:'class2'
+                                    sortClass:'class3'
                                 }
                             })
                         }

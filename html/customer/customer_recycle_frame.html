@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>回收客户-主页</title>
+    <title>回收提醒-主页</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -30,15 +30,19 @@
 <body>
     <div id="wrap" v-cloak>
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
-            <div class="filter-lis cfil-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
-                <div class="cfil-t flex-wrap flex-between">
-                    <div class="cname w-elli" v-text="khdata.name"></div>
+            <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
+                <div class="filter-lt flex-wrap flex-between">
+                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name"></span></div>
                     <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>
-                <div class="cfil-b">
-                    <div class="cfil-bt lis"><i></i>客户类型: <span v-text="khdata.status||'无'"></span></div>
-                    <div class="cfil-gj time lis"><i></i>跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
-                    <div class="cfil-jh time lis"><i></i>计划跟进: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                <div class="filter-lb">
+                    <div class="lis flb-cls1">客户类型: <span v-text="khdata.status||'无'"></span></div>
+                    <div class="flex-wrap filter-lb1">
+                        <div class="lis flex-con flb-cls2">号码归属地: <span>成都成都成</span></div>
+                        <div class="lis flex-con flb-cls2">客户类型: <span v-text="khdata.status||'无'"></span></div>
+                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
+                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                    </div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -90,7 +94,6 @@
             nCustomerFrame.pageNo = 1;
             nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
         });
-
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom',
@@ -98,7 +101,8 @@
                 threshold:0
             }
         }, function(ret, err){
-            if(++nCustomerFrame.pageNo <= nCustomerFrame.totalPage){
+            if(nCustomerFrame.isHavaMoreData){
+                ++nCustomerFrame.pageNo
                 nCustomerFrame.fetchListData(true);
             }else{
                 $('#not-more').show();
@@ -113,29 +117,70 @@
             nCustomerFrame.pageNo = 1;
             nCustomerFrame.fetchListData();
         });
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterCustomerList'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(typeof obj.status != 'undefined'){
+                nCustomerFrame.search_status = obj.status;
+                nCustomerFrame.pageNo = 1;
+                nCustomerFrame.fetchListData();
+            }
+            if(typeof obj.origin != 'undefined'){
+                nCustomerFrame.search_source = obj.origin;
+                nCustomerFrame.pageNo = 1;
+                nCustomerFrame.fetchListData();
+            }
+            if(typeof obj.sort != 'undefined'){
+                console.log(JSON.stringify(obj.sort))
+                // nCustomerFrame.search_status = obj.status;
+                // nCustomerFrame.pageNo = 1;
+                // nCustomerFrame.fetchListData();
+            }
+        });
+
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',
             data: {
                 search_cusName:'', // 搜索客户名
+                search_source:'',  // 客户来源
+                search_status:'',  // 客户状态
+                order_followtime:0,     // 跟进时间
+                order_nextfollow:0,     // 计划跟进时间
                 pageNo:1,
                 totalPage:1,
                 khDataList:[],  // 客户信息list
-                userInfo:''
+                userInfo:'',
+                isHavaMoreData:true
             },
             mounted: function() {
+                this.init();
                 this.fetchListData();
             },
             methods: {
-                // 获取页面数据
-                fetchListData:function(isLoadMore,callback){
+                init:function(){
                     this.userInfo = wPref.getPrefs({
                         key:'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                // 获取页面数据
+                fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
                     wDialog.showProgress();
+                    console.log(JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        search_cusName:_this.search_cusName,
+                        search_source:_this.search_source,
+                        search_status:_this.search_status,
+                        order_followtime:_this.order_followtime,
+                        order_nextfollow:_this.order_nextfollow,
+                        pageNo:_this.pageNo,
+                        pageSize:10,
+                    }))
                     wApiAjax({
                         url:'customer/recoveryCusList',
                         headers:{
@@ -151,9 +196,10 @@
                             console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
+                                _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
-                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                    // _this.totalPage = Math.ceil(res.count / res.pageSize);
                                 }
                                 else{
                                     if(res.data){
@@ -184,7 +230,7 @@
                         }
                     })
                 },
-                // 跳转到跟进记录
+                // 跳转到跟进页面
                 handleSkipFollow:function(id,phone){
                     api.openWin({
                         name: 'followRecord',
@@ -199,6 +245,16 @@
                 }
             }
         })
+    }
+
+    // 跟进时间&计划跟进时间 条件筛选
+    function filterCondition(data){
+        var d = JSON.parse(data);
+        $('#not-more').hide();
+        nCustomerFrame.order_followtime = d.status1;
+        nCustomerFrame.order_nextfollow = d.status2;
+        nCustomerFrame.pageNo = 1;
+        nCustomerFrame.fetchListData();
     }
     // 获取搜索的内容
     function getSearchValue(val){
