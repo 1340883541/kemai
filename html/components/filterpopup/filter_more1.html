@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>筛选更多</title>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filtermore.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-more clear">
+            <div class="w-filter-content">
+                <!-- 关闭 -->
+                <div class="follow-header follow-r-m-header">
+                    <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                        <div class="left back"><img class="filter-m-close" src="../../../image/icon-dh-guanbi.png" /></div>
+                    </div>
+                    <div class="fh-place" id="fh-place"></div>
+                </div>
+                <!-- 筛选内容 -->
+                <div class="filter-m-body">
+                    <!-- 来源归类 -->
+                    <div class="filter-m-ylgs">
+                        <p class="p1">来源归类</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li class="f-curr">陌电</li>
+                            <li>活动</li>
+                            <li>精准</li>
+                            <li>转介绍</li>
+                            <li>转介绍</li>
+                        </ul>
+                        <div class="">
+
+                        </div>
+                    </div>
+                    <!-- 时间范围 -->
+                    <div class="filter-m-ylgs margin-top30">
+                        <p class="p1">时间范围</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li class="f-curr">今日</li>
+                            <li>本周</li>
+                            <li>本月</li>
+                            <li>本年</li>
+                            <li>本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input type="text" placeholder="开始时间" readonly="true">
+                            <text>—</text>
+                            <input type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script>
+apiready = function() {
+    $api.fixStatusBar($('#fh-fixed')[0]);
+}
+</script>
+</html>
