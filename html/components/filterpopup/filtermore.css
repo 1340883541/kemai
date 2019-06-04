@@ -137,6 +137,7 @@
     padding-right: 15px;
     border-radius: 4px;
     border: 1px solid #e9e9e9;
+    box-shadow: none;
 }
 .filter-m-date input::-webkit-input-placeholder {
     color: #ccc;
@@ -151,18 +152,19 @@
 
 .filter-m-khly .khly-rodio{
     width: 14px;
-  	height: 14px;
-
-  	border: 0px;
-    display: inline-block;
+    height: 36px;
+    border: 0px;
+    display: block;
+    float: left;
     margin-right: 12px;
+    line-height: 36px;
 }
 .uncheck{
-    background: url(../../../image/icon-xz-wgx.png) no-repeat center 0px;
+    background: url(../../../image/icon-xz-wgx.png) no-repeat center 11px;
   	background-size: 14px;
 }
 .check{
-    background: url(../../../image/icon-xz-gx.png) no-repeat center 0px !important;
+    background: url(../../../image/icon-xz-gx.png) no-repeat center 11px !important;
     background-size: 14px !important;
 }
 .filter-m-khly .p2.border-1px:after{
