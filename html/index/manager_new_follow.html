@@ -38,11 +38,12 @@
                         <div class="cap">新增跟进资源</div>
                         <div class="desc">333</div>
                     </div>
+                    <div class="mger-right">分配</div>
                 </div>
                 <div class="mger-nav flex-wrap">
-                    <div class="flex-con curr" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'">大区</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'">团队</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
+                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
+                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
+                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,1)">
@@ -59,8 +60,8 @@
             <div class="mger-header-place"></div>
         </div>
         <div class="mger-container">
-            <ul class="mger-lists clear mger-area" id="mger-area">
-                <li class="mger-lis fl flex-wrap">
+            <ul class="mger-lists clear mger-area" id="mger-area" v-if="isShowAreaBox">
+                <li class="mger-lis fl flex-wrap checked" @click.stop="handleChooseArea">
                     <div class="left flex-wrap flex-vertical flex-center">
                         <p class="mger-cap">天津</p>
                         <p class="mger-desc">
@@ -71,8 +72,8 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-team" style="display:none">
-                <li class="mger-lis">
+            <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
+                <li class="mger-lis checked" @click.stop="handleChooseTeam">
                     <div class="mger-lt">销售一组</div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr">
@@ -84,8 +85,8 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-group" style="display:none">
-                <li class="mger-lis">
+            <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
+                <li class="mger-lis checked" @click.stop="handleChooseGroup">
                     <div class="mger-lt">销售一组1队</div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr">
@@ -97,8 +98,8 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew" style="display:none">
-                <li class="mger-lis">
+            <ul class="mger-lists mger-crew" id="mger-crew" v-if="isShowCrewBox">
+                <li class="mger-lis checked" @click.stop="handleChooseCrew">
                     <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
                     <div class="mger-lnum-box flex-wrap">
                         <div class="flex-con mger-lnum">
@@ -153,6 +154,7 @@
             name: 'filterManagerNewFollow'
         }, function(ret, err){
             var obj = ret.value;
+            console.log(JSON.stringify(obj))
             if(obj){
                 if(typeof obj.origin != 'undefined'){
                     managerNewFollowV.currOriginSelected = obj.origin;
@@ -180,13 +182,26 @@
                 // tdgly  国内团队管理员
                 // yg   国内员工
                 // zz  组长
-                jobTitle:'gngly',
+                jobTitle:'',
 
                 currOriginSelected:'',
                 currSortSelected:1,
 
                 startDate:'',
-                endDate:''
+                endDate:'',
+                // 显示哪个盒子
+                isShowAreaBox:false,
+                isShowTeamBox:false,
+                isShowGroupBox:false,
+                isShowCrewBox:false,
+                // 当前选中的
+                isCurrArea:false,
+                isCurrTeam:false,
+                isCurrGroup:false,
+                // id
+                areaId:'',
+                teamId:'',
+                groupId:''
             },
             mounted: function() {
                 var _this = this;
@@ -196,11 +211,30 @@
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                 console.log(JSON.stringify(this.userInfo))
+                this.init();
                 this.$nextTick(function(){
                     _this.renderCircle();
                 })
             },
             methods: {
+                init:function(){
+                    this.jobTitle = this.userInfo.xxx || 'tdgly';
+                    if(this.jobTitle === 'gngly' || this.jobTitle === 'qygly'){
+                        this.isShowAreaBox = true;
+                        this.isCurrArea = true;
+                    }
+                    else if(this.jobTitle === 'tdgly'){
+                        this.isShowTeamBox = true;
+                        this.isCurrTeam = true;
+                    }
+                    else if(this.jobTitle === 'zz'){
+                        this.isShowGroupBox = true;
+                        this.isCurrGroup = true;
+                    }
+                    else{
+                        console.log('没有这个权限')
+                    }
+                },
                 renderCircle:function(){
                     var circleWid = $('#circle-0').outerWidth()/2;
                     Circles.create({
@@ -211,6 +245,55 @@
                         colors: ['#eee', '#0c7ff9'],
                         isPercent:1
                     })
+                },
+                // 切换职位
+                // i=0 大区  i=1 团队  i=2 小组
+                handleSwitchPosition:function(i){
+                    if(i === 0){
+                        this.isShowAreaBox = true;
+                        this.isShowTeamBox = false;
+                        this.isShowGroupBox = false;
+                        this.isShowCrewBox = false;
+
+                        this.isCurrArea = true;
+                        this.isCurrTeam = false;
+                        this.isCurrGroup = false;
+                    }
+                    else if(i === 1){
+                        if(this.areaId){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = true;
+                            this.isShowGroupBox = false;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = true;
+                            this.isCurrGroup = false;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择大区'
+                            })
+                        }
+                    }
+                    else if(i === 2){
+                        if(this.teamId){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = false;
+                            this.isShowGroupBox = true;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = false;
+                            this.isCurrGroup = true;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择团队'
+                            })
+                        }
+                    }
+                    else{
+                        console.log('参数错误');
+                    }
                 },
                 handleChooseFilter:function(e,i){
                     var tag = e.currentTarget,
@@ -227,7 +310,7 @@
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterManagerStat',
+                                    origin:'filterManagerNewFollow',
                                     startDate:_this.startDate,
                                     endDate:_this.endDate
                                 }
@@ -238,7 +321,7 @@
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterManagerStat',
+                                    origin:'filterManagerNewFollow',
                                     classifyData:JSON.stringify(_this.khOriginList),
                                     currSelected:_this.currOriginSelected
                                 }
@@ -249,7 +332,7 @@
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterManagerStat',
+                                    origin:'filterManagerNewFollow',
                                     currSelected:_this.currSortSelected,
                                     sortClass:'class2'
                                 }

@@ -184,7 +184,6 @@
     z-index: 1;
     width: 100%;
     height: .84rem;
-    line-height: .84rem;
     text-align: center;
     color: #333;
     background-color: #fff;
@@ -203,7 +202,7 @@
     border-top:6px solid #d8d8d8;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    margin-left: 6px;
+    margin-left: 4px;
 }
 .w-header .w-filter-lists .w-filter-lis.curr > i{
     border-top:6px solid #0c7ff9;

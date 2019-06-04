@@ -35,6 +35,19 @@
     background-size: .4rem;
 }
 
+.mger-header-box .mger-header .mger-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: 40px;
+    color:#fff;
+    font-size: 16px;
+    padding:0 10px;
+    text-align: center;
+    line-height: 40px;
+    background-size: .4rem;
+}
 .mger-header-box .mger-header .mger-contain {
     color: #fff;
     height: 40px;
@@ -92,6 +105,12 @@
     box-shadow: 0 1px 10px 0 rgba(0, 0, 0, .06);
 }
 
+.mger-header-box .mger-filter .mger-f.curr{
+    font-weight: bold;
+}
+.mger-header-box .mger-filter .mger-f.curr>i{
+    border-top: 5px solid #0c7ff9;
+}
 .mger-header-box .mger-filter .mger-f>i {
     width: 0;
     height: 0;
@@ -111,12 +130,27 @@
 }
 
 .mger-container .mger-area .mger-lis {
+    position: relative;
     width: calc(50% - 10px);
     margin-left: 10px;
     background-color: #fff;
+    border:1px solid #fff;
     border-radius: 8px;
     padding: 15px 10px;
     margin-bottom: 15px;
+}
+.mger-container .mger-lis.checked{
+    border:1px solid #0c7ff9 !important;
+}
+.mger-container .mger-lis.checked:after{
+    content:'';
+    position: absolute;
+    right: 0;
+    top:0;
+    width: 24px;
+    height: 24px;
+    background: url('../../image/postion_checked.png') no-repeat center;
+    background-size: 24px;
 }
 
 .mger-container .mger-area .mger-lis .left {
@@ -144,9 +178,12 @@
 }
 
 .mger-container .mger-team .mger-lis{
+    position: relative;
     width:100%;
     margin-bottom: 10px;
     background-color: #fff;
+    border:1px solid #fff;
+    border-radius: 8px;
     padding:15px 10px;
 }
 
@@ -178,14 +215,20 @@
     bottom:7px;
     height: 17px;
     padding-bottom: 1px;
-    line-height: 16px;
+    line-height: 18px;
     text-align: center;
     width:36px;
     font-size: 11px;
     color:#fff;
-    background-color:#ff3b30;
-    border-radius: 8px;
-
+    overflow: hidden;
+}
+.mger-container .mger-team .mger-lis .mger-lpro-curr > span.left{
+    background: url('../../image/alert_left.png') no-repeat center;
+    background-size: 36px 16px;
+}
+.mger-container .mger-team .mger-lis .mger-lpro-curr > span.right{
+    background: url('../../image/alert_right.png') no-repeat center;
+    background-size: 36px 16px;
 }
 .mger-container .mger-team .mger-lis .mger-lpro-curr > span.right{
     right:-36px;
@@ -200,9 +243,12 @@
     color:#666;
 }
 .mger-container .mger-crew .mger-lis{
+    position: relative;
     width:100%;
     margin-bottom: 10px;
     background-color: #fff;
+    border:1px solid #fff;
+    border-radius: 8px;
 }
 .mger-container .mger-crew .mger-lis .mger-lt{
     padding: 5px 15px;

@@ -6,8 +6,12 @@
 // 清除 移动端点击的300ms 延迟，点透事件
 if ('addEventListener' in document) {
     document.addEventListener('DOMContentLoaded', function() {
-        if(FastClick){
-            FastClick.attach(document.body);
+        try{
+            if(FastClick){
+                FastClick.attach(document.body);
+            }
+        }catch(err){
+            console.log(err)
         }
     }, false);
 };
@@ -81,6 +85,70 @@ function wOpenCustomerSortFrame(par){
         h:par.h,
         param:par.param
     })
+}
+// 打开客户跟进时间筛选框
+function wOpenCustomerTimeFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_time.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 打开更多筛选
+// 目前只包含 客户来源，客户状态，归属地，时间这四种选择。
+function wOpenCustomerMoreFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_more.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 格式化日期
+function funcFormateDate(year,month,day){
+	month = (month+'').length > 1 ? month : '0' + month;
+	day = (day+'').length > 1 ? day : '0' + day;
+	return year + '-' + month + '-' + day;
+}
+// 获取今天的起止时间
+function funcGetThisToday(){
+	var date = new Date(),
+		year = date.getFullYear(),
+		month = date.getMonth()+1,
+		day = date.getDate();
+	return {
+		startDate:funcFormateDate(year,month,day),
+		endDate:funcFormateDate(year,month,day)
+	}
+}
+// 获取到本周的起止时间
+function funcGetThisWeek(){
+	var date = new Date(),
+		year = date.getFullYear(),
+		month = date.getMonth()+1,
+		week = date.getDay(),
+		day = date.getDate();
+	return {
+		startDate:funcFormateDate(year,month,day-week+1),
+		endDate:funcFormateDate(year,month,day-week+7)
+	}
+}
+// 获取到本月的起止时间
+function funcGetThisMonth(){
+	var date = new Date(),
+		year = date.getFullYear(),
+		month = date.getMonth()+1;
+	var nextMonthDay = new Date(funcFormateDate(year,month+1,1));
+	var lastDay = new Date(nextMonthDay - 86400000).getDate();
+	return {
+		startDate:funcFormateDate(year,month,1),
+		endDate:funcFormateDate(year,month,lastDay)
+	}
 }
 // 自定义指令，长按
 Vue.directive('longpress', {
