@@ -79,8 +79,15 @@
             var obj = ret.value;
             console.log('new header---'+JSON.stringify(obj))
             if(obj){
+
                 if(typeof obj.classify != 'undefined'){
-                    ncusHeaderV.currClassifySelected = obj.classify;
+                    ncusHeaderV.currClassify = obj.classify;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    ncusHeaderV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    ncusHeaderV.endDate = obj.endDate;
                 }
                 if(typeof obj.origin != 'undefined'){
                     ncusHeaderV.currOriginSelected = obj.origin;
@@ -91,7 +98,7 @@
                     ncusHeaderV.currHome = obj.home;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    ncusHeaderV.currSortSelected = obj.sort;
+                    ncusHeaderV.currSort = obj.sort;
                 }
             }
             $('.w-filter-lis').removeClass('curr');
@@ -114,12 +121,19 @@
                 // 归属地
                 currHome:'',
                 // 排序
-                currSortSelected:0
+                currSort:0
             },
             created:function(){
-                this.currOriginType = param.val == 0 ? 2 : 1;
-            },
-            mounted:function(){
+                console.log(JSON.stringify(param))
+                if(param.empId){
+                    this.currOriginSelected = param.currOrigin;
+                    this.currOriginTwoSelected = param.currOriginTwo;
+                    this.currOriginType = param.currType;
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
+                }else{
+                    this.currOriginType = param.val == 0 ? 2 : 1;
+                }
             },
             methods:{
                 init:function(){
@@ -149,8 +163,8 @@
                                 h:h,
                                 param:{
                                     origin:'filterNewCustomer',
-                                    startDate:'',
-                                    endDate:''
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
                                 }
                             });
                         }
@@ -177,8 +191,8 @@
                                     currType:_this.currOriginType,
                                     currClassify:_this.currClassifySelected,
                                     currHome:_this.currHome,
-                                    startDate:'',
-                                    endDate:'',
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
                                 }
                             });
                         }
@@ -188,7 +202,7 @@
                                 h:h,
                                 param:{
                                     origin:'filterNewCustomer',
-                                    currSelected:_this.currSortSelected,
+                                    currSelected:_this.currSort,
                                     sortClass:'class5'
                                 }
                             })
@@ -233,6 +247,22 @@
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
+        var pObj = {};
+        if(param.empId){
+            pObj = {
+                empId:param.empId,
+                currOrigin:param.currOrigin,
+                currOriginTwo:param.currOriginTwo,
+                currType:param.currType,
+                startDate:param.startDate,
+                endDate:param.endDate,
+            }
+        }else{
+            pObj = {
+                origin:param.val,
+                type:param.val == 0 ? 2 : 1
+            }
+        }
         wHrefJs.openFrame({
             name:'newCustomerFrame',
             path:'./new_customer_frame.html',
@@ -240,11 +270,7 @@
             h:h,
             bounces:true,
             bgColor:'#f7f7f7',
-            param:{
-                origin:param.val,
-                type:param.val == 0 ? 2 : 1,
-                empId:param.empId
-            },
+            param:pObj,
             animation:{
                 type:'none'
             }

@@ -386,7 +386,7 @@ var wHrefJs = {
         par.bgColor = par.bgColor === undefined || par.bgColor == false ? '#fff' : par.bgColor;
         api.openWin({
             name: par.name,
-            url: par.path,
+            url: par.path || par.url,
             pageParam: par.param,
             bounces: par.bounces,
             bgColor:par.bgColor,

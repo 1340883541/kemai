@@ -152,8 +152,10 @@
                 currOrigin:'',
                 currType:'',
                 currHome:'',
-                currSort:'',
-
+                currSort:0,
+                startDate:'',
+                endDate:'',
+                
                 khDataList: [], //客户来源列表
                 pageNo: 1,
                 totalPage: 1,
@@ -169,8 +171,11 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    this.currOrigin = api.pageParam.origin;
-                    this.currType = api.pageParam.type;
+                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
+                    this.currType = param.currType;
+                    this.currOrigin = param.currOrigin;
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
                 },
                 // 获取今日新增列表
                 fetchNewAdd: function(isLoadMore, callback) {
@@ -184,10 +189,10 @@
                     else{
                         url = 'newResource/newAddResFollList';
                     }
-                    console.log('new request----'+JSON.stringify({
+                    console.log('new customer frame request----'+JSON.stringify({
                         employeeid: param.empId ? param.empId : _this.userInfo.employeeid,
-                        startTime:funcGetThisToday().startDate,
-                        endTime:funcGetThisToday().startDate,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
                         cusSource:_this.currOrigin,
                         sort:_this.currSort,
                         type:_this.currType,
@@ -204,8 +209,8 @@
                         },
                         data: {
                             employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
-                            startTime:funcGetThisToday().startDate,
-                            endTime:funcGetThisToday().startDate,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
                             cusSource:_this.currOrigin,
                             sort:_this.currSort,
                             type:_this.currType,
@@ -241,7 +246,7 @@
                     })
                 },
                 // 跳转到详情
-                skipDetail: function(id,phone) {
+                skipCustomerDetail: function(id,phone) {
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
@@ -267,30 +272,6 @@
                 }
             }
         });
-    }
-    // 显示客户来源的弹窗
-    function showFilterPopup() {
-        $('#filter-popup').show();
-    }
-    // 隐藏客户来源的弹窗
-    function hideFilterPopup() {
-        $('#filter-popup').hide();
-    }
-    // 隐藏弹窗框
-    function hideFilterPopupBox() {
-        hideFilterPopup();
-        api.setFrameAttr({
-            bounces: true
-        });
-    }
-    // 联系状态和分配时间 条件筛选
-    function filterCondition(data) {
-        var d = JSON.parse(data);
-        $('#not-more').hide();
-        newCustomerFrame.search_status = d.status1;
-        newCustomerFrame.order_time = d.status2;
-        newCustomerFrame.pageNo = 1;
-        newCustomerFrame.fetchNewAdd();
     }
     // 获取搜索的内容
     function getSearchValue(val) {

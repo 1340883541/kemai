@@ -126,7 +126,7 @@
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <empty-con :is-show="teamList.length === 0" txt="暂无小组信息"></empty-con>
+                <empty-con :is-show="groupList.length === 0" txt="暂无小组信息"></empty-con>
             </ul>
             <ul class="mger-lists mger-team" id="mger-crew" v-if="isShowCrewBox">
                 <li
@@ -171,7 +171,7 @@
                     managerStatV.callStatus = obj.callStatus;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    managerStatV.currSortSelected = obj.sort;
+                    managerStatV.currSort = obj.sort;
                     managerStatV.currSortType = obj.sort == 0 ? 'desc' : 'asc';
                 }
                 if(typeof obj.startDate != 'undefined'){
@@ -196,10 +196,10 @@
                 // tdgly  国内团队管理员
                 // yg   国内员工
                 // zz  组长
-                jobTitle:'qygly',
+                jobTitle:'',
                 step:'',
                 initStep:'',
-                currSortSelected:0,
+                currSort:0,
                 currSortType:'desc',
                 // 开始结束时间
                 startDate:'',
@@ -240,7 +240,7 @@
                     key: 'userInfo'
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                // console.log(JSON.stringify(this.userInfo))
+                this.jobTitle = this.userInfo.relativePosi;
                 // 通话状态
                 this.callStatus = param.callStatus;
                 this.step = this.jobTitle == 'gngly' || this.jobTitle == 'qygly' ? 1 : this.jobTitle == 'tdgly' ? 2 : 3;
@@ -271,39 +271,37 @@
                 fetchCallData:function(filterStep){
                     var _this = this;
                     wDialog.showProgress();
-                    console.log(JSON.stringify({
-                        step:_this.step,
+                    var data = {
+                        step:filterStep?filterStep:_this.step,
                         initStep:_this.initStep,
                         token:TOKEN_DATA,
-                        regionIds:_this.areaId,
-                        teamIds:_this.teamId,
-                        groupIds:_this.groupId,
-                        empIds:_this.crewId,
                         sortType:_this.currSortType,
                         callTimeStart:_this.startDate,
                         callTimeEnd:_this.endDate,
                         callStatus:_this.callStatus
-                    }))
+                    };
+                    if(filterStep==1 || this.step == 1){
+                        data.orgId = '';
+                    }
+                    else if(filterStep==2 || this.step == 2){
+                        data.orgId = this.areaId;
+                    }
+                    else if(filterStep==3 || this.step == 3){
+                        data.orgId = this.teamId;
+                    }
+                    else{
+                        data.orgId = this.groupId;
+                    }
+                    console.log(JSON.stringify(data))
                     wApiAjax({
                         url:'todayCall/empDetail',
                         headers: {
                             token: TOKEN_DATA
                         },
-                        data:{
-                            step:filterStep?filterStep:_this.step,
-                            token:TOKEN_DATA,
-                            regionIds:_this.areaId,
-                            teamIds:_this.teamId,
-                            groupIds:_this.groupId,
-                            empIds:_this.crewId,
-                            sortType:_this.currSortType,
-                            callTimeStart:_this.startDate,
-                            callTimeEnd:_this.endDate,
-                            callStatus:_this.callStatus
-                        },
+                        data:data,
                         success:function(res){
                             wDialog.hideProgress();
-                            console.log('response ------------'+JSON.stringify(res))
+                            console.log('manager stat response ------------'+JSON.stringify(res))
                             if(res.code==1){
                                 var list = _this.funcFormatRequestData(res.data);
                                 if(filterStep){
@@ -371,7 +369,7 @@
                         this.isCurrGroup = false;
                     }
                     else if(i === 1){
-                        if(this.areaId){
+                        if(this.areaId || this.jobTitle == 'tdgly'){
                             this.isShowAreaBox = false;
                             this.isShowTeamBox = true;
                             this.isShowGroupBox = false;
@@ -387,7 +385,7 @@
                         }
                     }
                     else if(i === 2){
-                        if(this.teamId){
+                        if(this.teamId || this.jobTitle == 'zz'){
                             this.isShowAreaBox = false;
                             this.isShowTeamBox = false;
                             this.isShowGroupBox = true;
@@ -403,21 +401,15 @@
                         }
                     }
                     else if(i === 3){
-                        if(this.teamId){
-                            this.isShowAreaBox = false;
-                            this.isShowTeamBox = false;
-                            this.isShowGroupBox = false;
-                            this.isShowCrewBox = true;
+                        this.isShowAreaBox = false;
+                        this.isShowTeamBox = false;
+                        this.isShowGroupBox = false;
+                        this.isShowCrewBox = true;
 
-                            this.isCurrArea = false;
-                            this.isCurrTeam = false;
-                            this.isCurrGroup = true;
-                            this.step = 4;
-                        }else{
-                            wDialog.toast({
-                                msg:'请先选择团队'
-                            })
-                        }
+                        this.isCurrArea = false;
+                        this.isCurrTeam = false;
+                        this.isCurrGroup = true;
+                        this.step = 4;
                     }
                     else{
                         console.log('参数错误');
@@ -457,13 +449,16 @@
                     this.handleSwitchPosition(3);
                 },
                 handleChooseCrew:function(id){
-                    console.log('跳转查看员工的客户')
+                    var _this = this;
                     this.crewCurr = id;
                     wHrefJs.openWin({
                         name:'callStat',
                         path:'./call_stat_header.html',
                         param:{
-                            empId:id
+                            empId:id,
+                            startDate:_this.startDate,
+                            endDate:_this.endDate,
+                            callStatus:_this.callStatus
                         }
                     })
                 },
@@ -505,7 +500,7 @@
                                 h:h,
                                 param:{
                                     origin:'filterManagerStat',
-                                    currSelected:_this.currSortSelected,
+                                    currSelected:_this.currSort,
                                     sortClass:'class3'
                                 }
                             })
@@ -534,6 +529,9 @@
                     }
                     if(this.teamName && this.groupName){
                         return this.teamName+'/'+this.groupName;
+                    }
+                    if(this.teamName){
+                        return this.teamName;
                     }
                     return '';
                 }

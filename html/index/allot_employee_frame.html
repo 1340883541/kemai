@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增客户-主页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+        #wrap{
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div class="filter-lists" v-if="employeeList && employeeList.length > 0" v-cloak>
+            <div class="filter-lis" v-for="employee in employeeList" :key="employee.id">
+                <div class="filter-lt flex-wrap flex-between">
+                    <div class="flex-wrap filter-lcap">
+                        <span class="cname w-elli" v-text="employee.cusnmae"></span>
+                    </div>
+                    <div class="cphone" @click.stop="handleSkipFollow(employee.id,employee.phone)">去分配</div>
+                </div>
+                <div class="filter-lb">
+                    <div class="lis flb-cls1">号码归属地: <span v-text="employee.attribution||'未知'"></span></div>
+                    <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status green-col orange-col">已跟进</span></div>
+                    <div class="lis flb-cls2">分配时间: <span v-text="employee.createtime||'暂未分配'"></span></div>
+                    <div class="lis flb-cls2" v-if="employee">跟进时间: <span v-text="employee.createtime"></span></div>
+                </div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="employeeList.length === 0" txt="暂无你查找的客户"></empty-con>
+        <!-- 跟进记录弹窗 -->
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var allotEmployeeFrameV = null;
+    apiready = function() {
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: false,
+            loadAnimInterval: 120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            $('#not-more').hide();
+            allotEmployeeFrameV.pageNo = 1;
+            allotEmployeeFrameV.fetchAllotEeployee(false, api.refreshHeaderLoadDone);
+        });
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterAllotEmployee'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(obj){
+                if(typeof obj.startDate != 'undefined'){
+                    allotEmployeeFrameV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    allotEmployeeFrameV.endDate = obj.endDate;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    allotEmployeeFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
+                    allotEmployeeFrameV.currType = obj.type;
+                }
+                allotEmployeeFrameV.pageNo = 1;
+                allotEmployeeFrameV.fetchAllotEeployee();
+            }
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (++allotEmployeeFrameV.pageNo <= allotEmployeeFrameV.totalPage) {
+                allotEmployeeFrameV.fetchAllotEeployee(true);
+            } else {
+                $('#not-more').show();
+            }
+        });
+        var param = api.pageParam;
+        allotEmployeeFrameV = new Vue({
+            el: '#wrap',
+            data: {
+                // 筛选条件
+                search_cusName: '', // 搜索客户名
+                currOrigin:'',
+                currType:'',
+                startDate:'',
+                endDate:'',
+
+
+                employeeList: [], //客户来源列表
+                pageNo: 1,
+                totalPage: 1,
+                userInfo: '',
+                areaId:''
+            },
+            mounted: function() {
+                this.init();
+                this.fetchAllotEeployee();
+            },
+            methods: {
+                init:function(){
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
+                    this.currType = param.currType;
+                    this.currOrigin = param.currOrigin;
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
+                    this.areaId = param.region
+                },
+                // 获取今日新增列表
+                fetchAllotEeployee: function(isLoadMore, callback) {
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log('allot employee frame request----'+JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
+                        region:_this.areaId,
+                        cusSource:_this.currOrigin,
+                        sort:0,
+                        type:_this.currType,
+                        search_cusName:_this.search_cusName,
+                        pageNo: _this.pageNo,
+                        pageSize: 10
+                    }));
+                    // return;
+                    wApiAjax({
+                        url: 'newResource/allocationList',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid:_this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            region:_this.areaId,
+                            cusSource:_this.currOrigin,
+                            sort:0,
+                            type:_this.currType,
+                            search_cusName:_this.search_cusName,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
+                        },
+                        success: function(res) {
+                            wDialog.hideProgress();
+                            console.log(JSON.stringify(res))
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
+                                    _this.employeeList = res.data ? res.data : [];
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                } else {
+                                    if (res.data) {
+                                        _this.employeeList = _this.employeeList.concat(res.data);
+                                    }
+                                }
+
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail: function() {
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                }
+            }
+        });
+    }
+    // 获取搜索的内容
+    function getSearchValue(val) {
+        allotEmployeeFrameV.search_cusName = val;
+        allotEmployeeFrameV.pageNo = 1;
+        allotEmployeeFrameV.fetchAllotEeployee();
+    }
+    // 清空搜索的内容
+    function clearSearchValue() {
+        allotEmployeeFrameV.search_cusName = '';
+    }
+</script>
+
+</html>

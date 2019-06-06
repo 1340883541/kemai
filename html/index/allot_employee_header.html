@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>电话-头部</title>
+    <title>新增资源分配-头部</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -28,17 +28,25 @@
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
-                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">今日通话<i></i></span></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">新增资源分配<i></i></span></div>
+            </div>
+            <div class="search-box" id="header-search-box">
+                <div class="search-inp">
+                    <form action="#" onsubmit="return false;">
+                        <i class="search" @click="submitSeach"></i>
+                        <i class="close" @click="clearSearchVal"></i>
+                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                    </form>
+                    <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索销售负责人</span></div>
+                </div>
+                <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
             <div class="w-filter-lists flex-wrap">
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
+                    <span>客户来源</span><i></i>
+                </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
-                    <span>通话时间</span><i></i>
-                </div>
-                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
-                    <span>通话状态</span><i></i>
-                </div>
-                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,3)">
-                    <span>排序</span><i></i>
+                    <span>变更时间</span><i></i>
                 </div>
             </div>
         </div>
@@ -52,27 +60,29 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var callStatHeaderV = null;
+    var ncusHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
-        var param = api.pageParam;
         // 跳转到frame
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
+        var param = api.pageParam;
         wHrefJs.openFrame({
-            name:'openCallStatFrame',
-            path:'./call_stat_frame.html',
+            name:'openAllotEmployeeFrame',
+            path:'./allot_employee_frame.html',
             y:y,
             h:h,
             bounces:true,
             bgColor:'rgba(0,0,0,0)',
             param:{
-                empId:param.empId,
                 startDate:param.startDate,
                 endDate:param.endDate,
-                callStatus:param.callStatus,
+                currOrigin:param.currOrigin,
+                currOriginTwo:param.currOriginTwo,
+                currType:param.currType,
+                region:param.region
             },
             animation:{
                 type:'none'
@@ -80,43 +90,76 @@
         });
         // 筛选客户状态
         api.addEventListener({
-            name: 'filterCallStat'
+            name: 'filterAllotEmployee'
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
-                if(typeof obj.callStatus != 'undefined'){
-                    callStatHeaderV.callStatus = obj.callStatus;
-                }
-                if(typeof obj.sort != 'undefined'){
-                    callStatHeaderV.currSortSelected = obj.sort;
+                if(typeof obj.origin != 'undefined'){
+                    ncusHeaderV.currOriginSelected = obj.origin;
+                    ncusHeaderV.currOriginTwoSelected = obj.originTwo;
+                    ncusHeaderV.currOriginType = obj.type;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    callStatHeaderV.startDate = obj.startDate;
+                    ncusHeaderV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    callStatHeaderV.endDate = obj.endDate;
+                    ncusHeaderV.endDate = obj.endDate;
                 }
             }
             $('.w-filter-lis').removeClass('curr');
         });
-        callStatHeaderV = new Vue({
+
+        ncusHeaderV = new Vue({
             el:"#wrap",
             data:{
                 searchVal:'',
-                // 通话状态
-                callStatus:'',
-                // 排序方式
-                currSortSelected:0,
+
+                currOriginSelected:'',
+                currOriginTwoSelected:'',
+                currOriginType:'',
                 // 开始结束时间
                 startDate:'',
-                endDate:''
+                endDate:'',
             },
             mounted:function(){
-                this.startDate = param.startDate;
-                this.endDate = param.endDate;
-                this.callStatus = param.callStatus;
+                this.currOriginSelected=param.currOrigin;
+                this.currOriginTwoSelected=param.currOriginTwo;
+                this.currOriginType=param.currType;
+                // 开始结束时间
+                this.startDate=param.startDate;
+                this.endDate=param.endDate;
             },
             methods:{
+                // 获取焦点
+                onFoucsInp:function(){
+                    $('#header-search-box').addClass('curr');
+                    setTimeout(function(){
+                        $('#search-inp').focus();
+                    },200);
+                },
+                // 取消搜索
+                cancelSearch:function(){
+                    $('#search-inp').blur();
+                    $('#header-search-box').removeClass('curr');
+                    this.clearSearchVal();
+                },
+                // 清空搜索
+                clearSearchVal:function(){
+                    this.searchVal = '';
+                    api.execScript({
+                        name:'main',
+                        frameName: 'customerFrame',
+                        script: 'clearSearchValue();'
+                    });
+                },
+                // 搜索
+                submitSeach:function(){
+                    api.execScript({
+                        name:'main',
+                        frameName: 'customerFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
+                },
                 // 筛选
                 clickFilterFn:function(e,i){
                     var tag = e.currentTarget,
@@ -128,37 +171,28 @@
                         h = wHei - y;
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
-                        if(i === 1){
+                        if(i === 0){
+                            wOpenCustomerOriginFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterAllotEmployee',
+                                    currSelected:_this.currOriginSelected,
+                                    currTwoSelected:_this.currOriginTwoSelected,
+                                    currType:_this.currOriginType
+                                }
+                            });
+                        }
+                        else if(i === 1){
                             wOpenCustomerTimeFrame({
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterCallStat',
+                                    origin:'filterAllotEmployee',
                                     startDate:_this.startDate,
-                                    endDate:_this.endDate
+                                    endDate:_this.endDate,
                                 }
                             });
-                        }
-                        else if(i === 2){
-                            wOpenCustomerCallstatusFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterCallStat',
-                                    callStatus:_this.callStatus
-                                }
-                            });
-                        }
-                        else if(i == 3){
-                            wOpenCustomerSortFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterCallStat',
-                                    currSelected:_this.currSortSelected,
-                                    sortClass:'class4'
-                                }
-                            })
                         }
                         else{
                             console.log('筛选页面参数错误')

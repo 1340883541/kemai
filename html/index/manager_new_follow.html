@@ -38,7 +38,7 @@
                         <div class="cap">新增跟进资源</div>
                         <div class="desc" v-text="currNowLocationTxt"></div>
                     </div>
-                    <div class="mger-right" v-text="allotTxt"></div>
+                    <div class="mger-right" v-text="allotTxt" @click.stop="handleAllotEmployee"></div>
                 </div>
                 <div class="mger-nav flex-wrap">
                     <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
@@ -72,7 +72,7 @@
                     <div class="left flex-wrap flex-vertical flex-center">
                         <p class="mger-cap" v-text="area.name"></p>
                         <p class="mger-desc">
-                            <span v-text="area.addtotal"></span>/<span v-text="area.total">5000</span>
+                            <span v-text="area.addtotal"></span>/<span v-text="area.total"></span>
                         </p>
                     </div>
                     <div class="right" :id="'circle-'+idx">
@@ -169,12 +169,12 @@
             console.log(JSON.stringify(obj))
             if(obj){
                 if(typeof obj.origin != 'undefined'){
-                    managerNewFollowV.currOriginSelected = obj.origin;
-                    managerNewFollowV.currOriginTwoSelected = obj.originTwo;
-                    managerNewFollowV.currOriginType = obj.type;
+                    managerNewFollowV.currOrigin = obj.origin;
+                    managerNewFollowV.currOriginTwo = obj.originTwo;
+                    managerNewFollowV.currType = obj.type;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    managerNewFollowV.currSortSelected = obj.sort;
+                    managerNewFollowV.currSort = obj.sort;
                 }
                 if(typeof obj.startDate != 'undefined'){
                     managerNewFollowV.startDate = obj.startDate;
@@ -182,6 +182,7 @@
                 if(typeof obj.endDate != 'undefined'){
                     managerNewFollowV.endDate = obj.endDate;
                 }
+                managerNewFollowV.filterGetData();
             }
             $('.filter-lis').removeClass('curr');
         });
@@ -201,11 +202,11 @@
                 startDate:'',
                 endDate:'',
 
-                currOriginSelected:param.val,
-                currOriginTwoSelected:'',
-                currOriginType:'',
+                currOrigin:param.val,
+                currOriginTwo:'',
+                currType:'',
 
-                currSortSelected:0,
+                currSort:0,
                 // 显示哪个盒子
                 isShowAreaBox:false,
                 isShowTeamBox:false,
@@ -236,7 +237,7 @@
                 crewList:[]
             },
             mounted: function() {
-                this.currOriginType = param.val == 0 ? 2 : 1;
+                this.currType = param.val == 0 ? 2 : 1;
                 this.init();
                 this.fetchAllAreaData();
             },
@@ -285,16 +286,17 @@
                         }
                     })
                 },
-                fetchPosiData:function(){
+                fetchPosiData:function(isFilter){
+                    isFilter = isFilter || false;
                     var _this = this;
                     wDialog.showProgress();
                     console.log('manager -- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                        sort:_this.currSortSelected,
-                        type:_this.currOriginType,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
                         search_cusName:'',
                         attributionid:'',
                         resourcetype:'',
@@ -310,9 +312,9 @@
                             employeeid: _this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                            sort:_this.currSortSelected,
-                            type:_this.currOriginType,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
                             search_cusName:'',
                             attributionid:'',
                             resourcetype:'',
@@ -320,7 +322,7 @@
                             pageSize: 1000
                         },
                         success: function(res) {
-                            console.log(JSON.stringify(res))
+                            console.log('initlist '+JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
                                 var jobRelaIdx = getJobRelative(_this.jobTitle);
@@ -400,7 +402,12 @@
 
                 },
                 // 获取团队数据
-                fetchTeamData:function(){
+                fetchTeamData:function(isFilter){
+                    isFilter = isFilter || false;
+                    console.log(this.areaId)
+                    if(getJobRelative(this.jobTitle) > 1){
+                        return;
+                    }
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
@@ -412,9 +419,9 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                            sort:_this.currSortSelected,
-                            type:_this.currOriginType,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
                             region:_this.areaId
                         },
                         success:function(res){
@@ -425,7 +432,9 @@
                                     v.percent = Math.round((v.addtotal/v.total)*100);
                                     return v;
                                 });
-                                _this.handleSwitchPosition(1);
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(1);
+                                }
                             }
                         }
                     })
@@ -444,16 +453,20 @@
                     }
                 },
                 // 获取小组数据
-                fetchGroupData:function(){
+                fetchGroupData:function(isFilter){
+                    isFilter = isFilter || false;
+                    if(getJobRelative(this.jobTitle) > 2){
+                        return
+                    }
                     var _this = this;
                     wDialog.showProgress();
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                        sort:_this.currSortSelected,
-                        type:_this.currOriginType,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
                         region:_this.areaId,
                         team:_this.teamId
                     }))
@@ -466,9 +479,9 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                            sort:_this.currSortSelected,
-                            type:_this.currOriginType,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
                             region:_this.areaId,
                             team:_this.teamId
                         },
@@ -480,7 +493,9 @@
                                     v.percent = Math.round((v.addtotal/v.total)*100);
                                     return v;
                                 });
-                                _this.handleSwitchPosition(2);
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(2);
+                                }
                             }
                         }
                     })
@@ -500,16 +515,20 @@
                     }
                 },
                 // 获取成员数据
-                fetchCrewData:function(){
+                fetchCrewData:function(isFilter){
+                    isFilter = isFilter || false;
+                    if(this.areaId === '' && this.teamId === '' && this.groupId === ''){
+                        return
+                    }
                     var _this = this;
                     wDialog.showProgress();
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                        sort:_this.currSortSelected,
-                        type:_this.currOriginType,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
                         region:_this.areaId,
                         team:_this.teamId,
                         groupid:_this.groupId
@@ -523,9 +542,9 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwoSelected ? _this.currOriginTwoSelected : _this.currOriginSelected,
-                            sort:_this.currSortSelected,
-                            type:_this.currOriginType,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
                             region:_this.areaId,
                             team:_this.teamId,
                             groupid:_this.groupId
@@ -538,22 +557,41 @@
                                     v.percent = Math.round((v.addtotal/v.total)*100);
                                     return v;
                                 });
-                                _this.handleSwitchPosition(3);
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(3);
+                                }else{
+                                    if(_this.isCurrGroup){
+                                        _this.handleSwitchPosition(2);
+                                    }
+                                }
                             }
                         }
                     })
                 },
                 // 选择小组
                 handleChooseCrew:function(id){
+                    var _this = this;
                     wHrefJs.openWin({
                         name: 'newCustomerHeader',
                         path: './new_customer_header.html',
                         param: {
                             val: param.val,
-                            empId:id
+                            empId:id,
+                            startDate:_this.startDate,
+                            endDate:_this.endDate,
+                            currType:_this.currType,
+                            currOrigin:_this.currOrigin,
+                            currOriginTwo:_this.currOriginTwo
                         },
                         bgColor: '#f7f7f7'
                     })
+                },
+                // 筛选获取数据
+                filterGetData:function(){
+                    this.fetchPosiData(true);
+                    this.fetchTeamData(true);
+                    this.fetchGroupData(true);
+                    this.fetchCrewData(true);
                 },
                 // 切换职位
                 // i=0 大区  i=1 团队  i=2 小组
@@ -641,9 +679,9 @@
                                 h:h,
                                 param:{
                                     origin:'filterManagerNewFollow',
-                                    currSelected:_this.currOriginSelected,
-                                    currTwoSelected:_this.currOriginTwoSelected,
-                                    currType:_this.currOriginType
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currType
                                 }
                             });
                         }
@@ -653,7 +691,7 @@
                                 h:h,
                                 param:{
                                     origin:'filterManagerNewFollow',
-                                    currSelected:_this.currSortSelected,
+                                    currSelected:_this.currSort,
                                     sortClass:'class2'
                                 }
                             })
@@ -667,13 +705,35 @@
                             name:'filterCustomerFrame'
                         });
                     }
+                },
+                // 分配员工
+                handleAllotEmployee:function(){
+                    var _this = this;
+                    if(this.allotTxt){
+                        wHrefJs.openWin({
+                            name:'allotEmployeeHeader',
+                            url:'./allot_employee_header.html',
+                            param:{
+                                currOrigin:_this.currOrigin,
+                                currOriginTwo:_this.currOriginTwo,
+                                currType:_this.currType,
+                                startDate:_this.startDate,
+                                endDate:_this.endDate,
+                                region:_this.areaId
+                            }
+                        })
+                    }
                 }
             },
             computed:{
                 allotTxt:function(){
                     var idx = getJobRelative(this.jobTitle);
                     if(idx == 1 || idx == 2){
-                        return '分配'
+                        if(this.isCurrTeam){
+                            return '分配'
+                        }else{
+                            return '';
+                        }
                     }
                     else{
                         return '';
@@ -691,6 +751,9 @@
                     }
                     if(this.teamName && this.groupName){
                         return this.teamName+'/'+this.groupName;
+                    }
+                    if(this.teamName){
+                        return this.teamName;
                     }
                     return '';
                 }

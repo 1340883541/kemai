@@ -463,6 +463,21 @@
     line-height: 1em;
     padding: 10px 0;
 }
+.filter-lists .filter-lis .filter-lb .lis.flb-cls1 .follow-status{
+    margin-left: 4px;
+    padding: 0 4px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 13px;
+}
+.filter-lists .filter-lis .filter-lb .lis.flb-cls1 .follow-status.orange-col{
+    color:#fff9f2;
+    background-color: #ff9402;
+}
+.filter-lists .filter-lis .filter-lb .lis.flb-cls1 .follow-status.green-col{
+    color:#f2fcf7;
+    background-color: #00bf6d;
+}
 .filter-lists .filter-lis .filter-lb .lis.flb-cls2{
     color:#999;
     line-height: 1em;
