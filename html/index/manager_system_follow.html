@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>管理者新增资源跟进</title>
+    <title>管理者系统资源跟进</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -35,7 +35,7 @@
                 <div class="mger-header">
                     <div class="mger-back" onclick="api.closeWin();"></div>
                     <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
-                        <div class="cap">新增跟进资源</div>
+                        <div class="cap">系统跟进资源</div>
                         <div class="desc">333</div>
                     </div>
                 </div>
@@ -45,92 +45,103 @@
                     <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
-                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                    <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,1)">
                         <span>计划时间</span><i></i>
                     </div>
-                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                    <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,2)">
                         <span>客户来源</span><i></i>
                     </div>
-                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                    <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,3)">
                         <span>客户状态</span><i></i>
                     </div>
-                    <div class="flex-con mger-f flex-wrap flex-center  flex-align-item">
+                    <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,4)">
                         <span>排序</span><i></i>
                     </div>
                 </div>
             </div>
             <div class="mger-header-place"></div>
         </div>
+
         <div class="mger-container">
-            <ul class="mger-lists clear mger-area" id="mger-area">
-                <li class="mger-lis fl flex-wrap">
+            <ul class="mger-lists clear mger-area" id="mger-area" v-if="isShowAreaBox">
+                <li
+                    v-if="areaList && areaList.length > 0"
+                    class="mger-lis fl flex-wrap"
+                    v-for="(area,idx) in areaList"
+                    :key="'area'+idx"
+                    :class="{checked:areaCurr === area.region}"
+                    @click.stop="handleChooseArea(area.region,area.name)"
+                >
                     <div class="left flex-wrap flex-vertical flex-center">
-                        <p class="mger-cap">天津</p>
+                        <p class="mger-cap" v-text="area.name"></p>
                         <p class="mger-desc">
-                            <span>5000</span>/<span>5000</span>
+                            <span v-text="area.addtotal"></span>/<span v-text="area.total"></span>
                         </p>
                     </div>
-                    <div class="right" id="circle-0">
+                    <div class="right" :id="'circle-'+idx">
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-team" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt">销售一组</div>
+            <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
+                <li
+                    v-if="teamList && teamList.length > 0"
+                    class="mger-lis"
+                    v-for="(team,idx) in teamList"
+                    :key="'team'+idx"
+                    :class="{checked:teamCurr === team.team}"
+                    @click.stop="handleChooseTeam(team.team,team.name)"
+                >
+                    <div class="mger-lt" v-text="team.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr">
-                            <span class="left">90%</span>
+                        <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
+                            <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
                         </div>
                     </div>
                     <div class="mger-ldesc">
-                        <span>430</span>/<span>1000</span>
+                        <span v-text="team.addtotal"></span>/<span v-text="team.total"></span>
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-group" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt">销售一组1队</div>
+            <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
+                <li
+                    v-if="groupList && groupList.length > 0"
+                    class="mger-lis"
+                    v-for="(group,idx) in groupList"
+                    :key="'group'+idx"
+                    :class="{checked:groupCurr === group.groupid}"
+                    @click.stop="handleChooseGroup(group.groupid,group.name)"
+                >
+                    <div class="mger-lt" v-text="group.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr">
-                            <span class="right">90%</span>
+                        <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
+                            <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
                         </div>
                     </div>
                     <div class="mger-ldesc">
-                        <span>430</span>/<span>1000</span>
+                        <span v-text="group.addtotal"></span>/<span v-text="group.total"></span>
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
+            <ul class="mger-lists mger-crew" id="mger-crew" v-if="isShowCrewBox">
+                <li
+                    v-if="crewList && crewList.length > 0"
+                    v-for="crew in crewList"
+                    class="mger-lis"
+                    :class="{'curr':crewCurr===crew.id}"
+                    @click.stop="handleChooseCrew(crew.id)"
+                >
+                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2" v-text="crew.name"></span></div>
                     <div class="mger-lnum-box flex-wrap">
                         <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
+                            <p class="num" v-text="crew.total"></p>
                             <p class="txt">新增数</p>
                         </div>
                         <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
+                            <p class="num" v-text="crew.addtotal"></p>
                             <p class="txt">已跟进</p>
                         </div>
                         <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">未跟进</p>
-                        </div>
-                    </div>
-                </li>
-                <li class="mger-lis">
-                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
-                    <div class="mger-lnum-box flex-wrap">
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">新增数</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">已跟进</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
+                            <p class="num" v-text="crew.total - crew.addtotal"></p>
                             <p class="txt">未跟进</p>
                         </div>
                     </div>
@@ -144,14 +155,45 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
-<script type="text/javascript" src="../../script/lib/circles.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+    var managerSystemFollowV = null;
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
-        new Vue({
+
+        $api.fixStatusBar($('.mger-header-fix')[0]);
+        $api.fixStatusBar($('.mger-header-place')[0]);
+        var param = api.pageParam;
+        api.addEventListener({
+            name: 'filterManagerSystemFollow'
+        }, function(ret, err){
+            var obj = ret.value;
+            console.log(JSON.stringify(obj))
+            if(obj){
+                if(typeof obj.origin != 'undefined'){
+                    managerSystemFollowV.currOrigin = obj.origin;
+                    managerSystemFollowV.currOriginTwo = obj.originTwo;
+                    managerSystemFollowV.currType = obj.type;
+                }
+                if(typeof obj.status != 'undefined'){
+                    managerSystemFollowV.currStatus = obj.status;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    managerSystemFollowV.currSort = obj.sort;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    managerSystemFollowV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    managerSystemFollowV.endDate = obj.endDate;
+                }
+                managerSystemFollowV.filterGetData();
+            }
+            $('.filter-lis').removeClass('curr');
+        });
+        managerSystemFollowV = new Vue({
             el: "#wrapper",
             data: {
                 userInfo:{},
@@ -161,33 +203,509 @@
                 // tdgly  国内团队管理员
                 // yg   国内员工
                 // zz  组长
-                jobTitle:'gngly',
+                jobTitle:'',
+
+                // 排序
+                startDate:'',
+                endDate:'',
+
+                currOrigin:'',
+                currOriginTwo:'',
+                currType:'',
+
+                currSort:0,
+                currStatus:param.status,
+                // 显示哪个盒子
+                isShowAreaBox:false,
+                isShowTeamBox:false,
+                isShowGroupBox:false,
+                isShowCrewBox:false,
+                // 当前选中的
+                isCurrArea:false,
+                isCurrTeam:false,
+                isCurrGroup:false,
+                // id
+                areaId:'',
+                areaName:'',
+                areaCurr:'',
+                teamId:'',
+                teamName:'',
+                teamCurr:'',
+                groupId:'',
+                groupName:'',
+                groupCurr:'',
+                crewId:'',
+                crewCurr:'',
+
+                // 权限数据
+                areaList:[],
+                teamList:[],
+                groupList:[],
+                crewList:[]
             },
             mounted: function() {
-                var _this = this;
-
-                this.userInfo = wPref.getPrefs({
-                    key: 'userInfo'
-                });
-                this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                console.log(JSON.stringify(this.userInfo))
-                this.$nextTick(function(){
-                    _this.renderCircle();
-                })
+                this.currStatus = param.status;
+                this.init();
+                // this.fetchPosiData();
             },
             methods: {
-                renderCircle:function(){
-                    var circleWid = $('#circle-0').outerWidth()/2;
-                    Circles.create({
-                        id: 'circle-0',
-                        value: 100,
-                        radius: circleWid,
-                        width: 3,
-                        colors: ['#eee', '#0c7ff9'],
-                        isPercent:1
+                init:function(){
+                    // 获取权限，初始化结构
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    this.jobTitle = this.userInfo.relativePosi;
+                    this.currStatus = param.status;
+                    if(this.jobTitle === 'gngly' || this.jobTitle === 'qygly'){
+                        this.isShowAreaBox = true;
+                        this.isCurrArea = true;
+                    }
+                    else if(this.jobTitle === 'tdgly'){
+                        this.isShowTeamBox = true;
+                        this.isCurrTeam = true;
+                    }
+                    else if(this.jobTitle === 'zz'){
+                        this.isShowGroupBox = true;
+                        this.isCurrGroup = true;
+                    }
+                    else{
+                        console.log('没有这个权限')
+                    }
+                },
+                fetchPosiData:function(isFilter){
+                    isFilter = isFilter || false;
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log('manager -- request--------' + JSON.stringify({
+                        employeeid: _this.userInfo.employeeid,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
+                        search_cusName:'',
+                        attributionid:'',
+                        resourcetype:'',
+                        pageNo: _this.pageNo,
+                        pageSize: 1000
+                    }))
+                    wApiAjax({
+                        url: 'newResource/newAddResFollList',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
+                            search_cusName:'',
+                            attributionid:'',
+                            resourcetype:'',
+                            pageNo: _this.pageNo,
+                            pageSize: 1000
+                        },
+                        success: function(res) {
+                            console.log('initlist '+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                var jobRelaIdx = getJobRelative(_this.jobTitle);
+                                if(jobRelaIdx === 1){
+                                    _this.areaList = res.data || [];
+                                }
+                                else if(jobRelaIdx === 2){
+                                    _this.areaId = res.data.regionId;
+                                    _this.areaCurr = res.data.regionId;
+                                    _this.teamList = res.data.teamList || [];
+                                }
+                                else if(jobRelaIdx === 3){
+                                    _this.areaId = res.data.regionId;
+                                    _this.areaCurr = res.data.regionId;
+                                    _this.teamId = res.data.teamId;
+                                    _this.teamCurr = res.data.teamId;
+                                    _this.groupList = res.data.groupList || [];
+                                }
+                                else{
+                                    console.log('没有权限')
+                                }
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                        }
                     })
-                }
+                },
+
+
+                // 选择大区
+                handleChooseArea:function(id,name) {
+                    if(this.areaId !== id){
+                        this.areaName = name;
+                        this.areaId = id;
+                        this.areaCurr = id;
+                        this.teamName = '';
+                        this.teamId = '';
+                        this.teamCurr = '';
+                        this.groupId = '';
+                        this.groupCurr = '';
+                        this.crewId = '';
+                        this.crewCurr = '';
+                    }
+                    this.fetchTeamData();
+
+                },
+                // 获取团队数据
+                fetchTeamData:function(isFilter){
+                    isFilter = isFilter || false;
+                    console.log(this.areaId)
+                    if(getJobRelative(this.jobTitle) > 1){
+                        return;
+                    }
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'newResource/newAddResFollListByRegion',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
+                            region:_this.areaId
+                        },
+                        success:function(res){
+                            console.log('teamlist-------'+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.teamList = res.data.teamList.map(function(v){
+                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    return v;
+                                });
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(1);
+                                }
+                            }
+                        }
+                    })
+                },
+                // 选择团队
+                handleChooseTeam:function(id,name) {
+                    if(this.teamId !== id){
+                        this.teamName = name;
+                        this.teamId = id;
+                        this.teamCurr = id;
+                        this.groupName = '';
+                        this.groupId = '';
+                        this.groupCurr = '';
+                    }
+                    this.fetchGroupData();
+                },
+                // 获取小组数据
+                fetchGroupData:function(isFilter){
+                    isFilter = isFilter || false;
+                    if(getJobRelative(this.jobTitle) > 2){
+                        return
+                    }
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log(JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
+                        region:_this.areaId,
+                        team:_this.teamId
+                    }))
+                    wApiAjax({
+                        url:'newResource/newAddResFollListByTeam',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
+                            region:_this.areaId,
+                            team:_this.teamId
+                        },
+                        success:function(res){
+                            console.log('grouplist-------'+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.groupList = res.data.groupList.map(function(v){
+                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    return v;
+                                });
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(2);
+                                }
+                            }
+                        }
+                    })
+                },
+                // 选择小组
+                handleChooseGroup:function(id,name) {
+                    var _this = this;
+                    if(_this.groupId !== id){
+                        this.groupName = name;
+                        _this.groupId = id;
+                        _this.groupCurr = id;
+                        _this.crewId = '';
+                        _this.crewCurr = '';
+                    }
+                    _this.fetchCrewData();
+                },
+                // 获取成员数据
+                fetchCrewData:function(isFilter){
+                    isFilter = isFilter || false;
+                    if(this.areaId === '' && this.teamId === '' && this.groupId === ''){
+                        return
+                    }
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log(JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
+                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        sort:_this.currSort,
+                        type:_this.currType,
+                        region:_this.areaId,
+                        team:_this.teamId,
+                        groupid:_this.groupId
+                    }))
+                    wApiAjax({
+                        url:'newResource/newAddResFollListByGroup',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            sort:_this.currSort,
+                            type:_this.currType,
+                            region:_this.areaId,
+                            team:_this.teamId,
+                            groupid:_this.groupId
+                        },
+                        success:function(res){
+                            console.log('crewlist-------'+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.crewList = res.data.groupList.map(function(v){
+                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    return v;
+                                });
+                                if(!isFilter){
+                                    _this.handleSwitchPosition(3);
+                                }else{
+                                    if(_this.isCurrGroup){
+                                        _this.handleSwitchPosition(2);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                },
+                // 选择小组
+                handleChooseCrew:function(id){
+                    var _this = this;
+                    wHrefJs.openWin({
+                        name: 'newCustomerHeader',
+                        path: './new_customer_header.html',
+                        param: {
+                            val: param.val,
+                            empId:id,
+                            startDate:_this.startDate,
+                            endDate:_this.endDate,
+                            currType:_this.currType,
+                            currOrigin:_this.currOrigin,
+                            currOriginTwo:_this.currOriginTwo
+                        },
+                        bgColor: '#f7f7f7'
+                    })
+                },
+                // 筛选获取数据
+                filterGetData:function(){
+                    this.fetchPosiData(true);
+                    this.fetchTeamData(true);
+                    this.fetchGroupData(true);
+                    this.fetchCrewData(true);
+                },
+                // 切换职位
+                // i=0 大区  i=1 团队  i=2 小组
+                handleSwitchPosition:function(i){
+                    if(i === 0){
+                        this.isShowAreaBox = true;
+                        this.isShowTeamBox = false;
+                        this.isShowGroupBox = false;
+                        this.isShowCrewBox = false;
+
+                        this.isCurrArea = true;
+                        this.isCurrTeam = false;
+                        this.isCurrGroup = false;
+                    }
+                    else if(i === 1){
+                        if(this.areaId !== ''){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = true;
+                            this.isShowGroupBox = false;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = true;
+                            this.isCurrGroup = false;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择大区'
+                            })
+                        }
+                    }
+                    else if(i === 2){
+                        if(this.teamId !== ''){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = false;
+                            this.isShowGroupBox = true;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = false;
+                            this.isCurrGroup = true;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择团队'
+                            })
+                        }
+                    }
+                    else if(i === 3){
+                        this.isShowAreaBox = false;
+                        this.isShowTeamBox = false;
+                        this.isShowGroupBox = false;
+                        this.isShowCrewBox = true;
+
+                        this.isCurrArea = false;
+                        this.isCurrTeam = false;
+                        this.isCurrGroup = true;
+                    }
+                    else{
+                        console.log('参数错误');
+                    }
+                },
+                handleChooseFilter:function(e,i){
+                    var tag = e.currentTarget,
+                        _this = this;
+                    // 1.客户来源 2客户状态  3 更多 4排序
+                    // 跳转到frame
+                    var wHei = $(window).height(),
+                        y = $('.mger-header-box').height(),
+                        h = wHei - y;
+                    if(!$(tag).hasClass('curr')){
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                        if(i === 1){
+                            wOpenCustomerTimeFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterManagerSystemFollow',
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate
+                                }
+                            });
+                        }
+                        else if(i === 2){
+                            wOpenCustomerOriginFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterManagerSystemFollow',
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currType,
+                                    isHaveAllOrigin:true,
+                                    isHaveRecourcePool:false
+                                }
+                            });
+                        }
+                        else if(i == 3){
+                            wOpenCustomerStatusFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterManagerSystemFollow',
+                                    currSelected:_this.currStatus
+                                }
+                            })
+                        }
+                        else if(i == 4){
+                            wOpenCustomerSortFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterManagerSystemFollow',
+                                    currSelected:_this.currSort,
+                                    sortClass:'class6'
+                                }
+                            })
+                        }
+                        else{
+                            console.log('筛选页面参数错误')
+                        }
+                    }else{
+                        $(tag).removeClass('curr');
+                        api.closeFrame({
+                            name:'filterCustomerFrame'
+                        });
+                    }
+                },
             },
+            computed:{
+                allotTxt:function(){
+                    var idx = getJobRelative(this.jobTitle);
+                    if(idx == 1 || idx == 2){
+                        if(this.isCurrTeam){
+                            return '分配'
+                        }else{
+                            return '';
+                        }
+                    }
+                    else{
+                        return '';
+                    }
+                },
+                currNowLocationTxt:function(){
+                    if(this.areaName && this.teamName && this.groupName){
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
+                    }
+                    if(this.areaName && this.teamName){
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8);
+                    }
+                    if(this.areaName){
+                        return this.areaName;
+                    }
+                    if(this.teamName && this.groupName){
+                        return this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
+                    }
+                    if(this.teamName){
+                        return this.teamName;
+                    }
+                    return '';
+                }
+            }
         });
     }
 </script>

@@ -245,8 +245,8 @@
                 this.callStatus = param.callStatus;
                 this.step = this.jobTitle == 'gngly' || this.jobTitle == 'qygly' ? 1 : this.jobTitle == 'tdgly' ? 2 : 3;
                 this.initStep = this.step;
-                this.startDate = funcGetThisToday().startDate;
-                this.endDate = funcGetThisToday().endDate;
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
                 if(this.jobTitle == 'gngly' || this.jobTitle == 'qygly'){
                     this.isShowAreaBox = true;
                     this.isCurrArea = true;
@@ -519,16 +519,16 @@
             computed:{
                 currNowLocationTxt:function(){
                     if(this.areaName && this.teamName && this.groupName){
-                        return this.areaName+'/'+this.teamName+'/'+this.groupName
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
                     }
                     if(this.areaName && this.teamName){
-                        return this.areaName+'/'+this.teamName;
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8);
                     }
                     if(this.areaName){
                         return this.areaName;
                     }
                     if(this.teamName && this.groupName){
-                        return this.teamName+'/'+this.groupName;
+                        return this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
                     }
                     if(this.teamName){
                         return this.teamName;

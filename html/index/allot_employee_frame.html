@@ -39,9 +39,9 @@
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">号码归属地: <span v-text="employee.attribution||'未知'"></span></div>
-                    <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status green-col orange-col">已跟进</span></div>
+                    <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status" :class="[employee.followtime?'green-col':'orange-col']" v-text="showFollowTxt(employee.followtime)"></span></div>
                     <div class="lis flb-cls2">分配时间: <span v-text="employee.createtime||'暂未分配'"></span></div>
-                    <div class="lis flb-cls2" v-if="employee">跟进时间: <span v-text="employee.createtime"></span></div>
+                    <div class="lis flb-cls2" v-if="employee.followtime">跟进时间: <span v-text="employee.followtime"></span></div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -155,8 +155,8 @@
                     this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
                     this.currType = param.currType;
                     this.currOrigin = param.currOrigin;
-                    this.startDate = param.startDate;
-                    this.endDate = param.endDate;
+                    // this.startDate = param.startDate;
+                    // this.endDate = param.endDate;
                     this.areaId = param.region
                 },
                 // 获取今日新增列表
@@ -170,13 +170,11 @@
                         endTime:_this.endDate,
                         region:_this.areaId,
                         cusSource:_this.currOrigin,
-                        sort:0,
                         type:_this.currType,
                         search_cusName:_this.search_cusName,
                         pageNo: _this.pageNo,
                         pageSize: 10
                     }));
-                    // return;
                     wApiAjax({
                         url: 'newResource/allocationList',
                         headers: {
@@ -188,8 +186,8 @@
                             endTime:_this.endDate,
                             region:_this.areaId,
                             cusSource:_this.currOrigin,
-                            sort:0,
                             type:_this.currType,
+                            sort:0,
                             search_cusName:_this.search_cusName,
                             pageNo: _this.pageNo,
                             pageSize: 10
@@ -218,6 +216,14 @@
                             callback && typeof callback === 'function' && callback();
                         }
                     })
+                },
+                showFollowTxt:function(ft){
+                    if(ft){
+                        return '已跟进'
+                    }
+                    else{
+                        return '未跟进'
+                    }
                 }
             }
         });

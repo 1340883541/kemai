@@ -74,14 +74,20 @@
             name: 'filterCustomerList'
         }, function(ret, err){
             var obj = ret.value;
+            console.log('customer list header---'+JSON.stringify(obj))
             if(typeof obj.status != 'undefined'){
-                ncusHeaderV.currStatusSelected = obj.status;
+                ncusHeaderV.currStatus = obj.status;
             }
             if(typeof obj.origin != 'undefined'){
-                ncusHeaderV.currOriginSelected = obj.origin;
+                ncusHeaderV.currOrigin = obj.origin;
+                ncusHeaderV.currOriginTwo = obj.originTwo;
+                ncusHeaderV.currType = obj.type;
+            }
+            if(typeof obj.home != 'undefined'){
+                ncusHeaderV.currHome = obj.home;
             }
             if(typeof obj.sort != 'undefined'){
-                ncusHeaderV.currSortSelected = obj.sort;
+                ncusHeaderV.currSort = obj.sort;
             }
             $('.w-filter-lis').removeClass('curr');
         });
@@ -98,58 +104,24 @@
             el:"#wrap",
             data:{
                 searchVal:'',
-                // 客户来源
-                khOriginList:[],
-                currOriginSelected:'',
-                // 客户状态
-                khStatusList:[],
-                currStatusSelected:'',
+
+                currOrigin:'',
+                currOriginTwo:'',
+                currType:'',
+                currStatus:'',
+                currHome:'',
                 // 排序方式
-                currSortSelected:1
+                currSort:0,
+                jobTitle:''
             },
             mounted:function(){
-                this.fetchKhClass();
-                this.fetchKhOrigin();
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.jobTitle = this.userInfo.relativePosi;
             },
             methods:{
-                // 获取客户状态
-                fetchKhClass:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/sourceAndType',
-                        headers:{
-                            "token":TOKEN_DATA
-                        },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.khStatusList = res.data.customerSatauslist;
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
-                // 获取客户来源
-                fetchKhOrigin:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/allSource',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.khOriginList = res.data.allsrorcelist
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
                 // 获取焦点
                 onFoucsInp:function(){
                     $('#header-search-box').addClass('curr');
@@ -197,8 +169,11 @@
                                 h:h,
                                 param:{
                                     origin:'filterCustomerList',
-                                    classifyData:JSON.stringify(_this.khOriginList),
-                                    currSelected:_this.currOriginSelected
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currType,
+                                    isHaveAllOrigin:true,
+                                    isHaveRecourcePool:false
                                 }
                             })
                         }
@@ -208,13 +183,26 @@
                                 h:h,
                                 param:{
                                     origin:'filterCustomerList',
-                                    classifyData:JSON.stringify(_this.khStatusList),
-                                    currSelected:_this.currStatusSelected
+                                    currSelected:_this.currStatus
                                 }
                             })
                         }
                         else if(i == 3){
-                            console.log('更多筛选')
+                            wOpenCustomerMore1Frame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterCustomerList',
+                                    currOrigin:_this.currOrigin,
+                                    currOriginTwo:_this.currOriginTwo,
+                                    currType:_this.currType,
+                                    currStatus:_this.currStatus,
+                                    currHome:_this.currHome,
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
+                                    isFullScreen:true
+                                }
+                            });
                         }
                         else if(i == 4){
                             wOpenCustomerSortFrame({
@@ -222,8 +210,8 @@
                                 h:h,
                                 param:{
                                     origin:'filterCustomerList',
-                                    currSelected:_this.currSortSelected,
-                                    sortClass:'class1'
+                                    currSelected:_this.currSort,
+                                    sortClass:_this.jobTitle === 'gngly' ? 'class7' : 'class1'
                                 }
                             })
                         }

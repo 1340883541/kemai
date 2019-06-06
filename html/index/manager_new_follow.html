@@ -67,7 +67,7 @@
                     v-for="(area,idx) in areaList"
                     :key="'area'+idx"
                     :class="{checked:areaCurr === area.region}"
-                    @click.stop="handleChooseArea(area.region)"
+                    @click.stop="handleChooseArea(area.region,area.name)"
                 >
                     <div class="left flex-wrap flex-vertical flex-center">
                         <p class="mger-cap" v-text="area.name"></p>
@@ -86,7 +86,7 @@
                     v-for="(team,idx) in teamList"
                     :key="'team'+idx"
                     :class="{checked:teamCurr === team.team}"
-                    @click.stop="handleChooseTeam(team.team)"
+                    @click.stop="handleChooseTeam(team.team,team.name)"
                 >
                     <div class="mger-lt" v-text="team.name"></div>
                     <div class="mger-lpro">
@@ -106,7 +106,7 @@
                     v-for="(group,idx) in groupList"
                     :key="'group'+idx"
                     :class="{checked:groupCurr === group.groupid}"
-                    @click.stop="handleChooseGroup(group.groupid)"
+                    @click.stop="handleChooseGroup(group.groupid,group.name)"
                 >
                     <div class="mger-lt" v-text="group.name"></div>
                     <div class="mger-lpro">
@@ -161,7 +161,6 @@
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
         var param = api.pageParam;
-        console.log(JSON.stringify(param))
         api.addEventListener({
             name: 'filterManagerNewFollow'
         }, function(ret, err){
@@ -229,7 +228,6 @@
                 crewId:'',
                 crewCurr:'',
 
-                allAreaData:[],
                 // 权限数据
                 areaList:[],
                 teamList:[],
@@ -239,7 +237,7 @@
             mounted: function() {
                 this.currType = param.val == 0 ? 2 : 1;
                 this.init();
-                this.fetchAllAreaData();
+                this.fetchPosiData();
             },
             methods: {
                 init:function(){
@@ -265,26 +263,6 @@
                     else{
                         console.log('没有这个权限')
                     }
-                },
-                fetchAllAreaData:function(){
-                    var _this = this;
-                    wDialog.showProgress();
-                    wApiAjax({
-                        url:'newResource/regionList',
-                        headers:{
-                            token: TOKEN_DATA
-                        },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.fetchPosiData();
-                                _this.allAreaData = res.data;
-                            }else{
-                                wDialog.toast({
-                                    msg:res.msg
-                                })
-                            }
-                        }
-                    })
                 },
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;
@@ -322,7 +300,7 @@
                             pageSize: 1000
                         },
                         success: function(res) {
-                            console.log('initlist '+JSON.stringify(res))
+                            // console.log('initlist '+JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
                                 var jobRelaIdx = getJobRelative(_this.jobTitle);
@@ -362,12 +340,6 @@
                 funcDealWithData:function(data){
                     var _this = this;
                     return data.map(function(val){
-                        var filterList = _this.allAreaData.filter(function(v){
-                            return v.id == val.region;
-                        });
-                        if(filterList.length > 0){
-                            val.name = filterList[0].name;
-                        }
                         val.percent = Math.round((val.addtotal / val.total) * 100);
                         return val;
                     });
@@ -384,21 +356,20 @@
                     })
                 },
                 // 选择大区
-                handleChooseArea:function(id) {
+                handleChooseArea:function(id,name) {
                     if(this.areaId !== id){
+                        this.areaName = name;
                         this.areaId = id;
                         this.areaCurr = id;
+                        this.teamName = '';
                         this.teamId = '';
                         this.teamCurr = '';
                         this.groupId = '';
                         this.groupCurr = '';
                         this.crewId = '';
                         this.crewCurr = '';
-                        this.fetchTeamData();
                     }
-                    else{
-                        this.handleSwitchPosition(1);
-                    }
+                    this.fetchTeamData();
 
                 },
                 // 获取团队数据
@@ -440,17 +411,16 @@
                     })
                 },
                 // 选择团队
-                handleChooseTeam:function(id) {
+                handleChooseTeam:function(id,name) {
                     if(this.teamId !== id){
+                        this.teamName = name;
                         this.teamId = id;
                         this.teamCurr = id;
+                        this.groupName = '';
                         this.groupId = '';
                         this.groupCurr = '';
-                        this.fetchGroupData();
                     }
-                    else{
-                        this.handleSwitchPosition(2);
-                    }
+                    this.fetchGroupData();
                 },
                 // 获取小组数据
                 fetchGroupData:function(isFilter){
@@ -501,18 +471,16 @@
                     })
                 },
                 // 选择小组
-                handleChooseGroup:function(id) {
+                handleChooseGroup:function(id,name) {
                     var _this = this;
                     if(_this.groupId !== id){
+                        this.groupName = name;
                         _this.groupId = id;
                         _this.groupCurr = id;
                         _this.crewId = '';
                         _this.crewCurr = '';
-                        _this.fetchCrewData();
                     }
-                    else{
-                        _this.handleSwitchPosition(3);
-                    }
+                    _this.fetchCrewData();
                 },
                 // 获取成员数据
                 fetchCrewData:function(isFilter){
@@ -681,7 +649,9 @@
                                     origin:'filterManagerNewFollow',
                                     currSelected:_this.currOrigin,
                                     currTwoSelected:_this.currOriginTwo,
-                                    currType:_this.currType
+                                    currType:_this.currType,
+                                    isHaveAllOrigin:false,
+                                    isHaveRecourcePool:true
                                 }
                             });
                         }
@@ -717,8 +687,8 @@
                                 currOrigin:_this.currOrigin,
                                 currOriginTwo:_this.currOriginTwo,
                                 currType:_this.currType,
-                                startDate:_this.startDate,
-                                endDate:_this.endDate,
+                                // startDate:_this.startDate,
+                                // endDate:_this.endDate,
                                 region:_this.areaId
                             }
                         })
@@ -741,16 +711,16 @@
                 },
                 currNowLocationTxt:function(){
                     if(this.areaName && this.teamName && this.groupName){
-                        return this.areaName+'/'+this.teamName+'/'+this.groupName
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
                     }
                     if(this.areaName && this.teamName){
-                        return this.areaName+'/'+this.teamName;
+                        return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8);
                     }
                     if(this.areaName){
                         return this.areaName;
                     }
                     if(this.teamName && this.groupName){
-                        return this.teamName+'/'+this.groupName;
+                        return this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);
                     }
                     if(this.teamName){
                         return this.teamName;

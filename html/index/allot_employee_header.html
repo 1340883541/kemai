@@ -77,8 +77,8 @@
             bounces:true,
             bgColor:'rgba(0,0,0,0)',
             param:{
-                startDate:param.startDate,
-                endDate:param.endDate,
+                // startDate:param.startDate,
+                // endDate:param.endDate,
                 currOrigin:param.currOrigin,
                 currOriginTwo:param.currOriginTwo,
                 currType:param.currType,
@@ -179,7 +179,9 @@
                                     origin:'filterAllotEmployee',
                                     currSelected:_this.currOriginSelected,
                                     currTwoSelected:_this.currOriginTwoSelected,
-                                    currType:_this.currOriginType
+                                    currType:_this.currOriginType,
+                                    isHaveAllOrigin:false,
+                                    isHaveRecourcePool:true
                                 }
                             });
                         }

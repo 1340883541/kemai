@@ -37,11 +37,12 @@
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户类型: <span v-text="khdata.status||'无'"></span></div>
+                    <div class="lis flb-cls2" v-if="jobTitle==='gngly'">最后跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
                     <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属地: <span>成都成都成</span></div>
-                        <div class="lis flex-con flb-cls2">客户类型: <span v-text="khdata.status||'无'"></span></div>
-                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
-                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                        <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
+                        <div class="lis flex-con flb-cls2" v-if="jobTitle!=='gngly'">跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
+                        <div class="lis flex-con flb-cls2" v-if="jobTitle!=='gngly'">计划时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
                     </div>
                 </div>
             </div>
@@ -122,21 +123,22 @@
             name: 'filterCustomerList'
         }, function(ret, err){
             var obj = ret.value;
-            if(typeof obj.status != 'undefined'){
-                nCustomerFrame.search_status = obj.status;
+            console.log(JSON.stringify(obj))
+            if(obj){
+                if(typeof obj.status != 'undefined'){
+                    nCustomerFrame.search_status = obj.status;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    nCustomerFrame.search_source = obj.originTwo ? obj.originTwo : obj.origin;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    nCustomerFrame.sort = obj.sort;
+                }
+                if(typeof obj.home != 'undefined'){
+                    nCustomerFrame.attributionid = obj.home;
+                }
                 nCustomerFrame.pageNo = 1;
                 nCustomerFrame.fetchListData();
-            }
-            if(typeof obj.origin != 'undefined'){
-                nCustomerFrame.search_source = obj.origin;
-                nCustomerFrame.pageNo = 1;
-                nCustomerFrame.fetchListData();
-            }
-            if(typeof obj.sort != 'undefined'){
-                console.log(JSON.stringify(obj.sort))
-                // nCustomerFrame.search_status = obj.status;
-                // nCustomerFrame.pageNo = 1;
-                // nCustomerFrame.fetchListData();
             }
         });
 
@@ -147,12 +149,13 @@
                 search_cusName:'', // 搜索客户名
                 search_source:'',  // 客户来源
                 search_status:'',  // 客户状态
-                order_followtime:0,     // 跟进时间
-                order_nextfollow:0,     // 计划跟进时间
+                sort:0,
+                attributionid:'',
                 pageNo:1,
                 totalPage:1,
                 khDataList:[],  // 客户信息list
                 userInfo:'',
+                jobTitle:'',
                 isHavaMoreData:true
             },
             mounted: function() {
@@ -165,22 +168,23 @@
                         key:'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    this.jobTitle = this.userInfo.relativePosi;
                 },
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         search_cusName:_this.search_cusName,
                         search_source:_this.search_source,
                         search_status:_this.search_status,
-                        order_followtime:_this.order_followtime,
-                        order_nextfollow:_this.order_nextfollow,
+                        sort:_this.sort,
+                        attributionid:_this.attributionid,
                         pageNo:_this.pageNo,
                         pageSize:10,
                     }))
+                    wDialog.showProgress();
                     wApiAjax({
                         url:'customer/datalist',
                         headers:{
@@ -191,8 +195,8 @@
                             search_cusName:_this.search_cusName,
                             search_source:_this.search_source,
                             search_status:_this.search_status,
-                            order_followtime:_this.order_followtime,
-                            order_nextfollow:_this.order_nextfollow,
+                            sort:_this.sort,
+                            attributionid:_this.attributionid,
                             pageNo:_this.pageNo,
                             pageSize:10,
                         },

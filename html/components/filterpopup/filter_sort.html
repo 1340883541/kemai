@@ -61,6 +61,21 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">分配时间从远到近</li>
                 </ul>
             </div>
+            <div class="w-filter-pop1" v-if="sortClass === 'class6'">
+                <ul>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">系统资源量从高到低</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">系统资源量从低到高</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">系统资源跟进量从高到低</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">系统资源跟进量从低到高</li>
+                </ul>
+            </div>
+            <!-- 客户列表 国内管理员 -->
+            <div class="w-filter-pop1" v-if="sortClass === 'class7'">
+                <ul>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
+                </ul>
+            </div>
         </div>
     </div>
 </body>

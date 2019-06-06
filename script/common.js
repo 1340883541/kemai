@@ -131,12 +131,27 @@ function wOpenCustomerHomeFrame(par){
     })
 }
 // 打开更多筛选
-// 目前只包含 客户来源，客户状态，归属地，时间这四种选择。
+// 目前只包含 客户来源，来源归类，归属地，时间这四种选择。
 function wOpenCustomerMoreFrame(par){
     par = par || {};
     wHrefJs.openFrame({
         name:'filterCustomerFrame',
         path:'../components/filterpopup/filter_more.html',
+        y:par.y,
+        h:par.h,
+        param:par.param,
+        animation:{
+            type:par.isMoveIn ? 'movein' : 'none'
+        }
+    })
+}
+// 打开更多筛选
+// 目前只包含 客户来源，客户状态，归属地这四种选择。
+function wOpenCustomerMore1Frame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_more1.html',
         y:par.y,
         h:par.h,
         param:par.param,

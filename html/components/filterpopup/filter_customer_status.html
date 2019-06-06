@@ -35,7 +35,10 @@
 </body>
 <script type="text/javascript" src="../../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
 <script>
     apiready = function(){
         var param = api.pageParam;
@@ -44,20 +47,47 @@
             data:{
                 customerStatusList:[],
                 currSelected:'',
-                sendOrigin:''
+                origin:''
             },
             mounted:function(){
-                this.sendOrigin = param.origin;
-                this.customerStatusList = JSON.parse(param.classifyData);
+                this.origin = param.origin;
                 this.currSelected = param.currSelected;
+                this.fetchCustomerStatus();
             },
             methods:{
+                // 获取客户状态
+                fetchCustomerStatus:function(){
+                    var _this = this;
+                    var customerStatusList = myLocalStorage.getItem('customerStatusList');
+                    if(customerStatusList){
+                        this.customerStatusList = JSON.parse(customerStatusList);
+                    }else{
+                        wDialog.showProgress();
+                        wApiAjax({
+                            url:'customer/sourceAndType',
+                            headers:{
+                                "token":TOKEN_DATA
+                            },
+                            success:function(res){
+                                wDialog.hideProgress();
+                                if(res.code == 1){
+                                    _this.customerStatusList = res.data.customerSatauslist.filter(function(v){
+                                        if(!~v.name.indexOf('无效')){
+                                            return v;
+                                        }
+                                    });
+                                    myLocalStorage.setItem('customerStatusList',JSON.stringify(_this.customerStatusList));
+                                }
+                            }
+                        })
+                    }
+                },
                 // 筛选客户状态
                 handlePitchStatus:function(val){
                     var _this = this;
                     this.currSelected = val;
                     api.sendEvent({
-                        name: _this.sendOrigin,
+                        name: _this.origin,
                         extra: {
                             status:val
                         }
@@ -67,7 +97,7 @@
                 handleCloseFilterPopup:function(){
                     var _this = this;
                     api.sendEvent({
-                        name: _this.sendOrigin
+                        name: _this.origin
                     });
                     api.closeFrame();
                 }

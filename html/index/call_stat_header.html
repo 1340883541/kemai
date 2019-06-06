@@ -28,7 +28,7 @@
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
-                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">今日通话<i></i></span></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">通话统计<i></i></span></div>
             </div>
             <div class="w-filter-lists flex-wrap">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
@@ -57,6 +57,7 @@
         $api.fixStatusBar($('.w-header')[0]);
 
         var param = api.pageParam;
+        console.log('----------'+JSON.stringify(param))
         // 跳转到frame
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
@@ -112,8 +113,8 @@
                 endDate:''
             },
             mounted:function(){
-                this.startDate = param.startDate;
-                this.endDate = param.endDate;
+                this.startDate = param.startDate||funcGetThisToday().startDate;
+                this.endDate = param.endDate||funcGetThisToday().endDate;
                 this.callStatus = param.callStatus;
             },
             methods:{

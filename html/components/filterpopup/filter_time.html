@@ -31,9 +31,9 @@
                         </div>
                     </div>
                     <div class="flex-wrap time-shortcut flex-between">
-                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,0)">今日</div>
-                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,1)">本周</div>
-                        <div class="time-shortcut-lis" @click.stop="handleChooseShortcatDate($event,2)">本月</div>
+                        <div class="time-shortcut-lis" :class="{'curr':currToday}" id="today-btn" @click.stop="handleChooseShortcatDate($event,0)">今日</div>
+                        <div class="time-shortcut-lis" :class="{'curr':currWeek}" id="week-btn" @click.stop="handleChooseShortcatDate($event,1)">本周</div>
+                        <div class="time-shortcut-lis" :class="{'curr':currMonth}" id="month-btn" @click.stop="handleChooseShortcatDate($event,2)">本月</div>
                     </div>
                 </div>
                 <div class="bottom bor-1px-t flex-wrap">
@@ -51,62 +51,60 @@
 <script type="text/javascript" src="../../../script/common.js"></script>
 <script>
     var filterTimeV = null;
-    apiready = function(){
+    apiready = function() {
         var param = api.pageParam;
         filterTimeV = new Vue({
-            el:'#wrapper',
-            data:{
-                startDate:'',
-                endDate:'',
-                isGetStartDate:true
+            el: '#wrapper',
+            data: {
+                startDate: '',
+                endDate: '',
+                isGetStartDate: true
             },
-            created:function(){
+            created: function() {
                 this.startDate = param.startDate;
                 this.endDate = param.endDate;
             },
-            mounted:function(){
+            mounted: function() {
                 var _this = this;
-                this.$nextTick(function(){
+                this.$nextTick(function() {
                     // 初始化日历
                     $('.choose-date').mdater({
-                        minDate : new Date('2008-01-01'),
-                        sureCb(date){
-                            if(_this.isGetStartDate){
+                        minDate: new Date('2008-01-01'),
+                        sureCb(date) {
+                            if (_this.isGetStartDate) {
                                 _this.startDate = date;
-                            }else{
+                            } else {
                                 _this.endDate = date;
                             }
                         }
                     });
                 })
             },
-            methods:{
-                handleChooseShortcatDate:function(e,i){
+            methods: {
+                handleChooseShortcatDate: function(e, i) {
                     var tag = e.currentTarget;
-                    if(!$(tag).hasClass('curr')){
+                    if (!$(tag).hasClass('curr')) {
                         $(tag).addClass('curr').siblings().removeClass('curr');
                     }
-                    if(i === 0){
+                    if (i === 0) {
                         this.startDate = funcGetThisToday().startDate;
                         this.endDate = funcGetThisToday().endDate;
-                    }
-                    else if(i === 1){
+                    } else if (i === 1) {
                         this.startDate = funcGetThisWeek().startDate;
                         this.endDate = funcGetThisWeek().endDate;
-                    }
-                    else{
+                    } else {
                         this.startDate = funcGetThisMonth().startDate;
                         this.endDate = funcGetThisMonth().endDate;
                     }
                 },
                 // 清空
-                handleClearChooseDate:function(){
+                handleClearChooseDate: function() {
                     this.startDate = '';
                     this.endDate = '';
                     $('.time-shortcut-lis').removeClass('curr');
                 },
                 // 确认
-                handleSureChooseDate:function(){
+                handleSureChooseDate: function() {
                     var _this = this;
                     api.sendEvent({
                         name: param.origin,
@@ -124,8 +122,29 @@
                     });
                     api.closeFrame();
                 }
+            },
+            computed: {
+                currToday: function() {
+                    if(this.startDate === funcGetThisToday().startDate && this.endDate === funcGetThisToday().endDate){
+                        return true;
+                    }
+                    return false;
+                },
+                currWeek: function() {
+                    if(this.startDate === funcGetThisWeek().startDate && this.endDate === funcGetThisWeek().endDate){
+                        return true;
+                    }
+                    return false;
+                },
+                currMonth: function() {
+                    if(this.startDate === funcGetThisMonth().startDate && this.endDate === funcGetThisMonth().endDate){
+                        return true;
+                    }
+                    return false;
+                }
             }
         })
     }
 </script>
+
 </html>

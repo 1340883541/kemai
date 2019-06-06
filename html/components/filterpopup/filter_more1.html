@@ -18,36 +18,13 @@
 
 <body>
     <div id="wrapper">
-        <div class="w-filter-more clear" @click.stop="handleCloseFilterPopup">
+        <div class="w-filter-more clear bor-1px-t" @click.stop="handleCloseFilterPopup">
             <!-- 全屏添加class width100 -->
-            <div class="w-filter-content" @click.stop.prevent>
-                <!-- 关闭 -->
-                <div class="follow-header follow-r-m-header">
-                    <!-- 全屏添加class width100 -->
-                    <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                        <div class="left back" @click.stop="handleCloseFilterPopup"><img class="filter-m-close" src="../../../image/icon-dh-guanbi.png" /></div>
-                    </div>
-                    <div class="fh-place" id="fh-place"></div>
-                </div>
+            <div class="w-filter-content width100" @click.stop.prevent>
                 <!-- 筛选内容 -->
                 <div class="filter-m-body">
-                    <!-- 来源归类 -->
-                    <div class="filter-m-ylgs" v-if="isHaveClassify">
-                        <p class="p1">来源归类</p>
-                        <ul class="filter-m-ylgs-info clear">
-                            <li :class="{'f-curr':currClassify==''}" @click.stop="handlePitchClassify('')">全部</li>
-                            <li
-                                v-for="classify in classifyData"
-                                :key="classify.value"
-                                v-text="classify.name"
-                                :class="{'f-curr':currClassify==classify.value}"
-                                @click.stop="handlePitchClassify(classify.value)"
-                            ></li>
-                        </ul>
-                        <div class=""></div>
-                    </div>
                     <!-- 客户状态 -->
-                    <div class="filter-m-ylgs" v-if="isHaveStatus">
+                    <div class="filter-m-ylgs">
                         <p class="p1">客户状态</p>
                         <ul class="filter-m-ylgs-info clear">
                             <li :class="{'f-curr':currStatus==''}" @click.stop="handlePitchClassify('')">全部</li>
@@ -60,20 +37,6 @@
                             ></li>
                         </ul>
                         <div class=""></div>
-                    </div>
-                    <!-- 时间范围 -->
-                    <div class="filter-m-ylgs margin-top30">
-                        <p class="p1">时间范围</p>
-                        <ul class="filter-m-ylgs-info clear">
-                            <li @click.stop="handleChooseShortcatDate($event,0)">今日</li>
-                            <li @click.stop="handleChooseShortcatDate($event,1)">本周</li>
-                            <li @click.stop="handleChooseShortcatDate($event,2)">本月</li>
-                        </ul>
-                        <div class="filter-m-date clear">
-                            <input class="choose-date" v-model="startDate" @click.stop="isGetStartDate = true" type="text" placeholder="开始时间" readonly="true">
-                            <span>—</span>
-                            <input class="choose-date" v-model="endDate" @click.stop="isGetStartDate = false" type="text" placeholder="结束时间" readonly="true">
-                        </div>
                     </div>
                     <!-- 号码归属地 -->
                     <div class="filter-m-ylgs margin-top30">
@@ -135,25 +98,11 @@
                                 ></li>
                             </ul>
                         </div>
-                        <div class="filter-m-khyl-list" v-if="isHaveRecourcePool && originAllData.respool">
-                            <p class="p2 margin-top30 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.respool.respoolParValue,2)">
-                                <i class="khly-rodio" :class="[currOrigin === originAllData.respool.respoolParValue?'check':'uncheck']"></i><span v-text="originAllData.respool.respoolParName"></span>
-                            </p>
-                            <ul class="filter-m-khly-info clear">
-                                <li
-                                    v-if="originAllData.respool.respoolList"
-                                    v-for="respool in originAllData.respool.respoolList"
-                                    :class="{'f-curr':currOriginTwo === respool.value && currType == 2}"
-                                    v-text="respool.name"
-                                    @click.stop="handleChooseCustomerOrigin('two',respool.value,2,originAllData.respool.respoolParValue)"
-                                ></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
                 <!-- 筛选确定/取消 -->
                 <!-- 全屏添加class width100 -->
-                <div class="filter-m-footer border-1px">
+                <div class="filter-m-footer border-1px width100">
                     <button class="cancel-btn" @click.stop="handleCleanData">清空</button>
                     <button class="confirm-btn" @click.stop="handleSureData">确定</button>
                 </div>
@@ -171,126 +120,55 @@
 <script>
 apiready = function() {
     var param = api.pageParam;
-    $api.fixStatusBar($('#fh-fixed')[0]);
-    $api.fixStatusBar($('#fh-place')[0]);
     new Vue({
         el:"#wrapper",
         data:{
-            classifyData:[],
+            customerStatusList:[],
             homeposiData:[],
             originAllData:[],
-            customerStatusList:[],
 
-            currClassify:'',
 
             currStatus:'',
-
             currOrigin:'',
             currOriginTwo:'',
             currType:'',
-
             currHome:'',
-
-            startDate:'',
-            endDate:'',
-
-            isHaveRecourcePool:false,
-            isHaveClassify:false,
-            isHaveStatus:false,
-
             isGetStartDate:true,
+
+            // startDate:'',
+            // endDate:'',
             // 是否展开
             isUnwindHomePosi:true
         },
         mounted:function(){
             this.init();
-            this.fetchClassifyData();
-            this.fetchCustomerStatus();
             this.fetchHomeData();
+            this.fetchCustomerStatus();
             this.fetchOriginData();
         },
         methods:{
             init:function(){
                 var _this = this;
-                this.currClassify = param.currClassify;
                 this.currOrigin = param.currOrigin;
                 this.currOriginTwo = param.currOriginTwo;
                 this.currType = param.currType;
+                this.currStatus = param.currStatus;
                 this.currHome = param.currHome;
-                this.startDate = param.startDate;
-                this.endDate = param.endDate;
-                this.isHaveRecourcePool = param.isHaveRecourcePool;
-                this.isHaveClassify = param.isHaveClassify;
-                this.isHaveStatus = param.isHaveStatus;
-                this.$nextTick(function(){
-                    // 初始化日历
-                    $('.choose-date').mdater({
-                        minDate : new Date('1999-01-01'),
-                        sureCb(date){
-                            if(_this.isGetStartDate){
-                                _this.startDate = date;
-                            }else{
-                                _this.endDate = date;
-                            }
-                        }
-                    });
-                })
-            },
-            fetchClassifyData:function(){
-                var _this = this;
-                var classifyData = window.localStorage.getItem('classifyData');
-                if(classifyData){
-                    this.classifyData = JSON.parse(classifyData);
-                }
-                else{
-                    wDialog.showProgress();
-                    wApiAjax({
-                        url:'customer/addNewCusSourse',
-                        method:'get',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        success:function(res){
-                            wDialog.hideProgress();
-                            if(res.code == 1){
-                                _this.classifyData = res.classifySource || [];
-                                window.localStorage.setItem('classifyData',JSON.stringify(res.classifySource));
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                }
-            },
-
-            // 获取客户状态
-            fetchCustomerStatus:function(){
-                var _this = this;
-                var customerStatusList = myLocalStorage.getItem('customerStatusList');
-                if(customerStatusList){
-                    this.customerStatusList = JSON.parse(customerStatusList);
-                }else{
-                    wDialog.showProgress();
-                    wApiAjax({
-                        url:'customer/sourceAndType',
-                        headers:{
-                            "token":TOKEN_DATA
-                        },
-                        success:function(res){
-                            wDialog.hideProgress();
-                            if(res.code == 1){
-                                _this.customerStatusList = res.data.customerSatauslist.filter(function(v){
-                                    if(!~v.name.indexOf('无效')){
-                                        return v;
-                                    }
-                                });
-                                myLocalStorage.setItem('customerStatusList',JSON.stringify(_this.customerStatusList));
-                            }
-                        }
-                    })
-                }
+                // this.startDate = param.startDate;
+                // this.endDate = param.endDate;
+                // this.$nextTick(function(){
+                //     // 初始化日历
+                //     $('.choose-date').mdater({
+                //         minDate : new Date('1999-01-01'),
+                //         sureCb(date){
+                //             if(_this.isGetStartDate){
+                //                 _this.startDate = date;
+                //             }else{
+                //                 _this.endDate = date;
+                //             }
+                //         }
+                //     });
+                // })
             },
             fetchHomeData:function(){
                 var _this = this;
@@ -314,6 +192,33 @@ apiready = function() {
                                 wDialog.toast({
                                     msg:res.message
                                 })
+                            }
+                        }
+                    })
+                }
+            },
+            // 获取客户状态
+            fetchCustomerStatus:function(){
+                var _this = this;
+                var customerStatusList = myLocalStorage.getItem('customerStatusList');
+                if(customerStatusList){
+                    this.customerStatusList = JSON.parse(customerStatusList);
+                }else{
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/sourceAndType',
+                        headers:{
+                            "token":TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.customerStatusList = res.data.customerSatauslist.filter(function(v){
+                                    if(!~v.name.indexOf('无效')){
+                                        return v;
+                                    }
+                                });
+                                myLocalStorage.setItem('customerStatusList',JSON.stringify(_this.customerStatusList));
                             }
                         }
                     })
@@ -368,7 +273,7 @@ apiready = function() {
             },
             // 筛选客户归来来源
             handlePitchClassify:function(val){
-                this.currClassify = val;;
+                this.currStatus = val;;
             },
             // 筛选客户状态
             handlePitchHome:function(val){
@@ -377,17 +282,12 @@ apiready = function() {
             // 筛选客户来源
             handleChooseCustomerOrigin:function(rl,value,type,fValue) {
                 if(rl === 'one'){
-                    if(this.isHaveRecourcePool){
-                        this.currOrigin = value;
+                    if(this.currOrigin === value){
+                        this.currOrigin = '';
                         this.currOriginTwo = '';
                     }else{
-                        if(this.currOrigin === value){
-                            this.currOrigin = '';
-                            this.currOriginTwo = '';
-                        }else{
-                            this.currOrigin = value;
-                            this.currOriginTwo = '';
-                        }
+                        this.currOrigin = value;
+                        this.currOriginTwo = '';
                     }
                 }
                 else{
@@ -403,27 +303,22 @@ apiready = function() {
             },
             // 清空
             handleCleanData:function(){
-                this.currClassify = '';
-                if(this.isHaveRecourcePool){
-                    this.currOrigin = param.currOrigin;
-                    this.currOriginTwo =  param.currOriginTwo;
-                    this.currType = param.currType;
-                }else{
-                    this.currOrigin = '';
-                    this.currOriginTwo = '';
-                    this.currType = '';
-                }
+                this.currStatus = '';
+                this.currOrigin = '';
+                this.currOriginTwo = '';
+                this.currType = '';
                 this.currHome = '';
-                this.startDate = '';
-                this.endDate = '';
+                // this.startDate = '';
+                // this.endDate = '';
             },
             // 确认
             handleSureData:function(){
                 var _this = this;
+                console.log(param.origin)
                 api.sendEvent({
                     name: param.origin,
                     extra:{
-                        classify:_this.currClassify,
+                        status:_this.currStatus,
                         origin:_this.currOrigin,
                         originTwo:_this.currOriginTwo,
                         type:_this.currType,

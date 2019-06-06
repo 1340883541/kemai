@@ -21,14 +21,15 @@
             <div class="w-filter-pop2 clear" style="padding-top:1px;" @click.stop>
                 <div class="left fl">
                     <ul>
-                        <li v-if="originAllData.corSour" :class="{'curr':currSelected==originAllData.corSour.corSourParValue}" v-text="originAllData.corSour.corSourParName" @click.stop="handleChooseOneOrigin(originAllData.corSour.corSourParValue,originAllData.corSour.corSourList,1)"></li>
-                        <li v-if="originAllData.halt" :class="{'curr':currSelected==originAllData.halt.halParValue}" v-text="originAllData.halt.halParName" @click.stop="handleChooseOneOrigin(originAllData.halt.halParValue,originAllData.halt.haltList,1)"></li>
-                        <li v-if="originAllData.net" :class="{'curr':currSelected==originAllData.net.halParValue}" v-text="originAllData.net.netParName" @click.stop="handleChooseOneOrigin(originAllData.net.halParValue,originAllData.net.networkList,1)"></li>
-                        <li v-if="originAllData.respool" :class="{'curr':currSelected==originAllData.respool.respoolParValue}" v-text="originAllData.respool.respoolParName" @click.stop="handleChooseOneOrigin(originAllData.respool.respoolParValue,originAllData.respool.respoolList,1)"></li>
+                        <li v-if="isHaveAllOrigin" :class="{'curr':currSelected===''}" @click.stop="handleChooseOneOrigin('',[],0)">全部</li>
+                        <li v-if="originAllData.corSour" :class="{'curr':currSelected===originAllData.corSour.corSourParValue}" v-text="originAllData.corSour.corSourParName" @click.stop="handleChooseOneOrigin(originAllData.corSour.corSourParValue,originAllData.corSour.corSourList,1)"></li>
+                        <li v-if="originAllData.halt" :class="{'curr':currSelected===originAllData.halt.halParValue}" v-text="originAllData.halt.halParName" @click.stop="handleChooseOneOrigin(originAllData.halt.halParValue,originAllData.halt.haltList,1)"></li>
+                        <li v-if="originAllData.net" :class="{'curr':currSelected===originAllData.net.halParValue}" v-text="originAllData.net.netParName" @click.stop="handleChooseOneOrigin(originAllData.net.halParValue,originAllData.net.networkList,1)"></li>
+                        <li v-if="isHaveRecourcePool&&originAllData.respool" :class="{'curr':currSelected===originAllData.respool.respoolParValue}" v-text="originAllData.respool.respoolParName" @click.stop="handleChooseOneOrigin(originAllData.respool.respoolParValue,originAllData.respool.respoolList,2)"></li>
                     </ul>
                 </div>
                 <div class="right fl">
-                    <ul>
+                    <ul v-if="currTwoSelected !== '' || currSelected != ''">
                         <li
                             :class="{'curr':currTwoSelected===''}"
                             @click.stop="handleChooseTwoOrigin('')"
@@ -37,7 +38,7 @@
                             v-if="originTwoData && originTwoData.length > 0"
                             v-for="originTwo in originTwoData"
                             :key="originTwo.value"
-                            :class="{'curr':currTwoSelected==originTwo.value}"
+                            :class="{'curr':currTwoSelected===originTwo.value}"
                             @click.stop="handleChooseTwoOrigin(originTwo.value)"
                             v-text="originTwo.name"
                         ></li>
@@ -56,7 +57,7 @@
 <script>
     apiready = function(){
         var param = api.pageParam;
-        console.log('filter origin---'+JSON.stringify(param))
+        // console.log('filter origin---'+JSON.stringify(param))
         new Vue({
             el:'#wrapper',
             data:{
@@ -64,13 +65,17 @@
                 currSelected:'',
                 currTwoSelected:'',
                 currType:'',
-                originTwoData:[]
+                originTwoData:[],
+                isHaveAllOrigin:false,
+                isHaveRecourcePool:false
             },
             mounted:function(){
                 this.customerOriginList = param.originData ? JSON.parse(param.originData) : {};
                 this.currSelected = param.currSelected;
                 this.currTwoSelected = param.currTwoSelected;
                 this.currType = param.currType;
+                this.isHaveAllOrigin = param.isHaveAllOrigin;
+                this.isHaveRecourcePool = param.isHaveRecourcePool;
                 this.fetchOriginAllData();
             },
             methods:{
@@ -107,19 +112,23 @@
                 },
                 getOriginTwoData:function(){
                     // 资源池
-                    if(this.currSelected == 0){
+                    if(this.currSelected === ''){
+                        this.originTwoData = [];
+                        return
+                    }
+                    if(this.currSelected === 0){
                         this.originTwoData = this.originAllData.respool.respoolList;
                     }
                     // 公司资源
-                    else if(this.currSelected == 1){
+                    else if(this.currSelected === 1){
                         this.originTwoData = this.originAllData.corSour.corSourList;
                     }
                     // 渠道资源
-                    else if(this.currSelected == 2){
+                    else if(this.currSelected === 2){
                         this.originTwoData = this.originAllData.halt.haltList;
                     }
                     // 销售资源
-                    else if(this.currSelected == 3){
+                    else if(this.currSelected === 3){
                         this.originTwoData = this.originAllData.net.networkList;
                     }
                     else{
@@ -130,6 +139,18 @@
                     console.log('val----'+val)
                     console.log('list----'+JSON.stringify(list))
                     console.log('type---'+type)
+                    // 一级选择全部
+                    if(val === ''){
+                        api.sendEvent({
+                            name: param.origin,
+                            extra: {
+                                origin:'',
+                                originTwo:'',
+                                type:type
+                            }
+                        });
+                        api.closeFrame();
+                    }
                     if(this.currSelected != val){
                         this.currSelected = val;
                         this.currTwoSelected = 0;

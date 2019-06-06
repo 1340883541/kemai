@@ -285,7 +285,7 @@
                                 employeeid: _this.userInfo.employeeid
                             },
                             success: function(res) {
-                                console.log('today new data: ' + JSON.stringify(res))
+                                // console.log('today new data: ' + JSON.stringify(res))
                                 if (res.code == 1) {
                                     _this.newResourceFollowList = res.data || [];
                                 }
@@ -404,20 +404,23 @@
                         })
                     },
                     // 跳转到系统跟进列表
-                    handleSkipSystemList: function(origin) {
+                    handleSkipSystemList: function(status) {
                         if (this.userInfo.xxx == 'yg') {
                             wHrefJs.openWin({
                                 name: 'systemFollowHeader',
                                 path: './system_follow_header.html',
                                 param: {
-                                    origin: origin
+                                    status:status
                                 },
                                 bgColor: '#f7f7f7'
                             })
                         } else {
-                            api.openWin({
-                                name: 'managerNewFollow',
-                                url: 'manager_new_follow.html'
+                            wHrefJs.openWin({
+                                name: 'managerSystemFollow',
+                                url: 'manager_system_follow.html',
+                                param:{
+                                    status:status
+                                }
                             })
                         }
                     },
@@ -452,7 +455,9 @@
                                 name: 'callStatHeader',
                                 path: './call_stat_header.html',
                                 param: {
-                                    callStatus: status
+                                    callStatus: status,
+                                    startDate:funcGetThisToday().startDate,
+                                    endDate:funcGetThisToday().endDate,
                                 }
                             })
                         }else{
@@ -460,7 +465,9 @@
                                 name:'managerStat',
                                 path:'./manager_stat.html',
                                 param:{
-                                    callStatus:status
+                                    callStatus:status,
+                                    startDate:funcGetThisToday().startDate,
+                                    endDate:funcGetThisToday().endDate,
                                 }
                             })
                         }
@@ -477,7 +484,6 @@
         }
         // 刷新数据
         function refrshIndexData() {
-            console.log('innn')
             indexV.fetchNewData()
             indexV.fetchStatData();
             indexV.getMessageData();

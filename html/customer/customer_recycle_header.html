@@ -43,7 +43,7 @@
             </div>
             <div class="w-filter-lists flex-wrap">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
-                    <span>最后跟进<br>时间</span><i></i>
+                    <span>跟进时间</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
                     <span>客户来源</span><i></i>
@@ -231,7 +231,9 @@
                                 param:{
                                     origin:'filterCustomerRecycle',
                                     classifyData:JSON.stringify(_this.khOriginList),
-                                    currSelected:_this.currOriginSelected
+                                    currSelected:_this.currOriginSelected,
+                                    isHaveAllOrigin:true,
+                                    isHaveRecourcePool:false
                                 }
                             });
                         }
@@ -254,7 +256,10 @@
 
                                     // 当前归属地
                                     currHomeRela:_this.currHomeRela,
-                                    class:'aside'
+
+                                    isHaveRecourcePool:false,
+                                    isHaveStatus:true,
+                                    isHaveClassify:false,
                                 }
                             });
                         }

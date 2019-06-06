@@ -121,11 +121,24 @@
     }
     apiready = function(){
         // 安卓 关闭app
-        wHrefJs.andriodBackMain({
-            cb: function() {
-                api.closeWidget({
-                    silent: false
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            if( ret ){
+                var framesList = api.frames();
+                var isSomeFilterFrame = framesList.some(function(v){
+                    return v.name === 'filterCustomerFrame'
                 });
+                if(isSomeFilterFrame){
+                    api.closeFrame({
+                        name: 'filterCustomerFrame'
+                    });
+                }
+                else{
+                    api.closeWidget({
+                        silent: false
+                    });
+                }
             }
         });
         // 极光推送，消息列表跳转

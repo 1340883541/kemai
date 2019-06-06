@@ -115,11 +115,13 @@
 .w-filter-pop2 .right{
     width:calc(100% - 100px);
     text-align: center;
+    height: 300px;
     max-height: 300px;
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling:touch;
     text-align: left;
+    background-color: #fff;
 }
 .w-filter-pop2 .right li{
     padding-left: 30px;

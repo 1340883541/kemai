@@ -155,7 +155,7 @@
                 currSort:0,
                 startDate:'',
                 endDate:'',
-                
+
                 khDataList: [], //客户来源列表
                 pageNo: 1,
                 totalPage: 1,
@@ -190,7 +190,7 @@
                         url = 'newResource/newAddResFollList';
                     }
                     console.log('new customer frame request----'+JSON.stringify({
-                        employeeid: param.empId ? param.empId : _this.userInfo.employeeid,
+                        employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
                         cusSource:_this.currOrigin,

@@ -77,9 +77,7 @@
             name: 'filterNewCustomer'
         }, function(ret, err){
             var obj = ret.value;
-            console.log('new header---'+JSON.stringify(obj))
             if(obj){
-
                 if(typeof obj.classify != 'undefined'){
                     ncusHeaderV.currClassify = obj.classify;
                 }
@@ -90,8 +88,8 @@
                     ncusHeaderV.endDate = obj.endDate;
                 }
                 if(typeof obj.origin != 'undefined'){
-                    ncusHeaderV.currOriginSelected = obj.origin;
-                    ncusHeaderV.currOriginTwoSelected = obj.originTwo;
+                    ncusHeaderV.currOrigin = obj.origin;
+                    ncusHeaderV.currOriginTwo = obj.originTwo;
                     ncusHeaderV.currOriginType = obj.type;
                 }
                 if(typeof obj.home != 'undefined'){
@@ -108,12 +106,10 @@
             data:{
                 searchVal:'',
                 // 来源归类
-                classifyData:[],
-                currClassifySelected:0,
+                currClassify:0,
                 // 客户来源
-                originData:[],
-                currOriginSelected:param.val,
-                currOriginTwoSelected:'',
+                currOrigin:param.val,
+                currOriginTwo:'',
                 currOriginType:'',
 
                 startDate:'',
@@ -124,10 +120,9 @@
                 currSort:0
             },
             created:function(){
-                console.log(JSON.stringify(param))
                 if(param.empId){
-                    this.currOriginSelected = param.currOrigin;
-                    this.currOriginTwoSelected = param.currOriginTwo;
+                    this.currOrigin = param.currOrigin;
+                    this.currOriginTwo = param.currOriginTwo;
                     this.currOriginType = param.currType;
                     this.startDate = param.startDate;
                     this.endDate = param.endDate;
@@ -174,9 +169,11 @@
                                 h:h,
                                 param:{
                                     origin:'filterNewCustomer',
-                                    currSelected:_this.currOriginSelected,
-                                    currTwoSelected:_this.currOriginTwoSelected,
-                                    currType:_this.currOriginType
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currOriginType,
+                                    isHaveAllOrigin:false,
+                                    isHaveRecourcePool:true
                                 }
                             });
                         }
@@ -186,13 +183,17 @@
                                 h:wHei,
                                 param:{
                                     origin:'filterNewCustomer',
-                                    currOrigin:_this.currOriginSelected,
-                                    currOriginTwo:_this.currOriginTwoSelected,
+                                    currOrigin:_this.currOrigin,
+                                    currOriginTwo:_this.currOriginTwo,
                                     currType:_this.currOriginType,
-                                    currClassify:_this.currClassifySelected,
+                                    currClassify:_this.currClassify,
                                     currHome:_this.currHome,
                                     startDate:_this.startDate,
                                     endDate:_this.endDate,
+
+                                    isHaveClassify:true,
+                                    isHaveRecourcePool:true,
+                                    isHaveStatus:false
                                 }
                             });
                         }
