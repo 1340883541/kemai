@@ -38,22 +38,16 @@
                 <div class="new-follow-box">
                     <div class="index-cap">新增资源跟进</div>
                     <div class="head-bb flex-wrap">
-                        <div class="flex-con head-bb-lis" v-for="i in 4" v-if="newResourceFollow[i-1]" @click.stop="skipNewCustomer(newResourceFollow[i-1].value)" :key="i">
-                            <div class="head-bb-t" :class="'head-bb-t'+i" v-text="newResourceFollow[i-1].name"></div>
-                            <div class="head-bb-b" v-text="newResourceFollow[i-1].num"></div>
+                        <div
+                            class="flex-con head-bb-lis"
+                            v-if="newResourceFollowList && newResourceFollowList.length > 0"
+                            v-for="(newResource,i) in newResourceFollowList"
+                            @click.stop="skipNewCustomer(newResource.value)"
+                            :key="'new'+i"
+                        >
+                            <div class="head-bb-t" :class="'head-bb-t'+i" v-text="newResource.name"></div>
+                            <div class="head-bb-b" v-text="newResource.num"></div>
                         </div>
-                        <!-- <div class="flex-con head-bb-lis" v-if="newResourceFollow[1]" @click.stop="skipNewCustomer(newResourceFollow[1].value)">
-                            <div class="head-bb-t head-bb-t2" v-text="newResourceFollow[1].name"></div>
-                            <div class="head-bb-b" v-text="newResourceFollow[1].num"></div>
-                        </div>
-                        <div class="flex-con head-bb-lis" v-if="newResourceFollow[2]" @click.stop="skipNewCustomer(newResourceFollow[2].value)">
-                            <div class="head-bb-t head-bb-t3" v-text="newResourceFollow[2].name"></div>
-                            <div class="head-bb-b" v-text="newResourceFollow[2].num"></div>
-                        </div>
-                        <div class="flex-con head-bb-lis" v-if="newResourceFollow[3]" @click.stop="skipNewCustomer(newResourceFollow[3].value)">
-                            <div class="head-bb-t head-bb-t3" v-text="newResourceFollow[3].name"></div>
-                            <div class="head-bb-b" v-text="newResourceFollow[3].num"></div>
-                        </div> -->
                     </div>
                 </div>
             </div>
@@ -120,9 +114,9 @@
         </div>
         <!-- 今日统计 -->
         <div class="stat-box">
-            <div class="index-cap">今日统计</div>
+            <div class="index-cap">今日通话</div>
             <div class="stat-lis flex-wrap">
-                <div class="flex-con stat-ls bor-r" @click="skipStat('拨号')">
+                <div class="flex-con stat-ls bor-r" @click="skipStat('')">
                     <div class="stat-ls-t stat-ls-t1">拨号(次)</div>
                     <div class="stat-ls-b" v-text="allCallTimes"></div>
                 </div>
@@ -130,20 +124,18 @@
                     <div class="stat-ls-t stat-ls-t4">查看微信(个)</div>
                     <div class="stat-ls-b" v-text="lookwechatcount"></div>
                 </div> -->
-                <div class="flex-con stat-ls" @click="skipStat('未接')">
-                    <div class="stat-ls-t stat-ls-t2">未接(次)</div>
-                    <div class="stat-ls-b" v-text="noanscall"></div>
-                </div>
-                <div class="flex-con stat-ls bor-r" @click="skipStat('号码异常')">
-                    <div class="stat-ls-t stat-ls-t2">号码异常(个)</div>
-                    <div class="stat-ls-b" v-text="abnormalNum"></div>
-                </div>
-                <div class="flex-con stat-ls bor-r" @click="skipStat('接通')">
-                    <div class="stat-ls-t stat-ls-t1">接通(次)</div>
+                <div class="flex-con stat-ls" @click="skipStat(1)">
+                    <div class="stat-ls-t stat-ls-t1">接听(次)</div>
                     <div class="stat-ls-b" v-text="vaildcall"></div>
                 </div>
-                <!-- <div class="flex-con stat-ls">
-                </div> -->
+                <div class="flex-con stat-ls bor-r" @click="skipStat(2)">
+                    <div class="stat-ls-t stat-ls-t2">未接听(次)</div>
+                    <div class="stat-ls-b" v-text="noanscall"></div>
+                </div>
+                <div class="flex-con stat-ls" @click="skipStat(3)">
+                    <div class="stat-ls-t stat-ls-t2">号码异常(次)</div>
+                    <div class="stat-ls-b">{{abnormalNum1}}/{{abnormalNum2}}</div>
+                </div>
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
@@ -174,7 +166,7 @@
                 data: {
                     employeeid: '',
                     account: '',
-                    newResourceFollow: [], //新增资源跟进
+                    newResourceFollowList: [], //新增资源跟进
                     systemResourceFollow: [], //系统资源跟进
 
                     resource: 0, //资源回收
@@ -186,11 +178,13 @@
                     follow: 0, //跟进提醒
                     subscriptionBook: 0, //认购书提醒
                     // 今日统计
+                    // lookwechatcount: 0, //查看微信次数
                     vaildcall: 0, //今日接通通话
                     noanscall: 0, //今日统计未接听通话
-                    // lookwechatcount: 0, //查看微信次数
                     allCallTimes: 0, //拨号
-                    abnormalNum: 0, // 拨号异常
+                    abnormalNum1: 0, // 主叫拨号异常
+                    abnormalNum2: 0, // 被叫拨号异常
+
                     // 系统资源跟进
                     shortTerm: 0, //短期客户数量
                     metTerm: 0, //中期客户数量
@@ -203,17 +197,12 @@
                     notificationInfo: {}
                 },
                 mounted: function() {
-                    this.userInfo = wPref.getPrefs({
-                        key: 'userInfo'
-                    });
-                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-
                     this.netWorkStatus();
                     // 获取数据
                     this.fetchStatData();
-                    this.getMessageData();
+                    // this.getMessageData();
                     this.fetchNewData();
-                    this.fetchSystemFollowData();
+                    // this.fetchSystemFollowData();
                     this.$nextTick(function() {
                         $(window).on('scroll', function() {
                             var sTop = $(window).scrollTop()
@@ -238,6 +227,7 @@
                             key: 'userInfo'
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        var TOKEN_DATA = myLocalStorage.getItem('token');
                         wApiAjax({
                             url: "msgRemind/getAllNoticeCount",
                             method: 'get',
@@ -284,6 +274,7 @@
                             key: 'userInfo'
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        TOKEN_DATA = myLocalStorage.getItem('token');
                         wDialog.showProgress();
                         wApiAjax({
                             url: 'workbench/newAddResourceFoll',
@@ -296,7 +287,7 @@
                             success: function(res) {
                                 console.log('today new data: ' + JSON.stringify(res))
                                 if (res.code == 1) {
-                                    _this.newResourceFollow = res.data || [];
+                                    _this.newResourceFollowList = res.data || [];
                                 }
                                 wDialog.hideProgress();
                             },
@@ -305,30 +296,34 @@
                             }
                         })
                     },
-                    // 获取今日统计数据
+                    // 获取今日通过统计数据
                     fetchStatData: function() {
                         var _this = this;
                         this.userInfo = wPref.getPrefs({
                             key: 'userInfo'
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        TOKEN_DATA = myLocalStorage.getItem('token');
                         wDialog.showProgress();
                         wApiAjax({
-                            url: 'workbench/todaySta',
+                            url: 'todayCall/index',
                             headers: {
                                 token: TOKEN_DATA
                             },
+                            method:'get',
                             data: {
-                                employeeid: _this.userInfo.employeeid
+                                // employeeid: _this.userInfo.employeeid,
+                                token:TOKEN_DATA
                             },
                             success: function(res) {
-                                console.log(JSON.stringify(res))
+                                wDialog.hideProgress();
                                 if (res.code == 1) {
-                                    _this.vaildcall = res.vaildcall;
-                                    _this.noanscall = res.noanscall;
-                                    _this.abnormalNum = res.abnormalNum;
-                                    // _this.lookwechatcount = res.lookwechatcount;
-                                    _this.allCallTimes = res.allCallTimes;
+                                    var data = res.data || {};
+                                    _this.vaildcall = data.answer;
+                                    _this.noanscall = data.disAnswer;
+                                    _this.abnormalNum1 = data.unknownPhone;
+                                    _this.abnormalNum2 = data.invalid;
+                                    _this.allCallTimes = data.total;
                                 }
                             },
                             fail: function() {
@@ -343,6 +338,7 @@
                             key: 'userInfo'
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                        TOKEN_DATA = myLocalStorage.getItem('token');
                         wDialog.showProgress();
                         wApiAjax({
                             url: 'workbench/sysResourceFoll',
@@ -428,43 +424,43 @@
                     // 跳转新增
                     skipNewCustomer: function(val) {
                         var self = this;
-                        if (this.userInfo.xxx == 'yg') {
+                        if (this.userInfo.relativePosi == 'yg') {
                             wHrefJs.openWin({
                                 name: 'newCustomerHeader',
                                 path: './new_customer_header.html',
                                 param: {
-                                    value: val
+                                    val: val
                                 },
                                 bgColor: '#f7f7f7'
                             })
                         } else {
-                            api.openWin({
+                            wHrefJs.openWin({
                                 name: 'managerNewFollow',
-                                url: 'manager_new_follow.html',
+                                path: 'manager_new_follow.html',
                                 param: {
-                                    value: val
+                                    val: val
                                 },
+                                bgColor: '#f7f7f7'
                             })
                         }
-
                     },
                     // 跳转到今日统计
-                    skipStat: function(val) {
+                    skipStat: function(status) {
                         var _this = this;
-                        if(this.userInfo.xxx == 'yg'){
+                        if(this.userInfo.relativePosi == 'yg'){
                             wHrefJs.openWin({
-                                name: 'indexStat',
-                                path: './index_stat.html',
+                                name: 'callStatHeader',
+                                path: './call_stat_header.html',
                                 param: {
-                                    statTypeTxt: val
+                                    callStatus: status
                                 }
                             })
                         }else{
                             wHrefJs.openWin({
                                 name:'managerStat',
                                 path:'./manager_stat.html',
-                                pararm:{
-                                    value:''
+                                param:{
+                                    callStatus:status
                                 }
                             })
                         }
@@ -480,12 +476,13 @@
             })
         }
         // 刷新数据
-    function refrshIndexData() {
-        indexV.fetchNewData()
-        indexV.fetchStatData();
-        indexV.getMessageData();
-        indexV.fetchSystemFollowData();
-    }
+        function refrshIndexData() {
+            console.log('innn')
+            indexV.fetchNewData()
+            indexV.fetchStatData();
+            indexV.getMessageData();
+            indexV.fetchSystemFollowData();
+        }
 </script>
 
 </html>

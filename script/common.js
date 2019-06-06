@@ -64,6 +64,17 @@ function wOpenCustomerOriginFrame(par){
         param:par.param
     })
 }
+// 打开客户来源归类筛选框
+function wOpenCustomerClassifyFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_classify.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
 // 打开客户来源筛选框
 function wOpenCustomerStatusFrame(par){
     par = par || {};
@@ -97,6 +108,28 @@ function wOpenCustomerTimeFrame(par){
         param:par.param
     })
 }
+// 筛选打开通话状态弹窗
+function wOpenCustomerCallstatusFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_callstatus.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 筛选归属地
+function wOpenCustomerHomeFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_home.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
 // 打开更多筛选
 // 目前只包含 客户来源，客户状态，归属地，时间这四种选择。
 function wOpenCustomerMoreFrame(par){
@@ -106,8 +139,31 @@ function wOpenCustomerMoreFrame(par){
         path:'../components/filterpopup/filter_more.html',
         y:par.y,
         h:par.h,
-        param:par.param
+        param:par.param,
+        animation:{
+            type:par.isMoveIn ? 'movein' : 'none'
+        }
     })
+}
+// 获取权限
+// gngly  国内管理员
+// qygly  国内区域管理员
+// tdgly  国内团队管理员
+// yg   国内员工
+// zz  组长
+function getJobRelative(job){
+    if(job == 'gngly' || job == 'qygly'){
+        return 1;
+    }
+    else if(job == 'tdgly'){
+        return 2
+    }
+    else if(job == 'zz'){
+        return 3
+    }
+    else{
+        return 0;
+    }
 }
 // 格式化日期
 function funcFormateDate(year,month,day){
@@ -165,21 +221,21 @@ Vue.directive('longpress', {
                     handler(el)
                 }, 800)
             }
-        }
-        let move = function(e){
+        };
+        var move = function(e){
         	if(Math.abs(e.changedTouches[0].pageY - startY) > 20){
         		cancel();
         	}
-        }
+        };
         var cancel = function(e){
             if (pressTimer !== null) {
                 clearTimeout(pressTimer)
                 pressTimer = null
             }
-        }
+        };
         var handler = function(e){
             binding.value(e)
-        }
+        };
         el.addEventListener("touchstart", start);
         el.addEventListener('touchmove', move);
         el.addEventListener("touchend", cancel);

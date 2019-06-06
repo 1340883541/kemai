@@ -17,13 +17,17 @@
 
 <body>
     <div id="wrapper">
-        <div class="w-filter-popup">
-            <div class="w-filter-pop1">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop1" @click.stop.prevent>
                 <ul>
-                    <li>陌电</li>
-                    <li class="curr">活动</li>
-                    <li>精准</li>
-                    <li>转介绍</li>
+                    <li :class="{'curr':currSelected==''}" @click.stop="handlePitchClassify('')">全部</li>
+                    <li
+                        v-for="classify in classifyData"
+                        :key="classify.value"
+                        v-text="classify.name"
+                        :class="{'curr':currSelected==classify.value}"
+                        @click.stop="handlePitchClassify(classify.value)"
+                    ></li>
                 </ul>
             </div>
         </div>
@@ -31,6 +35,73 @@
 </body>
 <script type="text/javascript" src="../../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
-
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    var param = api.pageParam;
+    new Vue({
+        el:'#wrapper',
+        data:{
+            classifyData:[],
+            currSelected:''
+        },
+        mounted:function(){
+            this.currSelected = param.currSelected;
+            this.fetchClassifyData();
+        },
+        methods:{
+            fetchClassifyData:function(){
+                var _this = this;
+                var classifyData = window.localStorage.getItem('classifyData');
+                if(classifyData){
+                    this.classifyData = JSON.parse(classifyData);
+                }
+                else{
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/addNewCusSourse',
+                        method:'get',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.classifyData = res.classifySource || [];
+                                window.localStorage.setItem('classifyData',JSON.stringify(res.classifySource));
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
+                }
+            },
+            // 筛选客户状态
+            handlePitchClassify:function(val){
+                var _this = this;
+                this.currSelected = val;
+                api.sendEvent({
+                    name: param.origin,
+                    extra: {
+                        classify:val
+                    }
+                });
+                api.closeFrame();
+            },
+            handleCloseFilterPopup:function(){
+                var _this = this;
+                api.sendEvent({
+                    name: param.origin
+                });
+                api.closeFrame();
+            }
+        }
+    })
+}
+</script>
 </html>

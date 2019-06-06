@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>电话-头部</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style media="screen">
+        html,body,#wrap{
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <div id="follow-p"></div>
+        <div class="w-header">
+            <div class="w-header-cap">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">回收提醒<i></i></span></div>
+            </div>
+            <div class="w-filter-lists flex-wrap">
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
+                    <span>通话时间</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
+                    <span>通话状态</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,3)">
+                    <span>排序</span><i></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var callStatHeaderV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        wHrefJs.openFrame({
+            name:'openCallStatFrame',
+            path:'./call_stat_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'rgba(0,0,0,0)',
+            param:{
+                empId:api.pageParam.empId
+            },
+            animation:{
+                type:'none'
+            }
+        });
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterCallStat'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(obj){
+                if(typeof obj.callStatus != 'undefined'){
+                    callStatHeaderV.callStatus = obj.callStatus;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    callStatHeaderV.currSortSelected = obj.sort;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    callStatHeaderV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    callStatHeaderV.endDate = obj.endDate;
+                }
+            }
+            $('.w-filter-lis').removeClass('curr');
+        });
+
+        callStatHeaderV = new Vue({
+            el:"#wrap",
+            data:{
+                searchVal:'',
+                // 通话状态
+                callStatus:'',
+                // 排序方式
+                currSortSelected:0,
+                // 开始结束时间
+                startDate:'',
+                endDate:''
+            },
+            mounted:function(){
+                // this.startDate = funcGetThisToday().startDate;
+                // this.endDate = funcGetThisToday().endDate;
+            },
+            methods:{
+                // 筛选
+                clickFilterFn:function(e,i){
+                    var tag = e.currentTarget,
+                        _this = this;
+                    // 1.客户来源 2客户状态  3 更多 4排序
+                    // 跳转到frame
+                    var wHei = $(window).height(),
+                        y = api.safeArea.top + $('.w-header').height(),
+                        h = wHei - y;
+                    if(!$(tag).hasClass('curr')){
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                        if(i === 1){
+                            wOpenCustomerTimeFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterCallStat',
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate
+                                }
+                            });
+                        }
+                        else if(i === 2){
+                            wOpenCustomerCallstatusFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterCallStat',
+                                    callStatus:_this.callStatus
+                                }
+                            });
+                        }
+                        else if(i == 3){
+                            wOpenCustomerSortFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterCallStat',
+                                    currSelected:_this.currSortSelected,
+                                    sortClass:'class4'
+                                }
+                            })
+                        }
+                        else{
+                            console.log('筛选页面参数错误')
+                        }
+                    }else{
+                        $(tag).removeClass('curr');
+                        api.closeFrame({
+                            name:'filterCustomerFrame'
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
+</html>

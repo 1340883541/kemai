@@ -123,8 +123,11 @@
                 currStatusSelected:'',
                 // 排序方式
                 currSortSelected:1,
+                // 开始结束时间
                 startDate:'',
-                endDate:''
+                endDate:'',
+                // 当前归属地，所有归属地缓存
+                currHomeRela:''
             },
             mounted:function(){
                 this.fetchKhClass();
@@ -233,7 +236,27 @@
                             });
                         }
                         else if(i == 3){
-                            console.log('更多筛选');
+                            wOpenCustomerMoreFrame({
+                                y:0,
+                                h:wHei,
+                                param:{
+                                    origin:'filterCustomerRecycle',
+                                    // 客户来源
+                                    customerOriginData:JSON.stringify(_this.khOriginList),
+                                    currOriginSelected:_this.currOriginSelected,
+                                    // 客户状态
+                                    customerStatusData:JSON.stringify(_this.khStatusList),
+                                    currStatusSelected:_this.currStatusSelected,
+
+                                    // 时间
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
+
+                                    // 当前归属地
+                                    currHomeRela:_this.currHomeRela,
+                                    class:'aside'
+                                }
+                            });
                         }
                         else if(i == 4){
                             wOpenCustomerSortFrame({

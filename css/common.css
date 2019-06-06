@@ -401,7 +401,7 @@
     transform:scaleY(0.5);
 }
 .filter-lists .filter-lis .filter-lt .cname{
-    max-width: 44vw;
+    max-width: 40vw;
     color:#333;
     font-size: 18px;
 }
@@ -412,7 +412,7 @@
 .filter-lists .filter-lis .filter-lt .rela-state{
     height: 16px;
     padding:0 4px;
-    font-size: 13px;
+    font-size: 12px;
     color:#fff;
     line-height: 16px;
     text-align: center;
@@ -442,6 +442,13 @@
     border-radius: 4px;
     margin-top: 9px;
     overflow:hidden;
+}
+.filter-lists .filter-lis .filter-lt .call-time{
+    padding-left: 16px;
+    background: url('../image/icon-shijian32.png') no-repeat left center;
+    background-size: 14px;
+    font-size: 14px;
+    color:#999;
 }
 .filter-lists .filter-lis .filter-lb{
     padding-top: 5px;

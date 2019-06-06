@@ -90,9 +90,12 @@
     height: 16px;
     display: inline-block;
     float: right;
-    background: url(../../../image/icon-gr-jiantou32.png) no-repeat 0px 1px;
+    background: url('../../../image/icon-gr-jiantou32.png') no-repeat 0px 1px;
     background-size: 16px;
     transform: rotate(90deg);
+}
+.icon-b-jiantou.pack-up{
+    transform: rotate(0);
 }
 .filter-m-ylgs-info{
     margin-top: 15px;
@@ -142,7 +145,7 @@
 .filter-m-date input::-webkit-input-placeholder {
     color: #ccc;
 }
-.filter-m-date text{
+.filter-m-date span{
     width: 11.2%;
     line-height: 36px;
     float: left;

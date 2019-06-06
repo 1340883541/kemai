@@ -196,7 +196,7 @@
                             console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
+                                _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
                                     // _this.totalPage = Math.ceil(res.count / res.pageSize);

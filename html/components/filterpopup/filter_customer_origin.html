@@ -18,23 +18,29 @@
 <body>
     <div id="wrapper">
         <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
-            <div class="w-filter-pop2 clear">
+            <div class="w-filter-pop2 clear" style="padding-top:1px;" @click.stop>
                 <div class="left fl">
                     <ul>
-                        <li>公司资源</li>
-                        <li class="curr">销售资源</li>
-                        <li>渠道资源</li>
-                        <li>资源池</li>
+                        <li v-if="originAllData.corSour" :class="{'curr':currSelected==originAllData.corSour.corSourParValue}" v-text="originAllData.corSour.corSourParName" @click.stop="handleChooseOneOrigin(originAllData.corSour.corSourParValue,originAllData.corSour.corSourList,1)"></li>
+                        <li v-if="originAllData.halt" :class="{'curr':currSelected==originAllData.halt.halParValue}" v-text="originAllData.halt.halParName" @click.stop="handleChooseOneOrigin(originAllData.halt.halParValue,originAllData.halt.haltList,1)"></li>
+                        <li v-if="originAllData.net" :class="{'curr':currSelected==originAllData.net.halParValue}" v-text="originAllData.net.netParName" @click.stop="handleChooseOneOrigin(originAllData.net.halParValue,originAllData.net.networkList,1)"></li>
+                        <li v-if="originAllData.respool" :class="{'curr':currSelected==originAllData.respool.respoolParValue}" v-text="originAllData.respool.respoolParName" @click.stop="handleChooseOneOrigin(originAllData.respool.respoolParValue,originAllData.respool.respoolList,1)"></li>
                     </ul>
                 </div>
                 <div class="right fl">
                     <ul>
-                        <li class="curr">全部</li>
-                        <li>公司网络资源</li>
-                        <li>公司参与展会</li>
-                        <li>公司渠道资源</li>
-                        <li>公司组织活动</li>
-                        <li>移民推荐</li>
+                        <li
+                            :class="{'curr':currTwoSelected===''}"
+                            @click.stop="handleChooseTwoOrigin('')"
+                        >全部</li>
+                        <li
+                            v-if="originTwoData && originTwoData.length > 0"
+                            v-for="originTwo in originTwoData"
+                            :key="originTwo.value"
+                            :class="{'curr':currTwoSelected==originTwo.value}"
+                            @click.stop="handleChooseTwoOrigin(originTwo.value)"
+                            v-text="originTwo.name"
+                        ></li>
                     </ul>
                 </div>
             </div>
@@ -43,29 +49,104 @@
 </body>
 <script type="text/javascript" src="../../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
 <script>
     apiready = function(){
         var param = api.pageParam;
+        console.log('filter origin---'+JSON.stringify(param))
         new Vue({
             el:'#wrapper',
             data:{
-                customerStatusList:[],
+                originAllData:{},
                 currSelected:'',
+                currTwoSelected:'',
+                currType:'',
+                originTwoData:[]
             },
             mounted:function(){
-                this.customerStatusList = param.classifyData ? JSON.parse(param.classifyData) : [];
+                this.customerOriginList = param.originData ? JSON.parse(param.originData) : {};
                 this.currSelected = param.currSelected;
+                this.currTwoSelected = param.currTwoSelected;
+                this.currType = param.currType;
+                this.fetchOriginAllData();
             },
             methods:{
-                // 筛选客户状态
-                handlePitchStatus:function(val){
+                // 获取客户来源所有
+                fetchOriginAllData:function(){
                     var _this = this;
-                    this.currSelected = val;
+                    var originAllData = window.localStorage.getItem('originAllData');
+                    if(originAllData){
+                        this.originAllData = JSON.parse(originAllData);
+                        this.getOriginTwoData();
+                    }
+                    else{
+                        wDialog.showProgress();
+                        wApiAjax({
+                            url:'newResource/cusSource',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            success:function(res){
+                                console.log('two'+JSON.stringify(res))
+                                wDialog.hideProgress();
+                                if(res.code == 1){
+                                    _this.originAllData = res.data || [];
+                                    window.localStorage.setItem('originAllData',JSON.stringify(res.data));
+                                    _this.getOriginTwoData();
+                                }else{
+                                    wDialog.toast({
+                                        msg:res.message
+                                    })
+                                }
+                            }
+                        })
+                    }
+                },
+                getOriginTwoData:function(){
+                    // 资源池
+                    if(this.currSelected == 0){
+                        this.originTwoData = this.originAllData.respool.respoolList;
+                    }
+                    // 公司资源
+                    else if(this.currSelected == 1){
+                        this.originTwoData = this.originAllData.corSour.corSourList;
+                    }
+                    // 渠道资源
+                    else if(this.currSelected == 2){
+                        this.originTwoData = this.originAllData.halt.haltList;
+                    }
+                    // 销售资源
+                    else if(this.currSelected == 3){
+                        this.originTwoData = this.originAllData.net.networkList;
+                    }
+                    else{
+                        console.log('来源错误')
+                    }
+                },
+                handleChooseOneOrigin:function(val,list,type){
+                    console.log('val----'+val)
+                    console.log('list----'+JSON.stringify(list))
+                    console.log('type---'+type)
+                    if(this.currSelected != val){
+                        this.currSelected = val;
+                        this.currTwoSelected = 0;
+                        this.originTwoData = list;
+                        this.currType = type;
+                    }
+                },
+                // 筛选客户状态
+                handleChooseTwoOrigin:function(val){
+                    var _this = this;
+                    this.currTwoSelected = val;
                     api.sendEvent({
                         name: param.origin,
                         extra: {
-                            status:val
+                            origin:_this.currSelected,
+                            originTwo:val,
+                            type:_this.currType
                         }
                     });
                     api.closeFrame();

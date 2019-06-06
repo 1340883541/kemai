@@ -35,14 +35,29 @@
                 <div class="mger-header">
                     <div class="mger-back" onclick="api.closeWin();"></div>
                     <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
-                        <div class="cap">新增跟进资源</div>
-                        <div class="desc">333</div>
+                        <div class="cap">今日通话</div>
+                        <div class="desc" v-text="currNowLocationTxt"></div>
                     </div>
                 </div>
                 <div class="mger-nav flex-wrap">
-                    <div class="flex-con curr" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'">大区</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'">团队</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
+                    <div
+                        class="flex-con"
+                        :class="{'curr':isCurrArea}"
+                        v-if="jobTitle == 'gngly' || jobTitle == 'qygly'"
+                        @click.stop="handleSwitchPosition(0)"
+                    >大区</div>
+                    <div
+                        class="flex-con"
+                        :class="{'curr':isCurrTeam}"
+                        v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'"
+                        @click.stop="handleSwitchPosition(1)"
+                    >团队</div>
+                    <div
+                        class="flex-con"
+                        :class="{'curr':isCurrGroup}"
+                        v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'"
+                        @click.stop="handleSwitchPosition(2)"
+                    >小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,1)">
@@ -59,79 +74,77 @@
             <div class="mger-header-place"></div>
         </div>
         <div class="mger-container">
-            <ul class="mger-lists clear mger-area" id="mger-area">
-                <li class="mger-lis fl flex-wrap">
-                    <div class="left flex-wrap flex-vertical flex-center">
-                        <p class="mger-cap">天津</p>
-                        <p class="mger-desc">
-                            <span>5000</span>/<span>5000</span>
-                        </p>
-                    </div>
-                    <div class="right" id="circle-0">
-                    </div>
-                </li>
-            </ul>
-            <ul class="mger-lists mger-team" id="mger-team" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt">销售一组</div>
-                    <div class="mger-lpro">
-                        <div class="mger-lpro-curr">
-                            <span class="left">90%</span>
-                        </div>
-                    </div>
+            <ul class="mger-lists mger-team" id="mger-area" v-if="isShowAreaBox">
+                <li
+                    class="mger-lis"
+                    v-if="areaList.length > 0"
+                    v-for="area in areaList"
+                    :key="'area'+area.id"
+                    :class="{'checked':area.id == areaCurr}"
+                    @click.stop="handleChooseArea(area.name,area.id)"
+                >
+                    <div class="mger-lt" v-text="area.name"></div>
+                    <div class="mger-lcount" :style="'width:'+area.percent+'%'"></div>
                     <div class="mger-ldesc">
-                        <span>430</span>/<span>1000</span>
+                        <span v-text="area.count"></span>次
                     </div>
                 </li>
+                <!-- 空页面 -->
+                <empty-con :is-show="areaList.length === 0" txt="暂无大区信息"></empty-con>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-group" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt">销售一组1队</div>
-                    <div class="mger-lpro">
-                        <div class="mger-lpro-curr">
-                            <span class="right">90%</span>
-                        </div>
-                    </div>
+            <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
+                <li
+                    class="mger-lis"
+                    v-if="teamList.length > 0"
+                    v-for="team in teamList"
+                    :key="'team'+team.id"
+                    :class="{'checked':team.id == teamCurr}"
+                    @click.stop="handleChooseTeam(team.name,team.id)"
+                >
+                    <div class="mger-lt" v-text="team.name"></div>
+                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
                     <div class="mger-ldesc">
-                        <span>430</span>/<span>1000</span>
+                        <span v-text="team.count"></span>次
                     </div>
                 </li>
+                <!-- 空页面 -->
+                <empty-con :is-show="teamList.length === 0" txt="暂无团队信息"></empty-con>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew" style="display:none">
-                <li class="mger-lis">
-                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
-                    <div class="mger-lnum-box flex-wrap">
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">新增数</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">已跟进</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">未跟进</p>
-                        </div>
+            <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
+                <li
+                    class="mger-lis"
+                    v-if="groupList.length > 0"
+                    v-for="group in groupList"
+                    :key="'group'+group.id"
+                    :class="{'checked':group.id == groupCurr}"
+                    @click.stop="handleChooseGroup(group.name,group.id)"
+                >
+                    <div class="mger-lt" v-text="group.name"></div>
+                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="group.count"></span>次
                     </div>
                 </li>
-                <li class="mger-lis">
-                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2">龙渝</span></div>
-                    <div class="mger-lnum-box flex-wrap">
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">新增数</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">已跟进</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num">200</p>
-                            <p class="txt">未跟进</p>
-                        </div>
+                <!-- 空页面 -->
+                <empty-con :is-show="teamList.length === 0" txt="暂无小组信息"></empty-con>
+            </ul>
+            <ul class="mger-lists mger-team" id="mger-crew" v-if="isShowCrewBox">
+                <li
+                    class="mger-lis"
+                    v-if="crewList.length > 0"
+                    v-for="crew in crewList"
+                    :key="'crew'+crew.id"
+                    :class="{'checked':crew.id == crewCurr}"
+                    @click.stop="handleChooseCrew(crew.id)"
+                >
+                    <div class="mger-lt" v-text="crew.name"></div>
+                    <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="crew.count"></span>次
                     </div>
                 </li>
+                <!-- 空页面 -->
+                <empty-con :is-show="crewList.length === 0" txt="暂无人员信息"></empty-con>
             </ul>
         </div>
     </div>
@@ -141,7 +154,6 @@
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
-<script type="text/javascript" src="../../script/lib/circles.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
@@ -149,16 +161,18 @@
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
+        var param = api.pageParam;
         api.addEventListener({
             name: 'filterManagerStat'
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
-                if(typeof obj.origin != 'undefined'){
-                    managerStatV.currOriginSelected = obj.origin;
+                if(typeof obj.callStatus != 'undefined'){
+                    managerStatV.callStatus = obj.callStatus;
                 }
                 if(typeof obj.sort != 'undefined'){
                     managerStatV.currSortSelected = obj.sort;
+                    managerStatV.currSortType = obj.sort == 0 ? 'desc' : 'asc';
                 }
                 if(typeof obj.startDate != 'undefined'){
                     managerStatV.startDate = obj.startDate;
@@ -166,6 +180,7 @@
                 if(typeof obj.endDate != 'undefined'){
                     managerStatV.endDate = obj.endDate;
                 }
+                managerStatV.fetchAllData();
             }
             $('.filter-lis').removeClass('curr');
         });
@@ -174,19 +189,49 @@
             el: "#wrapper",
             data: {
                 userInfo:{},
+                // 当前所在位置
                 // 职位
                 // gngly  国内管理员
                 // qygly  国内区域管理员
                 // tdgly  国内团队管理员
                 // yg   国内员工
                 // zz  组长
-                jobTitle:'gngly',
-
-                currOriginSelected:'',
-                currSortSelected:1,
-
+                jobTitle:'qygly',
+                step:'',
+                initStep:'',
+                currSortSelected:0,
+                currSortType:'desc',
+                // 开始结束时间
                 startDate:'',
-                endDate:''
+                endDate:'',
+                // 显示哪个盒子
+                isShowAreaBox:false,
+                isShowTeamBox:false,
+                isShowGroupBox:false,
+                isShowCrewBox:false,
+                // 当前选中的
+                isCurrArea:false,
+                isCurrTeam:false,
+                isCurrGroup:false,
+                // id
+                areaId:'',
+                areaName:'',
+                areaCurr:'',
+                teamId:'',
+                teamName:'',
+                teamCurr:'',
+                groupId:'',
+                groupName:'',
+                groupCurr:'',
+                crewId:'',
+                crewCurr:'',
+
+                callStatus:'',
+                // 返回信息List
+                areaList:[],
+                teamList:[],
+                groupList:[],
+                crewList:[]
             },
             mounted: function() {
                 var _this = this;
@@ -195,23 +240,234 @@
                     key: 'userInfo'
                 });
                 this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                console.log(JSON.stringify(this.userInfo))
-                this.$nextTick(function(){
-                    _this.renderCircle();
-                })
+                // console.log(JSON.stringify(this.userInfo))
+                // 通话状态
+                this.callStatus = param.callStatus;
+                this.step = this.jobTitle == 'gngly' || this.jobTitle == 'qygly' ? 1 : this.jobTitle == 'tdgly' ? 2 : 3;
+                this.initStep = this.step;
+                this.startDate = funcGetThisToday().startDate;
+                this.endDate = funcGetThisToday().endDate;
+                if(this.jobTitle == 'gngly' || this.jobTitle == 'qygly'){
+                    this.isShowAreaBox = true;
+                    this.isCurrArea = true;
+                }
+                else if(this.jobTitle == 'tdgly'){
+                    this.isShowTeamBox = true;
+                    this.isCurrTeam = true;
+                }
+                else{
+                    this.isShowGroupBox = true;
+                    this.isCurrGroup = true;
+                }
+                this.fetchCallData();
             },
             methods: {
-                renderCircle:function(){
-                    var circleWid = $('#circle-0').outerWidth()/2;
-                    Circles.create({
-                        id: 'circle-0',
-                        value: 100,
-                        radius: circleWid,
-                        width: 3,
-                        colors: ['#eee', '#0c7ff9'],
-                        isPercent:1
+                fetchAllData:function(){
+                    // 请求多次记录所有的数据
+                    for(var i = this.initStep; i <= this.step;i++){
+                        this.fetchCallData(i);
+                    }
+                },
+                fetchCallData:function(filterStep){
+                    var _this = this;
+                    wDialog.showProgress();
+                    console.log(JSON.stringify({
+                        step:_this.step,
+                        initStep:_this.initStep,
+                        token:TOKEN_DATA,
+                        regionIds:_this.areaId,
+                        teamIds:_this.teamId,
+                        groupIds:_this.groupId,
+                        empIds:_this.crewId,
+                        sortType:_this.currSortType,
+                        callTimeStart:_this.startDate,
+                        callTimeEnd:_this.endDate,
+                        callStatus:_this.callStatus
+                    }))
+                    wApiAjax({
+                        url:'todayCall/empDetail',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data:{
+                            step:filterStep?filterStep:_this.step,
+                            token:TOKEN_DATA,
+                            regionIds:_this.areaId,
+                            teamIds:_this.teamId,
+                            groupIds:_this.groupId,
+                            empIds:_this.crewId,
+                            sortType:_this.currSortType,
+                            callTimeStart:_this.startDate,
+                            callTimeEnd:_this.endDate,
+                            callStatus:_this.callStatus
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            console.log('response ------------'+JSON.stringify(res))
+                            if(res.code==1){
+                                var list = _this.funcFormatRequestData(res.data);
+                                if(filterStep){
+                                    if(filterStep == 1){
+                                        _this.areaList = list;
+                                    }
+                                    else if(filterStep == 2){
+                                        _this.teamList = list;
+                                    }
+                                    else if(filterStep == 3){
+                                        _this.groupList = list;
+                                    }
+                                    else{
+                                        _this.crewList = list;
+                                    }
+                                }else{
+                                    if(_this.step == 1){
+                                        _this.areaList = list;
+                                    }
+                                    else if(_this.step == 2){
+                                        _this.teamList = list;
+                                    }
+                                    else if(_this.step == 3){
+                                        _this.groupList = list;
+                                    }
+                                    else{
+                                        _this.crewList = list;
+                                    }
+                                }
+                            }
+                        }
                     })
                 },
+                // 格式化数据
+                funcFormatRequestData:function(data){
+                    data = data || [];
+                    var _this = this;
+                    // if(this.step)
+                    if(data && data.length == 1){
+                        return data.map(function(v){
+                            v.count == 0 ? v.percent = 0 : v.percent = 100;
+                            return v;
+                        });
+                    }else{
+                        var list = data.map(function(v){
+                            return v.count;
+                        });
+                        var max = Math.max.apply(null,list);
+                        return data.map(function(v){
+                            max == 0 ? v.percent = 0 : v.percent = Math.ceil((v.count / max) * 100);
+                            return v;
+                        });
+                    }
+                },
+                // 切换大区，团队
+                handleSwitchPosition:function(i){
+                    if(i === 0){
+                        this.isShowAreaBox = true;
+                        this.isShowTeamBox = false;
+                        this.isShowGroupBox = false;
+                        this.isShowCrewBox = false;
+
+                        this.isCurrArea = true;
+                        this.isCurrTeam = false;
+                        this.isCurrGroup = false;
+                    }
+                    else if(i === 1){
+                        if(this.areaId){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = true;
+                            this.isShowGroupBox = false;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = true;
+                            this.isCurrGroup = false;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择大区'
+                            })
+                        }
+                    }
+                    else if(i === 2){
+                        if(this.teamId){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = false;
+                            this.isShowGroupBox = true;
+                            this.isShowCrewBox = false;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = false;
+                            this.isCurrGroup = true;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择团队'
+                            })
+                        }
+                    }
+                    else if(i === 3){
+                        if(this.teamId){
+                            this.isShowAreaBox = false;
+                            this.isShowTeamBox = false;
+                            this.isShowGroupBox = false;
+                            this.isShowCrewBox = true;
+
+                            this.isCurrArea = false;
+                            this.isCurrTeam = false;
+                            this.isCurrGroup = true;
+                            this.step = 4;
+                        }else{
+                            wDialog.toast({
+                                msg:'请先选择团队'
+                            })
+                        }
+                    }
+                    else{
+                        console.log('参数错误');
+                    }
+                },
+                handleChooseArea:function(name,id){
+                    this.areaName = name;
+                    this.areaId = id;
+                    this.areaCurr = id;
+                    this.teamId = '';
+                    this.teamName = '';
+                    this.teamCurr = '';
+                    this.groupId = '';
+                    this.groupName = '';
+                    this.groupCurr = '';
+                    this.step = 2;
+                    this.fetchCallData();
+                    this.handleSwitchPosition(1);
+                },
+                handleChooseTeam:function(name,id){
+                    this.teamName = name;
+                    this.teamId = id;
+                    this.teamCurr = id;
+                    this.groupId = '';
+                    this.groupName = '';
+                    this.groupCurr = '';
+                    this.step = 3;
+                    this.fetchCallData();
+                    this.handleSwitchPosition(2);
+                },
+                handleChooseGroup:function(name,id){
+                    this.groupName = name;
+                    this.groupId = id;
+                    this.groupCurr = id;
+                    this.step = 4;
+                    this.fetchCallData();
+                    this.handleSwitchPosition(3);
+                },
+                handleChooseCrew:function(id){
+                    console.log('跳转查看员工的客户')
+                    this.crewCurr = id;
+                    wHrefJs.openWin({
+                        name:'callStat',
+                        path:'./call_stat_header.html',
+                        param:{
+                            empId:id
+                        }
+                    })
+                },
+                // 筛选
                 handleChooseFilter:function(e,i){
                     var tag = e.currentTarget,
                         _this = this;
@@ -234,13 +490,12 @@
                             });
                         }
                         else if(i === 2){
-                            wOpenCustomerOriginFrame({
+                            wOpenCustomerCallstatusFrame({
                                 y:y,
                                 h:h,
                                 param:{
                                     origin:'filterManagerStat',
-                                    classifyData:JSON.stringify(_this.khOriginList),
-                                    currSelected:_this.currOriginSelected
+                                    callStatus:_this.callStatus
                                 }
                             });
                         }
@@ -266,6 +521,23 @@
                     }
                 }
             },
+            computed:{
+                currNowLocationTxt:function(){
+                    if(this.areaName && this.teamName && this.groupName){
+                        return this.areaName+'/'+this.teamName+'/'+this.groupName
+                    }
+                    if(this.areaName && this.teamName){
+                        return this.areaName+'/'+this.teamName;
+                    }
+                    if(this.areaName){
+                        return this.areaName;
+                    }
+                    if(this.teamName && this.groupName){
+                        return this.teamName+'/'+this.groupName;
+                    }
+                    return '';
+                }
+            }
         });
     }
 </script>
