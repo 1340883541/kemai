@@ -86,17 +86,13 @@
                     class="mger-lis"
                     v-for="(team,idx) in teamList"
                     :key="'team'+idx"
-                    :class="{checked:teamCurr === team.team}"
-                    @click.stop="handleChooseTeam(team.team,team.name)"
+                    :class="{checked:teamCurr === team.teamid}"
+                    @click.stop="handleChooseTeam(team.teamid,team.teamname)"
                 >
-                    <div class="mger-lt" v-text="team.name"></div>
-                    <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
-                            <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
-                        </div>
-                    </div>
+                    <div class="mger-lt" v-text="team.teamname"></div>
+                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
                     <div class="mger-ldesc">
-                        <span v-text="team.addtotal"></span>/<span v-text="team.total"></span>
+                        <span v-text="team.total"></span>
                     </div>
                 </li>
             </ul>
@@ -106,42 +102,28 @@
                     class="mger-lis"
                     v-for="(group,idx) in groupList"
                     :key="'group'+idx"
-                    :class="{checked:groupCurr === group.groupid}"
-                    @click.stop="handleChooseGroup(group.groupid,group.name)"
+                    :class="{checked:groupCurr === group.teamid}"
+                    @click.stop="handleChooseGroup(group.teamid,group.groupname)"
                 >
-                    <div class="mger-lt" v-text="group.name"></div>
-                    <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
-                            <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
-                        </div>
-                    </div>
+                    <div class="mger-lt" v-text="group.groupname"></div>
+                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
                     <div class="mger-ldesc">
-                        <span v-text="group.addtotal"></span>/<span v-text="group.total"></span>
+                        <span v-text="group.total"></span>
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew" v-if="isShowCrewBox">
+            <ul class="mger-lists mger-team" id="mger-crew" v-if="isShowCrewBox">
                 <li
                     v-if="crewList && crewList.length > 0"
                     v-for="crew in crewList"
                     class="mger-lis"
-                    :class="{'curr':crewCurr===crew.id}"
-                    @click.stop="handleChooseCrew(crew.id)"
+                    :class="{'curr':crewCurr===crew.empid}"
+                    @click.stop="handleChooseCrew(crew.empid)"
                 >
-                    <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2" v-text="crew.name"></span></div>
-                    <div class="mger-lnum-box flex-wrap">
-                        <div class="flex-con mger-lnum">
-                            <p class="num" v-text="crew.total"></p>
-                            <p class="txt">新增数</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num" v-text="crew.addtotal"></p>
-                            <p class="txt">已跟进</p>
-                        </div>
-                        <div class="flex-con mger-lnum">
-                            <p class="num" v-text="crew.total - crew.addtotal"></p>
-                            <p class="txt">未跟进</p>
-                        </div>
+                    <div class="mger-lt" v-text="crew.empname"></div>
+                    <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="crew.total"></span>
                     </div>
                 </li>
             </ul>
@@ -361,7 +343,6 @@
                 // 获取团队数据
                 fetchTeamData:function(isFilter){
                     isFilter = isFilter || false;
-                    console.log(this.areaId)
                     if(getJobRelative(this.jobTitle) > 1){
                         return;
                     }
@@ -377,7 +358,8 @@
                             startTime:_this.startDate,
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
-                            cusStatus:_this.cusStatus,
+                            cusStatus:_this.currStatus,
+                            type:1,
                             sort:_this.currSort,
                             region:_this.areaId
                         },
@@ -385,7 +367,7 @@
                             console.log('teamlist-------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.teamList = funcFormatRequestData(res.data);
+                                _this.teamList = _this.funcFormatRequestData(res.data.teamList);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(1);
                                 }
@@ -411,20 +393,24 @@
                     if(getJobRelative(this.jobTitle) > 2){
                         return
                     }
+                    // if(this.areaId == '' || this.itemId == ''){
+                    //     return;
+                    // }
                     var _this = this;
                     wDialog.showProgress();
-                    console.log(JSON.stringify({
+                    console.log('group list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
                         cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
-                        currStatus:_this.currStatus,
+                        cusStatus:_this.currStatus,
                         sort:_this.currSort,
                         region:_this.areaId,
-                        team:_this.teamId
+                        team:_this.teamId,
+                        type:1,
                     }))
                     wApiAjax({
-                        url:'newResource/newAddResFollListByTeam',
+                        url:'systemResource/sysResourceListByTeam',
                         headers:{
                             token:TOKEN_DATA
                         },
@@ -433,7 +419,8 @@
                             startTime:_this.startDate,
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
-                            currStatus:_this.currStatus,
+                            cusStatus:_this.currStatus,
+                            type:1,
                             sort:_this.currSort,
                             region:_this.areaId,
                             team:_this.teamId
@@ -442,7 +429,7 @@
                             console.log('grouplist-------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.groupList = funcFormatRequestData(res.data);
+                                _this.groupList =_this.funcFormatRequestData(res.data.groupList);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(2);
                                 }
@@ -465,24 +452,25 @@
                 // 获取成员数据
                 fetchCrewData:function(isFilter){
                     isFilter = isFilter || false;
-                    if(this.areaId === '' && this.teamId === '' && this.groupId === ''){
-                        return
-                    }
+                    // if(this.areaId === '' || this.teamId === '' || this.groupId === ''){
+                    //     return
+                    // }
                     var _this = this;
                     wDialog.showProgress();
-                    console.log(JSON.stringify({
+                    console.log('crew list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
                         cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                         sort:_this.currSort,
-                        currStatus:_this.currStatus,
+                        cusStatus:_this.currStatus,
+                        type:1,
                         region:_this.areaId,
                         team:_this.teamId,
                         groupid:_this.groupId
                     }))
                     wApiAjax({
-                        url:'newResource/newAddResFollListByGroup',
+                        url:'systemResource/sysResourceListByGroup',
                         headers:{
                             token:TOKEN_DATA
                         },
@@ -492,7 +480,8 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            currStatus:_this.currStatus,
+                            cusStatus:_this.currStatus,
+                            type:1,
                             region:_this.areaId,
                             team:_this.teamId,
                             groupid:_this.groupId
@@ -501,10 +490,7 @@
                             console.log('crewlist-------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.crewList = res.data.groupList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
-                                    return v;
-                                });
+                                _this.crewList = _this.funcFormatRequestData(res.data.groupList);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(3);
                                 }else{
@@ -520,8 +506,8 @@
                 handleChooseCrew:function(id){
                     var _this = this;
                     wHrefJs.openWin({
-                        name: 'systemCustomerHeader',
-                        path: './system_customer_header.html',
+                        name: 'systemFollowHeader',
+                        path: './system_follow_header.html',
                         param: {
                             empId:id,
                             startDate:_this.startDate,

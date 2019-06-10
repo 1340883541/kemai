@@ -36,20 +36,19 @@
 
 <body>
     <div id="wrap">
-        <div class="filter-lists">
-            <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
+        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
             <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="filter-lt flex-wrap flex-between">
-                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name">和哈哈哈哈哈哈哈哈哈哈哈哈</span><span class="red-bg green-bg rela-state">未联系</span></div>
+                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name"></span></div>
                     <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>
                 <div class="filter-lb">
-                    <div class="lis flb-cls1">客户类型: <span v-text="khdata.status||'无'">少的地方</span></div>
+                    <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
                     <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属地: <span>成都成都成</span></div>
-                        <div class="lis flex-con flb-cls2">客户类型: <span>短期</span></div>
-                        <div class="lis flex-con flb-cls2">计划时间: <span>2019-06-20</span></div>
-                        <div class="lis flex-con flb-cls2">跟进时间: <span>2019-05-20</span></div>
+                        <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">客户类型: <span v-text="khdata.status||'暂无'"></span></div>
+                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂无跟进'"></span></div>
+                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
                     </div>
                 </div>
             </div>
@@ -68,7 +67,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var sCusListV = null;
+    var sCusSystemFrameV = null;
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
@@ -99,107 +98,146 @@
             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
-            sCusListV.pageNo = 1;
-            sCusListV.fetchSystemData(false, api.refreshHeaderLoadDone);
+            sCusSystemFrameV.pageNo = 1;
+            sCusSystemFrameV.fetchSystemData(false, api.refreshHeaderLoadDone);
         });
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err) {
-            if (++sCusListV.pageNo <= sCusListV.totalPage) {
-                sCusListV.fetchSystemData(true);
+            if (++sCusSystemFrameV.pageNo <= sCusSystemFrameV.totalPage) {
+                sCusSystemFrameV.fetchSystemData(true);
             } else {
-                $('#not-more').show();
+                if(sCusSystemFrameV.khDataList.length > 0){
+                    $('#not-more').show();
+                }
             }
         });
         // 跟进成功
         api.addEventListener({
             name: 'followRecordSuccessRefresh'
         }, function(ret, err){
-            sCusListV.pageNo = 1;
-            sCusListV.fetchSystemData();
+            sCusSystemFrameV.pageNo = 1;
+            sCusSystemFrameV.fetchSystemData();
         });
 
         var param = api.pageParam;
-        sCusListV = new Vue({
+
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterSystemCustomer'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(obj){
+                if(typeof obj.status != 'undefined'){
+                    sCusSystemFrameV.currStatus = obj.status;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    sCusSystemFrameV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    sCusSystemFrameV.endDate = obj.endDate;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    sCusSystemFrameV.currOrigin = obj.origin;
+                    sCusSystemFrameV.currOriginTwo = obj.originTwo;
+                    sCusSystemFrameV.currOriginType = obj.type;
+                }
+                if(typeof obj.home != 'undefined'){
+                    sCusSystemFrameV.currHome = obj.home;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    sCusSystemFrameV.currSort = obj.sort;
+                }
+                $('#not-more').hide();
+                sCusSystemFrameV.pageNo = 1;
+                sCusSystemFrameV.fetchSystemData();
+            }
+        });
+        sCusSystemFrameV = new Vue({
             el: '#wrap',
             data: {
-                khClassifyList: [], //客户来源列表
                 search_cusName: '', // 搜索客户名
-                search_status: 0, // 联系状态
-                order_followtime: 0, // 跟进时间
-                order_nextfollow: 0, // 计划跟进时间
+                startDate:'',
+                endDate:'',
+                currType:'',
+                currOrigin:'',
+                currOriginTwo:'',
+                currStatus:'',
+                currHome:'',
+                currSort:0,
                 pageNo: 1,
                 totalPage: 1,
                 khDataList: [], // 客户数据列表
                 userInfo: ''
             },
             mounted: function() {
-                // this.fetchCustomerClassify();
+                this.init();
                 this.fetchSystemData();
             },
             methods: {
-                // 获取客户类型
-                fetchCustomerClassify: function() {
-                    var _this = this;
+                init:function(){
+                    // 获取权限，初始化结构
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     });
-                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    wApiAjax({
-                        url: 'workbench/syReFoCustomerSataus',
-                        headers: {
-                            "token": TOKEN_DATA
-                        },
-                        success: function(res) {
-                            // console.log('customerclassify ========   '+JSON.stringify(res))
-                            if (res.code == 1) {
-                                _this.khClassifyList = res.data.customerSatauslist;
-                                res.data.customerSatauslist.forEach(function(v, i) {
-                                    if (v.name === param.origin) {
-                                        _this.currClassifyIndex = i;
-                                        _this.search_status = v.value;
-                                    }
-                                })
-                                _this.fetchSystemData();
-                            } else {
-                                wDialog.toast({
-                                    msg: res.msg
-                                })
-                            }
-                        }
-                    })
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
+                    this.currType = param.currType;
+                    this.currOrigin = param.currOrigin;
+                    this.currOriginTwo = param.currOriginTwo;
+                    this.currStatus = param.currStatus;
                 },
-                // 获取今日新增列表
+                // 获取系统跟进列表
                 fetchSystemData: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
                     wDialog.showProgress();
                     console.log('request data ====> '+JSON.stringify({
-                        employeeid: _this.userInfo.employeeid,
+                        employeeid: param.empId ? param.empId : _this.userInfo.employeeid,
                         search_cusName: _this.search_cusName,
-                        search_status: _this.search_status,
-                        order_followtime: _this.order_followtime,
-                        order_nextfollow:_this.order_nextfollow,
+                        startTime: _this.startDate,
+                        endTime: _this.endDate,
+                        cusSource:_this.currOriginTwo?_this.currOriginTwo:_this.currOrigin,
+                        cusStatus:_this.currStatus,
+                        sort:_this.currSort,
+                        attributionid:_this.currHome,
+                        type:1,
+                        resourcetype:'',
                         pageNo: _this.pageNo,
                         pageSize: 10
                     }))
+                    var url = '';
+                    if(param.origin === 'managerSystemFollow'){
+                        url = 'systemResource/sysResourceListByEmp';
+                    }
+                    else{
+                        url = 'systemResource/sysResourceList'
+                    }
+                    console.log('url----------'+url);
                     wApiAjax({
-                        url: 'workbench/sysResourceFollList',
+                        url: url,
                         headers: {
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid,
+                            employeeid: param.empId ? param.empId : _this.userInfo.employeeid,
                             search_cusName: _this.search_cusName,
-                            search_status: _this.search_status,
-                            order_followtime: _this.order_followtime,
-                            order_nextfollow:_this.order_nextfollow,
+                            startTime: _this.startDate,
+                            endTime: _this.endDate,
+                            cusSource:_this.currOriginTwo?_this.currOriginTwo:_this.currOrigin,
+                            cusStatus:_this.currStatus,
+                            sort:_this.currSort,
+                            attributionid:_this.currHome,
+                            type:1,
+                            resourcetype:'',
                             pageNo: _this.pageNo,
                             pageSize: 10
                         },
                         success: function(res) {
-                            console.log(JSON.stringify(res))
+                            console.log('system response -----------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
                                 if (!isLoadMore) {
@@ -224,7 +262,7 @@
                     })
                 },
                 // 跳转到详情
-                skipDetail: function(id,phone) {
+                skipCustomerDetail: function(id,phone) {
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
@@ -270,20 +308,20 @@
     function filterCondition(data) {
         var d = JSON.parse(data);
         $('#not-more').hide();
-        sCusListV.order_followtime = d.status1;
-        sCusListV.order_nextfollow = d.status2;
-        sCusListV.pageNo = 1;
-        sCusListV.fetchSystemData();
+        sCusSystemFrameV.order_followtime = d.status1;
+        sCusSystemFrameV.order_nextfollow = d.status2;
+        sCusSystemFrameV.pageNo = 1;
+        sCusSystemFrameV.fetchSystemData();
     }
     // 获取搜索的内容
     function getSearchValue(val) {
-        sCusListV.search_cusName = val;
-        sCusListV.pageNo = 1;
-        sCusListV.fetchSystemData();
+        sCusSystemFrameV.search_cusName = val;
+        sCusSystemFrameV.pageNo = 1;
+        sCusSystemFrameV.fetchSystemData();
     }
     // 清空搜索的内容
     function clearSearchValue() {
-        sCusListV.search_cusName = '';
+        sCusSystemFrameV.search_cusName = '';
     }
 </script>
 

@@ -45,7 +45,7 @@
                             @click.stop="skipNewCustomer(newResource.value)"
                             :key="'new'+i"
                         >
-                            <div class="head-bb-t" :class="'head-bb-t'+i" v-text="newResource.name"></div>
+                            <div class="head-bb-t" :class="'head-bb-t'+(i+1)" v-text="newResource.name"></div>
                             <div class="head-bb-b" v-text="newResource.num"></div>
                         </div>
                     </div>
@@ -57,11 +57,11 @@
             <div class="system-follow flex-wrap">
                 <div
                     class="flex-con system-lis"
-                    v-for="system in systemResourceFollowList"
+                    v-for="(system,idx) in systemResourceFollowList"
                     :key="system.value"
                     @click="handleSkipSystemList(system.value)"
                 >
-                    <div class="sys-lbox sys-lbox5">
+                    <div class="sys-lbox" :class="'sys-lbox'+(idx+1)">
                         <div class="system-t" v-text="system.name"></div>
                         <div class="system-b" v-cloak>{{system.num|messageFilter}}</div>
                     </div>
@@ -361,7 +361,7 @@
                     },
                     // 跳转到系统跟进列表
                     handleSkipSystemList: function(status) {
-                        if (this.userInfo.xxx == 'yg') {
+                        if (this.userInfo.relativePosi == 'yg') {
                             wHrefJs.openWin({
                                 name: 'systemFollowHeader',
                                 path: './system_follow_header.html',

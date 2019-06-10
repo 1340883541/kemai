@@ -108,7 +108,9 @@
                 ++callStatFrameV.pageNo
                 callStatFrameV.fetchListData(true);
             }else{
-                $('#not-more').show();
+                if(newCustomerFrame.customerDataList.length > 0){
+                    $('#not-more').show();
+                }
             }
         });
 
@@ -149,6 +151,7 @@
                 if(typeof obj.endDate != 'undefined'){
                     callStatFrameV.endDate = obj.endDate;
                 }
+                $('#not-more').hide();
                 callStatFrameV.pageNo = 1;
                 callStatFrameV.fetchListData();
             }
@@ -168,6 +171,7 @@
             el: '#wrap',
             data: {
                 pageNo:1,
+                pageSize:10,
                 isHavaMoreData:true,
                 userInfo:'',
                 // 筛选
@@ -207,7 +211,7 @@
                         sortType:_this.sortType,
                         sortBy:_this.sortBy,
                         pageNo:_this.pageNo,
-                        pageSize:_this.pageSize
+                        pageSize:10
                     }))
                     wApiAjax({
                         url:'todayCall/cusDetail',
@@ -223,10 +227,9 @@
                             sortType:_this.sortType,
                             sortBy:_this.sortBy,
                             pageNo:_this.pageNo,
-                            pageSize:_this.pageSize
+                            pageSize:10
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;

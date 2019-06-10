@@ -232,16 +232,24 @@
     color:#333;
     font-weight: bold;
 }
-.system-follow-box .system-follow .system-lis .sys-lbox5{
+.system-follow-box .system-follow .system-lis .sys-lbox1{
     background: url('../../image/icon-xt-01.png') no-repeat left top;
     background-size: 16px;
 }
-.system-follow-box .system-follow .system-lis .sys-lbox6{
+.system-follow-box .system-follow .system-lis .sys-lbox2{
     background: url('../../image/icon-xt-02.png') no-repeat left top;
     background-size: 17px;
 }
-.system-follow-box .system-follow .system-lis .sys-lbox7{
+.system-follow-box .system-follow .system-lis .sys-lbox3{
     background: url('../../image/icon-xt-03.png') no-repeat left top;
+    background-size: 16px;
+}
+.system-follow-box .system-follow .system-lis .sys-lbox4{
+    background: url('../../image/icon-xt-04.png') no-repeat left top;
+    background-size: 16px;
+}
+.system-follow-box .system-follow .system-lis .sys-lbox5{
+    background: url('../../image/icon-xt-05.png') no-repeat left top;
     background-size: 16px;
 }
 /*消息提醒*/

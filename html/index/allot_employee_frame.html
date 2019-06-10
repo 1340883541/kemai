@@ -110,6 +110,7 @@
                     allotEmployeeFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
                     allotEmployeeFrameV.currType = obj.type;
                 }
+                $('#not-more').hide();
                 allotEmployeeFrameV.pageNo = 1;
                 allotEmployeeFrameV.fetchAllotEeployee();
             }
@@ -121,7 +122,9 @@
             if (++allotEmployeeFrameV.pageNo <= allotEmployeeFrameV.totalPage) {
                 allotEmployeeFrameV.fetchAllotEeployee(true);
             } else {
-                $('#not-more').show();
+                if(allotEmployeeFrameV.employeeList.length>0){
+                    $('#not-more').show();
+                }
             }
         });
         var param = api.pageParam;
@@ -136,7 +139,7 @@
                 endDate:'',
 
 
-                employeeList: [], //客户来源列表
+                employeeList: [], //客户
                 pageNo: 1,
                 totalPage: 1,
                 userInfo: '',

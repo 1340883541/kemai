@@ -120,6 +120,7 @@
                 if(typeof obj.sort != 'undefined'){
                     newCustomerFrame.currSort = obj.sort;
                 }
+                $('#not-more').hide();
                 newCustomerFrame.pageNo = 1;
                 newCustomerFrame.fetchNewAdd();
             }
@@ -131,7 +132,9 @@
             if (++newCustomerFrame.pageNo <= newCustomerFrame.totalPage) {
                 newCustomerFrame.fetchNewAdd(true);
             } else {
-                $('#not-more').show();
+                if(newCustomerFrame.khDataList.length > 0){
+                    $('#not-more').show();
+                }
             }
         });
         // 跟进成功

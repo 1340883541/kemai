@@ -105,7 +105,9 @@
                 ++nCustomerRecycleFrameV.pageNo
                 nCustomerRecycleFrameV.fetchListData(true);
             }else{
-                $('#not-more').show();
+                if(nCustomerRecycleFrameV.khDataList.length>0){
+                    $('#not-more').show();
+                }
             }
         });
 

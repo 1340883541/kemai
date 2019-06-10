@@ -300,7 +300,7 @@
                             pageSize: 1000
                         },
                         success: function(res) {
-                            // console.log('initlist '+JSON.stringify(res))
+                            console.log('initlist '+JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
                                 var jobRelaIdx = getJobRelative(_this.jobTitle);
