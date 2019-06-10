@@ -40,9 +40,9 @@
                     </div>
                 </div>
                 <div class="mger-nav flex-wrap">
-                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'">大区</div>
-                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'">团队</div>
-                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
+                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
+                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
+                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,1)">
@@ -368,7 +368,7 @@
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'newResource/newAddResFollListByRegion',
+                        url:'systemResource/sysResourceListByRegion',
                         headers:{
                             token:TOKEN_DATA
                         },
@@ -377,18 +377,15 @@
                             startTime:_this.startDate,
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusStatus:_this.cusStatus,
                             sort:_this.currSort,
-                            type:_this.currType,
                             region:_this.areaId
                         },
                         success:function(res){
                             console.log('teamlist-------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.teamList = res.data.teamList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
-                                    return v;
-                                });
+                                _this.teamList = funcFormatRequestData(res.data);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(1);
                                 }
@@ -421,8 +418,8 @@
                         startTime:_this.startDate,
                         endTime:_this.endDate,
                         cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        currStatus:_this.currStatus,
                         sort:_this.currSort,
-                        type:_this.currType,
                         region:_this.areaId,
                         team:_this.teamId
                     }))
@@ -436,8 +433,8 @@
                             startTime:_this.startDate,
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            currStatus:_this.currStatus,
                             sort:_this.currSort,
-                            type:_this.currType,
                             region:_this.areaId,
                             team:_this.teamId
                         },
@@ -445,10 +442,7 @@
                             console.log('grouplist-------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.groupList = res.data.groupList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
-                                    return v;
-                                });
+                                _this.groupList = funcFormatRequestData(res.data);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(2);
                                 }
@@ -482,7 +476,7 @@
                         endTime:_this.endDate,
                         cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                         sort:_this.currSort,
-                        type:_this.currType,
+                        currStatus:_this.currStatus,
                         region:_this.areaId,
                         team:_this.teamId,
                         groupid:_this.groupId
@@ -498,7 +492,7 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            currStatus:_this.currStatus,
                             region:_this.areaId,
                             team:_this.teamId,
                             groupid:_this.groupId
@@ -529,14 +523,14 @@
                         name: 'systemCustomerHeader',
                         path: './system_customer_header.html',
                         param: {
-                            val: param.val,
                             empId:id,
                             startDate:_this.startDate,
                             endDate:_this.endDate,
                             currType:_this.currType,
                             currOrigin:_this.currOrigin,
                             currOriginTwo:_this.currOriginTwo,
-                            currStatus:_this.currStatus
+                            currStatus:_this.currStatus,
+                            origin:'managerSystemFollow'
                         },
                         bgColor: '#f7f7f7'
                     })
@@ -547,6 +541,27 @@
                     this.fetchTeamData(true);
                     this.fetchGroupData(true);
                     this.fetchCrewData(true);
+                },
+                // 格式化数据
+                funcFormatRequestData:function(data){
+                    data = data || [];
+                    var _this = this;
+                    // if(this.step)
+                    if(data && data.length == 1){
+                        return data.map(function(v){
+                            v.count == 0 ? v.percent = 0 : v.percent = 100;
+                            return v;
+                        });
+                    }else{
+                        var list = data.map(function(v){
+                            return v.count;
+                        });
+                        var max = Math.max.apply(null,list);
+                        return data.map(function(v){
+                            max == 0 ? v.percent = 0 : v.percent = Math.ceil((v.count / max) * 100);
+                            return v;
+                        });
+                    }
                 },
                 // 切换职位
                 // i=0 大区  i=1 团队  i=2 小组

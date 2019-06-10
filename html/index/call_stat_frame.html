@@ -252,6 +252,7 @@
                 },
                 // 跳转客户详情
                 skipCustomerDetail: function(id,phone) {
+                    console.log('skip detail  ' + id + '----' + phone);
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
