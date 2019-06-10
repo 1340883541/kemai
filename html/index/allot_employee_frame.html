@@ -122,9 +122,7 @@
             if (++allotEmployeeFrameV.pageNo <= allotEmployeeFrameV.totalPage) {
                 allotEmployeeFrameV.fetchAllotEeployee(true);
             } else {
-                if(allotEmployeeFrameV.employeeList.length>0){
-                    $('#not-more').show();
-                }
+                $('#not-more').show();
             }
         });
         var param = api.pageParam;

@@ -34,6 +34,7 @@
                         <div class="time-shortcut-lis" :class="{'curr':currToday}" id="today-btn" @click.stop="handleChooseShortcatDate($event,0)">今日</div>
                         <div class="time-shortcut-lis" :class="{'curr':currWeek}" id="week-btn" @click.stop="handleChooseShortcatDate($event,1)">本周</div>
                         <div class="time-shortcut-lis" :class="{'curr':currMonth}" id="month-btn" @click.stop="handleChooseShortcatDate($event,2)">本月</div>
+                        <div class="time-shortcut-lis" :class="{'curr':currYear}" id="year-btn" @click.stop="handleChooseShortcatDate($event,3)">本年</div>
                     </div>
                 </div>
                 <div class="bottom bor-1px-t flex-wrap">
@@ -92,9 +93,13 @@
                     } else if (i === 1) {
                         this.startDate = funcGetThisWeek().startDate;
                         this.endDate = funcGetThisWeek().endDate;
-                    } else {
+                    } else if(i == 2) {
                         this.startDate = funcGetThisMonth().startDate;
                         this.endDate = funcGetThisMonth().endDate;
+                    }
+                    else{
+                        this.startDate = funcGetThisYear().startDate;
+                        this.endDate = funcGetThisYear().endDate;
                     }
                 },
                 // 清空
@@ -138,6 +143,12 @@
                 },
                 currMonth: function() {
                     if(this.startDate === funcGetThisMonth().startDate && this.endDate === funcGetThisMonth().endDate){
+                        return true;
+                    }
+                    return false;
+                },
+                currYear: function() {
+                    if(this.startDate === funcGetThisYear().startDate && this.endDate === funcGetThisYear().endDate){
                         return true;
                     }
                     return false;

@@ -126,8 +126,6 @@
                     this.currOriginType = param.currType;
                     this.startDate = param.startDate;
                     this.endDate = param.endDate;
-                }else{
-                    this.currOriginType = param.val == 0 ? 2 : 1;
                 }
             },
             methods:{
@@ -260,8 +258,11 @@
             }
         }else{
             pObj = {
-                origin:param.val,
-                type:param.val == 0 ? 2 : 1
+                currOrigin:param.val,
+                currType:param.val == 0 ? 2 : 1,
+                currOriginTwo:'',
+                startDate:'',
+                endDate:'',
             }
         }
         wHrefJs.openFrame({

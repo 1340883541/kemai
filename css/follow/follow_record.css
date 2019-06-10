@@ -307,25 +307,64 @@ body,html{
 }
 .call-phone-box{
     width: 100%;
-    height: 80px;
+    height: 64px;
 }
 .call-phone-box .call-phone-fixed{
     position: fixed;
-    z-index: 9;
-    left: 50%;
-    bottom:15px;
-    width: 160px;
-    margin-left: -80px;
-    text-align: center;
-    height: 50px;
-    line-height: 50px;
-    background-image: linear-gradient(90deg,rgba(13, 100, 250, 0.95) 0%, rgba(84, 203, 248, 0.95) 100%);
-    color:#fff;
-    font-size: 19px;
-    font-weight: bold;
-    border-radius: 25px;
+    left: 0;
+    bottom:0;
+    width:100%;
+    height: 64px;
+    padding:12px 15px;
+    z-index: 999;
+    background-color: #fff;
+    box-shadow: 0px -1px 20px 0 rgba(0,0,0,.08)
 }
-.call-phone-box .call-phone-fixed.gray-bg{
+.call-phone-box .call-phone-fixed .call-btn{
+    position: relative;
+    z-index: 1000;
+    width:48%;
+    border-radius: 4px;
+    line-height: 40px;
+    height: 40px;
+    text-align: center;
+    color:#fff;
+    font-size: 16px;
+}
+.call-phone-box .call-phone-fixed .call-btn > i{
+    width:16px;
+    height: 16px;
+    margin-right: 4px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.call-phone-box .call-phone-fixed .call-btn1{
+    background-image: linear-gradient(90deg, #216eff 0%, #248cfa 100%);
+}
+.call-phone-box .call-phone-fixed .call-btn1 > i{
+    background-image: url('../../image/icon-dianhua.png');
+}
+.call-phone-box .call-phone-fixed .call-btn2 > i{
+    background-image: url('../../image/icon-dianhua1.png');
+}
+.call-phone-box .call-phone-fixed .call-btn2 > span{
+    position: absolute;
+    right: -5px;
+    top: -5px;
+    width: 40px;
+    height: 16px;
+    text-align: center;
+    line-height: 16px;
+    font-size: 12px;
+    color:#fff;
+    background: url('../../image/icon-dianhua1-t.png') no-repeat center;
+    background-size: contain;
+}
+.call-phone-box .call-phone-fixed .call-btn2{
+    background-image: linear-gradient(90deg, #ffae00 0%, #ff9402 100%);
+}
+.call-phone-box .call-phone-fixed  .call-btn.gray-bg{
     background: #ccc;
 }
 .call-phone-box .call-phone-fixed > i{

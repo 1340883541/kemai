@@ -29,7 +29,7 @@
                     </ul>
                 </div>
                 <div class="right fl">
-                    <ul v-if="currTwoSelected !== '' || currSelected != ''">
+                    <ul v-if="currTwoSelected !== '' || currSelected !== ''">
                         <li
                             :class="{'curr':currTwoSelected===''}"
                             @click.stop="handleChooseTwoOrigin('')"

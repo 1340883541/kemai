@@ -68,6 +68,7 @@
                             <li :class="{'f-curr':currToday}" @click.stop="handleChooseShortcatDate($event,0)">今日</li>
                             <li :class="{'f-curr':currWeek}" @click.stop="handleChooseShortcatDate($event,1)">本周</li>
                             <li :class="{'f-curr':currMonth}" @click.stop="handleChooseShortcatDate($event,2)">本月</li>
+                            <li :class="{'f-curr':currYear}" @click.stop="handleChooseShortcatDate($event,3)">本年</li>
                         </ul>
                         <div class="filter-m-date clear">
                             <input class="choose-date" v-model="startDate" @click.stop="isGetStartDate = true" type="text" placeholder="开始时间" readonly="true">
@@ -362,9 +363,13 @@ apiready = function() {
                     this.startDate = funcGetThisWeek().startDate;
                     this.endDate = funcGetThisWeek().endDate;
                 }
-                else{
+                else if(i == 2) {
                     this.startDate = funcGetThisMonth().startDate;
                     this.endDate = funcGetThisMonth().endDate;
+                }
+                else{
+                    this.startDate = funcGetThisYear().startDate;
+                    this.endDate = funcGetThisYear().endDate;
                 }
             },
             // 筛选客户归来来源
@@ -463,6 +468,12 @@ apiready = function() {
             },
             currMonth: function() {
                 if(this.startDate === funcGetThisMonth().startDate && this.endDate === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currYear: function() {
+                if(this.startDate === funcGetThisYear().startDate && this.endDate === funcGetThisYear().endDate){
                     return true;
                 }
                 return false;

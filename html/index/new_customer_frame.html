@@ -132,9 +132,7 @@
             if (++newCustomerFrame.pageNo <= newCustomerFrame.totalPage) {
                 newCustomerFrame.fetchNewAdd(true);
             } else {
-                if(newCustomerFrame.khDataList.length > 0){
-                    $('#not-more').show();
-                }
+                $('#not-more').show();
             }
         });
         // 跟进成功
@@ -225,7 +223,7 @@
                         },
                         success: function(res) {
                             wDialog.hideProgress();
-                            // console.log(JSON.stringify(res))
+                            console.log('new customer frame response----'+JSON.stringify(res))
                             if (res.code == 1) {
                                 if (!isLoadMore) {
                                     _this.khDataList = res.data ? res.data : [];

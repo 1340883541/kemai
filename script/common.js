@@ -221,6 +221,15 @@ function funcGetThisMonth(){
 		endDate:funcFormateDate(year,month,lastDay)
 	}
 }
+// 获取到本月的起止时间
+function funcGetThisYear(){
+	var date = new Date(),
+		year = date.getFullYear();
+	return {
+		startDate:funcFormateDate(year,1,1),
+		endDate:funcFormateDate(year,12,31)
+	}
+}
 // 自定义指令，长按
 Vue.directive('longpress', {
     bind: function(el, binding, vNode) {

@@ -106,15 +106,15 @@
                     <div class="stat-ls-b" v-text="lookwechatcount"></div>
                 </div> -->
                 <div class="flex-con stat-ls" @click="skipStat(1)">
-                    <div class="stat-ls-t stat-ls-t1">接听(次)</div>
+                    <div class="stat-ls-t stat-ls-t2">接听(次)</div>
                     <div class="stat-ls-b" v-text="vaildcall"></div>
                 </div>
                 <div class="flex-con stat-ls bor-r" @click="skipStat(2)">
-                    <div class="stat-ls-t stat-ls-t2">未接听(次)</div>
+                    <div class="stat-ls-t stat-ls-t3">未接听(次)</div>
                     <div class="stat-ls-b" v-text="noanscall"></div>
                 </div>
                 <div class="flex-con stat-ls" @click="skipStat(3)">
-                    <div class="stat-ls-t stat-ls-t2">号码异常(次)</div>
+                    <div class="stat-ls-t stat-ls-t4">号码异常(个)</div>
                     <div class="stat-ls-b">{{abnormalNum1}}/{{abnormalNum2}}</div>
                 </div>
             </div>
@@ -276,6 +276,7 @@
                                 token:TOKEN_DATA
                             },
                             success: function(res) {
+                                console.log(JSON.stringify(res))
                                 wDialog.hideProgress();
                                 if (res.code == 1) {
                                     var data = res.data || {};

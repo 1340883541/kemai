@@ -108,9 +108,7 @@
             if (++sCusSystemFrameV.pageNo <= sCusSystemFrameV.totalPage) {
                 sCusSystemFrameV.fetchSystemData(true);
             } else {
-                if(sCusSystemFrameV.khDataList.length > 0){
-                    $('#not-more').show();
-                }
+                $('#not-more').show();
             }
         });
         // 跟进成功
@@ -182,13 +180,16 @@
                         key: 'userInfo'
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-
-                    this.startDate = param.startDate;
-                    this.endDate = param.endDate;
-                    this.currType = param.currType;
-                    this.currOrigin = param.currOrigin;
-                    this.currOriginTwo = param.currOriginTwo;
-                    this.currStatus = param.currStatus;
+                    if(param.empId){
+                        this.startDate = param.startDate;
+                        this.endDate = param.endDate;
+                        this.currType = param.currType;
+                        this.currOrigin = param.currOrigin;
+                        this.currOriginTwo = param.currOriginTwo;
+                        this.currStatus = param.currStatus;
+                    }else{
+                        this.currStatus = param.status;
+                    }
                 },
                 // 获取系统跟进列表
                 fetchSystemData: function(isLoadMore, callback) {

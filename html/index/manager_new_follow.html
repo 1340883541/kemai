@@ -70,7 +70,7 @@
                     @click.stop="handleChooseArea(area.region,area.name)"
                 >
                     <div class="left flex-wrap flex-vertical flex-center">
-                        <p class="mger-cap" v-text="area.name"></p>
+                        <p class="mger-cap w-elli" v-text="area.name"></p>
                         <p class="mger-desc">
                             <span v-text="area.addtotal"></span>/<span v-text="area.total"></span>
                         </p>
@@ -88,7 +88,7 @@
                     :class="{checked:teamCurr === team.team}"
                     @click.stop="handleChooseTeam(team.team,team.name)"
                 >
-                    <div class="mger-lt" v-text="team.name"></div>
+                    <div class="mger-lt w-elli" v-text="team.name"></div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
                             <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
@@ -108,7 +108,7 @@
                     :class="{checked:groupCurr === group.groupid}"
                     @click.stop="handleChooseGroup(group.groupid,group.name)"
                 >
-                    <div class="mger-lt" v-text="group.name"></div>
+                    <div class="mger-lt w-elli" v-text="group.name"></div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
                             <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
@@ -268,7 +268,7 @@
                     isFilter = isFilter || false;
                     var _this = this;
                     wDialog.showProgress();
-                    console.log('manager -- request--------' + JSON.stringify({
+                    console.log('manager new follow-- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,

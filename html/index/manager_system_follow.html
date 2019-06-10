@@ -150,7 +150,6 @@
             name: 'filterManagerSystemFollow'
         }, function(ret, err){
             var obj = ret.value;
-            console.log(JSON.stringify(obj))
             if(obj){
                 if(typeof obj.origin != 'undefined'){
                     managerSystemFollowV.currOrigin = obj.origin;

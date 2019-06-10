@@ -35,6 +35,10 @@
                     <div class="left">客户状态</div>
                     <div class="right"><span class="blue" v-text="clientState"></span><i class="follow-more"></i></div>
                 </div>
+                <div class="follow-b1-b bor-1px-t follow-box-ls flex-wrap flex-between" v-if="isShowTalkingResult" @click.stop="handleSwitchCustomerResult">
+                    <div class="left">通话结果</div>
+                    <div class="right"><span v-text="talkedResult||'请选择'"></span><i class="follow-more"></i></div>
+                </div>
             </div>
         </div>
         <div class="follow-box follow-box2">
@@ -112,7 +116,10 @@
 
         <!-- 电话跟进 -->
         <div class="call-phone-box" v-if="!isExistNoFollowRecord && !isEditFollow">
-            <div class="call-phone-fixed w-event-none gray-bg" id="call-phone-btn" @click="handleCallFollow"><i></i>电话跟进</div>
+            <div class="call-phone-fixed bor-1px-t flex-wrap flex-between">
+                <div class="call-btn call-btn1 w-event-none gray-bg flex-wrap flex-center flex-align-item" id="call-phone-normal-btn" @click="handleCallFollowNormal"><i></i>普通电话</div>
+                <div class="call-btn call-btn2 w-event-none gray-bg flex-wrap flex-center flex-align-item" id="call-phone-btn" @click="handleCallFollow"><i></i>办公电话<span class="w-event-none">推荐</span></div>
+            </div>
         </div>
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
         <!-- 修改客户姓名 -->
@@ -149,7 +156,24 @@
                 </ul>
             </div>
         </div>
-        <!-- 选择客户状态弹窗 -->
+        <!-- 通话结果弹窗 -->
+        <div class="choose-follow-popup follow-popup choose-customer-status" style="display:none;" id="choose-talking-result">
+            <div class="choose-follow-t bor-1px-b">选择通话结果<i class="close" @click.stop="funcHideAllPopup"></i></div>
+            <div class="choose-follow-b">
+                <ul>
+                    <!-- <li
+                        v-for="(cState,index) in clientStateList"
+                        :key="index" v-text="cState.name"
+                        :class="{'curr':clientStateCode === cState.value}"
+                        @click.stop="handleChooseCustomerState(cState.name,cState.value)"
+                    ></li> -->
+                    <li @click.stop="handleChooseTalkingResult(1)" :class="{'curr':talkedResultState===1}" ref="talkingPopup1" data-txt="未接听">未接听</li>
+                    <li @click.stop="handleChooseTalkingResult(2)" :class="{'curr':talkedResultState===2}" ref="talkingPopup2" data-txt="接通">接通</li>
+                    <li @click.stop="handleChooseTalkingResult(3)" :class="{'curr':talkedResultState===3}" ref="talkingPopup3" data-txt="号码异常">号码异常</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 选择跟进方式 -->
         <div class="choose-follow-popup follow-popup choose-follow-way" style="display:none;" id="choose-follow-way">
             <div class="choose-follow-t bor-1px-b">选择跟进方式<i class="close" @click.stop="funcHideAllPopup"></i></div>
             <div class="choose-follow-b">
@@ -181,7 +205,7 @@
         $api.fixStatusBar($('#fh-place')[0]);
         $api.fixStatusBar($('#fh-bg')[0]);
         var param = api.pageParam;
-
+        console.log('follow record param-----> ' +JSON.stringify(param))
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err){
@@ -223,6 +247,9 @@
                 clientState:'',
                 clientStateCode:'',
                 clientName:'',
+                talkedResult:'', //通话结果
+                talkedResultState:'',// 通话结果状态
+                isShowTalkingResult:false, // 只有直接拨打才会有通话结果
 
                 followId:'',
                 clientAddr:'', // 归属地
@@ -250,7 +277,8 @@
                     followAddress:'',
                     followDate:'',
                     showFollowDate:'',
-                    followContent:''
+                    followContent:'',
+                    talkedResultState:''
                 },
                 isCanSaveFollowRecord:true, //是否能够保存记录
                 isCanBack:true,
@@ -345,7 +373,7 @@
                                 _this.clientAddr = res.data.attribution || '未知';
                                 setTimeout(function(){
                                     _this.isCanCall = true;
-                                    $('#call-phone-btn').removeClass('w-event-none gray-bg');
+                                    $('#call-phone-btn,#call-phone-normal-btn').removeClass('w-event-none gray-bg');
                                     $('#follow-save-btn').removeClass('w-event-none');
                                     _this.isInitFollowContent = false;
                                 },300)
@@ -465,6 +493,17 @@
                 handleSwitchCustomerState:function(){
                     this.funcHideAllPopup();
                     $('#popup-bg,#choose-customer-status').show();
+                },
+                handleChooseTalkingResult:function(i){
+                    this.funcHideAllPopup();
+                    this.talkedResultState = i;
+                    this.talkedResult = this.$refs['talkingPopup'+i].getAttribute('data-txt');
+                    console.log(this.talkedResult)
+                },
+                // 选择通话结果
+                handleSwitchCustomerResult:function(){
+                    this.funcHideAllPopup();
+                    $('#popup-bg,#choose-talking-result').show();
                 },
                 // 选择客户状态
                 handleChooseCustomerState:function(name,code){
@@ -617,6 +656,14 @@
                       }
                   });
                 },
+                // 直接拨打电话
+                handleCallFollowNormal:function(){
+                    this.isShowTalkingResult = true;
+                    api.call({
+                        type: 'tel_prompt',
+                        number: this.cusPhone
+                    });
+                },
                 // 电话跟进
                 handleCallFollow:function(){
                     if(this.isCanCall){
@@ -630,7 +677,7 @@
                                 empid:_this.userInfo.employeeid,
                                 is_work:_this.isWork,
                                 followId:_this.followId
-                            }))
+                            }));
                             wApiAjax({
                                 url:'ema/makeCall',
                                 headers:{
