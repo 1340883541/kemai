@@ -810,6 +810,10 @@ body,html{
     padding-bottom: 14px;
     overflow: hidden;
     max-height: 115px;
+    white-space:normal;
+    word-break:break-all;
+
+
 }
 
 
@@ -885,4 +889,11 @@ body,html{
   border: 1px solid #0c7ff9;
   background: #0c7ff9;
   color: #fff;
+}
+
+
+.disabled {
+    pointer-events: none;
+    cursor: default;
+    opacity: 0.3;
 }

@@ -179,6 +179,16 @@
             followRecordV.handleBack();
         });
 
+        api.addEventListener({
+            name: 'chooseFollowText'
+        }, function(ret, err){
+            if( ret ){
+                 console.log( JSON.stringify( ret ) );
+                 if(ret.value.sendOrigin === 'followRecordTxt'){
+                     followRecordV.followContent = ret.value.txt;
+                 }
+            }
+        });
         var param = api.pageParam;
         followRecordV = new Vue({
             el: '#follow-wrapper',
@@ -195,7 +205,8 @@
                 wordStr: '', //识别的文字
                 userInfo: {},
                 fContentFront: '',
-                fContentBehind: ''
+                fContentBehind: '',
+                nameTitle1:''
             },
             mounted: function() {
                 this.init();
@@ -218,7 +229,10 @@
                       name: 'followRecordMore',
                       url: './follow_record_more.html',
                       allowEdit:true,
-                      slidBackEnabled: false
+                      slidBackEnabled: false,
+                      pageParam:{
+                          origin:'followRecordTxt'
+                      }
                   });
                 },
                 // 选择快捷跟进

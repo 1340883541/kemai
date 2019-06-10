@@ -224,6 +224,12 @@
                     else{
                         return '未跟进'
                     }
+                },
+                handleSkipFollow:function(){
+                    wHrefJs.openWin({
+                        name: 'changePerson',
+                        path: 'change_person.html'
+                    })
                 }
             }
         });

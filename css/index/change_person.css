@@ -1,0 +1,33 @@
+.change_person_box{
+    width:100%;
+    overflow:hidden;
+}
+.change_person_list{
+    width:100%;
+    overflow:hidden;
+    background: #fff;
+
+
+}
+.change_person_city{
+    width:100%;
+    height:0.96rem;
+    border-bottom: 1px solid #e9e9e9;
+    line-height: 0.96rem;
+    display: flex;
+    align-items: center;
+    padding-left: .3rem;
+}
+.change_person_city .imgCity img{
+  width:0.16rem;
+  height:0.16rem;
+}
+.change_person_city .text{
+    fontFamily: "PingFangSC-Medium";
+	fontSize: .16rem;
+	color: "#333333";
+    padding-left: .15rem;
+}
+.sale_box{
+    padding:0 .3rem;
+}

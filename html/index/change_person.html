@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>变更销售负责人</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/change_person.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        .follow-wrapper {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            min-height: 0;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="change_person" class="follow-wrapper" v-cloak>
+        <div class="w-header">
+            <div class="w-header-cap">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">变更销售负责人<i></i></span></div>
+            </div>
+        </div>
+        <div class="change_person_box">
+            <div class="change_person_list">
+                <div class="change_person_city">
+                    <div class="imgCity">
+                        <img src="../../image/icon-jiantou-r.png" v-if="!hideImg">
+                        <img src="../../image/icon-jiantoudown.png" v-if="hideImg">
+                    </div>
+                    <div class="text">成都</div>
+                </div>
+                <div class="sale_box">
+                    <div class="sale_list">
+                        <div class="text_lef">
+                            <img src="../../image/touxiang-tuandui.png">
+                            <div>销售一组</div>
+                        </div>
+                        <div class=img_rig>
+                            <img src="../../image/icon-gr-jiantou32.png">
+                        </div>
+                    </div>
+                    <div class="name_person">
+                        <div class="name_lef">
+                            <img src="../../image/touxiang-ren.png">
+                            <div class="name">刘涛</div>
+                        </div>
+                        <div class="img_rig">
+                            <img src="../../image/icon-danxuankuang.png">
+                            <img src="../../image/icon-danxuankuangp.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+    var followRecordV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+
+        var param = api.pageParam;
+        followRecordV = new Vue({
+            el: '#change_person',
+            data: {
+              hideImg:true,
+            },
+            mounted: function() {
+                this.init();
+            },
+            methods: {
+                init: function() {
+                    var _this = this;
+                    this.followContent = param.content;
+                    this.initFollowContent = param.content;
+                    this.shortcutList = param.shortcutList;
+                    // 获取用户信息
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+            }
+        });
+    }
+</script>
+
+</html>

@@ -60,77 +60,76 @@
         var param = api.pageParam;
         console.log(JSON.stringify(param))
         new Vue({
-            el:'#wrapper',
-            data:{
-                cusId:param.cusId,
-                cusPhone:param.cusPhone,
-                noteList:[],
-                checkedIndex:''
+            el: '#wrapper',
+            data: {
+                cusId: param.cusId,
+                cusPhone: param.cusPhone,
+                noteList: [],
+                checkedIndex: ''
             },
-            mounted:function(){
+            mounted: function() {
                 this.userInfo = wPref.getPrefs({
-                    key:'userInfo'
+                    key: 'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 this.getData();
             },
-            methods:{
-                getData:function(){
+            methods: {
+                getData: function() {
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'sms/getSmsTemplate',
-                        method:'get',
-                        headers:{
-                            "token":TOKEN_DATA
+                        url: 'sms/getSmsTemplate',
+                        method: 'get',
+                        headers: {
+                            "token": TOKEN_DATA
                         },
-                        data:{
-                            empid:_this.userInfo.employeeid,
-                            customerids:_this.cusId
+                        data: {
+                            empid: _this.userInfo.employeeid,
+                            customerids: _this.cusId
                         },
-                        success:function(res){
+                        success: function(res) {
                             wDialog.hideProgress();
                             console.log(JSON.stringify(res))
-                            if(res.code == 0){
+                            if (res.code == 0) {
                                 _this.noteList = res.data;
                             }
                         }
                     })
                 },
                 // 切换选择的模板
-                checkNoteTemplate:function(index){
+                checkNoteTemplate: function(index) {
                     this.checkedIndex = index;
                 },
-                sureCheckedTemplate:function(){
-                    if(this.checkedIndex === ''){
+                sureCheckedTemplate: function() {
+                    if (this.checkedIndex === '') {
                         wDialog.toast({
-                            msg:'请选择一个模板'
+                            msg: '请选择一个模板'
                         });
-                    }
-                    else{
+                    } else {
                         var _this = this;
                         wApiAjax({
-                            url:'sms/sendSmsTemplate',
-                            headers:{
-                                "token":TOKEN_DATA
+                            url: 'sms/sendSmsTemplate',
+                            headers: {
+                                "token": TOKEN_DATA
                             },
-                            data:{
-                                empid:_this.userInfo.employeeid,
-                                cusid:_this.cusId,
-                                phone:_this.cusPhone,
-                                smsid:_this.noteList[_this.checkedIndex].smsid,
-                                templateid:_this.noteList[_this.checkedIndex].templateid,
-                                params:_this.noteList[_this.checkedIndex].params.join(',')
+                            data: {
+                                empid: _this.userInfo.employeeid,
+                                cusid: _this.cusId,
+                                phone: _this.cusPhone,
+                                smsid: _this.noteList[_this.checkedIndex].smsid,
+                                templateid: _this.noteList[_this.checkedIndex].templateid,
+                                params: _this.noteList[_this.checkedIndex].params.join(',')
                             },
-                            success:function(res){
+                            success: function(res) {
                                 console.log(JSON.stringify(res))
-                                if(res.code == 0){
+                                if (res.code == 0) {
                                     wDialog.toast({
-                                        msg:'发送成功'
+                                        msg: '发送成功'
                                     })
-                                }else{
+                                } else {
                                     wDialog.toast({
-                                        msg:res.msg
+                                        msg: res.msg
                                     })
                                 }
                             }

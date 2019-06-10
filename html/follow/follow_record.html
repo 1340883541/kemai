@@ -196,6 +196,16 @@
                 followRecordV.wechatCard = ret.value.wechat;
             }
         });
+        api.addEventListener({
+            name: 'chooseFollowText'
+        }, function(ret, err){
+            if( ret ){
+                 console.log( JSON.stringify( ret ) );
+                 if(ret.value.sendOrigin === 'followRecord'){
+                     followRecordV.followContent = ret.value.txt;
+                 }
+            }
+        });
 
         followRecordV = new Vue({
             el:'#follow-wrapper',
@@ -393,7 +403,7 @@
                         },
                         url:"customer/fastFollow",
                         data:{
-                            employeeid:_this.userInfo.employeeid,
+                            employeeid:0,
                         },
                         method:'get',
                         success:function(res){
@@ -601,7 +611,10 @@
                       name: 'followRecordMore',
                       url: './follow_record_more.html',
                       allowEdit:true,
-                      slidBackEnabled: false
+                      slidBackEnabled: false,
+                      pageParam:{
+                          origin:'followRecord'
+                      }
                   });
                 },
                 // 电话跟进
