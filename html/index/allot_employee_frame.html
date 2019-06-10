@@ -35,7 +35,7 @@
                     <div class="flex-wrap filter-lcap">
                         <span class="cname w-elli" v-text="employee.cusnmae"></span>
                     </div>
-                    <div class="cphone" @click.stop="handleSkipFollow(employee.id,employee.phone)">去分配</div>
+                    <div class="cphone" @click.stop="handleSkipFollow(employee.cusid,employee.phone)">去分配</div>
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">号码归属地: <span v-text="employee.attribution||'未知'"></span></div>
@@ -228,10 +228,15 @@
                         return '未跟进'
                     }
                 },
-                handleSkipFollow:function(){
+                handleSkipFollow:function(id){
                     wHrefJs.openWin({
                         name: 'changePerson',
-                        path: 'change_person.html'
+                        path: 'change_person.html',
+                        param:{
+                            cusId:id,
+                            isWork:1
+                        }
+
                     })
                 }
             }
