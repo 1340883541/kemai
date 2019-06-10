@@ -55,34 +55,15 @@
         <div class="system-follow-box">
             <div class="index-cap">系统资源跟进</div>
             <div class="system-follow flex-wrap">
-                <div class="flex-con system-lis" @click="handleSkipSystemList('长期')">
+                <div
+                    class="flex-con system-lis"
+                    v-for="system in systemResourceFollowList"
+                    :key="system.value"
+                    @click="handleSkipSystemList(system.value)"
+                >
                     <div class="sys-lbox sys-lbox5">
-                        <div class="system-t">长期</div>
-                        <div class="system-b" v-text="longTerm">2</div>
-                    </div>
-                </div>
-                <div class="flex-con system-lis" @click="handleSkipSystemList('中期')">
-                    <div class="sys-lbox sys-lbox6">
-                        <div class="system-t">中期</div>
-                        <div class="system-b" v-text="funcFormateSystemCount(metTerm)">2</div>
-                    </div>
-                </div>
-                <div class="flex-con system-lis" @click="handleSkipSystemList('短期')">
-                    <div class="sys-lbox sys-lbox7">
-                        <div class="system-t">短期</div>
-                        <div class="system-b" v-text="funcFormateSystemCount(shortTerm)">2</div>
-                    </div>
-                </div>
-                <div class="flex-con system-lis" @click="handleSkipSystemList('未接')">
-                    <div class="sys-lbox sys-lbox5">
-                        <div class="system-t">未接</div>
-                        <div class="system-b" v-text="funcFormateSystemCount(unansweredCus)"></div>
-                    </div>
-                </div>
-                <div class="flex-con system-lis" @click="handleSkipSystemList('成交')">
-                    <div class="sys-lbox sys-lbox6">
-                        <div class="system-t">成交</div>
-                        <div class="system-b" v-text="funcFormateSystemCount(dealCus)"></div>
+                        <div class="system-t" v-text="system.name"></div>
+                        <div class="system-b" v-cloak>{{system.num|messageFilter}}</div>
                     </div>
                 </div>
                 <div class="flex-con system-lis"></div>
@@ -167,7 +148,7 @@
                     employeeid: '',
                     account: '',
                     newResourceFollowList: [], //新增资源跟进
-                    systemResourceFollow: [], //系统资源跟进
+                    systemResourceFollowList: [], //系统资源跟进
 
                     resource: 0, //资源回收
                     sign: 0, //签约消息
@@ -200,9 +181,9 @@
                     this.netWorkStatus();
                     // 获取数据
                     this.fetchStatData();
-                    // this.getMessageData();
+                    this.getMessageData();
                     this.fetchNewData();
-                    // this.fetchSystemFollowData();
+                    this.fetchSystemFollowData();
                     this.$nextTick(function() {
                         $(window).on('scroll', function() {
                             var sTop = $(window).scrollTop()
@@ -229,41 +210,20 @@
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                         var TOKEN_DATA = myLocalStorage.getItem('token');
                         wApiAjax({
-                            url: "msgRemind/getAllNoticeCount",
-                            method: 'get',
-                            headers: {
-                                token: TOKEN_DATA
+                            url:'msgRemind/getRecoverySta',
+                            method:'get',
+                            headers:{
+                                token:TOKEN_DATA
                             },
-                            data: {
+                            data:{
                                 employeeid: _this.userInfo.employeeid
                             },
-                            success: function(res) {
-                                // console.log('inn11111111111'+JSON.stringify(res))
-                                if (res.code == 200) {
-                                    _this.notificationInfo = res.info || {};
-                                    _this.notificationInfo.switch = res.switch;
-                                    if (res.switch == 0) {
-                                        _this.resource = 0;
-                                        _this.sign = 0;
-                                        _this.pay = 0;
-                                        _this.change_principal = 0;
-                                        _this.recovery = 0;
-                                        _this.subscription = 0;
-                                        _this.follow = 0;
-                                        _this.subscriptionBook = 0;
-                                    } else {
-                                        res.info = res.info || {};
-                                        _this.resource = res.info.resource == 'off' ? 0 : res.info.resource;
-                                        _this.sign = res.info.sign == 'off' ? 0 : res.info.sign;
-                                        _this.pay = res.info.pay == 'off' ? 0 : res.info.pay;
-                                        _this.change_principal = res.info.change_principal == 'off' ? 0 : res.info.change_principal;
-                                        _this.recovery = res.info.recovery == 'off' ? 0 : res.info.recovery;
-                                        _this.subscription = res.info.subscription == 'off' ? 0 : res.info.subscription;
-                                        _this.follow = res.info.follow == 'off' ? 0 : res.info.follow;
-                                        _this.subscriptionBook = res.info.subscriptionBook == 'off' ? 0 : res.info.subscriptionBook;
-                                    }
+                            success:function(res){
+                                if(res.code == 1){
+                                    _this.sign = res.data.sign;
+                                    _this.pay = res.data.pay;
+                                    _this.recovery = res.data.recovery;
                                 }
-                                cb && typeof cb === 'function' && cb();
                             }
                         })
                     },
@@ -341,7 +301,7 @@
                         TOKEN_DATA = myLocalStorage.getItem('token');
                         wDialog.showProgress();
                         wApiAjax({
-                            url: 'workbench/sysResourceFoll',
+                            url: 'systemResource/sysResourceSta',
                             headers: {
                                 token: TOKEN_DATA
                             },
@@ -349,13 +309,9 @@
                                 employeeid: _this.userInfo.employeeid
                             },
                             success: function(res) {
-                                // console.log('system response data: ' + JSON.stringify(res))
+                                console.log('system response data: ' + JSON.stringify(res))
                                 if (res.code == 1) {
-                                    _this.shortTerm = res.shortTerm;
-                                    _this.metTerm = res.metTerm;
-                                    _this.longTerm = res.longTerm;
-                                    _this.dealCus = res.dealCus;
-                                    _this.unansweredCus = res.unansweredCus;
+                                    _this.systemResourceFollowList = res.data;
                                 }
                             },
                             fail: function() {

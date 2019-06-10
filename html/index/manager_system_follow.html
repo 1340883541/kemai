@@ -36,13 +36,13 @@
                     <div class="mger-back" onclick="api.closeWin();"></div>
                     <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
                         <div class="cap">系统跟进资源</div>
-                        <div class="desc">333</div>
+                        <div class="desc" v-text="currNowLocationTxt"></div>
                     </div>
                 </div>
                 <div class="mger-nav flex-wrap">
-                    <div class="flex-con curr" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'">大区</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'">团队</div>
-                    <div class="flex-con" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
+                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'">大区</div>
+                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'">团队</div>
+                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'">小组</div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,1)">
@@ -69,16 +69,14 @@
                     class="mger-lis fl flex-wrap"
                     v-for="(area,idx) in areaList"
                     :key="'area'+idx"
-                    :class="{checked:areaCurr === area.region}"
-                    @click.stop="handleChooseArea(area.region,area.name)"
+                    :class="{checked:areaCurr === area.regionid}"
+                    @click.stop="handleChooseArea(area.regionid,area.name)"
                 >
                     <div class="left flex-wrap flex-vertical flex-center">
                         <p class="mger-cap" v-text="area.name"></p>
                         <p class="mger-desc">
-                            <span v-text="area.addtotal"></span>/<span v-text="area.total"></span>
+                            <span v-text="area.total"></span>
                         </p>
-                    </div>
-                    <div class="right" :id="'circle-'+idx">
                     </div>
                 </li>
             </ul>
@@ -244,9 +242,8 @@
                 crewList:[]
             },
             mounted: function() {
-                this.currStatus = param.status;
                 this.init();
-                // this.fetchPosiData();
+                this.fetchPosiData();
             },
             methods: {
                 init:function(){
@@ -257,6 +254,7 @@
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     this.jobTitle = this.userInfo.relativePosi;
                     this.currStatus = param.status;
+                    console.log('param--------->'+JSON.stringify(param))
                     if(this.jobTitle === 'gngly' || this.jobTitle === 'qygly'){
                         this.isShowAreaBox = true;
                         this.isCurrArea = true;
@@ -282,8 +280,9 @@
                         startTime:_this.startDate,
                         endTime:_this.endDate,
                         cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        cusStatus:_this.currStatus,
                         sort:_this.currSort,
-                        type:_this.currType,
+                        type:1,
                         search_cusName:'',
                         attributionid:'',
                         resourcetype:'',
@@ -291,7 +290,7 @@
                         pageSize: 1000
                     }))
                     wApiAjax({
-                        url: 'newResource/newAddResFollList',
+                        url: 'systemResource/sysResourceList',
                         headers: {
                             token: TOKEN_DATA
                         },
@@ -300,8 +299,9 @@
                             startTime:_this.startDate,
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusStatus:_this.currStatus,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            type:1,
                             search_cusName:'',
                             attributionid:'',
                             resourcetype:'',
@@ -526,8 +526,8 @@
                 handleChooseCrew:function(id){
                     var _this = this;
                     wHrefJs.openWin({
-                        name: 'newCustomerHeader',
-                        path: './new_customer_header.html',
+                        name: 'systemCustomerHeader',
+                        path: './system_customer_header.html',
                         param: {
                             val: param.val,
                             empId:id,
@@ -535,7 +535,8 @@
                             endDate:_this.endDate,
                             currType:_this.currType,
                             currOrigin:_this.currOrigin,
-                            currOriginTwo:_this.currOriginTwo
+                            currOriginTwo:_this.currOriginTwo,
+                            currStatus:_this.currStatus
                         },
                         bgColor: '#f7f7f7'
                     })
@@ -674,19 +675,6 @@
                 },
             },
             computed:{
-                allotTxt:function(){
-                    var idx = getJobRelative(this.jobTitle);
-                    if(idx == 1 || idx == 2){
-                        if(this.isCurrTeam){
-                            return '分配'
-                        }else{
-                            return '';
-                        }
-                    }
-                    else{
-                        return '';
-                    }
-                },
                 currNowLocationTxt:function(){
                     if(this.areaName && this.teamName && this.groupName){
                         return this.areaName.slice(0,8)+'/'+this.teamName.slice(0,8)+'/'+this.groupName.slice(0,8);

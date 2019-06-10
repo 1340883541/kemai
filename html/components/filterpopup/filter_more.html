@@ -50,13 +50,13 @@
                     <div class="filter-m-ylgs" v-if="isHaveStatus">
                         <p class="p1">客户状态</p>
                         <ul class="filter-m-ylgs-info clear">
-                            <li :class="{'f-curr':currStatus==''}" @click.stop="handlePitchClassify('')">全部</li>
+                            <li :class="{'f-curr':currStatus==''}" @click.stop="handlePitchStatus('')">全部</li>
                             <li
                                 v-for="status in customerStatusList"
                                 :key="status.value"
                                 v-text="status.name"
                                 :class="{'f-curr':currStatus==status.value}"
-                                @click.stop="handlePitchClassify(status.value)"
+                                @click.stop="handlePitchStatus(status.value)"
                             ></li>
                         </ul>
                         <div class=""></div>
@@ -65,9 +65,9 @@
                     <div class="filter-m-ylgs margin-top30">
                         <p class="p1">时间范围</p>
                         <ul class="filter-m-ylgs-info clear">
-                            <li @click.stop="handleChooseShortcatDate($event,0)">今日</li>
-                            <li @click.stop="handleChooseShortcatDate($event,1)">本周</li>
-                            <li @click.stop="handleChooseShortcatDate($event,2)">本月</li>
+                            <li :class="{'f-curr':currToday}" @click.stop="handleChooseShortcatDate($event,0)">今日</li>
+                            <li :class="{'f-curr':currWeek}" @click.stop="handleChooseShortcatDate($event,1)">本周</li>
+                            <li :class="{'f-curr':currMonth}" @click.stop="handleChooseShortcatDate($event,2)">本月</li>
                         </ul>
                         <div class="filter-m-date clear">
                             <input class="choose-date" v-model="startDate" @click.stop="isGetStartDate = true" type="text" placeholder="开始时间" readonly="true">
@@ -213,6 +213,7 @@ apiready = function() {
             init:function(){
                 var _this = this;
                 this.currClassify = param.currClassify;
+                this.currStatus = param.currStatus;
                 this.currOrigin = param.currOrigin;
                 this.currOriginTwo = param.currOriginTwo;
                 this.currType = param.currType;
@@ -370,6 +371,9 @@ apiready = function() {
             handlePitchClassify:function(val){
                 this.currClassify = val;;
             },
+            handlePitchStatus:function(val){
+                this.currStatus = val;;
+            },
             // 筛选客户状态
             handlePitchHome:function(val){
                 this.currHome = val;
@@ -424,6 +428,7 @@ apiready = function() {
                     name: param.origin,
                     extra:{
                         classify:_this.currClassify,
+                        status:_this.currStatus,
                         origin:_this.currOrigin,
                         originTwo:_this.currOriginTwo,
                         type:_this.currType,
@@ -443,6 +448,26 @@ apiready = function() {
             }
 
         },
+        computed: {
+            currToday: function() {
+                if(this.startDate === funcGetThisToday().startDate && this.endDate === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currWeek: function() {
+                if(this.startDate === funcGetThisWeek().startDate && this.endDate === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currMonth: function() {
+                if(this.startDate === funcGetThisMonth().startDate && this.endDate === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            }
+        }
     })
 }
 </script>

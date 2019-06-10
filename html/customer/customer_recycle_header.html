@@ -67,7 +67,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var ncusHeaderV = null;
+    var ncustomerRecycleHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
@@ -76,7 +76,7 @@
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
         wHrefJs.openFrame({
-            name:'openCustomerRecycleFrame',
+            name:'customerRecycleFrame',
             path:'./customer_recycle_frame.html',
             y:y,
             h:h,
@@ -93,85 +93,48 @@
             var obj = ret.value;
             if(obj){
                 if(typeof obj.status != 'undefined'){
-                    ncusHeaderV.currStatusSelected = obj.status;
+                    ncustomerRecycleHeaderV.currStatus = obj.status;
                 }
                 if(typeof obj.origin != 'undefined'){
-                    ncusHeaderV.currOriginSelected = obj.origin;
+                    ncustomerRecycleHeaderV.currOrigin = obj.origin;
+                    ncustomerRecycleHeaderV.currOriginTwo = obj.originTwo;
+                    ncustomerRecycleHeaderV.currType = obj.type;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    ncusHeaderV.currSortSelected = obj.sort;
+                    ncustomerRecycleHeaderV.currSort = obj.sort;
+                }
+                if(typeof obj.home != 'undefined'){
+                    ncustomerRecycleHeaderV.currHome = obj.home;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    ncusHeaderV.startDate = obj.startDate;
+                    ncustomerRecycleHeaderV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    ncusHeaderV.endDate = obj.endDate;
+                    ncustomerRecycleHeaderV.endDate = obj.endDate;
                 }
             }
             $('.w-filter-lis').removeClass('curr');
         });
 
-        ncusHeaderV = new Vue({
+        ncustomerRecycleHeaderV = new Vue({
             el:"#wrap",
             data:{
                 searchVal:'',
-                // 客户来源
-                khOriginList:[],
-                currOriginSelected:'',
-                // 客户状态
-                khStatusList:[],
-                currStatusSelected:'',
+                currOrigin:'',
+                currOriginTwo:'',
+                currType:'',
+                currStatus:'',
                 // 排序方式
-                currSortSelected:1,
+                currSort:0,
                 // 开始结束时间
                 startDate:'',
                 endDate:'',
                 // 当前归属地，所有归属地缓存
-                currHomeRela:''
+                currHome:''
             },
             mounted:function(){
-                this.fetchKhClass();
-                this.fetchKhOrigin();
             },
             methods:{
-                // 获取客户状态
-                fetchKhClass:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/sourceAndType',
-                        headers:{
-                            "token":TOKEN_DATA
-                        },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.khStatusList = res.data.customerSatauslist;
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
-                // 获取客户来源
-                fetchKhOrigin:function(){
-                    var _this = this;
-                    wApiAjax({
-                        url:'customer/allSource',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        success:function(res){
-                            if(res.code == 1){
-                                _this.khOriginList = res.data.allsrorcelist
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
-                            }
-                        }
-                    })
-                },
                 // 获取焦点
                 onFoucsInp:function(){
                     $('#header-search-box').addClass('curr');
@@ -189,16 +152,16 @@
                 clearSearchVal:function(){
                     this.searchVal = '';
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        name:'customerRecycleHeader',
+                        frameName: 'customerRecycleFrame',
                         script: 'clearSearchValue();'
                     });
                 },
                 // 搜索
                 submitSeach:function(){
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        name:'customerRecycleHeader',
+                        frameName: 'customerRecycleFrame',
                         script: 'getSearchValue(\''+this.searchVal+'\');'
                     });
                 },
@@ -230,8 +193,9 @@
                                 h:h,
                                 param:{
                                     origin:'filterCustomerRecycle',
-                                    classifyData:JSON.stringify(_this.khOriginList),
-                                    currSelected:_this.currOriginSelected,
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currType,
                                     isHaveAllOrigin:true,
                                     isHaveRecourcePool:false
                                 }
@@ -243,19 +207,14 @@
                                 h:wHei,
                                 param:{
                                     origin:'filterCustomerRecycle',
-                                    // 客户来源
-                                    customerOriginData:JSON.stringify(_this.khOriginList),
-                                    currOriginSelected:_this.currOriginSelected,
-                                    // 客户状态
-                                    customerStatusData:JSON.stringify(_this.khStatusList),
-                                    currStatusSelected:_this.currStatusSelected,
 
-                                    // 时间
+                                    currOrigin:_this.currOrigin,
+                                    currOriginTwo:_this.currOriginTwo,
+                                    currType:_this.currType,
+                                    currStatus:_this.currStatus,
+                                    currHome:_this.currHome,
                                     startDate:_this.startDate,
                                     endDate:_this.endDate,
-
-                                    // 当前归属地
-                                    currHomeRela:_this.currHomeRela,
 
                                     isHaveRecourcePool:false,
                                     isHaveStatus:true,
@@ -269,8 +228,8 @@
                                 h:h,
                                 param:{
                                     origin:'filterCustomerRecycle',
-                                    currSelected:_this.currSortSelected,
-                                    sortClass:'class1'
+                                    currSelected:_this.currSort,
+                                    sortClass:'class7'
                                 }
                             })
                         }
