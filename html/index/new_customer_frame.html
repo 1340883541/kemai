@@ -34,7 +34,7 @@
                 <div class="filter-lt flex-wrap flex-between">
                     <div class="flex-wrap filter-lcap">
                         <span class="cname w-elli" v-text="khdata.name"></span>
-                        <span class="rela-state" :class="[khdata.status == '未联系'?'red-bg':'green-bg']" v-text="khdata.status"></span>
+                        <span class="rela-state" :class="[khdata.status == '未跟进'?'red-bg':'green-bg']" v-text="khdata.status"></span>
                     </div>
                     <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
                 </div>

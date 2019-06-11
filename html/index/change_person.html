@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <div id="change_person" class="follow-wrapper" v-cloak>
+    <div id="change_person" class="follow-wrapper">
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
@@ -37,32 +37,30 @@
         </div>
         <div class="change_person_box">
             <div class="change_person_list" v-for="(list,i) in lists" :key="i">
-                <div class="change_person_city" @click="show_detail">
+                <div class="change_person_city bor-1px-b" @click="list.isShowDetail = !list.isShowDetail">
                     <div class="imgCity">
-                        <img src="../../image/icon-jiantou-r.png" v-show="show_detail1">
-                        <img src="../../image/icon-jiantoudown.png" v-show="!show_detail1">
+                        <img src="../../image/icon-jiantou-r.png" v-show="!list.isShowDetail">
+                        <img src="../../image/icon-jiantoudown.png" v-show="list.isShowDetail">
                     </div>
-                    <div class="text regionName" v-text=list.regionName></div>
+                    <div class="text regionName w-elli" v-text="list.regionName"></div>
                 </div>
-                <div class="sale_box" v-if="show_detail">
-                    <div class="sale_list bor-1px-b" v-for="(middleVal,middleKey) in list.teamList" :key="middleKey" @click="teamAll(middleVal.teamid,middleVal.name)">
+                <div class="sale_box" v-if="list.isShowDetail">
+                    <div class="sale_list bor-1px-b" v-for="(middleVal,middleKey) in list.teamList" :key="middleKey" @click="handleGetOpenGroup(middleVal.teamid,middleVal.name,list.regionName,list.regionId)">
                         <div class="text_lef">
                             <div><img src="../../image/touxiang-tuandui.png"></div>
-                            <div class="groups">{{middleVal.name}}</div>
+                            <div class="groups w-elli">{{middleVal.name}}</div>
                         </div>
                         <div class=img_rig>
                             <img src="../../image/icon-gr-jiantou32.png">
-                       </div>
-                    </div>
-                    <div class="name_person" v-for="(item,j) in list.empList" :key="j">
-                        <div class="name_lef" >
-                            <img src="../../image/touxiang-ren.png">
-                            <div class="name">{{item.name}}</div>
                         </div>
-                        <div class="img_rig1" @click="selection(item.name,item.empid)">
-                            <i class="uncheck"  :class="{check : check1 == item.name}" ></i>
-                            <!-- <img src="../../image/icon-danxuankuang.png" v-if="isShow" class="">
-                            <img src="../../image/icon-danxuankuangp.png" v-if="!isShow"> -->
+                    </div>
+                    <div class="name_person" v-for="(item,j) in list.empList" :key="j" @click="handleSelectEmployee(item.name,item.empid,list.regionName)">
+                        <div class="name_lef">
+                            <img src="../../image/touxiang-ren.png">
+                            <div class="name w-elli">{{item.name}}</div>
+                        </div>
+                        <div class="img_rig1">
+                            <i class="uncheck" :class="{'check' : check1 == item.name}"></i>
                         </div>
                     </div>
                 </div>
@@ -78,46 +76,48 @@
         <!-- 选定当前 -->
         <div class="popup_curr" v-show="popup_curr">
             <div class="popup_box">
-                <div class="curr_text"><span class="choose">当前选定：</span><span class="city">{{city}}</span><i>|</i><span class="name">{{name_title}}</span></div>
+                <div class="curr_text">
+                    <span class="choose">当前选定：</span>
+                    <span class="check-txt" v-html="currSelectedEmployeeTxt"></span>
+                </div>
             </div>
-            <div class="immediate_box1" @click="confirm">
+            <div class="immediate_box1" @click.stop="handleConfirmEmployee">
                 <div class="allocation">确认</div>
             </div>
         </div>
 
 
         <!-- 弹出销售 -->
+        <!-- <div class="popup_curr1" v-show="popup_curr1" style="display:none;"> -->
         <div class="popup_curr1" v-show="popup_curr1">
-            <div class="mengcheng"></div>
+            <div class="mengcheng" @click.stop="popup_curr1 = false"></div>
             <div class="curr_choose_box">
                 <div class="popup_box_list">
-                    <div class="curr_text_name"><span class="choose">当前选定：</span><span class="city">{{city_team}}</span><i>|</i>
-                        <span class="city">{{team_name}}</span><i>|</i><span class="city">{{sale_team}}</span><i>|</i><span class="name">{{name_chosse}}</span></div>
+                    <div class="curr_text_name">
+                        <span class="choose">当前选定：</span>
+                        <span class="check-txt" v-html="currSelectedEmployeeTxt"></span>
+                    </div>
                 </div>
                 <div class="all_box">
                     <div class="content_lef">
-                        <div class="lists_group">
-                            <div v-for="(item,a) in teams" :key="a">{{item.gruopName}}</div>
-                            <!-- <div>销售一组B对</div>
-                            <div>销售一组C对</div>
-                            <div>销售一组B对</div>
-                            <div>销售一组C对</div> -->
+                        <div class="lists_group" v-if="groupListOrg && groupListOrg.length>0" v-for="(item,a) in groupListOrg" :key="'org'+a"  @click.stop="handleChooseZzOrg(item.gruopName,item.emp)">
+                            <div>{{item.gruopName}}</div>
                         </div>
-                        <div class="flex_cont_img">
+                        <div class="flex_cont_img" v-if="groupListPer && groupListPer.length>0" v-for="(item,a) in groupListPer" :key="'per'+a" @click.stop="handleChooseZzPer(item.empId,item.name,a)">
                             <div class="img_rig1">
-                                <img src="../../image/icon-danxuankuang.png" v-if="isShow1">
-                                <img src="../../image/icon-danxuankuangp.png" v-if="!isShow1">
+                                <img src="../../image/icon-danxuankuang.png" v-if="item.isChecked">
+                                <img src="../../image/icon-danxuankuangp.png" v-else>
                             </div>
-                            <div class="name">刘涛</div>
+                            <div class="name">{{item.name}}</div>
                         </div>
                     </div>
                     <div class="content_rig">
-                        <div class="cont_flex">
+                        <div class="cont_flex" v-for="(crew,i) in crewList" :key="crew.id" @click.stop="handleChooseCrew(crew.id,crew.name,i)">
                             <div class="img_rig1">
-                                <img src="../../image/icon-danxuankuang.png" v-if="isShow2">
-                                <img src="../../image/icon-danxuankuangp.png" v-if="!isShow2">
+                                <img src="../../image/icon-danxuankuang.png" v-if="item.isChecked">
+                                <img src="../../image/icon-danxuankuangp.png" v-else>
                             </div>
-                            <div class="name_title">刘涛</div>
+                            <div class="name_title">{{crew.name}}</div>
                         </div>
                     </div>
                 </div>
@@ -127,9 +127,6 @@
             </div>
         </div>
     </div>
-
-
-
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
@@ -142,32 +139,27 @@
     var followRecordV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
+
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         followRecordV = new Vue({
             el: '#change_person',
             data: {
-              hideImg:true,
-              isShow1:true,
-              isShow2:true,
-              popup_curr:false,
-              popup_curr1:false,
-              lists:[],
-              cusId:0,
-              pageNo: 1,
-              totalPage: 1,
-              isFooter:true,
-              name_title:'',
-              city:'',
-              check1:'',
-              nameId:'',
-              showAll:false,
-              show_detail:true,
-              show_detail1:true,
-              city_team:"",
-              team_name:'',
-              sale_team:'',
-              name_chosse:'',
-              teams:[],
+                popup_curr: false,
+                popup_curr1: false,
+                lists: [],
+                cusId: 0,
+                isFooter: true,
+                currName: '',
+                check1: '',
+                nameId: '',
+                showAll: false,
+                cityName: "",
+                teamName: '',
+                groupName: '',
+                groupListOrg: [],
+                groupListPer:[],
+                crewList:[]
             },
             mounted: function() {
                 this.init();
@@ -177,20 +169,18 @@
                 init: function() {
                     var _this = this;
                     this.cusId = param.cusId;
-                    this.followContent = param.content;
-                    this.initFollowContent = param.content;
-                    this.shortcutList = param.shortcutList;
                     // 获取用户信息
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    this.getUserInfo();
-
                 },
                 // 根据员工id获取列表
-                getUserInfo:function () {
-                    var _this = this
+                getUserInfo: function() {
+                    var _this = this;
+                    setTimeout(function() {
+                        wDialog.showProgress();
+                    }, 100);
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findRegion',
@@ -199,65 +189,114 @@
                             "token": TOKEN_DATA,
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid,
-                            pageNo:_this.pageNo,
-                            pageSize:10
+                            employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                           console.log(JSON.stringify(res))
-                           if(res.code==1){
-                               _this.lists = res.data;
-                           }
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                _this.lists = res.data.map(function(v) {
+                                    v.isShowDetail = true;
+                                    return v;
+                                })
+                            }
                         }
                     })
                 },
                 // 选择变更人
-                selection:function(name,id){
-                     var _this = this;
-                    _this.check1 = name;
-                    _this.nameId = id;
-                    _this.popup_curr = true;
-                    _this.isFooter = false;
-                    _this.name_title = name;
-                    var city = $(".img_rig1").parents().find(".regionName").html();
-                    _this.city_team = city
+                handleSelectEmployee: function(name, id, city) {
+                    if (this.check1 === name) {
+                        this.check1 = '';
+                        this.nameId = '';
+                        this.popup_curr = false;
+                        this.isFooter = true;
+                        this.currName = '';
+                        this.cityName = '';
+                    } else {
+                        this.check1 = name;
+                        this.nameId = id;
+                        this.popup_curr = true;
+                        this.isFooter = false;
+                        this.currName = name;
+                        this.cityName = city;
+                    }
+                },
+                // 选择小组
+                handleChooseZzOrg:function(name,lists){
+                    console.log(JSON.stringify(lists))
+                    this.groupName = name;
+                    var crewList = lists || [];
+                    this.crewList = crewList.map(function(v){
+                        v.isChecked = false;
+                        return v;
+                    });
+                },
+                // 选择小组同级员工
+                handleChooseZzPer:function(id,name,i){
+                    if(this.empId === id){
+                        this.empId = '';
+                        this.currName = '';
+                        this.groupListPer[i] = false;
+                    }else{
+                        this.empId = id;
+                        this.currName = name;
+                        this.groupListPer = this.groupListPer.map(function(v,idx){
+                            if(i===idx){
+                                v.isChecked = true;
+                            }else{
+                                v.isChecked = false;
+                            }
+                            return v;
+                        })
+                    }
+                },
+                // 选择员工
+                handleChooseCrew(id,name){
+                    this.empId = id;
+                    this.currName = name;
                 },
                 // 确认
-                confirm:function(){
-                    var _this =this;
-                    wApiAjax({
-                        method: "post",
-                        url: 'newResource/changeSales',
-                        withCredentials: true,
-                        headers: {
-                            "token": TOKEN_DATA,
-                        },
-                        data: {
-                            employeeid: _this.userInfo.employeeid,
-                            customerid:_this.nameId
-                        },
-                        success: function(res) {
-                           console.log(JSON.stringify(res))
-                           if(res.code==1){
-                               _this.popup_curr = false;
-                               _this.isFooter = true;
-                           }
+                handleConfirmEmployee: function() {
+                    var _this = this;
+                    wDialog.confirm({
+                        msg: '确认分配给当前员工吗?',
+                        sureCb: function() {
+                            wApiAjax({
+                                method: "post",
+                                url: 'newResource/changeSales',
+                                withCredentials: true,
+                                headers: {
+                                    "token": TOKEN_DATA,
+                                },
+                                data: {
+                                    employeeid: _this.nameId,
+                                    customerid: _this.cusId
+                                },
+                                success: function(res) {
+                                    console.log('allot response' + JSON.stringify(res));
+                                    if (res.code == 1) {
+                                        api.sendEvent({
+                                            name: 'allotEmployeeSuccess'
+                                        });
+                                        wDialog.alert({
+                                            msg: '分配成功',
+                                            cb: function() {
+                                                api.closeWin();
+                                            }
+                                        })
+                                    }
+                                }
+                            })
                         }
                     })
-                },
-                // 控制显示隐藏
-                show_detail:function(){
-                    var _this = this;
-                    // this.show_detail = true;
-                    // this.show_detail1 = true;
+
                 },
                 // 分配团队
-                teamAll:function(id,name){
+                handleGetOpenGroup: function(id, name, areaName, areaId) {
                     var _this = this;
                     _this.popup_curr1 = true;
-                    var city = $(".sale_list").parents().find(".regionName").html();
-                    _this.city_team = city
-                    _this.team_name =name
+                    _this.cityName = areaName;
+                    _this.teamName = name;
+                    wDialog.showProgress();
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findTeam',
@@ -266,17 +305,41 @@
                             "token": TOKEN_DATA,
                         },
                         data: {
-                            region: 14,
-                            team:id,
+                            region: areaId,
+                            team: id,
                         },
                         success: function(res) {
-                           console.log(JSON.stringify(res))
-                           if(res.code==1){
-
-                           }
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                _this.groupListOrg  =  res.groupList;
+                                _this.groupListPer = res.zzList.map(function(v){
+                                    v.isChecked = false;
+                                    return v;
+                                });
+                            }
                         }
                     })
 
+                }
+            },
+            computed: {
+                currSelectedEmployeeTxt: function() {
+                    if (this.cityName && this.teamName && this.groupName && this.currName) {
+                        return this.cityName + ' | ' + this.teamName + ' | ' + this.groupName + ' | ' + '<b>' + this.name_title + '</b>'
+                    }
+                    if (this.cityName && this.teamName && this.groupName) {
+                        return this.cityName + ' | ' + this.teamName + ' | ' + this.groupName;
+                    }
+                    if (this.cityName && this.teamName && this.currName) {
+                        return this.cityName + ' | ' + this.teamName + ' | ' + '<b>' + this.currName + '</b>'
+                    }
+                    if (this.cityName && this.teamName) {
+                        return this.cityName + ' | ' + this.teamName;
+                    }
+                    if (this.cityName && this.currName) {
+                        return this.cityName + ' | ' + '<b>' + this.currName + '</b>'
+                    }
                 }
             }
         });

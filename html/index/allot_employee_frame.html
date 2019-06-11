@@ -125,6 +125,14 @@
                 $('#not-more').show();
             }
         });
+        api.addEventListener({
+            name: 'allotEmployeeSuccess'
+        }, function(ret, err){
+            wDialog.showProgress();
+            allotEmployeeFrameV.pageNo = 1;
+            allotEmployeeFrameV.fetchAllotEeployee();
+        });
+
         var param = api.pageParam;
         allotEmployeeFrameV = new Vue({
             el: '#wrap',
