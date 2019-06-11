@@ -81,6 +81,13 @@ function wApiAjax(par) {
             },
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
+            if(ret.count){
+                api.toast({
+                    msg: '总共'+ret.count + '条数据',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
             if (ret && ret.code != 500) {
                 if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
                     wDialog.hideProgress();

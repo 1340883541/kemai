@@ -19,7 +19,7 @@
     <div id="add-wrapper" class="add-wrapper" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop.prevent="handleBack"></div>
+                <div class="left back" @click.stop="api.closeWin();"></div>
                 <div class="center">新增客户</div>
                 <div class="right"></div>
             </div>
