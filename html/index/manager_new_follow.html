@@ -339,9 +339,13 @@
                 // 处理返回的数据
                 funcDealWithData:function(data){
                     var _this = this;
-                    return data.map(function(val){
-                        val.percent = Math.round((val.addtotal / val.total) * 100);
-                        return val;
+                    return data.map(function(v){
+                        if(v.addtotal == 0){
+                            v.percent = 0;
+                        }else{
+                            v.percent = Math.round((v.addtotal/v.total)*100);
+                        }
+                        return v;
                     });
                 },
                 renderCircle:function(i,val){
@@ -400,7 +404,11 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.teamList = res.data.teamList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    if(v.addtotal == 0){
+                                        v.percent = 0;
+                                    }else{
+                                        v.percent = Math.round((v.addtotal/v.total)*100);
+                                    }
                                     return v;
                                 });
                                 if(!isFilter){
@@ -460,7 +468,11 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.groupList = res.data.groupList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    if(v.addtotal == 0){
+                                        v.percent = 0;
+                                    }else{
+                                        v.percent = Math.round((v.addtotal/v.total)*100);
+                                    }
                                     return v;
                                 });
                                 if(!isFilter){
@@ -522,7 +534,11 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.crewList = res.data.groupList.map(function(v){
-                                    v.percent = Math.round((v.addtotal/v.total)*100);
+                                    if(v.addtotal == 0){
+                                        v.percent = 0;
+                                    }else{
+                                        v.percent = Math.round((v.addtotal/v.total)*100);
+                                    }
                                     return v;
                                 });
                                 if(!isFilter){

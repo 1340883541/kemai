@@ -69,6 +69,7 @@
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         // 打开新增客户
         openNewCustomerFrame(param);
 
