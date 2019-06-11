@@ -60,7 +60,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var ncusHeaderV = null;
+    var allotEmpHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
@@ -70,15 +70,13 @@
             h = wHei - y;
         var param = api.pageParam;
         wHrefJs.openFrame({
-            name:'openAllotEmployeeFrame',
+            name:'allotEmployeeFrame',
             path:'./allot_employee_frame.html',
             y:y,
             h:h,
             bounces:true,
             bgColor:'rgba(0,0,0,0)',
             param:{
-                // startDate:param.startDate,
-                // endDate:param.endDate,
                 currOrigin:param.currOrigin,
                 currOriginTwo:param.currOriginTwo,
                 currType:param.currType,
@@ -95,21 +93,21 @@
             var obj = ret.value;
             if(obj){
                 if(typeof obj.origin != 'undefined'){
-                    ncusHeaderV.currOriginSelected = obj.origin;
-                    ncusHeaderV.currOriginTwoSelected = obj.originTwo;
-                    ncusHeaderV.currOriginType = obj.type;
+                    allotEmpHeaderV.currOriginSelected = obj.origin;
+                    allotEmpHeaderV.currOriginTwoSelected = obj.originTwo;
+                    allotEmpHeaderV.currOriginType = obj.type;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    ncusHeaderV.startDate = obj.startDate;
+                    allotEmpHeaderV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    ncusHeaderV.endDate = obj.endDate;
+                    allotEmpHeaderV.endDate = obj.endDate;
                 }
             }
             $('.w-filter-lis').removeClass('curr');
         });
 
-        ncusHeaderV = new Vue({
+        allotEmpHeaderV = new Vue({
             el:"#wrap",
             data:{
                 searchVal:'',
@@ -147,16 +145,14 @@
                 clearSearchVal:function(){
                     this.searchVal = '';
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        frameName: 'allotEmployeeFrame',
                         script: 'clearSearchValue();'
                     });
                 },
                 // 搜索
                 submitSeach:function(){
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        frameName: 'allotEmployeeFrame',
                         script: 'getSearchValue(\''+this.searchVal+'\');'
                     });
                 },
@@ -209,7 +205,6 @@
             }
         });
     }
-
 </script>
 
 </html>
