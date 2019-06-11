@@ -429,6 +429,10 @@ apiready = function() {
             // 确认
             handleSureData:function(){
                 var _this = this;
+                var currType = 1;
+                if(param.isHaveRecourcePool){
+                    currType = this.currOrigin == 0 ? 2 : 1;
+                }
                 api.sendEvent({
                     name: param.origin,
                     extra:{
@@ -436,7 +440,7 @@ apiready = function() {
                         status:_this.currStatus,
                         origin:_this.currOrigin,
                         originTwo:_this.currOriginTwo,
-                        type:_this.currType,
+                        type:currType,
                         home:_this.currHome,
                         startDate:_this.startDate,
                         endDate:_this.endDate,

@@ -99,7 +99,7 @@
             name: 'filterNewCustomer'
         }, function(ret, err){
             var obj = ret.value;
-            // console.log('new frame---'+JSON.stringify(obj))
+            console.log('new frame---'+JSON.stringify(obj))
             if(obj){
                 if(typeof obj.classify != 'undefined'){
                     newCustomerFrame.currClassify = obj.classify;
@@ -182,7 +182,9 @@
                 fetchNewAdd: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },80);
                     var url = '';
                     if(param.empId){
                         url = 'newResource/newAddResFollListByEmp';

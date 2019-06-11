@@ -235,7 +235,9 @@
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                         TOKEN_DATA = myLocalStorage.getItem('token');
-                        wDialog.showProgress();
+                        setTimeout(function(){
+                            wDialog.showProgress();
+                        },80)
                         wApiAjax({
                             url: 'workbench/newAddResourceFoll',
                             headers: {
