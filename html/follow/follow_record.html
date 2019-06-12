@@ -161,15 +161,12 @@
             <div class="choose-follow-t bor-1px-b">选择通话结果<i class="close" @click.stop="funcHideAllPopup"></i></div>
             <div class="choose-follow-b">
                 <ul>
-                    <!-- <li
-                        v-for="(cState,index) in clientStateList"
-                        :key="index" v-text="cState.name"
-                        :class="{'curr':clientStateCode === cState.value}"
-                        @click.stop="handleChooseCustomerState(cState.name,cState.value)"
-                    ></li> -->
-                    <li @click.stop="handleChooseTalkingResult(1)" :class="{'curr':talkedResultState===1}" ref="talkingPopup1" data-txt="未接听">未接听</li>
-                    <li @click.stop="handleChooseTalkingResult(2)" :class="{'curr':talkedResultState===2}" ref="talkingPopup2" data-txt="接通">接通</li>
-                    <li @click.stop="handleChooseTalkingResult(3)" :class="{'curr':talkedResultState===3}" ref="talkingPopup3" data-txt="号码异常">号码异常</li>
+                    <li
+                        v-for="(tState,index) in talkedStateList"
+                        :key="index" v-text="tState.name"
+                        :class="{'curr':talkedState === tState.value}"
+                        @click.stop="handleChooseTalkingResult(tState.name,tState.value)"
+                    ></li>
                 </ul>
             </div>
         </div>
@@ -248,8 +245,9 @@
                 clientStateCode:'',
                 clientName:'',
                 talkedResult:'', //通话结果
-                talkedResultState:'',// 通话结果状态
+                talkedState:'',// 通话结果状态
                 isShowTalkingResult:false, // 只有直接拨打才会有通话结果
+                isSaveTalkingRecord:false,
 
                 followId:'',
                 clientAddr:'', // 归属地
@@ -257,7 +255,7 @@
                 followWayState:'',
                 followWayStateCode:'',
                 shortcutFollowList:[], // 快捷跟进列表
-
+                talkedStateList:[],
                 isHaveFollowAddress:false, //只有拜访才会跟进地址
                 followAddress:'',
 
@@ -278,7 +276,7 @@
                     followDate:'',
                     showFollowDate:'',
                     followContent:'',
-                    talkedResultState:''
+                    talkedState:''
                 },
                 isCanSaveFollowRecord:true, //是否能够保存记录
                 isCanBack:true,
@@ -290,6 +288,7 @@
             },
             mounted:function(){
                 this.init();
+                this.fetchTalkingState();
                 this.getFollowWay();
             },
             methods:{
@@ -320,6 +319,22 @@
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
                 },
+                // 获取通话状态
+                fetchTalkingState:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:"ema/callStatus",
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        method:'post',
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.talkedStateList = res.data ? res.data : [];
+                            }
+                        }
+                    })
+                },
                 // 获取客户信息
                 getClientInfo:function(isEdit,url){
                     var _this = this;
@@ -336,7 +351,7 @@
                         },
                         success:function(res){
                             wDialog.hideProgress();
-                            // console.log('follow record response ---> '+JSON.stringify(res))
+                            console.log('follow record response ---> '+JSON.stringify(res))
                             if(res.code==0){
                                 if(_this.isEditFollow){
                                     _this.followWayList.forEach(function(v){
@@ -496,10 +511,10 @@
                     this.funcHideAllPopup();
                     $('#popup-bg,#choose-customer-status').show();
                 },
-                handleChooseTalkingResult:function(i){
+                handleChooseTalkingResult:function(name,val){
                     this.funcHideAllPopup();
-                    this.talkedResultState = i;
-                    this.talkedResult = this.$refs['talkingPopup'+i].getAttribute('data-txt');
+                    this.talkedState = val;
+                    this.talkedResult = name;
                     console.log(this.talkedResult)
                 },
                 // 选择通话结果
@@ -735,14 +750,73 @@
                         this.isCanSaveFollowRecord = false;
                         wDialog.showProgress({
                             msg:'正在保存中，请稍等...'
-                        })
-                        var url = this.isEditFollow ? 'customer/cusFollowEdit' : 'customer/saveCallFollowPlus';
-                        this.funcSaveFollowRecord(url);
+                        });
+                        if(this.isShowTalkingResult){
+                            if(this.isSaveTalkingRecord){
+                                this.funcSaveFollowRecord('customer/saveCallFollowPlus');
+                            }else{
+                                this.funcSaveNormalCallRecord('ema/saveComPhone');
+                            }
+                        }else{
+                            var url = this.isEditFollow ? 'customer/cusFollowEdit' : 'customer/saveCallFollowPlus';
+                            this.funcSaveFollowRecord(url);
+                        }
                     }else{
                         wDialog.toast({
                             msg:'正在保存中,请稍等'
                         })
                     }
+                },
+                // 保存不同电话跟进
+                funcSaveNormalCallRecord:function(url){
+                    var _this = this;
+                    if(!this.talkedState){
+                        wDialog.toast({
+                            msg:'请选择通话结果'
+                        });
+                        wDialog.hideProgress();
+                        _this.isCanSaveFollowRecord = true;
+                        return;
+                    }
+                    console.log('save or edit follow record request data: ' + JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        customerid:_this.cusId,
+                        customerNumber:_this.cusPhone,
+                        followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                        status:_this.talkedState,
+                        is_work:_this.isWork
+                    }))
+                    wApiAjax({
+                        url:url,
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:_this.cusId,
+                            customerNumber:_this.cusPhone,
+                            followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                            status:_this.talkedState,
+                            is_work:_this.isWork
+                        },
+                        success:function(res){
+                            console.log('--------------'+JSON.stringify(res))
+                            if(res.code == 1){
+                                _this.isSaveTalkingRecord = true;
+                                _this.funcSaveFollowRecord('customer/saveCallFollowPlus');
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                                wDialog.hideProgress();
+                                _this.isCanSaveFollowRecord = true;
+                            }
+                        },
+                        fail:function(){
+                            _this.isCanSaveFollowRecord = true;
+                        }
+                    })
                 },
                 // 保存跟进的两种方式
                 funcSaveFollowRecord:function(url){

@@ -387,6 +387,7 @@
     font-size: .28rem;
     color: #333;
     line-height: .48rem;
+    word-break: break-all;
     /*max-height: 2.4rem;
     overflow: hidden;*/
 }

@@ -290,6 +290,9 @@
                     wDialog.confirm({
                         msg: '确认分配给当前员工吗?',
                         sureCb: function() {
+                            wDialog.showProgress({
+                                msg:'正在分配中...'
+                            })
                             wApiAjax({
                                 method: "post",
                                 url: 'newResource/changeSales',
@@ -303,6 +306,7 @@
                                 },
                                 success: function(res) {
                                     console.log('allot response' + JSON.stringify(res));
+                                    wDialog.hideProgress();
                                     if (res.code == 1) {
                                         api.sendEvent({
                                             name: 'allotEmployeeSuccess'

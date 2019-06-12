@@ -19,7 +19,7 @@
     <div id="add-wrapper" class="add-wrapper" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop="api.closeWin();"></div>
+                <div class="left back" @click.stop="handleBack"></div>
                 <div class="center">新增客户</div>
                 <div class="right"></div>
             </div>
@@ -37,7 +37,7 @@
                     <div class="add-cap">手机号码</div>
                     <div class="add-inp flex-wrap bor-1px-b">
                         <input type="text" class="flex-con" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
-                        <span class="phone-addr bor-1px-l" v-if="isShowPhoneAddr">号码归属地: {{saveFormData.customerPhoneAddrTxt}}</span>
+                        <span class="phone-addr bor-1px-l" v-show="isShowPhoneAddr" style="display:none;">号码归属地: {{saveFormData.customerPhoneAddrTxt}}</span>
                     </div>
                 </div>
                 <div class="add-lis">
@@ -91,9 +91,16 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var addV = null;
+
     apiready = function(){
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
+
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            addV.handleBack();
+        });
         addV = new Vue({
             el:'#add-wrapper',
             data:{
@@ -263,6 +270,26 @@
                         return false;
                     }
                     this.funcSaveAddCustomer();
+                },
+                handleBack:function(){
+                    var isCanBack = true;
+                    for(var key in this.saveFormData){
+                        if(this.saveFormData[key] != ''){
+                            isCanBack = false;
+                            break;
+                        }
+                    }
+                    if(!isCanBack){
+                        wDialog.confirm({
+                            msg: '是否放弃当前编辑？',
+                            button: ['是', '否'],
+                            sureCb: function() {
+                                api.closeWin();
+                            }
+                        })
+                    }else{
+                        api.closeWin();
+                    }
                 },
                 // 保存新增客户
                 funcSaveAddCustomer:function(){

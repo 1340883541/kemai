@@ -31,7 +31,7 @@
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop.prevent="handleBack">返回</div>
                 <div class="center">快捷用语</div>
-                <div class="right"  @click.stop="handleEditCustomerName">添加</div>
+                <div class="right" @click.stop="handleEditCustomerName">添加</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
@@ -39,7 +39,7 @@
         <div class="quick_lag_content">
             <ul class="quick_lag_ul">
                 <li class="quick_lag_li border-1px" v-for="(type,i) in lists" :key="i">
-                    <div class="li_radio" @click="selectedProduct(i)"><i class="uncheck" :class="{check:type.isSelect}" ></i></div>
+                    <div class="li_radio" @click="selectedProduct(i)"><i class="uncheck" :class="{check:type.isSelect}"></i></div>
                     <div class="li_text clear">
                         <div class="li_t_mun">{{i+1}}.</div>
                         <div class="li_t_info w-elli-4">{{type.content}}</div>
@@ -95,250 +95,267 @@
 <script type="text/javascript">
     var vuedata;
     apiready = function() {
-        $api.fixStatusBar($('#fh-fixed')[0]);
-        $api.fixStatusBar($('#fh-place')[0]);
-        // 监听返回按钮
-        api.addEventListener({
-            name: 'keyback'
-        }, function(ret, err) {
-            vuedata.handleBack();
-        });
+            $api.fixStatusBar($('#fh-fixed')[0]);
+            $api.fixStatusBar($('#fh-place')[0]);
+            // 监听返回按钮
+            api.addEventListener({
+                name: 'keyback'
+            }, function(ret, err) {
+                vuedata.handleBack();
+            });
 
-        vuedata = new Vue({
-            el: '#follow-wrapper',
-            data: {
-                 lists:[],
-                 pageNo:1,
-                 pageSize:10,
-                 content_name:'',
-                 flags: [],
-                 array:'',
-                 arrAll:[],
-                 delAll:'',
-                 nameText:''
-            },
-            mounted() {
-                this.init();
-                this.getUserInfo();
-            },
-            methods: {
-                // 返回
-                handleBack: function() {
-                    api.closeWin();
+            vuedata = new Vue({
+                el: '#follow-wrapper',
+                data: {
+                    lists: [],
+                    pageNo: 1,
+                    pageSize: 10,
+                    content_name: '',
+                    flags: [],
+                    array: '',
+                    arrAll: [],
+                    delAll: '',
+                    nameText: ''
                 },
-                init:function(){
-                    // 获取用户信息
-                    this.userInfo = wPref.getPrefs({
-                        key:'userInfo'
-                    });
-                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                mounted() {
+                    this.init();
+                    this.getUserInfo();
                 },
-                getUserInfo:function(){
-                    var _this = this;
-                    wApiAjax({
-                        method: "get",
-                        url: 'customer/fastFollow',
-                        withCredentials: true,
-                        headers: {
-                            "token": TOKEN_DATA,
-                        },
-                        data: {
-                            pageNo:_this.pageNo,
-                            pageSize:_this.pageSize,
-                            employeeid:_this.userInfo.employeeid,
-                        },
-                        success: function(res) {
-                            console.log(JSON.stringify(res))
-                             _this.lists = res.data
-                            //  _this.idList =res.data
-                            //  console.log(JSON.stringify(_this.idList))
-                        }
-                    })
-                },
-                // 添加快捷用语
-                handleEditCustomerName:function(){
-                    var _this = this;
-                    if(isIos()){
-                        wHrefJs.openFrame({
-                            name:'followShortcutPop',
-                            path:'./follow_shortcut_pop.html',
-                            animation:{
-                                type:"none",
-                                subType:"from_bottom",
-                                duration:100
+                methods: {
+                    // 返回
+                    handleBack: function() {
+                        api.closeWin();
+                    },
+                    init: function() {
+                        // 获取用户信息
+                        this.userInfo = wPref.getPrefs({
+                            key: 'userInfo'
+                        });
+                        this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    },
+                    getUserInfo: function() {
+                        var _this = this;
+                        wApiAjax({
+                            method: "get",
+                            url: 'customer/fastFollow',
+                            withCredentials: true,
+                            headers: {
+                                "token": TOKEN_DATA,
+                            },
+                            data: {
+                                pageNo: _this.pageNo,
+                                pageSize: _this.pageSize,
+                                employeeid: _this.userInfo.employeeid,
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                _this.lists = res.data
+                                    //  _this.idList =res.data
+                                    //  console.log(JSON.stringify(_this.idList))
                             }
                         })
-                    }else{
-                        this.funcHideAllPopup();
-                        $('#popup-bg,#customer-shortcut-popup').show();
-                        setTimeout(function(){
-                            $('#inp-textarea-name').focus();
-                        },10);
-                    }
-                },
-                funcHideAllPopup:function(){
-                    $('.follow-popup').hide();
-                     this.content_name ="";
-
-                },
-                handleSaveCustomerName:function(){
-                    var _this = this;
-                    wApiAjax({
-                        method: "post",
-                        url: 'customer/addFastFollow',
-                        withCredentials: true,
-                        headers: {
-                            "token": TOKEN_DATA,
-                        },
-                        data: {
-                           employeeid:_this.userInfo.employeeid,
-                           content:_this.content_name
-                        },
-                        success: function(res) {
-                            console.log(JSON.stringify(res))
-                             $('.follow-popup').hide();
-                             _this.content_name ="";
-                             _this.getUserInfo();
-
-                        }
-                    })
-                },
-                // 切换多选选中样式
-                selectedProduct: function(i) {
-                    var _this = this;
-                  if(typeof _this.lists[i].isSelect=='undefined'){
-                    _this.$set(_this.lists[i],"isSelect",true)
-                    console.log(i)
-                  }else{
-                    _this.lists[i].isSelect =! _this.lists[i].isSelect
-                    console.log(i)
-                  }
-                  let arr = [];
-                  let arrText = []
-                  _this.lists.forEach((item,n) => {
-                      if(item.isSelect){
-                          arr.push(item.id)
-                          arrText.push(item.content)
-                      }
-                      console.log(JSON.stringify(arr))
-                  });
-                  _this.array = arr.join(",")
-                  _this.nameText = arrText.join(",")
-                  if(arr.length==1){ //选择一个
-                     $(".quick_lag_delbtn").removeClass("disabled")
-                     $(".quick_lag_querbtn").removeClass("disabled")
-                  }else if(arr.length==0){ //一个都没有选择
-                      $(".quick_lag_delbtn").removeClass("disabled")
-                      $(".quick_lag_querbtn").removeClass("disabled")
-                  }else{ // 多选
-                     $(".quick_lag_delbtn").removeClass("disabled")
-                     $(".quick_lag_querbtn").addClass("disabled")
-                  }
-                },
-                // 一个确认
-                confirmDel:function(){
-                    console.log(this.array)
-                    console.log(this.nameText)
-                    api.sendEvent({
-                        name: 'chooseFollowText',
-                        extra: {
-                            txt: this.nameText,
-                            sendOrigin:api.pageParam.origin
-                        }
-                    });
-                    api.closeWin({
-                        name: 'followRecordMore'
-                    });
-                },
-                // 删除多个
-                detal:function(){
-                   var _this = this;
-                   if(_this.lists.length<=0){
-                       wDialog.toast({
-                           msg:'暂无选择项'
-                       });
-                       return;
-                   }
-                   if(_this.array.length<=0){
-                       wDialog.toast({
-                           msg:'请选择删除项'
-                       });
-                       return;
-                   }
-                   wDialog.confirm({
-                       msg: '确定删除勾选项？',
-                       button: ['确定', '取消'],
-                       sureCb: function() {
-                           wApiAjax({
-                               method: "post",
-                               url: 'customer/delFastFollow',
-                               withCredentials: true,
-                               headers: {
-                                   "token": TOKEN_DATA,
-                               },
-                               data: {
-                                  employeeid:_this.userInfo.employeeid,
-                                  fastFollowIds:_this.array
-                               },
-                               success: function(res) {
-                                   console.log(JSON.stringify(res))
-                                   _this.getUserInfo()
-                               }
-                           })
-                       }
-                   })
-
-                },
-                //清空选中快捷用语
-                handleCleanFollowChoose: function() {
-                    var _this = this;
-                    _this.lists.forEach((item,n) => {
-                        if(item){
-                            _this.arrAll.push(item.id)
-                        _this.delAll= _this.arrAll.join(",")
-                        console.log(_this.arrAll)
-                        // _this.$set(item,"isSelect",true)
-                        }
-                    })
-                    if(_this.lists.length<=0){
-                        wDialog.toast({
-                            msg:'暂无选择项'
-                        });
-                        return;
-                    }
-                    wDialog.confirm({
-                        msg: '确定清空所有？',
-                       button: ['确定', '取消'],
-                        sureCb: function() {
-                            wApiAjax({
-                                method: "post",
-                                url: 'customer/delFastFollow',
-                                withCredentials: true,
-                                headers: {
-                                    "token": TOKEN_DATA,
-                                },
-                                data: {
-                                   employeeid:_this.userInfo.employeeid,
-                                   fastFollowIds:_this.delAll,
-                                },
-                                success: function(res) {
-                                    console.log(JSON.stringify(res))
-                                    _this.getUserInfo()
+                    },
+                    // 添加快捷用语
+                    handleEditCustomerName: function() {
+                        var _this = this;
+                        if (isIos()) {
+                            wHrefJs.openFrame({
+                                name: 'followShortcutPop',
+                                path: './follow_shortcut_pop.html',
+                                animation: {
+                                    type: "none",
+                                    subType: "from_bottom",
+                                    duration: 100
                                 }
                             })
+                        } else {
+                            this.funcHideAllPopup();
+                            $('#popup-bg,#customer-shortcut-popup').show();
+                            setTimeout(function() {
+                                $('#inp-textarea-name').focus();
+                            }, 10);
                         }
-                    })
+                    },
+                    funcHideAllPopup: function() {
+                        $('.follow-popup').hide();
+                        this.content_name = "";
+                    },
+                    // 确定保存
+                    handleSaveCustomerName: function() {
+                        var _this = this;
+                        wApiAjax({
+                            method: "post",
+                            url: 'customer/addFastFollow',
+                            withCredentials: true,
+                            headers: {
+                                "token": TOKEN_DATA,
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid,
+                                content: _this.content_name
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 1) {
+                                    $('.follow-popup').hide();
+                                    _this.content_name = "";
+                                    _this.getUserInfo();
+                                } else {
+                                    wDialog.toast({
+                                        msg: res.msg
+                                    })
+                                }
+                            }
+                        })
+                    },
+                    // 切换多选选中样式
+                    selectedProduct: function(i) {
+                        var _this = this;
+                        if (typeof _this.lists[i].isSelect == 'undefined') {
+                            _this.$set(_this.lists[i], "isSelect", true)
+                                // console.log(i)
+                        } else {
+                            _this.lists[i].isSelect = !_this.lists[i].isSelect
+                                // console.log(i)
+                        }
+                        let arr = [];
+                        let arrText = []
+                        _this.lists.forEach(function(item, n) {
+                            if (item.isSelect) {
+                                arr.push(item.id)
+                                arrText.push(item.content)
+                            }
+                            // console.log(JSON.stringify(arr))
+                        });
+                        _this.array = arr.join(",")
+                        _this.nameText = arrText.join(",")
+                        if (arr.length == 1) { //选择一个
+                            $(".quick_lag_delbtn").removeClass("disabled")
+                            $(".quick_lag_querbtn").removeClass("disabled")
+                        } else if (arr.length == 0) { //一个都没有选择
+                            $(".quick_lag_delbtn").removeClass("disabled")
+                            $(".quick_lag_querbtn").removeClass("disabled")
+                        } else { // 多选
+                            $(".quick_lag_delbtn").removeClass("disabled")
+                            $(".quick_lag_querbtn").addClass("disabled")
+                        }
+                    },
+                    // 一个确认
+                    confirmDel: function() {
+                        // console.log(this.array)
+                        // console.log(this.nameText)
+                        api.sendEvent({
+                            name: 'chooseFollowText',
+                            extra: {
+                                txt: this.nameText,
+                                sendOrigin: api.pageParam.origin
+                            }
+                        });
+                        api.closeWin({
+                            name: 'followRecordMore'
+                        });
+                    },
+                    // 删除多个
+                    detal: function() {
+                        var _this = this;
+                        if (_this.lists.length <= 0) {
+                            wDialog.toast({
+                                msg: '暂无选择项'
+                            });
+                            return;
+                        }
+                        if (_this.array.length <= 0) {
+                            wDialog.toast({
+                                msg: '请选择删除项'
+                            });
+                            return;
+                        }
+                        wDialog.confirm({
+                            msg: '确定删除勾选项？',
+                            button: ['确定', '取消'],
+                            sureCb: function() {
+                                wApiAjax({
+                                    method: "post",
+                                    url: 'customer/delFastFollow',
+                                    withCredentials: true,
+                                    headers: {
+                                        "token": TOKEN_DATA,
+                                    },
+                                    data: {
+                                        employeeid: _this.userInfo.employeeid,
+                                        fastFollowIds: _this.array
+                                    },
+                                    success: function(res) {
+                                        if (res.code == 200) {
+                                            _this.array = [];
+                                            console.log(JSON.stringify(res))
+                                            _this.getUserInfo()
+                                        } else {
+                                            wDialog.toast({
+                                                msg: res.msg
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        })
 
-                },
-            }
-        })
-    }
-    // ios 填写客户姓名
-    function funcSaveCustomerShortcut(name){
+                    },
+                    //清空选中快捷用语
+                    handleCleanFollowChoose: function() {
+                        var _this = this;
+                        _this.lists.forEach((item, n) => {
+                            if (item) {
+                                _this.arrAll.push(item.id)
+                                _this.delAll = _this.arrAll.join(",")
+                                    // console.log(_this.arrAll)
+                                    // _this.$set(item,"isSelect",true)
+                            }
+                        })
+                        if (_this.lists.length <= 0) {
+                            wDialog.toast({
+                                msg: '暂无选择项'
+                            });
+                            return;
+                        }
+                        wDialog.confirm({
+                            msg: '确定清空所有？',
+                            button: ['确定', '取消'],
+                            sureCb: function() {
+                                wApiAjax({
+                                    method: "post",
+                                    url: 'customer/delFastFollow',
+                                    withCredentials: true,
+                                    headers: {
+                                        "token": TOKEN_DATA,
+                                    },
+                                    data: {
+                                        employeeid: _this.userInfo.employeeid,
+                                        fastFollowIds: _this.delAll,
+                                    },
+                                    success: function(res) {
+                                        console.log(JSON.stringify(res))
+                                        if (res.code == 200) {
+                                            _this.getUserInfo()
+                                        } else {
+                                            wDialog.toast({
+                                                msg: res.msg
+                                            })
+                                        }
+                                    }
+                                })
+                            }
+                        })
+
+                    },
+                }
+            })
+        }
+        // ios 填写客户姓名
+    function funcSaveCustomerShortcut(name) {
         vuedata.content_name = name;
         vuedata.handleSaveCustomerName();
     }
-
 </script>
 
 </html>

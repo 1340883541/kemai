@@ -172,7 +172,9 @@
                 fetchAllotEeployee: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },50);
                     console.log('allot employee frame request----'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -180,7 +182,7 @@
                         region:_this.areaId,
                         cusSource:_this.currOrigin,
                         type:_this.currType,
-                        search_cusName:_this.search_cusName,
+                        search_empName:_this.search_cusName,
                         pageNo: _this.pageNo,
                         pageSize: 10
                     }));
@@ -196,8 +198,7 @@
                             region:_this.areaId,
                             cusSource:_this.currOrigin,
                             type:_this.currType,
-                            sort:0,
-                            search_cusName:_this.search_cusName,
+                            search_empName:_this.search_cusName,
                             pageNo: _this.pageNo,
                             pageSize: 10
                         },

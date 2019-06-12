@@ -30,7 +30,7 @@ if (typeof Object.assign != 'function') {
         return target;
     };
 }
-var requestCount = 0;
+var isLoginPastDue = false;
 function wApiAjax(par) {
     par.data = par.data || '';
     // par.data = createSign(par);
@@ -90,32 +90,35 @@ function wApiAjax(par) {
             }
             if (ret && ret.code != 500) {
                 if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
-                    wDialog.hideProgress();
-                    // 清除全局token
-                    myLocalStorage.clearItem('token');
-                    wPref.removePrefs({key:'userInfo'});
-                    wPref.removePrefs({key:'isLogin'});
+                    if(!isLoginPastDue){
+                        isLoginPastDue = true;
+                        wDialog.hideProgress();
+                        // 清除全局token
+                        myLocalStorage.clearItem('token');
+                        wPref.removePrefs({key:'userInfo'});
+                        wPref.removePrefs({key:'isLogin'});
 
-                    // 清除推送
-                    var ajpush = api.require('ajpush');
-                    ajpush.bindAliasAndTags({
-                        alias:'',
-                    },function(res){
-                        // 设置别名
-                        if(res.statusCode == 0){
+                        // 清除推送
+                        var ajpush = api.require('ajpush');
+                        ajpush.bindAliasAndTags({
+                            alias:'',
+                        },function(res){
+                            // 设置别名
+                            if(res.statusCode == 0){
 
-                        }
-                    })
-                    wDialog.alert({
-                        msg:'用户信息过期，请重新登录',
-                        cb:function(){
-                            api.openWin({
-                                name: 'login',
-                                url: '../login/login.html'
-                            });
+                            }
+                        })
+                        wDialog.alert({
+                            msg:'用户信息过期，请重新登录',
+                            cb:function(){
+                                api.openWin({
+                                    name: 'login',
+                                    url: '../login/login.html'
+                                });
 
-                        }
-                    })
+                            }
+                        })
+                    }
                 }
                 else{
                     par.success && typeof par.success === 'function' && par.success(ret);
