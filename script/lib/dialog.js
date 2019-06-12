@@ -11,33 +11,33 @@
  */
 ;(function($, window, document, undefined) {
     'use strict';
-    
+
     var Dialog = (function() {
 
         /**
          * 弹窗构造函数
-         * @param {dom obj}   element   调用对象 
+         * @param {dom obj}   element   调用对象
          * @param {json obj}  options   弹窗配置项
          */
-        function Dialog(element, options) { 
+        function Dialog(element, options) {
             this.$element = $(element);
             this.settings = $.extend({}, $.fn.dialog.defaults, options);
         }
 
-        
+
         Dialog.prototype = {
             /**
              * 初始化弹窗
-             */ 
+             */
             _init: function() {
                 var self = this;
 
                 console.log('初始化弹窗');
-                
+
                 clearTimeout(self.autoCloseTimer);
-                
+
                 self.isHided = false;                   // 是否已经隐藏
-                self.tapBug = self._hasTapBug();        // 是否有点透 BUG
+                self.tapBug = self._hasTapBug();        // 是否有点透BUG
                 self.platform = mobileUtil.platform;    // 访问设备平台
                 self.dislogStyle = self.settings.style==='default' ? self.platform : self.settings.style;    // 弹窗风格, 默认自动判断平台; 否则, 为指定平台
 
@@ -74,7 +74,7 @@
                     var callback = self.settings.onClickConfirmBtn();
                     if (callback || callback === undefined) {
                         self.closeDialog();
-                    }          
+                    }
                 }).on('touchend', function(ev) {
                     ev.preventDefault();
                 });
@@ -84,7 +84,7 @@
                     var callback = self.settings.onClickCancelBtn();
                     if (callback || callback === undefined) {
                         self.closeDialog();
-                    } 
+                    }
                 }).on('touchend', function(ev) {
                     ev.preventDefault();
                 });
@@ -94,7 +94,7 @@
                     var callback = self.settings.onClickCloseBtn();
                     if (callback || callback === undefined) {
                         self.closeDialog();
-                    } 
+                    }
                 }).on('touchend', function(ev) {
                     ev.preventDefault();
                 });
@@ -178,7 +178,7 @@
                 self.$dialog = $('<div class="dialog dialog-open '+ self.settings.dialogClass +'" data-style="'+ self.dislogStyle +'"></div>');
                 self.$dialogOverlay = $('<div class="dialog-overlay"></div>');
                 self.$dialogContent = $('<div class="dialog-content"></div>');
-                self.$dialogTitle = $('<div class="dialog-content-hd"><h3 class="dialog-content-title">'+ self.settings.titleText +'</h3></div>');                
+                self.$dialogTitle = $('<div class="dialog-content-hd"><h3 class="dialog-content-title">'+ self.settings.titleText +'</h3></div>');
                 self.$dialogContentFt = $('<div class="dialog-content-ft"></div>');
                 self.$dialogContentBd = $('<div class="dialog-content-bd"></div>');
                 self.$closeBtn = $('<div class="dialog-btn-close"><span>close</span></div>');
@@ -191,17 +191,17 @@
                         self.$dialog.addClass('dialog-modal');
 
                         // 显示遮罩层
-                        if (self.settings.overlayShow) { 
-                            self.$dialog.append(self.$dialogOverlay); 
+                        if (self.settings.overlayShow) {
+                            self.$dialog.append(self.$dialogOverlay);
                         }
                         // 显示标题
-                        if (self.settings.titleShow) { 
-                            self.$dialogContent.append(self.$dialogTitle); 
+                        if (self.settings.titleShow) {
+                            self.$dialogContent.append(self.$dialogTitle);
                         }
                         // 显示关闭按钮
                         if (self.settings.closeBtnShow) {
                             self.$dialogTitle.append(self.$closeBtn);
-                        }                        
+                        }
 
                         self.$dialogContentBd.html(self.settings.content);
                         self.$dialogContentFt.append(self.$confirmBtn);
@@ -217,19 +217,19 @@
                         if (self.settings.contentScroll) {
                             self._setDialogContentHeight();
                         }
-                        
+
                         break;
                     case 'confirm':
                         // 添加 confirm 类型弹窗标识
                         self.$dialog.addClass('dialog-modal');
 
                         // 显示遮罩层
-                        if (self.settings.overlayShow) { 
-                            self.$dialog.append(self.$dialogOverlay); 
+                        if (self.settings.overlayShow) {
+                            self.$dialog.append(self.$dialogOverlay);
                         }
                         // 显示标题
-                        if (self.settings.titleShow) { 
-                            self.$dialogContent.append(self.$dialogTitle); 
+                        if (self.settings.titleShow) {
+                            self.$dialogContent.append(self.$dialogTitle);
                         }
                         // 显示关闭按钮
                         if (self.settings.closeBtnShow) {
@@ -252,12 +252,12 @@
                         self.$dialogContent.append(self.$dialogContentBd).append(self.$dialogContentFt);
                         self.$dialog.append(self.$dialogContent);
                         $('body').append(self.$dialog);
-                        
+
                         // 设置弹窗提示内容最大高度
                         if (self.settings.contentScroll) {
                             self._setDialogContentHeight();
                         }
-                        
+
                         if (self.settings.bodyNoScroll) {
                             $('body').addClass('body-no-scroll');
                         }
@@ -268,8 +268,8 @@
                         self.$dialog.addClass('dialog-toast');
 
                         // 显示遮罩层
-                        if (self.settings.overlayShow) { 
-                            self.$dialog.append(self.$dialogOverlay); 
+                        if (self.settings.overlayShow) {
+                            self.$dialog.append(self.$dialogOverlay);
                         }
 
                         // 弹窗内容 HTML, 默认为 content; 如果设置 icon 与 text, 则覆盖 content 的设置
@@ -303,8 +303,8 @@
                         }
 
                         // 显示遮罩层
-                        if (self.settings.overlayShow) { 
-                            self.$dialog.append(self.$dialogOverlay); 
+                        if (self.settings.overlayShow) {
+                            self.$dialog.append(self.$dialogOverlay);
                         }
 
                         // 弹窗内容 HTML, 默认为 content; 如果设置 icon 与 text, 则覆盖 content 的设置
@@ -376,11 +376,11 @@
             },
 
             /**
-             * 重置弹窗, 在窗口大小发生变化时触发 
+             * 重置弹窗, 在窗口大小发生变化时触发
              */
             _resetDialog: function() {
                 var self = this;
-                self._setDialogContentHeight();                
+                self._setDialogContentHeight();
             },
 
             /**
@@ -402,7 +402,7 @@
                 $(document)
                     .on('touchstart mousedown', '.content-scroll', function(ev) {
                         var touch = ev.changedTouches ? ev.changedTouches[0] : ev;
-                        
+
                         isTouchDown = true;
                         position.x = touch.clientX;
                         position.y = touch.clientY;
@@ -476,7 +476,7 @@
             },
 
             /**
-             * 更改 toast 和 notice 类型弹窗内容 
+             * 更改 toast 和 notice 类型弹窗内容
              * @public method
              * @param {string}  content          弹窗内容, 可以是HTML
              * @param {string}  infoIcon         弹窗提示图标
@@ -500,7 +500,7 @@
 
                 // 通过设置 infoIcon 与 infoText 更改弹窗内容, 会覆盖 content 的设置
                 var $infoIcon = self.$dialogContentBd.find('.info-icon');
-                var $infoText = self.$dialogContentBd.find('.info-text');                
+                var $infoText = self.$dialogContentBd.find('.info-text');
                 $infoIcon.attr({'src': self.settings.infoIcon});
                 $infoText.html(self.settings.infoText);
 
@@ -528,7 +528,7 @@
                 if (!self.$tapBugOverlayer.length) {
                     self.$tapBugOverlayer = $('<div class="solve-tap-bug" style="margin:0;padding:0;border:0;background:rgba(0,0,0,0);-webkit-tap-highlight-color:rgba(0,0,0,0);width:100%;height:100%;position:fixed;top:0;left:0;"></div>');
                     $('body').append(self.$tapBugOverlayer);
-                }                
+                }
             },
 
             /**
@@ -548,8 +548,8 @@
 
     /**----------------------------
      *  私有方法
-     ----------------------------*/    
-    /** 
+     ----------------------------*/
+    /**
      * 移动端相关数据 =>> mobileUtil 对象
      * 是否是安卓  : isAndroid
      * 是否是IOS   : isIOS
@@ -582,14 +582,14 @@
         };
     })(window);
 
-    
-    $.fn.dialog = function(options) { 
+
+    $.fn.dialog = function(options) {
         var self = this;
 
         return this.each(function(){
             var $this = $(this),
                 instance = window.jQuery ? $this.data('dialog') : $.fn.dialog.lookup[$this.data('dialog')];
-                        
+
             if (!instance) {
                 var obj = new Dialog(this, options);
                 obj._init();
@@ -638,7 +638,7 @@
         autoClose    : 0,         // 弹窗自动关闭的延迟时间(毫秒)。0: 不自动关闭; 大于0: 自动关闭弹窗的延迟时间
         overlayShow  : true,      // 是否显示遮罩层
         overlayClose : false,     // 是否可以点击遮罩层关闭弹窗
-         
+
         buttonStyle       : 'side',   // 按钮排版样式 [ side: 并排; stacked: 堆叠 ]
         buttonTextConfirm : '确定',   // 确定按钮文字
         buttonTextCancel  : '取消',   // 取消按钮文字
@@ -718,13 +718,13 @@
 
     // 注册快捷事件 tapEvent, 调用: $element.tapEvent(fn);
     ;['tapEvent'].forEach(function(eventName) {
-        $.fn[eventName] = function(callback) { 
+        $.fn[eventName] = function(callback) {
             return this.on(eventName, callback);
         };
     });
 })(window.jQuery || window.Zepto, window, document);
 /**
- * ripple  v1.0.0 
+ * ripple  v1.0.0
  * @date  2016-10-09
  * @author  方雨_Yu
  * @home  https://github.com/sufangyu/ripple
@@ -732,7 +732,7 @@
  */
 ;(function($, window, document, undefined) {
 	'use strict';
-	
+
 	var Ripple = (function() {
 
 		function Ripple(element, options) {
@@ -743,7 +743,7 @@
 
             self.target = null;  // 目标元素
 			self.positionX = 0;  // 点击位置的横坐标
-			self.positionY = 0;  // 点击位置的纵坐标 
+			self.positionY = 0;  // 点击位置的纵坐标
 
             self.init();
 		}
@@ -827,15 +827,15 @@
 	 * 获取元素的左、右、上、下相对浏览器视窗的位置
 	 * @param {DOM obj}  element   DOM 对象
 	 */
-	function getRect(element) {		
+	function getRect(element) {
 		try {
-			return element.getBoundingClientRect();            
+			return element.getBoundingClientRect();
         } catch(error) {
             console.log('No support getBoundingClientRect', error.message);
         }
 	}
 
-    /** 
+    /**
      * 按下的事件类型: event.downEvent [ touchstart 或 mousedown ]
      */
     var event = (function(window) {

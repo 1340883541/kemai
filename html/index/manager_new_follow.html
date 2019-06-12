@@ -25,6 +25,9 @@
         #wrap {
             position: relative;
         }
+        .circles-text{
+            font-size: 13px !important;
+        }
     </style>
 </head>
 
@@ -60,7 +63,7 @@
             <div class="mger-header-place"></div>
         </div>
         <div class="mger-container">
-            <ul class="mger-lists clear mger-area" id="mger-area" v-if="isShowAreaBox">
+            <ul class="mger-lists clear mger-area" id="mger-area" v-show="isShowAreaBox">
                 <li
                     v-if="areaList && areaList.length > 0"
                     class="mger-lis fl flex-wrap"
@@ -79,16 +82,34 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
+            <ul class="mger-lists mger-team" id="mger-team" v-show="isShowTeamBox">
                 <li
                     v-if="teamList && teamList.length > 0"
                     class="mger-lis"
                     v-for="(team,idx) in teamList"
-                    :key="'team'+idx"
+                    :key="'teamOrg'+idx"
                     :class="{checked:teamCurr === team.team}"
                     @click.stop="handleChooseTeam(team.team,team.name)"
                 >
-                    <div class="mger-lt w-elli" v-text="team.name"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="team.name"></div>
+                    <div class="mger-lpro">
+                        <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
+                            <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
+                        </div>
+                    </div>
+                    <div class="mger-ldesc">
+                        <span v-text="team.addtotal"></span>/<span v-text="team.total"></span>
+                    </div>
+                </li>
+                <li
+                    v-if="teamEmpList && teamEmpList.length > 0"
+                    class="mger-lis"
+                    v-for="(team,idx) in teamEmpList"
+                    :key="'teamEmp'+idx"
+                    :class="{checked:teamEmpCurr === team.empid}"
+                    @click.stop="handleChooseCrew('team',team.empid)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="team.name"></div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
                             <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
@@ -99,16 +120,34 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
+            <ul class="mger-lists mger-team" id="mger-group" v-show="isShowGroupBox">
                 <li
                     v-if="groupList && groupList.length > 0"
                     class="mger-lis"
                     v-for="(group,idx) in groupList"
-                    :key="'group'+idx"
+                    :key="'groupOrg'+idx"
                     :class="{checked:groupCurr === group.groupid}"
                     @click.stop="handleChooseGroup(group.groupid,group.name)"
                 >
-                    <div class="mger-lt w-elli" v-text="group.name"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="group.name"></div>
+                    <div class="mger-lpro">
+                        <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
+                            <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
+                        </div>
+                    </div>
+                    <div class="mger-ldesc">
+                        <span v-text="group.addtotal"></span>/<span v-text="group.total"></span>
+                    </div>
+                </li>
+                <li
+                    v-if="groupEmpList && groupEmpList.length > 0"
+                    class="mger-lis"
+                    v-for="(group,idx) in groupEmpList"
+                    :key="'groupEmp'+idx"
+                    :class="{checked:groupEmpCurr === group.empid}"
+                    @click.stop="handleChooseCrew('group',group.empid)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="group.name"></div>
                     <div class="mger-lpro">
                         <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
                             <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
@@ -119,13 +158,13 @@
                     </div>
                 </li>
             </ul>
-            <ul class="mger-lists mger-crew" id="mger-crew" v-if="isShowCrewBox">
+            <ul class="mger-lists mger-crew" id="mger-crew" v-show="isShowCrewBox">
                 <li
                     v-if="crewList && crewList.length > 0"
                     v-for="crew in crewList"
                     class="mger-lis"
-                    :class="{'curr':crewCurr===crew.id}"
-                    @click.stop="handleChooseCrew(crew.id)"
+                    :class="{'checked':crewCurr===crew.id}"
+                    @click.stop="handleChooseCrew('crew',crew.id)"
                 >
                     <div class="mger-lt flex-wrap flex-vertical flex-center flex-item-center"><span class="w-elli-2" v-text="crew.name"></span></div>
                     <div class="mger-lnum-box flex-wrap">
@@ -160,6 +199,28 @@
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
+        // api.addEventListener({
+        //     name: 'keyback'
+        // }, function(ret, err){
+        //     if(managerNewFollowV.isShowCrewBox || managerNewFollowV.isShowGroupBox){
+        //         if(managerNewFollowV.isShowCrewBox){
+        //             managerNewFollowV.isShowCrewBox = false;
+        //             managerNewFollowV.isShowGroupBox = true;
+        //         }else{
+        //             managerNewFollowV.handleSwitchPosition(1)
+        //         }
+        //     }
+        //     else if(managerNewFollowV.isShowTeamBox){
+        //         managerNewFollowV.handleSwitchPosition(0)
+        //     }
+        //     else if(managerNewFollowV.isShowAreaBox){
+        //         api.closeWin();
+        //     }
+        //     else{
+        //         api.closeWin();
+        //     }
+        // });
+
         var param = api.pageParam;
         api.addEventListener({
             name: 'filterManagerNewFollow'
@@ -222,16 +283,20 @@
                 teamId:'',
                 teamName:'',
                 teamCurr:'',
+                teamEmpCurr:'',
                 groupId:'',
                 groupName:'',
                 groupCurr:'',
+                groupEmpCurr:'',
                 crewId:'',
                 crewCurr:'',
 
                 // 权限数据
                 areaList:[],
                 teamList:[],
+                teamEmpList:[],
                 groupList:[],
+                groupEmpList:[],
                 crewList:[]
             },
             mounted: function() {
@@ -267,7 +332,9 @@
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },80)
                     console.log('manager new follow-- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -368,8 +435,10 @@
                         this.teamName = '';
                         this.teamId = '';
                         this.teamCurr = '';
+                        this.teamEmpCurr = '';
                         this.groupId = '';
                         this.groupCurr = '';
+                        this.groupEmpCurr = '';
                         this.crewId = '';
                         this.crewCurr = '';
                     }
@@ -411,6 +480,14 @@
                                     }
                                     return v;
                                 });
+                                _this.teamEmpList = res.data.teamEmpList.map(function(v){
+                                    if(v.addtotal == 0){
+                                        v.percent = 0;
+                                    }else{
+                                        v.percent = Math.round((v.addtotal/v.total)*100);
+                                    }
+                                    return v;
+                                });
                                 if(!isFilter){
                                     _this.handleSwitchPosition(1);
                                 }
@@ -427,6 +504,7 @@
                         this.groupName = '';
                         this.groupId = '';
                         this.groupCurr = '';
+                        this.groupEmpCurr = '';
                     }
                     this.fetchGroupData();
                 },
@@ -468,6 +546,14 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.groupList = res.data.groupList.map(function(v){
+                                    if(v.addtotal == 0){
+                                        v.percent = 0;
+                                    }else{
+                                        v.percent = Math.round((v.addtotal/v.total)*100);
+                                    }
+                                    return v;
+                                });
+                                _this.groupEmpList = res.data.groupEmpList.map(function(v){
                                     if(v.addtotal == 0){
                                         v.percent = 0;
                                     }else{
@@ -547,13 +633,28 @@
                                     if(_this.isCurrGroup){
                                         _this.handleSwitchPosition(2);
                                     }
+                                    // if(_this.isShowCrewBox){
+                                    //     _this.handleSwitchPosition(3);
+                                    // }
                                 }
                             }
                         }
                     })
                 },
                 // 选择小组
-                handleChooseCrew:function(id){
+                handleChooseCrew:function(rela,id){
+                    if(rela === 'team'){
+                        this.teamEmpCurr = id;
+                    }
+                    else if(rela === 'group'){
+                        this.groupEmpCurr = id;
+                    }
+                    else if(rela === 'crew'){
+                        this.crewCurr = id;
+                    }
+                    else{
+                        console.log('传值不正确')
+                    }
                     var _this = this;
                     wHrefJs.openWin({
                         name: 'newCustomerHeader',

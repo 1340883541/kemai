@@ -161,6 +161,27 @@
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
+        // api.addEventListener({
+        //     name: 'keyback'
+        // }, function(ret, err){
+        //     if(managerStatV.isShowCrewBox || managerStatV.isShowGroupBox){
+        //         if(managerStatV.isShowCrewBox){
+        //             managerStatV.isShowCrewBox = false;
+        //             managerStatV.isShowGroupBox = true;
+        //         }else{
+        //             managerStatV.handleSwitchPosition(1)
+        //         }
+        //     }
+        //     else if(managerStatV.isShowTeamBox){
+        //         managerStatV.handleSwitchPosition(0)
+        //     }
+        //     else if(managerStatV.isShowAreaBox){
+        //         api.closeWin();
+        //     }
+        //     else{
+        //         api.closeWin();
+        //     }
+        // });
         var param = api.pageParam;
         api.addEventListener({
             name: 'filterManagerStat'
@@ -270,7 +291,9 @@
                 },
                 fetchCallData:function(filterStep){
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },80)
                     var data = {
                         step:filterStep?filterStep:_this.step,
                         initStep:_this.initStep,

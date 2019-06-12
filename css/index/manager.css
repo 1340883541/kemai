@@ -188,11 +188,30 @@
 }
 
 .mger-container .mger-team .mger-lis .mger-lt{
+    position: relative;
     line-height: 1em;
     font-size: 16px;
     color:#333;
     font-weight: bold;
     margin-bottom: 17px;
+}
+.mger-container .mger-team .mger-lis .mger-lt.emp-lt{
+    padding-left: 24px;
+    line-height: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 20px;
+    background-image: url('../../image/touxiang-ren.png');
+}
+.mger-container .mger-team .mger-lis .mger-lt.org-lt{
+    padding-left: 24px;
+    line-height: 20px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    background-size: 20px;
+    background-image: url('../../image/touxiang-tuandui.png');
 }
 .mger-container .mger-team .mger-lis .mger-lpro{
     position: relative;
@@ -221,10 +240,10 @@
 }
 .mger-container .mger-team .mger-lis .mger-lpro-curr > span{
     position: absolute;
-    bottom:7px;
-    height: 17px;
+    bottom:6px;
+    height: 16px;
     padding-bottom: 1px;
-    line-height: 18px;
+    line-height: 16px;
     text-align: center;
     width:36px;
     font-size: 11px;

@@ -73,7 +73,7 @@
                     @click.stop="handleChooseArea(area.regionid,area.name)"
                 >
                     <div class="left flex-wrap flex-vertical flex-center">
-                        <p class="mger-cap" v-text="area.name"></p>
+                        <p class="mger-cap w-elli" v-text="area.name"></p>
                         <p class="mger-desc">
                             <span v-text="area.total"></span>
                         </p>
@@ -89,7 +89,7 @@
                     :class="{checked:teamCurr === team.teamid}"
                     @click.stop="handleChooseTeam(team.teamid,team.teamname)"
                 >
-                    <div class="mger-lt" v-text="team.teamname"></div>
+                    <div class="mger-lt w-elli" v-text="team.teamname"></div>
                     <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="team.total"></span>
@@ -102,10 +102,10 @@
                     class="mger-lis"
                     v-for="(group,idx) in groupList"
                     :key="'group'+idx"
-                    :class="{checked:groupCurr === group.teamid}"
-                    @click.stop="handleChooseGroup(group.teamid,group.groupname)"
+                    :class="{checked:groupCurr === group.groupid}"
+                    @click.stop="handleChooseGroup(group.groupid,group.groupname)"
                 >
-                    <div class="mger-lt" v-text="group.groupname"></div>
+                    <div class="mger-lt w-elli" v-text="group.groupname"></div>
                     <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="group.total"></span>
@@ -117,10 +117,10 @@
                     v-if="crewList && crewList.length > 0"
                     v-for="crew in crewList"
                     class="mger-lis"
-                    :class="{'curr':crewCurr===crew.empid}"
-                    @click.stop="handleChooseCrew(crew.empid)"
+                    :class="{'checked':crewCurr===crew.empid}"
+                    @click.stop="handleChooseCrew('crew',crew.empid)"
                 >
-                    <div class="mger-lt" v-text="crew.empname"></div>
+                    <div class="mger-lt w-elli" v-text="crew.empname"></div>
                     <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="crew.total"></span>
@@ -142,9 +142,27 @@
     apiready = function() {
         $api.fixStatusBar($('.mger-header-fix')[0]);
         $api.fixStatusBar($('.mger-header-place')[0]);
-
-        $api.fixStatusBar($('.mger-header-fix')[0]);
-        $api.fixStatusBar($('.mger-header-place')[0]);
+        // api.addEventListener({
+        //     name: 'keyback'
+        // }, function(ret, err){
+        //     if(managerSystemFollowV.isShowCrewBox || managerSystemFollowV.isShowGroupBox){
+        //         if(managerSystemFollowV.isShowCrewBox){
+        //             managerSystemFollowV.isShowCrewBox = false;
+        //             managerSystemFollowV.isShowGroupBox = true;
+        //         }else{
+        //             managerSystemFollowV.handleSwitchPosition(1)
+        //         }
+        //     }
+        //     else if(managerSystemFollowV.isShowTeamBox){
+        //         managerSystemFollowV.handleSwitchPosition(0)
+        //     }
+        //     else if(managerSystemFollowV.isShowAreaBox){
+        //         api.closeWin();
+        //     }
+        //     else{
+        //         api.closeWin();
+        //     }
+        // });
         var param = api.pageParam;
         api.addEventListener({
             name: 'filterManagerSystemFollow'
@@ -496,13 +514,19 @@
                                     if(_this.isCurrGroup){
                                         _this.handleSwitchPosition(2);
                                     }
+                                    // if(_this.isShowCrewBox){
+                                    //     _this.handleSwitchPosition(3);
+                                    // }
                                 }
                             }
                         }
                     })
                 },
                 // 选择小组
-                handleChooseCrew:function(id){
+                handleChooseCrew:function(rela,id){
+                    if(rela === 'crew'){
+                        this.crewCurr = id;
+                    }
                     var _this = this;
                     wHrefJs.openWin({
                         name: 'systemFollowHeader',
@@ -534,16 +558,16 @@
                     // if(this.step)
                     if(data && data.length == 1){
                         return data.map(function(v){
-                            v.count == 0 ? v.percent = 0 : v.percent = 100;
+                            v.total == 0 ? v.percent = 0 : v.percent = 100;
                             return v;
                         });
                     }else{
                         var list = data.map(function(v){
-                            return v.count;
+                            return v.total;
                         });
                         var max = Math.max.apply(null,list);
                         return data.map(function(v){
-                            max == 0 ? v.percent = 0 : v.percent = Math.ceil((v.count / max) * 100);
+                            max == 0 ? v.percent = 0 : v.percent = Math.ceil((v.total / max) * 100);
                             return v;
                         });
                     }
