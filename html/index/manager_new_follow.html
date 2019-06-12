@@ -501,6 +501,7 @@
                         this.teamName = name;
                         this.teamId = id;
                         this.teamCurr = id;
+                        this.teamEmpCurr = '';
                         this.groupName = '';
                         this.groupId = '';
                         this.groupCurr = '';
@@ -575,6 +576,7 @@
                         this.groupName = name;
                         _this.groupId = id;
                         _this.groupCurr = id;
+                        _this.groupEmpCurr = '';
                         _this.crewId = '';
                         _this.crewCurr = '';
                     }
@@ -645,9 +647,11 @@
                 handleChooseCrew:function(rela,id){
                     if(rela === 'team'){
                         this.teamEmpCurr = id;
+                        this.teamCurr = '';
                     }
                     else if(rela === 'group'){
                         this.groupEmpCurr = id;
+                        this.groupCurr = '';
                     }
                     else if(rela === 'crew'){
                         this.crewCurr = id;

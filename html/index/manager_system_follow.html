@@ -89,7 +89,21 @@
                     :class="{checked:teamCurr === team.teamid}"
                     @click.stop="handleChooseTeam(team.teamid,team.teamname)"
                 >
-                    <div class="mger-lt w-elli" v-text="team.teamname"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="team.teamname"></div>
+                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="team.total"></span>
+                    </div>
+                </li>
+                <li
+                    v-if="teamEmpList && teamEmpList.length > 0"
+                    class="mger-lis"
+                    v-for="(team,idx) in teamEmpList"
+                    :key="'teamEmp'+idx"
+                    :class="{checked:teamEmpCurr === team.empid}"
+                    @click.stop="handleChooseCrew('team',team.empid)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="team.empname"></div>
                     <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="team.total"></span>
@@ -105,7 +119,21 @@
                     :class="{checked:groupCurr === group.groupid}"
                     @click.stop="handleChooseGroup(group.groupid,group.groupname)"
                 >
-                    <div class="mger-lt w-elli" v-text="group.groupname"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="group.groupname"></div>
+                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="group.total"></span>
+                    </div>
+                </li>
+                <li
+                    v-if="groupEmpList && groupEmpList.length > 0"
+                    class="mger-lis"
+                    v-for="(group,idx) in groupEmpList"
+                    :key="'groupEmp'+idx"
+                    :class="{checked:groupEmpCurr === group.empid}"
+                    @click.stop="handleChooseCrew('group',group.empid)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="group.empname"></div>
                     <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="group.total"></span>
@@ -120,7 +148,7 @@
                     :class="{'checked':crewCurr===crew.empid}"
                     @click.stop="handleChooseCrew('crew',crew.empid)"
                 >
-                    <div class="mger-lt w-elli" v-text="crew.empname"></div>
+                    <div class="mger-lt w-elli emp-lt" v-text="crew.empname"></div>
                     <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="crew.total"></span>
@@ -227,17 +255,21 @@
                 areaCurr:'',
                 teamId:'',
                 teamName:'',
+                teamEmpCurr:'',
                 teamCurr:'',
                 groupId:'',
                 groupName:'',
                 groupCurr:'',
+                groupEmpCurr:'',
                 crewId:'',
                 crewCurr:'',
 
                 // 权限数据
                 areaList:[],
                 teamList:[],
+                teamEmpList:[],
                 groupList:[],
+                groupEmpList:[],
                 crewList:[]
             },
             mounted: function() {
@@ -348,6 +380,7 @@
                         this.areaCurr = id;
                         this.teamName = '';
                         this.teamId = '';
+                        this.teamEmpCurr = '';
                         this.teamCurr = '';
                         this.groupId = '';
                         this.groupCurr = '';
@@ -385,6 +418,7 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.teamList = _this.funcFormatRequestData(res.data.teamList);
+                                _this.teamEmpList = _this.funcFormatRequestData(res.data.teamEmpList||[]);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(1);
                                 }
@@ -398,6 +432,7 @@
                         this.teamName = name;
                         this.teamId = id;
                         this.teamCurr = id;
+                        this.teamEmpCurr = '';
                         this.groupName = '';
                         this.groupId = '';
                         this.groupCurr = '';
@@ -447,6 +482,7 @@
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.groupList =_this.funcFormatRequestData(res.data.groupList);
+                                _this.groupEmpList = _this.funcFormatRequestData(res.data.groupEmpList||[]);
                                 if(!isFilter){
                                     _this.handleSwitchPosition(2);
                                 }
@@ -461,6 +497,7 @@
                         this.groupName = name;
                         _this.groupId = id;
                         _this.groupCurr = id;
+                        _this.groupEmpCurr = '';
                         _this.crewId = '';
                         _this.crewCurr = '';
                     }
@@ -524,8 +561,19 @@
                 },
                 // 选择小组
                 handleChooseCrew:function(rela,id){
-                    if(rela === 'crew'){
+                    if(rela === 'team'){
+                        this.teamEmpCurr = id;
+                        this.teamCurr = '';
+                    }
+                    else if(rela === 'group'){
+                        this.groupEmpCurr = id;
+                        this.groupCurr = '';
+                    }
+                    else if(rela === 'crew'){
                         this.crewCurr = id;
+                    }
+                    else{
+                        console.log('传值不正确')
                     }
                     var _this = this;
                     wHrefJs.openWin({
