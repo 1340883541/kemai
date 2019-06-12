@@ -2,7 +2,7 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.222:8765/', // 本地
     // baseUrl:'https://192.168.0.222:9000/', // 本地 小麦
-    // baseUrl:'https://192.168.0.112:8087/', // 本地  埃文
+    // baseUrl:'https://192.168.0.112:9000/', // 本地  埃文
     // baseUrl:'https://192.168.0.222:9100/', // 本地
     baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
     // baseUrl: 'https://call.jindinghaiju.com/', // 正式
@@ -81,7 +81,7 @@ function wApiAjax(par) {
             },
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
-            if(ret.count){
+            if(ret && ret.count){
                 api.toast({
                     msg: '总共'+ret.count + '条数据',
                     duration: 2000,

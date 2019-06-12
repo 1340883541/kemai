@@ -55,18 +55,16 @@
             </div>
             <div class="w-filter-pop1" v-if="sortClass === 'class5'">
                 <ul>
-                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">联系状态从无到有</li>
-                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">联系状态从有到无</li>
-                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">分配时间从近到远</li>
-                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">分配时间从远到近</li>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">从未跟进到已跟进</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">从已跟进到未跟进</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">新增时间从近到远</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">新增时间从远到近</li>
                 </ul>
             </div>
             <div class="w-filter-pop1" v-if="sortClass === 'class6'">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">系统资源量从高到低</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">系统资源量从低到高</li>
-                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">系统资源跟进量从高到低</li>
-                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">系统资源跟进量从低到高</li>
                 </ul>
             </div>
             <!-- 客户列表 国内管理员 -->

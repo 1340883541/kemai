@@ -73,7 +73,7 @@
         <!-- 背景遮罩 -->
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
         <!-- 添加快捷用语 -->
-        <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-name-popup">
+        <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-shortcut-popup">
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
                 <div class="left" @click.stop="funcHideAllPopup">取消</div>
                 <div class="right" @click.stop="handleSaveCustomerName">确认</div>
@@ -160,8 +160,8 @@
                     var _this = this;
                     if(isIos()){
                         wHrefJs.openFrame({
-                            name:'followNamePop',
-                            path:'./follow_name_pop.html',
+                            name:'followShortcutPop',
+                            path:'./follow_shortcut_pop.html',
                             animation:{
                                 type:"none",
                                 subType:"from_bottom",
@@ -170,7 +170,7 @@
                         })
                     }else{
                         this.funcHideAllPopup();
-                        $('#popup-bg,#customer-name-popup').show();
+                        $('#popup-bg,#customer-shortcut-popup').show();
                         setTimeout(function(){
                             $('#inp-textarea-name').focus();
                         },10);
@@ -332,7 +332,11 @@
                 },
             }
         })
-
+    }
+    // ios 填写客户姓名
+    function funcSaveCustomerShortcut(name){
+        vuedata.content_name = name;
+        vuedata.handleSaveCustomerName();
     }
 
 </script>

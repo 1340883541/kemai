@@ -46,7 +46,7 @@
                             :key="'new'+i"
                         >
                             <div class="head-bb-t" :class="'head-bb-t'+(i+1)" v-text="newResource.name"></div>
-                            <div class="head-bb-b" v-text="newResource.num"></div>
+                            <div class="head-bb-b" v-text="newResource.num||0"></div>
                         </div>
                     </div>
                 </div>
@@ -336,7 +336,7 @@
                             })
                         } else {
                             wDialog.toast({
-                                msg: '暂不支持查看，敬请期待'
+                                msg: '即将上线'
                             })
                         }
                     },

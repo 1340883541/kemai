@@ -83,14 +83,14 @@
                     :class="{'checked':area.id == areaCurr}"
                     @click.stop="handleChooseArea(area.name,area.id)"
                 >
-                    <div class="mger-lt w-elli" v-text="area.name"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="area.name"></div>
                     <div class="mger-lcount" :style="'width:'+area.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="area.count"></span>次
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <empty-con :is-show="areaList.length === 0" txt="暂无大区信息"></empty-con>
+                <!-- <empty-con :is-show="areaList.length === 0" txt="暂无大区信息"></empty-con> -->
             </ul>
             <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
                 <li
@@ -101,14 +101,28 @@
                     :class="{'checked':team.id == teamCurr}"
                     @click.stop="handleChooseTeam(team.name,team.id)"
                 >
-                    <div class="mger-lt w-elli" v-text="team.name"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="team.name"></div>
+                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="team.count"></span>次
+                    </div>
+                </li>
+                <li
+                    class="mger-lis"
+                    v-if="teamEmpList.length > 0"
+                    v-for="team in teamEmpList"
+                    :key="'team'+team.id"
+                    :class="{'checked':team.id == teamEmpCurr}"
+                    @click.stop="handleChooseCrew('team',team.id)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="team.name"></div>
                     <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="team.count"></span>次
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <empty-con :is-show="teamList.length === 0" txt="暂无团队信息"></empty-con>
+                <!-- <empty-con :is-show="teamList.length === 0" txt="暂无团队信息"></empty-con> -->
             </ul>
             <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
                 <li
@@ -119,7 +133,21 @@
                     :class="{'checked':group.id == groupCurr}"
                     @click.stop="handleChooseGroup(group.name,group.id)"
                 >
-                    <div class="mger-lt w-elli" v-text="group.name"></div>
+                    <div class="mger-lt w-elli org-lt" v-text="group.name"></div>
+                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
+                    <div class="mger-ldesc">
+                        <span v-text="group.count"></span>次
+                    </div>
+                </li>
+                <li
+                    class="mger-lis"
+                    v-if="groupEmpList.length > 0"
+                    v-for="group in groupEmpList"
+                    :key="'group'+group.id"
+                    :class="{'checked':group.id == groupEmpCurr}"
+                    @click.stop="handleChooseCrew('group',group.id)"
+                >
+                    <div class="mger-lt w-elli emp-lt" v-text="group.name"></div>
                     <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="group.count"></span>次
@@ -135,9 +163,9 @@
                     v-for="crew in crewList"
                     :key="'crew'+crew.id"
                     :class="{'checked':crew.id == crewCurr}"
-                    @click.stop="handleChooseCrew(crew.id)"
+                    @click.stop="handleChooseCrew('crew',crew.id)"
                 >
-                    <div class="mger-lt w-elli" v-text="crew.name"></div>
+                    <div class="mger-lt w-elli emp-lt" v-text="crew.name"></div>
                     <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="crew.count"></span>次
@@ -241,9 +269,11 @@
                 teamId:'',
                 teamName:'',
                 teamCurr:'',
+                teamEmpCurr:'',
                 groupId:'',
                 groupName:'',
                 groupCurr:'',
+                groupEmpCurr:'',
                 crewId:'',
                 crewCurr:'',
 
@@ -251,7 +281,9 @@
                 // 返回信息List
                 areaList:[],
                 teamList:[],
+                teamEmpList:[],
                 groupList:[],
+                groupEmpList:[],
                 crewList:[]
             },
             mounted: function() {
@@ -324,34 +356,39 @@
                         data:data,
                         success:function(res){
                             wDialog.hideProgress();
-                            console.log('manager stat response ------------'+JSON.stringify(res))
+                            console.log('init  manager stat response ------------'+JSON.stringify(res))
                             if(res.code==1){
-                                var list = _this.funcFormatRequestData(res.data);
+                                var orgList = _this.funcFormatRequestData(res.data.orgDataList);
+                                var empList = _this.funcFormatRequestData(res.data.empDataList);
                                 if(filterStep){
                                     if(filterStep == 1){
-                                        _this.areaList = list;
+                                        _this.areaList = orgList;
                                     }
                                     else if(filterStep == 2){
-                                        _this.teamList = list;
+                                        _this.teamList = orgList;
+                                        _this.teamEmpList = empList;
                                     }
                                     else if(filterStep == 3){
-                                        _this.groupList = list;
+                                        _this.groupList = orgList;
+                                        _this.groupEmpList = empList;
                                     }
                                     else{
-                                        _this.crewList = list;
+                                        _this.crewList = orgList;
                                     }
                                 }else{
                                     if(_this.step == 1){
-                                        _this.areaList = list;
+                                        _this.areaList = orgList;
                                     }
                                     else if(_this.step == 2){
-                                        _this.teamList = list;
+                                        _this.teamList = orgList;
+                                        _this.teamEmpList = empList;
                                     }
                                     else if(_this.step == 3){
-                                        _this.groupList = list;
+                                        _this.groupList = orgList;
+                                        _this.groupEmpList = empList;
                                     }
                                     else{
-                                        _this.crewList = list;
+                                        _this.crewList = orgList;
                                     }
                                 }
                             }
@@ -445,9 +482,11 @@
                     this.teamId = '';
                     this.teamName = '';
                     this.teamCurr = '';
+                    this.teamEmpCurr = '';
                     this.groupId = '';
-                    this.groupName = '';
                     this.groupCurr = '';
+                    this.groupNmae = '';
+                    this.groupEmpCurr = '';
                     this.step = 2;
                     this.fetchCallData();
                     this.handleSwitchPosition(1);
@@ -456,9 +495,11 @@
                     this.teamName = name;
                     this.teamId = id;
                     this.teamCurr = id;
-                    this.groupId = '';
+                    this.teamEmpCurr = '';
                     this.groupName = '';
+                    this.groupId = '';
                     this.groupCurr = '';
+                    this.groupEmpCurr = '';
                     this.step = 3;
                     this.fetchCallData();
                     this.handleSwitchPosition(2);
@@ -467,12 +508,27 @@
                     this.groupName = name;
                     this.groupId = id;
                     this.groupCurr = id;
+                    this.groupEmpCurr = '';
                     this.step = 4;
                     this.fetchCallData();
                     this.handleSwitchPosition(3);
                 },
-                handleChooseCrew:function(id){
+                handleChooseCrew:function(rela,id){
                     var _this = this;
+                    if(rela === 'team'){
+                        this.teamEmpCurr = id;
+                        this.teamCurr = '';
+                    }
+                    else if(rela === 'group'){
+                        this.groupEmpCurr = id;
+                        this.groupCurr = '';
+                    }
+                    else if(rela === 'crew'){
+                        this.crewCurr = id;
+                    }
+                    else{
+                        console.log('传值不正确')
+                    }
                     this.crewCurr = id;
                     wHrefJs.openWin({
                         name:'callStat',

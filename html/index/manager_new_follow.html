@@ -384,6 +384,7 @@
                                     _this.areaId = res.data.regionId;
                                     _this.areaCurr = res.data.regionId;
                                     _this.teamList = _this.funcDealWithData(res.data.teamList || []);
+                                    _this.teamEmpList = _this.funcDealWithData(res.data.teamEmpList || []);
                                 }
                                 else if(jobRelaIdx === 3){
                                     _this.areaId = res.data.regionId;
@@ -391,6 +392,7 @@
                                     _this.teamId = res.data.teamId;
                                     _this.teamCurr = res.data.teamId;
                                     _this.groupList = _this.funcDealWithData(res.data.groupList || []);
+                                    _this.groupEmpList = _this.funcDealWithData(res.data.groupEmpList || []);
                                 }
                                 else{
                                     console.log('没有权限')
@@ -437,6 +439,7 @@
                         this.teamCurr = '';
                         this.teamEmpCurr = '';
                         this.groupId = '';
+                        this.groupNmae = '';
                         this.groupCurr = '';
                         this.groupEmpCurr = '';
                         this.crewId = '';

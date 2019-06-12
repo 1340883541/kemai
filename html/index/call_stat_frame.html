@@ -231,7 +231,7 @@
                             console.log('call stat response------'+JSON.stringify(res))
                             if(res.code == 1){
                                 if(res.count){
-                                    _this.isHavaMoreData = res.count >= _this.pageNo * _this.pageSize : false;
+                                    _this.isHavaMoreData = res.count > _this.pageNo * _this.pageSize ? true : false;
                                 }else{
                                     _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;
                                 }

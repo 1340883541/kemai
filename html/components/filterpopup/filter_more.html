@@ -339,7 +339,6 @@ apiready = function() {
                             if(res.code == 1){
                                 _this.originAllData = res.data || [];
                                 window.localStorage.setItem('originAllData',JSON.stringify(res.data));
-                                _this.getOriginTwoData();
                             }else{
                                 wDialog.toast({
                                     msg:res.message
