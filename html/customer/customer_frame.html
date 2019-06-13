@@ -165,7 +165,7 @@
                 nCustomerFrame.fetchListData();
             }
         });
-
+        var param = api.pageParam;
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',
@@ -202,6 +202,21 @@
                         key:'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    this.search_cusName = param.searchVal;
+                    this.search_source = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
+
+                    this.search_status = param.currStatus;
+                    this.attributionid = param.currHome;
+                    this.sort = param.currSort;
+                    this.startTimeFoll = param.startTimeFoll;
+                    this.endTimeFoll = param.endTimeFoll;
+                    this.startTimeNextFoll = param.startTimeNextFoll;
+                    this.endTimeNextFoll = param.endTimeNextFoll;
+                    this.startTimeChange = param.startTimeChange;
+                    this.endTimeChange = param.endTimeChange;
+                    this.startTimeCreate = param.startTimeCreate;
+                    this.endTimeCreate = param.endTimeCreate;
+
                     this.jobTitle = this.userInfo.relativePosi;
                 },
                 // 获取页面数据

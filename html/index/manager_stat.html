@@ -89,8 +89,6 @@
                         <span v-text="area.count"></span>次
                     </div>
                 </li>
-                <!-- 空页面 -->
-                <!-- <empty-con :is-show="areaList.length === 0" txt="暂无大区信息"></empty-con> -->
             </ul>
             <ul class="mger-lists mger-team" id="mger-team" v-if="isShowTeamBox">
                 <li
@@ -122,7 +120,7 @@
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <!-- <empty-con :is-show="teamList.length === 0" txt="暂无团队信息"></empty-con> -->
+                <empty-con :is-show="teamList.length === 0 && teamEmpList.length === 0" txt="暂无团队信息"></empty-con>
             </ul>
             <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
                 <li
@@ -154,7 +152,7 @@
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <empty-con :is-show="groupList.length === 0" txt="暂无小组信息"></empty-con>
+                <empty-con :is-show="groupList.length === 0 && groupEmpList.length === 0" txt="暂无小组信息"></empty-con>
             </ul>
             <ul class="mger-lists mger-team" id="mger-crew" v-if="isShowCrewBox">
                 <li
@@ -172,7 +170,7 @@
                     </div>
                 </li>
                 <!-- 空页面 -->
-                <empty-con :is-show="crewList.length === 0" txt="暂无人员信息"></empty-con>
+                <empty-con :is-show="crewList.length === 0" txt="暂无员工信息"></empty-con>
             </ul>
         </div>
     </div>

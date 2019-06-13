@@ -109,6 +109,7 @@
                         <span v-text="team.total"></span>
                     </div>
                 </li>
+                <empty-con :is-show="teamList.length === 0 && teamEmpList.length === 0" txt="暂无团队信息"></empty-con>
             </ul>
             <ul class="mger-lists mger-team" id="mger-group" v-if="isShowGroupBox">
                 <li
@@ -139,6 +140,7 @@
                         <span v-text="group.total"></span>
                     </div>
                 </li>
+                <empty-con :is-show="groupList.length === 0 && groupEmpList.length === 0" txt="暂无小组信息"></empty-con>
             </ul>
             <ul class="mger-lists mger-team" id="mger-crew" v-if="isShowCrewBox">
                 <li
@@ -154,6 +156,7 @@
                         <span v-text="crew.total"></span>
                     </div>
                 </li>
+                <empty-con :is-show="crewList.length === 0" txt="暂无员工信息"></empty-con>
             </ul>
         </div>
     </div>

@@ -123,6 +123,17 @@
                 name:'filterCustomerFrame'
             });
         });
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err){
+            for(var key in ncusHeaderV.$data){
+                if(key === 'currSort'){
+                    ncusHeaderV.$data[key] = 0;
+                }else{
+                    ncusHeaderV.$data[key] = '';
+                }
+            }
+        });
 
         ncusHeaderV = new Vue({
             el:"#wrap",
@@ -148,6 +159,7 @@
                 jobTitle:''
             },
             mounted:function(){
+                // console.log('customer header------------------'+JSON.stringify(this.$data))
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
@@ -283,6 +295,7 @@
                 h:h,
                 bounces:true,
                 bgColor:'rgba(0,0,0,0)',
+                param:ncusHeaderV.$data,
                 animation:{
                     type:'none'
                 }
