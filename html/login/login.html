@@ -214,7 +214,7 @@
                                             })
                                             self.sign = "登录中"
                                             self.login_hide = true
-                                                // console.log("-------login------------"+JSON.stringify(api.pageParam))
+                                            console.log("-------login------------"+JSON.stringify(api.pageParam))
                                             console.log('-------------login-suc-----------------'+JSON.stringify(res))
                                             api.sendEvent({
                                                 name: 'loginSuc',
@@ -223,15 +223,15 @@
                                                 }
                                             });
                                             if (param.origin === 'index') {
-                                                setTimeout(function() {
-                                                    api.closeToWin({
-                                                        name: 'root'
-                                                    });
-                                                }, 400);
+                                                // setTimeout(function() {
+                                                //     api.closeToWin({
+                                                //         name: 'root'
+                                                //     });
+                                                // }, 600);
                                             } else {
                                                 setTimeout(function() {
-                                                    api.closeWin({});
-                                                }, 400);
+                                                    api.closeWin();
+                                                }, 200);
                                             }
                                         }
                                         setTimeout(function() {
