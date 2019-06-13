@@ -120,10 +120,9 @@
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
-        <div class="skip-add" @click.stop="handleSkipAddCustomer">
+        <!-- <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
-            <!-- <i></i><span>新增客户</span> -->
-        </div>
+        </div> -->
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -209,6 +208,7 @@
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                         var TOKEN_DATA = myLocalStorage.getItem('token');
+                        wDialog.showProgress();
                         wApiAjax({
                             url:'msgRemind/getRecoverySta',
                             method:'get',
@@ -235,9 +235,7 @@
                         });
                         this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                         TOKEN_DATA = myLocalStorage.getItem('token');
-                        setTimeout(function(){
-                            wDialog.showProgress();
-                        },80)
+                        wDialog.showProgress();
                         wApiAjax({
                             url: 'workbench/newAddResourceFoll',
                             headers: {

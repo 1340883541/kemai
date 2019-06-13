@@ -33,8 +33,8 @@
                 <div class="msg-show-icon" style="display:none;"></div>
                 <div class="msg-lis-top bor-1px-b">
                     <div class="msg-lis-cap flex-wrap flex-between">
-                        <span v-if="msg.serverType == 'SendMsgByPhone'">CRM编号 <span v-text="msg.customerid"></span></span>
-                        <span v-if="msg.serverType != 'SendMsgByPhone'">新增资源</span>
+                        <span v-if="msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow'">CRM编号 <span v-text="msg.customerid"></span></span>
+                        <span v-if="msg.serverType == 'SendNewCusMsg'">新增资源</span>
                         <span class="already" v-if="msg.readstate == 1">已读</span>
                         <span class="not-ready" v-else></span>
                     </div>
@@ -49,7 +49,7 @@
                         class="skip"
                         v-if="msg.serverType"
                         @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)"
-                    >{{msg.serverType == 'SendMsgByPhone' ? '客户详情' : '查看客户'}}</span>
+                    >{{msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow' ? '客户详情' : '查看客户'}}</span>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -222,14 +222,14 @@
                         this.msgAlreadyAjax(id,idx,function(){
                             if(isList == 'SendNewCusMsg'){
                                 _this.skipCusList();
-                            }else if(isList == 'SendMsgByPhone'){
+                            }else if(isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow'){
                                 _this.skipDetail(cusId,cusPhone);
                             }
                         })
                     }else{
                         if(isList == 'SendNewCusMsg'){
                             _this.skipCusList();
-                        }else if(isList == 'SendMsgByPhone'){
+                        }else if(isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow'){
                             _this.skipDetail(cusId,cusPhone);
                         }
                     }

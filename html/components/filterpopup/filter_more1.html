@@ -38,6 +38,63 @@
                         </ul>
                         <div class=""></div>
                     </div>
+                    <!-- 时间范围 -->
+                    <div class="filter-m-ylgs margin-top30">
+                        <p class="p1">跟进时间</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li :class="{'f-curr':currFollowToday}" @click.stop="handleChooseShortcatDate($event,'follow',0)">今日</li>
+                            <li :class="{'f-curr':currFollowWeek}" @click.stop="handleChooseShortcatDate($event,'follow',1)">本周</li>
+                            <li :class="{'f-curr':currFollowMonth}" @click.stop="handleChooseShortcatDate($event,'follow',2)">本月</li>
+                            <li :class="{'f-curr':currFollowYear}" @click.stop="handleChooseShortcatDate($event,'follow',3)">本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input class="choose-date" v-model="startTimeFoll" @click.stop="handleChooseDate(0)" type="text" placeholder="开始时间" readonly="true">
+                            <span>—</span>
+                            <input class="choose-date" v-model="endTimeFoll" @click.stop="handleChooseDate(1)" type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                    <div class="filter-m-ylgs margin-top30" v-if="isShowNextFollowDateChoose">
+                        <p class="p1">计划跟进时间</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li :class="{'f-curr':currNextFollowToday}" @click.stop="handleChooseShortcatDate($event,'nextFollow',0)">今日</li>
+                            <li :class="{'f-curr':currNextFollowWeek}" @click.stop="handleChooseShortcatDate($event,'nextFollow',1)">本周</li>
+                            <li :class="{'f-curr':currNextFollowMonth}" @click.stop="handleChooseShortcatDate($event,'nextFollow',2)">本月</li>
+                            <li :class="{'f-curr':currNextFollowYear}" @click.stop="handleChooseShortcatDate($event,'nextFollow',3)">本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input class="choose-date" v-model="startTimeNextFoll" @click.stop="handleChooseDate(2)" type="text" placeholder="开始时间" readonly="true">
+                            <span>—</span>
+                            <input class="choose-date" v-model="endTimeNextFoll" @click.stop="handleChooseDate(3)" type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                    <div class="filter-m-ylgs margin-top30">
+                        <p class="p1">负责人变更时间</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li :class="{'f-curr':currChangeToday}" @click.stop="handleChooseShortcatDate($event,'change',0)">今日</li>
+                            <li :class="{'f-curr':currChangeWeek}" @click.stop="handleChooseShortcatDate($event,'change',1)">本周</li>
+                            <li :class="{'f-curr':currChangeMonth}" @click.stop="handleChooseShortcatDate($event,'change',2)">本月</li>
+                            <li :class="{'f-curr':currChangeYear}" @click.stop="handleChooseShortcatDate($event,'change',3)">本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input class="choose-date" v-model="startTimeChange" @click.stop="handleChooseDate(4)" type="text" placeholder="开始时间" readonly="true">
+                            <span>—</span>
+                            <input class="choose-date" v-model="endTimeChange" @click.stop="handleChooseDate(5)" type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                    <div class="filter-m-ylgs margin-top30">
+                        <p class="p1">创建时间</p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li :class="{'f-curr':currCreateToday}" @click.stop="handleChooseShortcatDate($event,'create',0)">今日</li>
+                            <li :class="{'f-curr':currCreateWeek}" @click.stop="handleChooseShortcatDate($event,'create',1)">本周</li>
+                            <li :class="{'f-curr':currCreateMonth}" @click.stop="handleChooseShortcatDate($event,'create',2)">本月</li>
+                            <li :class="{'f-curr':currCreateYear}" @click.stop="handleChooseShortcatDate($event,'create',3)">本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input class="choose-date" v-model="startTimeCreate" @click.stop="handleChooseDate(6)" type="text" placeholder="开始时间" readonly="true">
+                            <span>—</span>
+                            <input class="choose-date" v-model="endTimeCreate" @click.stop="handleChooseDate(7)" type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
                     <!-- 号码归属地 -->
                     <div class="filter-m-ylgs margin-top30">
                         <p class="p1 clear" @click.stop="isUnwindHomePosi=!isUnwindHomePosi">号码归属地<i class="icon-b-jiantou" :class={'pack-up':!isUnwindHomePosi}></i></p>
@@ -133,12 +190,20 @@ apiready = function() {
             currOriginTwo:'',
             currType:'',
             currHome:'',
-            isGetStartDate:true,
 
-            // startDate:'',
-            // endDate:'',
+            startTimeFoll:'',
+            endTimeFoll:'',
+            startTimeNextFoll:'',
+            endTimeNextFoll:'',
+            startTimeChange:'',
+            endTimeChange:'',
+            startTimeCreate:'',
+            endTimeCreate:'',
+            isCurrChooseDate:'',
+
             // 是否展开
-            isUnwindHomePosi:true
+            isUnwindHomePosi:true,
+            isShowNextFollowDateChoose:true
         },
         mounted:function(){
             this.init();
@@ -154,21 +219,55 @@ apiready = function() {
                 this.currType = param.currType;
                 this.currStatus = param.currStatus;
                 this.currHome = param.currHome;
-                // this.startDate = param.startDate;
-                // this.endDate = param.endDate;
-                // this.$nextTick(function(){
-                //     // 初始化日历
-                //     $('.choose-date').mdater({
-                //         minDate : new Date('1999-01-01'),
-                //         sureCb(date){
-                //             if(_this.isGetStartDate){
-                //                 _this.startDate = date;
-                //             }else{
-                //                 _this.endDate = date;
-                //             }
-                //         }
-                //     });
-                // })
+                this.startTimeFoll = param.startTimeFoll;
+                this.endTimeFoll = param.endTimeFoll;
+                this.startTimeNextFoll = param.startTimeNextFoll;
+                this.endTimeNextFoll = param.endTimeNextFoll;
+                this.startTimeChange = param.startTimeChange;
+                this.endTimeChange = param.endTimeChange;
+                this.startTimeCreate = param.startTimeCreate;
+                this.endTimeCreate = param.endTimeCreate;
+                this.isShowNextFollowDateChoose = param.isShowNextFollowDateChoose;
+                this.$nextTick(function(){
+                    // 初始化日历
+                    $('.choose-date').mdater({
+                        minDate : new Date('1999-01-01'),
+                        sureCb(date){
+                            console.log('date------------'+date)
+                            console.log('isCurrChooseDate------------'+_this.isCurrChooseDate)
+                            if(_this.isCurrChooseDate === 0){
+                                _this.startTimeFoll = date;
+                            }
+                            else if(_this.isCurrChooseDate === 1){
+                                _this.endTimeFoll = date;
+                            }
+                            else if(_this.isCurrChooseDate === 2){
+                                _this.startTimeNextFoll = date;
+                            }
+                            else if(_this.isCurrChooseDate === 3){
+                                _this.endTimeNextFoll = date;
+                            }
+                            else if(_this.isCurrChooseDate === 4){
+                                _this.startTimeChange = date;
+                            }
+                            else if(_this.isCurrChooseDate === 5){
+                                _this.endTimeChange = date;
+                            }
+                            else if(_this.isCurrChooseDate === 6){
+                                _this.startTimeCreate = date;
+                            }
+                            else if(_this.isCurrChooseDate === 7){
+                                _this.endTimeCreate = date;
+                            }
+                            else{
+                                console.log('选择日期字段错误')
+                            }
+                        }
+                    });
+                })
+            },
+            handleChooseDate:function(i){
+                this.isCurrChooseDate = i;
             },
             fetchHomeData:function(){
                 var _this = this;
@@ -252,22 +351,44 @@ apiready = function() {
                 }
             },
             // 选择时间
-            handleChooseShortcatDate:function(e,i){
+            handleChooseShortcatDate:function(e,name,i){
                 var tag = e.currentTarget;
                 if(!$(tag).hasClass('f-curr')){
                     $(tag).addClass('f-curr').siblings().removeClass('f-curr');
                 }
-                if(i === 0){
-                    this.startDate = funcGetThisToday().startDate;
-                    this.endDate = funcGetThisToday().endDate;
+                if(name === 'follow'){
+                    this.funcGetDate('startTimeFoll','endTimeFoll',i)
                 }
-                else if(i === 1){
-                    this.startDate = funcGetThisWeek().startDate;
-                    this.endDate = funcGetThisWeek().endDate;
+                else if(name === 'nextFollow'){
+                    this.funcGetDate('startTimeNextFoll','endTimeNextFoll',i)
+                }
+                else if(name === 'change'){
+                    this.funcGetDate('startTimeChange','endTimeChange',i)
+                }
+                else if(name === 'create'){
+                    this.funcGetDate('startTimeCreate','endTimeCreate',i)
                 }
                 else{
-                    this.startDate = funcGetThisMonth().startDate;
-                    this.endDate = funcGetThisMonth().endDate;
+                    console.log('选择时间name错误')
+                }
+            },
+            // 获取时间
+            funcGetDate:function(sName,eName,i){
+                if(i === 0){
+                    this[sName] = funcGetThisToday().startDate;
+                    this[eName] = funcGetThisToday().endDate;
+                }
+                else if(i === 1){
+                    this[sName] = funcGetThisWeek().startDate;
+                    this[eName] = funcGetThisWeek().endDate;
+                }
+                else if(i == 2){
+                    this[sName] = funcGetThisMonth().startDate;
+                    this[eName] = funcGetThisMonth().endDate;
+                }
+                else{
+                    this[sName] = funcGetThisYear().startDate;
+                    this[eName] = funcGetThisYear().endDate;
                 }
             },
             // 筛选客户归来来源
@@ -307,8 +428,15 @@ apiready = function() {
                 this.currOriginTwo = '';
                 this.currType = '';
                 this.currHome = '';
-                // this.startDate = '';
-                // this.endDate = '';
+
+                this.startTimeFoll = '';
+                this.endTimeFoll = '';
+                this.startTimeNextFoll = '';
+                this.endTimeNextFoll = '';
+                this.startTimeChange = '';
+                this.endTimeChange = '';
+                this.startTimeCreate = '';
+                this.endTimeCreate = '';
             },
             // 确认
             handleSureData:function(){
@@ -322,8 +450,15 @@ apiready = function() {
                         originTwo:_this.currOriginTwo,
                         type:_this.currType,
                         home:_this.currHome,
-                        startDate:_this.startDate,
-                        endDate:_this.endDate,
+
+                        startTimeFoll:_this.startTimeFoll,
+                        endTimeFoll:_this.endTimeFoll,
+                        startTimeNextFoll:_this.startTimeNextFoll,
+                        endTimeNextFoll:_this.endTimeNextFoll,
+                        startTimeChange:_this.startTimeChange,
+                        endTimeChange:_this.endTimeChange,
+                        startTimeCreate:_this.startTimeCreate,
+                        endTimeCreate:_this.endTimeCreate,
                     }
                 });
                 api.closeFrame();
@@ -335,8 +470,109 @@ apiready = function() {
                 });
                 api.closeFrame();
             }
-
         },
+        computed: {
+            // 跟进时间
+            currFollowToday: function() {
+                if(this.startTimeFoll === funcGetThisToday().startDate && this.endTimeFoll === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currFollowWeek: function() {
+                if(this.startTimeFoll === funcGetThisWeek().startDate && this.endTimeFoll === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currFollowMonth: function() {
+                if(this.startTimeFoll === funcGetThisMonth().startDate && this.endTimeFoll === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currFollowYear: function() {
+                if(this.startTimeFoll === funcGetThisYear().startDate && this.endTimeFoll === funcGetThisYear().endDate){
+                    return true;
+                }
+                return false;
+            },
+            // 下次跟进时间
+            currNextFollowToday: function() {
+                if(this.startTimeNextFoll === funcGetThisToday().startDate && this.endTimeNextFoll === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currNextFollowWeek: function() {
+                if(this.startTimeNextFoll === funcGetThisWeek().startDate && this.endTimeNextFoll === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currNextFollowMonth: function() {
+                if(this.startTimeNextFoll === funcGetThisMonth().startDate && this.endTimeNextFoll === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currNextFollowYear: function() {
+                if(this.startTimeNextFoll === funcGetThisYear().startDate && this.endTimeNextFoll === funcGetThisYear().endDate){
+                    return true;
+                }
+                return false;
+            },
+            // 变更负责人
+            currChangeToday: function() {
+                if(this.startTimeChange === funcGetThisToday().startDate && this.endTimeChange === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currChangeWeek: function() {
+                if(this.startTimeChange === funcGetThisWeek().startDate && this.endTimeChange === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currChangeMonth: function() {
+                if(this.startTimeChange === funcGetThisMonth().startDate && this.endTimeChange === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currChangeYear: function() {
+                if(this.startTimeChange === funcGetThisYear().startDate && this.endTimeChange === funcGetThisYear().endDate){
+                    return true;
+                }
+                return false;
+            },
+            // 创建时间
+            currCreateToday: function() {
+                if(this.startTimeCreate === funcGetThisToday().startDate && this.endTimeCreate === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currCreateWeek: function() {
+                if(this.startTimeCreate === funcGetThisWeek().startDate && this.endTimeCreate === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currCreateMonth: function() {
+                if(this.startTimeCreate === funcGetThisMonth().startDate && this.endTimeCreate === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currCreateYear: function() {
+                if(this.startTimeCreate === funcGetThisYear().startDate && this.endTimeCreate === funcGetThisYear().endDate){
+                    return true;
+                }
+                return false;
+            },
+        }
     })
 }
 </script>

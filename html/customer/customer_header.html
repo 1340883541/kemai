@@ -89,6 +89,30 @@
             if(typeof obj.sort != 'undefined'){
                 ncusHeaderV.currSort = obj.sort;
             }
+            if(typeof obj.startTimeFoll != 'undefined'){
+                ncusHeaderV.startTimeFoll = obj.startTimeFoll;
+            }
+            if(typeof obj.endTimeFoll != 'undefined'){
+                ncusHeaderV.endTimeFoll = obj.endTimeFoll;
+            }
+            if(typeof obj.startTimeNextFoll != 'undefined'){
+                ncusHeaderV.startTimeNextFoll = obj.startTimeNextFoll;
+            }
+            if(typeof obj.endTimeNextFoll != 'undefined'){
+                ncusHeaderV.endTimeNextFoll = obj.endTimeNextFoll;
+            }
+            if(typeof obj.startTimeChange != 'undefined'){
+                ncusHeaderV.startTimeChange = obj.startTimeChange;
+            }
+            if(typeof obj.endTimeChange != 'undefined'){
+                ncusHeaderV.endTimeChange = obj.endTimeChange;
+            }
+            if(typeof obj.startTimeCreate != 'undefined'){
+                ncusHeaderV.startTimeCreate = obj.startTimeCreate;
+            }
+            if(typeof obj.endTimeCreate != 'undefined'){
+                ncusHeaderV.endTimeCreate = obj.endTimeCreate;
+            }
             $('.w-filter-lis').removeClass('curr');
         });
         api.addEventListener({
@@ -110,6 +134,15 @@
                 currType:'',
                 currStatus:'',
                 currHome:'',
+
+                startTimeFoll:'',
+                endTimeFoll:'',
+                startTimeNextFoll:'',
+                endTimeNextFoll:'',
+                startTimeChange:'',
+                endTimeChange:'',
+                startTimeCreate:'',
+                endTimeCreate:'',
                 // 排序方式
                 currSort:0,
                 jobTitle:''
@@ -198,9 +231,17 @@
                                     currType:_this.currType,
                                     currStatus:_this.currStatus,
                                     currHome:_this.currHome,
-                                    startDate:_this.startDate,
-                                    endDate:_this.endDate,
-                                    isFullScreen:true
+
+                                    startTimeFoll:_this.startTimeFoll,
+                                    endTimeFoll:_this.endTimeFoll,
+                                    startTimeNextFoll:_this.startTimeNextFoll,
+                                    endTimeNextFoll:_this.endTimeNextFoll,
+                                    startTimeChange:_this.startTimeChange,
+                                    endTimeChange:_this.endTimeChange,
+                                    startTimeCreate:_this.startTimeCreate,
+                                    endTimeCreate:_this.endTimeCreate,
+                                    isFullScreen:true,
+                                    isShowNextFollowDateChoose:_this.jobTitle === 'gngly' ? false : true
                                 }
                             });
                         }
@@ -211,7 +252,7 @@
                                 param:{
                                     origin:'filterCustomerList',
                                     currSelected:_this.currSort,
-                                    sortClass:_this.jobTitle === 'gngly' ? 'class7' : 'class1'
+                                    sortClass:_this.jobTitle === 'gngly' ? 'class7' : 'class8'
                                 }
                             })
                         }

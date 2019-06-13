@@ -2,7 +2,9 @@
     width:100%;
     /*overflow:hidden;*/
     height:80vh;
-    overflow: auto;
+    overflow-x:hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scolling:touch;
 }
 .change_person_list{
     width:100%;

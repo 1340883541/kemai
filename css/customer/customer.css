@@ -369,19 +369,23 @@
     line-height:24px;;
     overflow: hidden;
 }
-.cd-contain .cd-flow .cd-flow-tit > i{
+.cd-contain .cd-flow .cd-flow-tit > .copy-edit{
     position: absolute;
     top:0;
-    right:0;
+    right:-5px;
     width:auto;
     height: 24px;
+    line-height: 24px;
     text-align: center;
-    padding-left: 13px;
-    background:url('../../image/icon-bianji2.png') no-repeat left center;
-    background-size: 12.5px;
+    font-size: 13px;
+}
+.cd-contain .cd-flow .cd-flow-tit > .copy-edit > span{
+    padding:0 5px;
+    color:#4C9FF8;
+}
+.cd-contain .cd-flow .cd-flow-tit > .copy-edit > b{
     color:#ccc;
-    font-size: 14px;
-    font-style: normal;
+    font-weight: normal;
 }
 .cd-contain .cd-flow .cd-flow-t {
     font-size: .28rem;

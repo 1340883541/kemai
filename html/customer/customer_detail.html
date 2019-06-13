@@ -108,7 +108,12 @@
                             <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
                             <div class="cd-flow-tit">
                                 <span v-text="returnFollowResultTitle(flow.contactway_vaule)"></span>
-                                <i @click.stop="handleEditFollowRecord(flow.id)">编辑</i>
+                                <div class="copy-edit flex-wrap">
+                                    <span @click.stop="handleClipTxt(flow.result)">复制</span>
+                                    <b>|</b>
+                                    <span @click.stop="handleEditFollowRecord(flow.id)">编辑</span>
+                                </div>
+                                <!-- <i></i> -->
                             </div>
                             <div class="cd-flow-t" v-if="flow.result" v-text="flow.result" v-longpress="handleLongpressClipTxt" :data-followtxt="flow.result"></div>
                             <!-- <div class="cd-flow-all">全文</div> -->
@@ -392,6 +397,18 @@
                         _this = this;
                     clipBoard.set({
                         value: followTxt
+                    }, function(ret, err) {
+                        if(ret.status){
+                            wDialog.toast({
+                                msg:'复制成功'
+                            });
+                        }
+                    });
+                },
+                handleClipTxt:function(txt) {
+                    var clipBoard = api.require('clipBoard');
+                    clipBoard.set({
+                        value:txt
                     }, function(ret, err) {
                         if(ret.status){
                             wDialog.toast({

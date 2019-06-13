@@ -136,6 +136,31 @@
                 if(typeof obj.home != 'undefined'){
                     nCustomerFrame.attributionid = obj.home;
                 }
+
+                if(typeof obj.startTimeFoll != 'undefined'){
+                    nCustomerFrame.startTimeFoll = obj.startTimeFoll;
+                }
+                if(typeof obj.endTimeFoll != 'undefined'){
+                    nCustomerFrame.endTimeFoll = obj.endTimeFoll;
+                }
+                if(typeof obj.startTimeNextFoll != 'undefined'){
+                    nCustomerFrame.startTimeNextFoll = obj.startTimeNextFoll;
+                }
+                if(typeof obj.endTimeNextFoll != 'undefined'){
+                    nCustomerFrame.endTimeNextFoll = obj.endTimeNextFoll;
+                }
+                if(typeof obj.startTimeChange != 'undefined'){
+                    nCustomerFrame.startTimeChange = obj.startTimeChange;
+                }
+                if(typeof obj.endTimeChange != 'undefined'){
+                    nCustomerFrame.endTimeChange = obj.endTimeChange;
+                }
+                if(typeof obj.startTimeCreate != 'undefined'){
+                    nCustomerFrame.startTimeCreate = obj.startTimeCreate;
+                }
+                if(typeof obj.endTimeCreate != 'undefined'){
+                    nCustomerFrame.endTimeCreate = obj.endTimeCreate;
+                }
                 nCustomerFrame.pageNo = 1;
                 nCustomerFrame.fetchListData();
             }
@@ -147,9 +172,19 @@
             data: {
                 search_cusName:'', // 搜索客户名
                 search_source:'',  // 客户来源
-                search_status:'',  // 客户状态
+                search_status:'',  //
                 sort:0,
                 attributionid:'',
+
+                startTimeFoll:'',
+                endTimeFoll:'',
+                startTimeNextFoll:'',
+                endTimeNextFoll:'',
+                startTimeChange:'',
+                endTimeChange:'',
+                startTimeCreate:'',
+                endTimeCreate:'',
+
                 pageNo:1,
                 totalPage:1,
                 khDataList:[],  // 客户信息list
@@ -173,13 +208,21 @@
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    console.log(JSON.stringify({
+                    console.log('customer frame request----------'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         search_cusName:_this.search_cusName,
                         search_source:_this.search_source,
                         search_status:_this.search_status,
                         sort:_this.sort,
                         attributionid:_this.attributionid,
+                        startTimeFoll:_this.startTimeFoll,
+                        endTimeFoll:_this.endTimeFoll,
+                        startTimeNextFoll:_this.startTimeNextFoll,
+                        endTimeNextFoll:_this.endTimeNextFoll,
+                        startTimeChange:_this.startTimeChange,
+                        endTimeChange:_this.endTimeChange,
+                        startTimeCreate:_this.startTimeCreate,
+                        endTimeCreate:_this.endTimeCreate,
                         pageNo:_this.pageNo,
                         pageSize:10,
                     }))
@@ -196,11 +239,19 @@
                             search_status:_this.search_status,
                             sort:_this.sort,
                             attributionid:_this.attributionid,
+                            startTimeFoll:_this.startTimeFoll,
+                            endTimeFoll:_this.endTimeFoll,
+                            startTimeNextFoll:_this.startTimeNextFoll,
+                            endTimeNextFoll:_this.endTimeNextFoll,
+                            startTimeChange:_this.startTimeChange,
+                            endTimeChange:_this.endTimeChange,
+                            startTimeCreate:_this.startTimeCreate,
+                            endTimeCreate:_this.endTimeCreate,
                             pageNo:_this.pageNo,
                             pageSize:10,
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            console.log('customer frame response--------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
