@@ -198,7 +198,7 @@
                             if(res.code == 1){
                                 if(!isLoadMore){
                                     _this.infoList = res.data || [];
-                                    _this.totalPage = Math.ceil(res.count / _this.pageSize);
+                                    _this.totalPage = Math.floor(res.count / _this.pageSize);
                                     console.log(_this.totalPage)
                                     if(_this.totalPage === 1){
                                         $('#not-more').show();

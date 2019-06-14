@@ -174,7 +174,11 @@
 
 
                     userInfo: {},
-                    notificationInfo: {}
+                    notificationInfo: {},
+                    isLoadFinishNew:false,
+                    isLoadFinishSystem:false,
+                    isLoadFinishStat:false,
+                    isLoadFinishMessage:false
                 },
                 mounted: function() {
                     this.netWorkStatus();
@@ -224,6 +228,8 @@
                                     _this.pay = res.data.pay;
                                     _this.recovery = res.data.recovery;
                                 }
+                                _this.isLoadFinishMessage = true;
+                                _this.funcHideProgress();
                             }
                         })
                     },
@@ -249,7 +255,8 @@
                                 if (res.code == 1) {
                                     _this.newResourceFollowList = res.data || [];
                                 }
-                                wDialog.hideProgress();
+                                _this.isLoadFinishNew = true;
+                                _this.funcHideProgress();
                             },
                             fail: function() {
 
@@ -277,7 +284,6 @@
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
-                                wDialog.hideProgress();
                                 if (res.code == 1) {
                                     var data = res.data || {};
                                     _this.vaildcall = data.answer;
@@ -286,6 +292,8 @@
                                     _this.abnormalNum2 = data.invalid;
                                     _this.allCallTimes = data.total;
                                 }
+                                _this.isLoadFinishStat = true;
+                                _this.funcHideProgress();
                             },
                             fail: function() {
 
@@ -314,6 +322,8 @@
                                 if (res.code == 1) {
                                     _this.systemResourceFollowList = res.data;
                                 }
+                                _this.isLoadFinishSystem= true;
+                                _this.funcHideProgress();
                             },
                             fail: function() {
 
@@ -435,6 +445,12 @@
                             name: 'addCustomer',
                             path: './add_customer.html',
                         })
+                    },
+                    funcHideProgress:function(){
+                        console.log(' ---new: '+this.isLoadFinishNew + ' ---system: '+ this.isLoadFinishSystem + ' ---message: '+ this.isLoadFinishMessage + ' ---sate: '+ this.isLoadFinishStat)
+                        if(this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat){
+                            wDialog.hideProgress();
+                        }
                     }
                 }
             })

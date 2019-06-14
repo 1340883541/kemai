@@ -409,7 +409,7 @@
                         });
                         var max = Math.max.apply(null,list);
                         return data.map(function(v){
-                            max == 0 ? v.percent = 0 : v.percent = Math.ceil((v.count / max) * 100);
+                            max == 0 ? v.percent = 0 : v.percent = Math.floor((v.count / max) * 100);
                             return v;
                         });
                     }
