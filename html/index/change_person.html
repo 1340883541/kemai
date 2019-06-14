@@ -103,7 +103,7 @@
                         <div class="lists_group" v-if="groupListOrg && groupListOrg.length>0" v-for="(item,a) in groupListOrg" :class="{'curr':currGroupOrgIdx === a}" :key="'org'+a"  @click.stop="handleChooseZzOrg(item.gruopName,item.emp,a)">
                             <div>{{item.gruopName}}</div>
                         </div>
-                        <div class="flex_cont_img" v-if="groupListPer && groupListPer.length>0" v-for="(item,a) in groupListPer" :key="'per'+a" @click.stop="handleChooseZzPer(item.empId,item.name,a)">
+                        <div class="flex_cont_img" v-if="groupListPer && groupListPer.length>0" v-for="(item,a) in groupListPer" :key="'per'+a" @click.stop="handleChooseZzPer(item.empid,item.name,a)">
                             <div class="img_rig1">
                                 <img src="../../image/icon-danxuankuang.png" v-if="!item.isChecked">
                                 <img src="../../image/icon-danxuankuangp.png" v-else>
@@ -160,7 +160,8 @@
                 groupListOrg: [],
                 groupListPer:[],
                 crewList:[],
-                currGroupOrgIdx:''
+                currGroupOrgIdx:'',
+                currGroupPerIdx:''
             },
             mounted: function() {
                 this.init();
@@ -228,6 +229,12 @@
                 // 选择小组
                 handleChooseZzOrg:function(name,lists,idx){
                     console.log(JSON.stringify(lists))
+                    this.groupListPer = this.groupListPer.map(function(v,idx){
+                        v.isChecked = false;
+                        return v;
+                    });
+                    this.empId = '';
+                    this.currName = '';
                     if(this.currGroupOrgIdx === idx){
                         return;
                     }else{
@@ -243,6 +250,9 @@
                 },
                 // 选择小组同级员工
                 handleChooseZzPer:function(id,name,i){
+                    this.groupName = '';
+                    this.currGroupOrgIdx = '';
+                    this.crewList = [];
                     if(this.empId === id){
                         this.empId = '';
                         this.currName = '';
@@ -251,13 +261,12 @@
                         this.empId = id;
                         this.currName = name;
                         this.groupListPer = this.groupListPer.map(function(v,idx){
+                            v.isChecked = false;
                             if(i===idx){
                                 v.isChecked = true;
-                            }else{
-                                v.isChecked = false;
                             }
                             return v;
-                        })
+                        });
                     }
                 },
                 // 选择员工
@@ -293,6 +302,10 @@
                             wDialog.showProgress({
                                 msg:'正在分配中...'
                             })
+                            console.log('allot employeed req------'+JSON.stringify({
+                                employeeid: _this.empId,
+                                customerid: _this.cusId
+                            }))
                             wApiAjax({
                                 method: "post",
                                 url: 'newResource/changeSales',

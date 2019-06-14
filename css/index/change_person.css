@@ -256,8 +256,9 @@ i{
 .flex_cont_img{
     display: flex;
     align-items: center;
-    height:1.02rem;
-    line-height: 1.02rem;
+    height:1rem;
+    line-height: 1rem;
+    padding: 0 .3rem;
 }
 .flex_cont_img .name{
     width:calc(100% - .44rem);
