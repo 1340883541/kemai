@@ -14,6 +14,11 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/lib/swiper.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style>
+        #wrapper {
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 
 <body>
@@ -38,15 +43,9 @@
                 <div class="new-follow-box">
                     <div class="index-cap">新增资源跟进</div>
                     <div class="head-bb flex-wrap">
-                        <div
-                            class="flex-con head-bb-lis"
-                            v-if="newResourceFollowList && newResourceFollowList.length > 0"
-                            v-for="(newResource,i) in newResourceFollowList"
-                            @click.stop="skipNewCustomer(newResource.value)"
-                            :key="'new'+i"
-                        >
-                            <div class="head-bb-t" :class="'head-bb-t'+(i+1)" v-text="newResource.name"></div>
-                            <div class="head-bb-b" v-text="newResource.num||0"></div>
+                        <div class="flex-con head-bb-lis" v-if="newResourceFollowList && newResourceFollowList.length > 0" v-for="(newResource,i) in newResourceFollowList" @click.stop="skipNewCustomer(newResource.value)" :key="'new'+i">
+                            <div class="head-bb-t" v-text="newResource.num||0"></div>
+                            <div class="head-bb-b" v-text="newResource.name"></div>
                         </div>
                     </div>
                 </div>
@@ -61,12 +60,23 @@
                     :key="system.value"
                     @click="handleSkipSystemList(system.value)"
                 >
+                    <div class="sys-lbox">
+                        <div class="system-t" v-cloak>{{system.num|messageFilter}}</div>
+                        <div class="system-b" v-text="system.name"></div>
+                    </div>
+                </div>
+                <div class="flex-con system-lis"></div>
+                <!-- <div
+                    class="flex-con system-lis"
+                    v-for="(system,idx) in systemResourceFollowList"
+                    :key="system.value"
+                    @click="handleSkipSystemList(system.value)"
+                >
                     <div class="sys-lbox" :class="'sys-lbox'+(idx+1)">
                         <div class="system-t" v-text="system.name"></div>
                         <div class="system-b" v-cloak>{{system.num|messageFilter}}</div>
                     </div>
-                </div>
-                <div class="flex-con system-lis"></div>
+                </div> -->
             </div>
         </div>
         <!-- 消息提醒 -->
@@ -175,10 +185,10 @@
 
                     userInfo: {},
                     notificationInfo: {},
-                    isLoadFinishNew:false,
-                    isLoadFinishSystem:false,
-                    isLoadFinishStat:false,
-                    isLoadFinishMessage:false
+                    isLoadFinishNew: false,
+                    isLoadFinishSystem: false,
+                    isLoadFinishStat: false,
+                    isLoadFinishMessage: false
                 },
                 mounted: function() {
                     this.netWorkStatus();
@@ -214,16 +224,16 @@
                         var TOKEN_DATA = myLocalStorage.getItem('token');
                         wDialog.showProgress();
                         wApiAjax({
-                            url:'msgRemind/getRecoverySta',
-                            method:'get',
-                            headers:{
-                                token:TOKEN_DATA
+                            url: 'msgRemind/getRecoverySta',
+                            method: 'get',
+                            headers: {
+                                token: TOKEN_DATA
                             },
-                            data:{
+                            data: {
                                 employeeid: _this.userInfo.employeeid
                             },
-                            success:function(res){
-                                if(res.code == 1){
+                            success: function(res) {
+                                if (res.code == 1) {
                                     _this.sign = res.data.sign;
                                     _this.pay = res.data.pay;
                                     _this.recovery = res.data.recovery;
@@ -277,10 +287,10 @@
                             headers: {
                                 token: TOKEN_DATA
                             },
-                            method:'get',
+                            method: 'get',
                             data: {
                                 // employeeid: _this.userInfo.employeeid,
-                                token:TOKEN_DATA
+                                token: TOKEN_DATA
                             },
                             success: function(res) {
                                 console.log(JSON.stringify(res))
@@ -322,7 +332,7 @@
                                 if (res.code == 1) {
                                     _this.systemResourceFollowList = res.data;
                                 }
-                                _this.isLoadFinishSystem= true;
+                                _this.isLoadFinishSystem = true;
                                 _this.funcHideProgress();
                             },
                             fail: function() {
@@ -377,7 +387,7 @@
                                 name: 'systemFollowHeader',
                                 path: './system_follow_header.html',
                                 param: {
-                                    status:status
+                                    status: status
                                 },
                                 bgColor: '#f7f7f7'
                             })
@@ -385,8 +395,8 @@
                             wHrefJs.openWin({
                                 name: 'managerSystemFollow',
                                 url: 'manager_system_follow.html',
-                                param:{
-                                    status:status
+                                param: {
+                                    status: status
                                 }
                             })
                         }
@@ -417,24 +427,24 @@
                     // 跳转到今日统计
                     skipStat: function(status) {
                         var _this = this;
-                        if(this.userInfo.relativePosi == 'yg'){
+                        if (this.userInfo.relativePosi == 'yg') {
                             wHrefJs.openWin({
                                 name: 'callStatHeader',
                                 path: './call_stat_header.html',
                                 param: {
                                     callStatus: status,
-                                    startDate:funcGetThisToday().startDate,
-                                    endDate:funcGetThisToday().endDate,
+                                    startDate: funcGetThisToday().startDate,
+                                    endDate: funcGetThisToday().endDate,
                                 }
                             })
-                        }else{
+                        } else {
                             wHrefJs.openWin({
-                                name:'managerStat',
-                                path:'./manager_stat.html',
-                                param:{
-                                    callStatus:status,
-                                    startDate:funcGetThisToday().startDate,
-                                    endDate:funcGetThisToday().endDate,
+                                name: 'managerStat',
+                                path: './manager_stat.html',
+                                param: {
+                                    callStatus: status,
+                                    startDate: funcGetThisToday().startDate,
+                                    endDate: funcGetThisToday().endDate,
                                 }
                             })
                         }
@@ -446,9 +456,9 @@
                             path: './add_customer.html',
                         })
                     },
-                    funcHideProgress:function(){
-                        console.log(' ---new: '+this.isLoadFinishNew + ' ---system: '+ this.isLoadFinishSystem + ' ---message: '+ this.isLoadFinishMessage + ' ---sate: '+ this.isLoadFinishStat)
-                        if(this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat){
+                    funcHideProgress: function() {
+                        console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat)
+                        if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat) {
                             wDialog.hideProgress();
                         }
                     }
@@ -456,12 +466,12 @@
             })
         }
         // 刷新数据
-        function refrshIndexData() {
-            indexV.fetchNewData()
-            indexV.fetchStatData();
-            indexV.getMessageData();
-            indexV.fetchSystemFollowData();
-        }
+    function refrshIndexData() {
+        indexV.fetchNewData()
+        indexV.fetchStatData();
+        indexV.getMessageData();
+        indexV.fetchSystemFollowData();
+    }
 </script>
 
 </html>

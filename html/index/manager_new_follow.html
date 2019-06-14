@@ -362,7 +362,8 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            // type:_this.currType,
+                            type:1,
                             search_cusName:'',
                             attributionid:'',
                             resourcetype:'',
@@ -471,7 +472,8 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            // type:_this.currType,
+                            type:1,
                             region:_this.areaId
                         },
                         success:function(res){
@@ -544,7 +546,8 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            // type:_this.currType,
+                            type:1,
                             region:_this.areaId,
                             team:_this.teamId
                         },
@@ -618,7 +621,8 @@
                             endTime:_this.endDate,
                             cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
                             sort:_this.currSort,
-                            type:_this.currType,
+                            // type:_this.currType,
+                            type:1,
                             region:_this.areaId,
                             team:_this.teamId,
                             groupid:_this.groupId
@@ -777,8 +781,8 @@
                                     currSelected:_this.currOrigin,
                                     currTwoSelected:_this.currOriginTwo,
                                     currType:_this.currType,
-                                    isHaveAllOrigin:false,
-                                    isHaveRecourcePool:true
+                                    isHaveAllOrigin:true,
+                                    isHaveRecourcePool:false
                                 }
                             });
                         }
