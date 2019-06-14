@@ -676,6 +676,7 @@
                 // 直接拨打电话
                 handleCallFollowNormal:function(){
                     this.isShowTalkingResult = true;
+                    $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
                     api.call({
                         type: 'tel_prompt',
                         number: this.cusPhone
@@ -685,6 +686,7 @@
                 handleCallFollow:function(){
                     if(this.isCanCall){
                         this.isShowTalkingResult = false;
+                        $('#call-phone-normal-btn').addClass('w-event-none gray-bg');
                         if(this.isFirstCallClick){
                             this.isFirstCallClick =  false;
                             var _this = this;
@@ -724,6 +726,7 @@
                                         wDialog.toast({
                                             msg:res.msg||'客户号码异常'
                                         });
+                                        $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
                                     }
                                 },
                                 fail:function(err){
@@ -731,6 +734,7 @@
                                     wDialog.toast({
                                         msg:'电话拨打失败'
                                     });
+                                    $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
                                 }
                             })
                         }else{
