@@ -60,7 +60,7 @@
                             <div class="name w-elli">{{item.name}}</div>
                         </div>
                         <div class="img_rig1">
-                            <i class="uncheck" :class="{'check' : check1 == item.name}"></i>
+                            <i class="uncheck" :class="{'check' : check1 == item.empid}"></i>
                         </div>
                     </div>
                 </div>
@@ -211,7 +211,7 @@
                     this.teamName = '';
                     this.groupName = '';
                     this.currName = '';
-                    if (this.check1 === name) {
+                    if (this.check1 === id) {
                         this.check1 = '';
                         this.empId = '';
                         this.popup_curr = false;
@@ -219,7 +219,7 @@
                         this.currName = '';
                         this.cityName = '';
                     } else {
-                        this.check1 = name;
+                        this.check1 = id;
                         this.empId = id;
                         this.popup_curr = true;
                         this.isFooter = false;
