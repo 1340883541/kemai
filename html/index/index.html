@@ -54,12 +54,7 @@
         <div class="system-follow-box">
             <div class="index-cap">系统资源跟进</div>
             <div class="system-follow flex-wrap">
-                <div
-                    class="flex-con system-lis"
-                    v-for="(system,idx) in systemResourceFollowList"
-                    :key="system.value"
-                    @click="handleSkipSystemList(system.value)"
-                >
+                <div class="flex-con system-lis" v-for="(system,idx) in systemResourceFollowList" :key="system.value" @click="handleSkipSystemList(system.value)">
                     <div class="sys-lbox">
                         <div class="system-t" v-cloak>{{system.num|messageFilter}}</div>
                         <div class="system-b" v-text="system.name"></div>
@@ -146,325 +141,339 @@
 <script>
     var indexV = null;
     apiready = function() {
-            var top = api.safeArea.top;
-            $('#head-bg').css('padding-top', top);
-            $('.index-header .head-box').css('padding-top', top);
-            $('#index-title').css('padding-top', top);
-            $('#offline-box').css('top', top + 48);
-            indexV = new Vue({
-                el: '#wrapper',
-                data: {
-                    employeeid: '',
-                    account: '',
-                    newResourceFollowList: [], //新增资源跟进
-                    systemResourceFollowList: [], //系统资源跟进
+        var top = api.safeArea.top;
+        $('#head-bg').css('padding-top', top);
+        $('.index-header .head-box').css('padding-top', top);
+        $('#index-title').css('padding-top', top);
+        $('#offline-box').css('top', top + 48);
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err) {
+            refrshIndexData();
+        });
 
-                    resource: 0, //资源回收
-                    sign: 0, //签约消息
-                    pay: 0, //缴费消息
-                    change_principal: 0, //负责人变更
-                    recovery: 0, //回收提醒
-                    subscription: 0, //认购消息
-                    follow: 0, //跟进提醒
-                    subscriptionBook: 0, //认购书提醒
-                    // 今日统计
-                    // lookwechatcount: 0, //查看微信次数
-                    vaildcall: 0, //今日接通通话
-                    noanscall: 0, //今日统计未接听通话
-                    allCallTimes: 0, //拨号
-                    abnormalNum1: 0, // 主叫拨号异常
-                    abnormalNum2: 0, // 被叫拨号异常
+        indexV = new Vue({
+            el: '#wrapper',
+            data: {
+                employeeid: '',
+                account: '',
+                newResourceFollowList: [], //新增资源跟进
+                systemResourceFollowList: [], //系统资源跟进
 
-                    // 系统资源跟进
-                    shortTerm: 0, //短期客户数量
-                    metTerm: 0, //中期客户数量
-                    longTerm: 0, //长期客户数量
-                    unansweredCus: 0, //未接客户
-                    dealCus: 0, //成交
+                resource: 0, //资源回收
+                sign: 0, //签约消息
+                pay: 0, //缴费消息
+                change_principal: 0, //负责人变更
+                recovery: 0, //回收提醒
+                subscription: 0, //认购消息
+                follow: 0, //跟进提醒
+                subscriptionBook: 0, //认购书提醒
+                // 今日统计
+                // lookwechatcount: 0, //查看微信次数
+                vaildcall: 0, //今日接通通话
+                noanscall: 0, //今日统计未接听通话
+                allCallTimes: 0, //拨号
+                abnormalNum1: 0, // 主叫拨号异常
+                abnormalNum2: 0, // 被叫拨号异常
+
+                // 系统资源跟进
+                shortTerm: 0, //短期客户数量
+                metTerm: 0, //中期客户数量
+                longTerm: 0, //长期客户数量
+                unansweredCus: 0, //未接客户
+                dealCus: 0, //成交
 
 
-                    userInfo: {},
-                    notificationInfo: {},
-                    isLoadFinishNew: false,
-                    isLoadFinishSystem: false,
-                    isLoadFinishStat: false,
-                    isLoadFinishMessage: false
-                },
-                mounted: function() {
-                    this.netWorkStatus();
-                    // 获取数据
-                    this.fetchStatData();
-                    this.getMessageData();
-                    this.fetchNewData();
-                    this.fetchSystemFollowData();
-                    this.$nextTick(function() {
-                        $(window).on('scroll', function() {
-                            var sTop = $(window).scrollTop()
-                            if (sTop <= 9) {
-                                $('#index-title').removeClass('fixbg')
-                            } else {
-                                $('#index-title').addClass('fixbg')
+                userInfo: {},
+                notificationInfo: {},
+                isLoadFinishNew: false,
+                isLoadFinishSystem: false,
+                isLoadFinishStat: false,
+                isLoadFinishMessage: false
+            },
+            mounted: function() {
+                this.netWorkStatus();
+                // 获取数据
+                this.fetchStatData();
+                this.getMessageData();
+                this.fetchNewData();
+                this.fetchSystemFollowData();
+                this.$nextTick(function() {
+                    $(window).on('scroll', function() {
+                        var sTop = $(window).scrollTop()
+                        if (sTop <= 9) {
+                            $('#index-title').removeClass('fixbg')
+                        } else {
+                            $('#index-title').addClass('fixbg')
+                        }
+                    })
+                })
+            },
+            filters: {
+                messageFilter: function(n) {
+                    return n > 99 ? '99+' : n;
+                }
+            },
+            methods: {
+                // 获取消息提醒的数据
+                getMessageData: function(cb) {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    var TOKEN_DATA = myLocalStorage.getItem('token');
+                    wDialog.showProgress({
+                        modal: false
+                    });
+                    wApiAjax({
+                        url: 'msgRemind/getRecoverySta',
+                        method: 'get',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid
+                        },
+                        success: function(res) {
+                            if (res.code == 1) {
+                                _this.sign = res.data.sign;
+                                _this.pay = res.data.pay;
+                                _this.recovery = res.data.recovery;
                             }
-                        })
+                            _this.isLoadFinishMessage = true;
+                            _this.funcHideProgress();
+                        }
                     })
                 },
-                filters: {
-                    messageFilter: function(n) {
-                        return n > 99 ? '99+' : n;
+                // 获取今日新增数据
+                fetchNewData: function(cb) {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    wDialog.showProgress({
+                        modal: false
+                    });
+                    wApiAjax({
+                        url: 'workbench/newAddResourceFoll',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid
+                        },
+                        success: function(res) {
+                            // console.log('today new data: ' + JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.newResourceFollowList = res.data || [];
+                            }
+                            _this.isLoadFinishNew = true;
+                            _this.funcHideProgress();
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+                // 获取今日通过统计数据
+                fetchStatData: function() {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    wDialog.showProgress({
+                        modal: false
+                    });
+                    wApiAjax({
+                        url: 'todayCall/index',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        method: 'get',
+                        data: {
+                            // employeeid: _this.userInfo.employeeid,
+                            token: TOKEN_DATA
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.code == 1) {
+                                var data = res.data || {};
+                                _this.vaildcall = data.answer;
+                                _this.noanscall = data.disAnswer;
+                                _this.abnormalNum1 = data.unknownPhone;
+                                _this.abnormalNum2 = data.invalid;
+                                _this.allCallTimes = data.total;
+                            }
+                            _this.isLoadFinishStat = true;
+                            _this.funcHideProgress();
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+                // 获取系统跟进
+                fetchSystemFollowData: function() {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    wDialog.showProgress({
+                        modal: false
+                    });
+                    wApiAjax({
+                        url: 'systemResource/sysResourceSta',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid
+                        },
+                        success: function(res) {
+                            // console.log('system response data: ' + JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.systemResourceFollowList = res.data;
+                            }
+                            _this.isLoadFinishSystem = true;
+                            _this.funcHideProgress();
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+                funcFormateSystemCount: function(num) {
+                    return num > 99 ? '99+' : num;
+                },
+                // 跳转到提醒列表
+                skipMessage: function(i, remindName) {
+                    if (i === 1) {
+                        console.log('暂没有')
+                    } else if (i === 2) {
+                        wHrefJs.openWin({
+                            name: 'customerRecycleHeader',
+                            path: '../customer/customer_recycle_header.html'
+                        })
+                    } else {
+                        wDialog.toast({
+                            msg: '即将上线'
+                        })
                     }
                 },
-                methods: {
-                    // 获取消息提醒的数据
-                    getMessageData: function(cb) {
-                        var _this = this;
-                        this.userInfo = wPref.getPrefs({
-                            key: 'userInfo'
-                        });
-                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                        var TOKEN_DATA = myLocalStorage.getItem('token');
-                        wDialog.showProgress();
-                        wApiAjax({
-                            url: 'msgRemind/getRecoverySta',
-                            method: 'get',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            data: {
-                                employeeid: _this.userInfo.employeeid
-                            },
-                            success: function(res) {
-                                if (res.code == 1) {
-                                    _this.sign = res.data.sign;
-                                    _this.pay = res.data.pay;
-                                    _this.recovery = res.data.recovery;
-                                }
-                                _this.isLoadFinishMessage = true;
-                                _this.funcHideProgress();
-                            }
-                        })
-                    },
-                    // 获取今日新增数据
-                    fetchNewData: function(cb) {
-                        var _this = this;
-                        this.userInfo = wPref.getPrefs({
-                            key: 'userInfo'
-                        });
-                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                        TOKEN_DATA = myLocalStorage.getItem('token');
-                        wDialog.showProgress();
-                        wApiAjax({
-                            url: 'workbench/newAddResourceFoll',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            data: {
-                                employeeid: _this.userInfo.employeeid
-                            },
-                            success: function(res) {
-                                // console.log('today new data: ' + JSON.stringify(res))
-                                if (res.code == 1) {
-                                    _this.newResourceFollowList = res.data || [];
-                                }
-                                _this.isLoadFinishNew = true;
-                                _this.funcHideProgress();
-                            },
-                            fail: function() {
-
-                            }
-                        })
-                    },
-                    // 获取今日通过统计数据
-                    fetchStatData: function() {
-                        var _this = this;
-                        this.userInfo = wPref.getPrefs({
-                            key: 'userInfo'
-                        });
-                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                        TOKEN_DATA = myLocalStorage.getItem('token');
-                        wDialog.showProgress();
-                        wApiAjax({
-                            url: 'todayCall/index',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            method: 'get',
-                            data: {
-                                // employeeid: _this.userInfo.employeeid,
-                                token: TOKEN_DATA
-                            },
-                            success: function(res) {
-                                console.log(JSON.stringify(res))
-                                if (res.code == 1) {
-                                    var data = res.data || {};
-                                    _this.vaildcall = data.answer;
-                                    _this.noanscall = data.disAnswer;
-                                    _this.abnormalNum1 = data.unknownPhone;
-                                    _this.abnormalNum2 = data.invalid;
-                                    _this.allCallTimes = data.total;
-                                }
-                                _this.isLoadFinishStat = true;
-                                _this.funcHideProgress();
-                            },
-                            fail: function() {
-
-                            }
-                        })
-                    },
-                    // 获取系统跟进
-                    fetchSystemFollowData: function() {
-                        var _this = this;
-                        this.userInfo = wPref.getPrefs({
-                            key: 'userInfo'
-                        });
-                        this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
-                        TOKEN_DATA = myLocalStorage.getItem('token');
-                        wDialog.showProgress();
-                        wApiAjax({
-                            url: 'systemResource/sysResourceSta',
-                            headers: {
-                                token: TOKEN_DATA
-                            },
-                            data: {
-                                employeeid: _this.userInfo.employeeid
-                            },
-                            success: function(res) {
-                                // console.log('system response data: ' + JSON.stringify(res))
-                                if (res.code == 1) {
-                                    _this.systemResourceFollowList = res.data;
-                                }
-                                _this.isLoadFinishSystem = true;
-                                _this.funcHideProgress();
-                            },
-                            fail: function() {
-
-                            }
-                        })
-                    },
-                    funcFormateSystemCount: function(num) {
-                        return num > 99 ? '99+' : num;
-                    },
-                    // 跳转到提醒列表
-                    skipMessage: function(i, remindName) {
-                        if (i === 1) {
-                            console.log('暂没有')
-                        } else if (i === 2) {
-                            wHrefJs.openWin({
-                                name: 'customerRecycleHeader',
-                                path: '../customer/customer_recycle_header.html'
-                            })
-                        } else {
-                            wDialog.toast({
-                                msg: '即将上线'
-                            })
-                        }
-                    },
-                    // 判断网络状态
-                    netWorkStatus: function() {
-                        listenOnline.offline(function() {
-                            $('#offline-box').show();
-                        });
-                        listenOnline.online(function() {
-                            $('#offline-box').hide();
-                        });
-                        var lineStatus = listenOnline.lineStatus();
-                        if (lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g') {
-                            $('#offline-box').show();
-                        } else {
-                            $('#offline-box').hide();
-                        }
-                    },
-                    // 跳转到offline
-                    skipOfflinePage: function() {
+                // 判断网络状态
+                netWorkStatus: function() {
+                    listenOnline.offline(function() {
+                        $('#offline-box').show();
+                    });
+                    listenOnline.online(function() {
+                        $('#offline-box').hide();
+                    });
+                    var lineStatus = listenOnline.lineStatus();
+                    if (lineStatus == 'unknown' || lineStatus == 'none' || lineStatus == '2g') {
+                        $('#offline-box').show();
+                    } else {
+                        $('#offline-box').hide();
+                    }
+                },
+                // 跳转到offline
+                skipOfflinePage: function() {
+                    wHrefJs.openWin({
+                        name: 'offline',
+                        path: '../person/solution.html'
+                    })
+                },
+                // 跳转到系统跟进列表
+                handleSkipSystemList: function(status) {
+                    if (this.userInfo.relativePosi == 'yg') {
                         wHrefJs.openWin({
-                            name: 'offline',
-                            path: '../person/solution.html'
+                            name: 'systemFollowHeader',
+                            path: './system_follow_header.html',
+                            param: {
+                                status: status
+                            },
+                            bgColor: '#f7f7f7'
                         })
-                    },
-                    // 跳转到系统跟进列表
-                    handleSkipSystemList: function(status) {
-                        if (this.userInfo.relativePosi == 'yg') {
-                            wHrefJs.openWin({
-                                name: 'systemFollowHeader',
-                                path: './system_follow_header.html',
-                                param: {
-                                    status: status
-                                },
-                                bgColor: '#f7f7f7'
-                            })
-                        } else {
-                            wHrefJs.openWin({
-                                name: 'managerSystemFollow',
-                                url: 'manager_system_follow.html',
-                                param: {
-                                    status: status
-                                }
-                            })
-                        }
-                    },
-                    // 跳转新增
-                    skipNewCustomer: function(val) {
-                        var self = this;
-                        if (this.userInfo.relativePosi == 'yg') {
-                            wHrefJs.openWin({
-                                name: 'newCustomerHeader',
-                                path: './new_customer_header.html',
-                                param: {
-                                    val: val
-                                },
-                                bgColor: '#f7f7f7'
-                            })
-                        } else {
-                            wHrefJs.openWin({
-                                name: 'managerNewFollow',
-                                path: 'manager_new_follow.html',
-                                param: {
-                                    val: val
-                                },
-                                bgColor: '#f7f7f7'
-                            })
-                        }
-                    },
-                    // 跳转到今日统计
-                    skipStat: function(status) {
-                        var _this = this;
-                        if (this.userInfo.relativePosi == 'yg') {
-                            wHrefJs.openWin({
-                                name: 'callStatHeader',
-                                path: './call_stat_header.html',
-                                param: {
-                                    callStatus: status,
-                                    startDate: funcGetThisToday().startDate,
-                                    endDate: funcGetThisToday().endDate,
-                                }
-                            })
-                        } else {
-                            wHrefJs.openWin({
-                                name: 'managerStat',
-                                path: './manager_stat.html',
-                                param: {
-                                    callStatus: status,
-                                    startDate: funcGetThisToday().startDate,
-                                    endDate: funcGetThisToday().endDate,
-                                }
-                            })
-                        }
-                    },
-                    // 跳转到新增客户
-                    handleSkipAddCustomer: function() {
+                    } else {
                         wHrefJs.openWin({
-                            name: 'addCustomer',
-                            path: './add_customer.html',
+                            name: 'managerSystemFollow',
+                            url: 'manager_system_follow.html',
+                            param: {
+                                status: status
+                            }
                         })
-                    },
-                    funcHideProgress: function() {
-                        console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat)
-                        if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat) {
-                            wDialog.hideProgress();
-                        }
+                    }
+                },
+                // 跳转新增
+                skipNewCustomer: function(val) {
+                    var self = this;
+                    if (this.userInfo.relativePosi == 'yg') {
+                        wHrefJs.openWin({
+                            name: 'newCustomerHeader',
+                            path: './new_customer_header.html',
+                            param: {
+                                val: val
+                            },
+                            bgColor: '#f7f7f7'
+                        })
+                    } else {
+                        wHrefJs.openWin({
+                            name: 'managerNewFollow',
+                            path: 'manager_new_follow.html',
+                            param: {
+                                val: val
+                            },
+                            bgColor: '#f7f7f7'
+                        })
+                    }
+                },
+                // 跳转到今日统计
+                skipStat: function(status) {
+                    var _this = this;
+                    if (this.userInfo.relativePosi == 'yg') {
+                        wHrefJs.openWin({
+                            name: 'callStatHeader',
+                            path: './call_stat_header.html',
+                            param: {
+                                callStatus: status,
+                                startDate: funcGetThisToday().startDate,
+                                endDate: funcGetThisToday().endDate,
+                            }
+                        })
+                    } else {
+                        wHrefJs.openWin({
+                            name: 'managerStat',
+                            path: './manager_stat.html',
+                            param: {
+                                callStatus: status,
+                                startDate: funcGetThisToday().startDate,
+                                endDate: funcGetThisToday().endDate,
+                            }
+                        })
+                    }
+                },
+                // 跳转到新增客户
+                handleSkipAddCustomer: function() {
+                    wHrefJs.openWin({
+                        name: 'addCustomer',
+                        path: './add_customer.html',
+                    })
+                },
+                funcHideProgress: function() {
+                    console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat)
+                    if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat) {
+                        wDialog.hideProgress();
                     }
                 }
-            })
-        }
+            }
+        })
+    }
         // 刷新数据
     function refrshIndexData() {
         indexV.fetchNewData()

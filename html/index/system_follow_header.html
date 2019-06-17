@@ -42,7 +42,7 @@
             </div>
             <div class="w-filter-lists flex-wrap">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
-                    <span>计划跟进</span><i></i>
+                    <span>计划时间</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
                     <span>客户来源</span><i></i>
@@ -181,6 +181,7 @@
                                     currHome:_this.currHome,
                                     startDate:_this.startDate,
                                     endDate:_this.endDate,
+                                    dateText:'计划时间',
 
                                     isHaveClassify:false,
                                     isHaveRecourcePool:false,

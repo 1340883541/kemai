@@ -842,7 +842,7 @@ var wDialog = {
             animationType: par.animateType || 'fade',
             title: par.msg || '努力加载中...',
             text: par.text || '请稍等...',
-            modal: par.modal || true
+            modal: par.modal == undefined ? true : par.modal
         });
         // if(!$('#w-progress-popup')[0]){
         //     var htmlString = '<div id="w-progress-popup">'+

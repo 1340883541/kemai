@@ -109,6 +109,7 @@
     background-color: #fff;
     border-radius: 4px;
     flex-wrap: wrap;
+    height: 64px;
 }
 
 .index-header .head-box .head-bb .head-bb-lis{
@@ -185,6 +186,7 @@
     position: relative;
     flex-wrap: wrap;
     margin-top: -15px;
+    height: 164px;
 }
 .system-follow-box .system-follow:after{
     content: '';
@@ -225,8 +227,9 @@
 }
 .system-follow-box .system-follow .system-lis .system-b{
     font-size: 14px;
-    margin-top: 9px;
+    margin-top: 8px;
     color:#666;
+    line-height: 1em;
 }
 .system-follow-box .system-follow .system-lis .sys-lbox1{
     background: url('../../image/icon-xt-01.png') no-repeat left top;

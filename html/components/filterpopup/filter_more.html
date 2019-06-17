@@ -63,7 +63,7 @@
                     </div>
                     <!-- 时间范围 -->
                     <div class="filter-m-ylgs margin-top30">
-                        <p class="p1">时间范围</p>
+                        <p class="p1" v-text="dateText"></p>
                         <ul class="filter-m-ylgs-info clear">
                             <li :class="{'f-curr':currToday}" @click.stop="handleChooseShortcatDate($event,0)">今日</li>
                             <li :class="{'f-curr':currWeek}" @click.stop="handleChooseShortcatDate($event,1)">本周</li>
@@ -201,7 +201,9 @@ apiready = function() {
 
             isGetStartDate:true,
             // 是否展开
-            isUnwindHomePosi:true
+            isUnwindHomePosi:true,
+
+            dateText:'时间范围'
         },
         mounted:function(){
             this.init();
@@ -224,6 +226,7 @@ apiready = function() {
                 this.isHaveRecourcePool = param.isHaveRecourcePool;
                 this.isHaveClassify = param.isHaveClassify;
                 this.isHaveStatus = param.isHaveStatus;
+                this.dateText = param.dateText ? param.dateText : '时间范围';
                 this.$nextTick(function(){
                     // 初始化日历
                     $('.choose-date').mdater({

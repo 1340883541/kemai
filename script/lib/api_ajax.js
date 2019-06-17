@@ -76,6 +76,7 @@ function wApiAjax(par) {
             dataType: par.dataType || 'json',
             headers: newHeaders,
             report: par.report || false,
+            tag:par.url,
             data: {
                 values: par.data || {},
                 files: par.files || {}
