@@ -4,8 +4,8 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.222:9000/', // 本地 小麦
     // baseUrl:'https://192.168.0.112:9000/', // 本地  埃文
     // baseUrl:'https://192.168.0.222:9100/', // 本地
-    baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    // baseUrl: 'https://call.jindinghaiju.com/', // 正式
+    // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
+    baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
@@ -13,7 +13,6 @@ if (typeof Object.assign != 'function') {
     Object.assign = function(target) {
         'use strict';
         if (target == null) {
-
             throw new TypeError('Cannot convert undefined or null to object');
         }
 
@@ -31,7 +30,8 @@ if (typeof Object.assign != 'function') {
         return target;
     };
 }
-var isLoginPastDue = false;
+var isLoginPastDue = false,
+    isCanLetApp = false;
 function wApiAjax(par) {
     par.data = par.data || '';
     // par.data = createSign(par);
@@ -82,14 +82,17 @@ function wApiAjax(par) {
             },
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
-            if(ret && ret.count){
-                api.toast({
-                    msg: '总共'+ret.count + '条数据',
-                    duration: 2000,
-                    location: 'bottom'
-                });
-            }
+            // if(ret && ret.count){
+            //     api.toast({
+            //         msg: '总共'+ret.count + '条数据',
+            //         duration: 2000,
+            //         location: 'bottom'
+            //     });
+            // }
             if (ret && ret.code != 500) {
+                // console.log(JSON.stringify(ret))
+                // console.log(JSON.stringify(newHeaders))
+                // console.log(JSON.stringify(par.url))
                 if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
                     if(!isLoginPastDue){
                         isLoginPastDue = true;
@@ -118,6 +121,18 @@ function wApiAjax(par) {
                                 });
 
                             }
+                        })
+                    }
+                }
+                else if(ret.code == 1005){
+                    if(!isCanLetApp){
+                        isCanLetApp = true;
+                        setTimeout(function(){
+                            isCanLetApp = false;
+                        },2000)
+                        wDialog.hideProgress();
+                        wDialog.toast({
+                            msg:'系统正在维护中'
                         })
                     }
                 }

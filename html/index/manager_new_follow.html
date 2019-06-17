@@ -383,11 +383,27 @@
                                             _this.renderCircle(i,v.percent);
                                         });
                                     })
+                                    // var totalT = 0,addTotalT = 0, reduceT = 0;
+                                    // _this.areaList.forEach(function(v){
+                                    //     totalT += Number(v.total);
+                                    //     addTotalT += Number(v.addtotal);
+                                    // })
+                                    // api.alert({
+                                    //     msg:'total='+totalT+' addtotal='+addTotalT
+                                    // })
                                 }
                                 else if(jobRelaIdx === 2){
                                     _this.areaId = res.data.regionId;
                                     _this.areaCurr = res.data.regionId;
                                     _this.teamList = _this.funcDealWithData(res.data.teamList || []);
+                                    // var totalT = 0,addTotalT = 0, reduceT = 0;
+                                    // _this.teamList.forEach(function(v){
+                                    //     totalT += Number(v.total);
+                                    //     addTotalT += Number(v.addtotal);
+                                    // });
+                                    // api.alert({
+                                    //     msg:'total='+totalT+' addtotal='+addTotalT
+                                    // })
                                     _this.teamEmpList = _this.funcDealWithData(res.data.teamEmpList || []);
                                 }
                                 else if(jobRelaIdx === 3){
@@ -397,6 +413,15 @@
                                     _this.teamCurr = res.data.teamId;
                                     _this.groupList = _this.funcDealWithData(res.data.groupList || []);
                                     _this.groupEmpList = _this.funcDealWithData(res.data.groupEmpList || []);
+
+                                    // var totalT = 0,addTotalT = 0, reduceT = 0;
+                                    // _this.groupList.forEach(function(v){
+                                    //     totalT += Number(v.total);
+                                    //     addTotalT += Number(v.addtotal);
+                                    // });
+                                    // api.alert({
+                                    //     msg:'total='+totalT+' addtotal='+addTotalT
+                                    // })
                                 }
                                 else{
                                     console.log('没有权限')

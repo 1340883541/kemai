@@ -184,6 +184,7 @@
 .system-follow-box .system-follow{
     position: relative;
     flex-wrap: wrap;
+    margin-top: -15px;
 }
 .system-follow-box .system-follow:after{
     content: '';
@@ -199,7 +200,7 @@
     position: relative;
     min-width: 33.333%;
     width:33.3333%;
-    padding: 16px 0;
+    padding: 20px 4px;
 }
 .system-follow-box .system-follow .system-lis .sys-lbox{
     position: relative;
