@@ -276,8 +276,8 @@
                 crewList:[],
                 isInitDataLoadFinish:true,
                 isTeamDataLoadFinish:true,
-                isGroupDateLoadFinish:true,
-                isCrewDateLoadFinish:true
+                isGroupDataLoadFinish:true,
+                isCrewDataLoadFinish:true
             },
             mounted: function() {
                 this.init();
@@ -468,7 +468,7 @@
                     // }
                     var _this = this;
                     wDialog.showProgress();
-                    this.isGroupDateLoadFinish = false;
+                    this.isGroupDataLoadFinish = false;
                     console.log('group list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -498,7 +498,7 @@
                         },
                         success:function(res){
                             console.log('grouplist-------'+JSON.stringify(res))
-                            _this.isGroupDateLoadFinish = true;
+                            _this.isGroupDataLoadFinish = true;
                             _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.groupList =_this.funcFormatRequestData(res.data.groupList);
@@ -527,7 +527,7 @@
                 fetchCrewData:function(isFilter){
                     isFilter = isFilter || false;
                     var _this = this;
-                    this.isCrewDateLoadFinish = false;
+                    this.isCrewDataLoadFinish = false;
                     wDialog.showProgress();
                     console.log('crew list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
@@ -560,7 +560,7 @@
                         },
                         success:function(res){
                             console.log('crewlist-------'+JSON.stringify(res))
-                            _this.isCrewDateLoadFinish = true;
+                            _this.isCrewDataLoadFinish = true;
                             _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.crewList = _this.funcFormatRequestData(res.data.groupList);
@@ -628,7 +628,7 @@
                     }
                 },
                 funcHideProgress:function(){
-                    if(this.isInitDataLoadFinish && this.isTeamDataLoadFinish && this.isGroupDateLoadFinish && this.isCrewDateLoadFinish){
+                    if(this.isInitDataLoadFinish && this.isTeamDataLoadFinish && this.isGroupDataLoadFinish && this.isCrewDataLoadFinish){
                         wDialog.hideProgress();
                     }
                 },

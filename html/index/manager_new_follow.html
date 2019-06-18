@@ -300,7 +300,12 @@
                 teamEmpList:[],
                 groupList:[],
                 groupEmpList:[],
-                crewList:[]
+                crewList:[],
+
+                isInitDataLoadFinish:true,
+                isTeamDataLoadFinish:true,
+                isGroupDataLoadFinish:true,
+                isCrewDataLoadFinish:true
             },
             mounted: function() {
                 this.currType = param.val == 0 ? 2 : 1;
@@ -338,6 +343,7 @@
                     setTimeout(function(){
                         wDialog.showProgress();
                     },10)
+                    this.isInitDataLoadFinish = false;
                     console.log('manager new follow-- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -372,7 +378,8 @@
                         },
                         success: function(res) {
                             console.log('initlist '+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isInitDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if (res.code == 1) {
                                 var jobRelaIdx = getJobRelative(_this.jobTitle);
                                 if(jobRelaIdx === 1){
@@ -485,6 +492,7 @@
                         return;
                     }
                     var _this = this;
+                    this.isTeamDataLoadFinish = false;
                     wDialog.showProgress();
                     wApiAjax({
                         url:'newResource/newAddResFollListByRegion',
@@ -503,7 +511,8 @@
                         },
                         success:function(res){
                             console.log('teamlist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isTeamDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.teamList = res.data.teamList.map(function(v){
                                     if(v.addtotal == 0){
@@ -550,6 +559,7 @@
                     }
                     var _this = this;
                     wDialog.showProgress();
+                    _this.isGroupDataLoadFinish = false;
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -578,7 +588,8 @@
                         },
                         success:function(res){
                             console.log('grouplist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isGroupDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.groupList = res.data.groupList.map(function(v){
                                     if(v.addtotal == 0){
@@ -624,6 +635,7 @@
                     }
                     var _this = this;
                     wDialog.showProgress();
+                    _this.isCrewDataLoadFinish = false;
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -654,7 +666,8 @@
                         },
                         success:function(res){
                             console.log('crewlist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isCrewDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.crewList = res.data.groupList.map(function(v){
                                     if(v.addtotal == 0){
@@ -713,9 +726,23 @@
                 // 筛选获取数据
                 filterGetData:function(){
                     this.fetchPosiData(true);
-                    this.fetchTeamData(true);
-                    this.fetchGroupData(true);
-                    this.fetchCrewData(true);
+                    if(this.areaId && getJobRelative(this.userInfo.relativePosi) <= 1){
+                        console.log('in1')
+                        this.fetchTeamData(true);
+                    }
+                    if(this.areaId && this.teamId  && getJobRelative(this.userInfo.relativePosi) <= 2){
+                        console.log('in2')
+                        this.fetchGroupData(true);
+                    }
+                    if(this.areaId && this.teamId && this.groupId && getJobRelative(this.userInfo.relativePosi) <= 3){
+                        console.log('in3')
+                        this.fetchCrewData(true);
+                    }
+                },
+                funcHideProgress:function(){
+                    if(this.isInitDataLoadFinish && this.isTeamDataLoadFinish && this.isGroupDataLoadFinish && this.isCrewDataLoadFinish){
+                        wDialog.hideProgress();
+                    }
                 },
                 // 切换职位
                 // i=0 大区  i=1 团队  i=2 小组
