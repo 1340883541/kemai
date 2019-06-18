@@ -266,7 +266,7 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            // console.log('today new data: ' + JSON.stringify(res))
+                            console.log('today new data: ' + JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.newResourceFollowList = res.data || [];
                             }

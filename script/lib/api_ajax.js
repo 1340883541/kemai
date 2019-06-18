@@ -84,11 +84,13 @@ function wApiAjax(par) {
         }, function(ret, err) {
             // console.log(JSON.stringify(ret))
             if(ret && ret.count){
-                api.toast({
-                    msg: '总共'+ret.count + '条数据',
-                    duration: 2000,
-                    location: 'bottom'
-                });
+                if(ret.pageNo == 1){
+                    api.toast({
+                        msg: '总共'+ret.count + '条数据',
+                        duration: 2000,
+                        location: 'bottom'
+                    });
+                }
             }
             // if(ret && ret.reqTime){
             //     api.toast({
