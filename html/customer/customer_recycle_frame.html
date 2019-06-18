@@ -194,6 +194,7 @@
                         search_cusName:_this.search_cusName,
                         pageNo:_this.pageNo,
                         pageSize:10,
+                        sort:_this.currSort
                     }))
                     wApiAjax({
                         url:'msgRemind/recoveryCusList',
@@ -210,6 +211,7 @@
                             search_cusName:_this.search_cusName,
                             pageNo:_this.pageNo,
                             pageSize:10,
+                            sort:_this.currSort
                         },
                         success:function(res){
                             console.log(JSON.stringify(res))
