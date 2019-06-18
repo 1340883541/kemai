@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增客户-首页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" /> -->
+</head>
+
+<body>
+    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
+    <div id="add-wrapper" class="add-select-wrapper">
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">选择销售员工|选择渠道员工</div>
+                <div class="right">确定</div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="emp-search-box">
+            <div class="add-emp-cap">直接搜索</div>
+            <div class="emp-search-inp">
+                <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" readonly disabled>
+                <i class="search-icon"></i>
+            </div>
+        </div>
+        <div class="emp-select-box">
+            <div class="add-emp-cap">按部门搜索</div>
+            <div class="emp-select-lists">
+                <ul>
+                    <li class="flex-wrap flex-between bor-1px-b">
+                        <div class="left">区域</div>
+                        <div class="right">请选择员工区域</div>
+                    </li>
+                    <li class="flex-wrap flex-between bor-1px-b">
+                        <div class="left">部门</div>
+                        <div class="right">请选择员工部门</div>
+                    </li>
+                    <li class="flex-wrap flex-between bor-1px-b">
+                        <div class="left">员工</div>
+                        <div class="right">请选择对应员工</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="popup-bg follow-popup"></div>
+        <!-- 选择员工 -->
+        <div class="choose-employee-popup">
+            <div class="choose-employee-t bor-1px-b">选择员工<i class="close"></i></div>
+            <div class="choose-employee-b">
+                <ul>
+                    <li class="curr">232</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    apiready = function(){
+
+    }
+</script>
+</html>

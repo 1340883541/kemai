@@ -236,6 +236,7 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
+                            console.log('message respose---->'+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.sign = res.data.sign;
                                 _this.pay = res.data.pay;
@@ -266,7 +267,7 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            console.log('today new data: ' + JSON.stringify(res))
+                            console.log('new respose---->'+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.newResourceFollowList = res.data || [];
                             }
@@ -300,7 +301,7 @@
                             token: TOKEN_DATA
                         },
                         success: function(res) {
-                            console.log(JSON.stringify(res))
+                            console.log('stat respose---->'+JSON.stringify(res))
                             if (res.code == 1) {
                                 var data = res.data || {};
                                 _this.vaildcall = data.answer;
@@ -337,7 +338,7 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            // console.log('system response data: ' + JSON.stringify(res))
+                            console.log('system respose---->'+JSON.stringify(res))
                             if (res.code == 1) {
                                 _this.systemResourceFollowList = res.data;
                             }

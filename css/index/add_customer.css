@@ -14,7 +14,7 @@
     top:0;
     width:100%;
     height: 120px;
-    background-image: linear-gradient(90deg, rgba(84, 203, 248, 1) 0%,  rgba(13, 100, 250, 1) 100%);
+    background-image: linear-gradient(90deg, #129bff 0%,  rgba(13, 100, 250, 1) 100%);
     box-sizing: content-box;
 }
 .add-header .fh-place{
@@ -27,7 +27,7 @@
     z-index: 99;
     width:100%;
     height: 40px;
-    background-image: linear-gradient(90deg, rgba(84, 203, 248, 0.95) 0%,  rgba(13, 100, 250, 0.95) 100%);
+    background-image: linear-gradient(90deg, #129bff 0%,  rgba(13, 100, 250, 0.95) 100%);
     color:#fff;
     line-height: 40px;
     box-sizing: content-box;
@@ -50,9 +50,8 @@
     padding:0 20px;
 }
 .add-box .add-lis .add-cap{
-    padding-top: 30px;
-    padding-bottom: 10px;
-    line-height: 1em;
+    padding: 20px 0;
+    line-height: 24px;
     font-size: 18px;
     color:#333;
     font-weight: bold;
@@ -107,6 +106,28 @@
     border:1px solid rgb(12,127,249);
     background-color: rgb(236,245,255);
 }
+.add-box .add-lis .add-select{
+    position: relative;
+    height: 44px;
+    background-color: #f6f6f6;
+    padding-left: 15px;
+    padding-right: 40px;
+    color:#666;
+    font-size: 15px;
+    padding-top:10px;
+    padding-bottom: 10px;
+    line-height: 24px;
+}
+.add-box .add-lis .add-select:after{
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width:44px;
+    height: 44px;
+    background: url('../../image/icon-gr-jiantou32.png') no-repeat center;
+    background-size: 16px;
+}
 .add-box .add-lis .add-textarea textarea{
     width:100%;
     height: 90px;
@@ -140,4 +161,240 @@
 .add-save .save-btn.no-event{
     opacity: .7;
     pointer-events: none;
+}
+.add-select-wrapper{
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+.add-select-box{
+    background-color: #fff;
+    box-shadow: 0px 1px 20px 0 rgba(0,0,0,.08);
+    padding-left: 15px;
+}
+.add-select-box .add-select-lis{
+    width: 100%;
+    height: 50px;
+}
+
+.add-select-box .add-select-lis > .left{
+    width:100px;
+    text-align: left;
+    color:#333;
+    font-size: 15px;
+    line-height: 14px;
+    padding:13px 0;
+    line-height: 24px;
+    color:#333;
+    font-size: 15px;
+}
+.add-select-box .add-select-lis > .right{
+    position: relative;
+    width:calc(100% - 100px);
+    text-align: right;
+    padding-right: 34px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    line-height: 24px;
+    color:#666;
+    font-size: 15px;
+}
+.add-select-box .add-select-lis > .right:after{
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width:32px;
+    height: 100%;
+    background: url('../../image/icon-gr-jiantou32.png') no-repeat left center;
+    background-size: 16px;
+}
+.add-select-box .add-select-lis > .search-right{
+    padding-right: 20px;
+}
+.add-select-box .add-select-lis > .search-right:after{
+    display: none;
+}
+.add-select-box .add-select-lis > .right>input{
+    text-align: right;
+}
+.add-select-box .add-select-lis > .no-search{
+    display: block;
+    width:100%;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    line-height: 24px;
+    color:#333;
+    font-size: 15px;
+}
+.add-select-box .add-select-lis > .has-search{
+    width: calc(100% - 80px);
+    padding:13px 0;
+    line-height: 24px;
+    color:#333;
+    font-size: 15px;
+}
+.add-select-box .add-select-lis > .search-btn{
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding:13px 20px;
+    line-height: 24px;
+    height: 50px;
+    text-align: center;
+    color:#0c7ff9;
+    font-size: 15px;
+}
+.add-search-box{
+    padding-left: 15px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling:touch;
+}
+.add-search-box li{
+    width: 100%;
+    height: 46px;
+    padding: 13px 0;
+    line-height: 20px;
+    color:#666;
+    font-size: 14px;
+}
+.add-emp-cap{
+    height: 40px;
+    padding:10px 15px;
+    line-height: 20px;
+    font-size: 13px;
+    color:#999;
+}
+.emp-search-box{
+    height: auto;
+    background-color: #fff;
+    margin-bottom: 10px;
+}
+.emp-search-box .emp-search-inp{
+    position: relative;
+    padding:0 15px 10px;
+}
+.emp-search-box .emp-search-inp > input{
+    width:100%;
+    height: 32px;
+    line-height: 20px;
+    padding:6px 30px;
+    color:#666;
+    background-color: #f6f6f6;
+}
+.emp-search-box .emp-search-inp > i.search-icon{
+    position: absolute;
+    left: 15px;
+    top:0;
+    width:30px;
+    height: 32px;
+    background: url('../../image/add_search.png') no-repeat center;
+    background-size: 16px;
+}
+.emp-search-box .emp-search-inp > i.detal-icon{
+    position: absolute;
+    right: 15px;
+    top:0;
+    width:30px;
+    height: 32px;
+    background: url('../../image/add_detal.png') no-repeat center;
+    background-size: 16px;
+}
+.emp-select-box{
+    background-color: #fff;
+    height: auto;
+}
+.emp-select-box .emp-select-lists{
+    padding-left: 15px;
+}
+.emp-select-box .emp-select-lists li{
+    height: 50px;
+}
+.emp-select-box .emp-select-lists li > .left{
+    width: 60px;
+    color:#333;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 13px 0;
+    line-height: 24px;
+}
+.emp-select-box .emp-select-lists li > .right{
+    position: relative;
+    width: calc(100% - 60px);
+    color:#333;
+    text-align: right;
+    padding: 13px 0;
+    line-height: 24px;
+    padding-right: 30px;
+}
+.emp-select-box .emp-select-lists li > .right:after{
+    content: '';
+    position: absolute;
+    right: 0px;
+    top:0;
+    width:30px;
+    height: 50px;
+    background:url('../../image/icon-gr-jiantou32.png') no-repeat left center;
+    background-size: 16px;
+}
+
+.popup-bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 900;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .4);
+}
+.choose-employee-popup {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 100%;
+    height: auto;
+    background-color: #fff;
+}
+
+.choose-employee-popup .choose-employee-t {
+    position: relative;
+    height: 56px;
+    line-height: 56px;
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+.choose-employee-popup .choose-employee-t .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 56px;
+    height: 56px;
+    background: url('../../image/icon-guanbi.png') no-repeat center;
+    background-size: 20px;
+}
+
+.choose-employee-popup .choose-employee-b {
+    padding-top: 15px;
+    height: 300px;
+    max-height: 300px;
+    box-sizing: content-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
+.choose-employee-popup .choose-employee-b ul li {
+    line-height: 50px;
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.choose-employee-popup .choose-employee-b ul li.curr {
+    color: rgb(12, 127, 249);
 }

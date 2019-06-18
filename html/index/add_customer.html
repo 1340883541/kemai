@@ -16,7 +16,8 @@
 </head>
 
 <body>
-    <div id="add-wrapper" class="add-wrapper" v-cloak>
+    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
+    <div id="add-wrapper" class="add-wrapper">
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
@@ -56,16 +57,20 @@
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">客户来源</div>
-                    <div class="add-switch">
-                        <ul class="clear" id="customer-origin">
-                            <li
-                                v-for="(cusOrigin,idx) in customerOriginList"
-                                :key="idx"
-                                @click.stop="handleSwitchCustomerOrigin(idx,cusOrigin.value)"
-                                v-text="cusOrigin.name"
-                                :class="{'curr':idx === customerOriginCurrIndex}"
-                            ></li>
-                        </ul>
+                    <div class="add-select">
+                        请选择
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">销售员工</div>
+                    <div class="add-select">
+                        请选择
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">渠道员工</div>
+                    <div class="add-select">
+                        请选择
                     </div>
                 </div>
                 <div class="add-lis">

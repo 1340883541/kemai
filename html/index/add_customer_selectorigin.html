@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>新增客户-首页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+</head>
+
+<body>
+    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
+    <div id="add-wrapper" class="add-select-wrapper flex-wrap flex-vertical">
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">新增客户</div>
+                <div class="right">确定</div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="add-select-box">
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <div class="left">客户来源</div>
+                <div class="right">请选择</div>
+            </div>
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <div class="left">二级来源</div>
+                <div class="right">自由资源</div>
+            </div>
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <div class="left">三级来源</div>
+                <div class="right">其他</div>
+            </div>
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <div class="left">合作渠道客户</div>
+                <div class="right search-right">
+                    <input type="text" placeholder="请输入">
+                </div>
+            </div>
+
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <input type="text" class="no-search" placeholder="请输入来源网络信息">
+            </div>
+
+            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+                <input type="text" class="has-search" placeholder="请输入客户准确联系方式">
+                <div class="search-btn">搜索</div>
+            </div>
+        </div>
+        <div class="add-search-box flex-con">
+            <ul>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+            </ul>
+        </div>
+
+        <div class="popup-bg follow-popup" style="display:none;"></div>
+        <!-- 选择员工 -->
+        <div class="choose-employee-popup" style="display:none;">
+            <div class="choose-employee-t bor-1px-b">选择员工<i class="close"></i></div>
+            <div class="choose-employee-b">
+                <ul>
+                    <li class="curr">232</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                    <li>哈哈哈哈</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+apiready = function(){
+    
+}
+</script>
+</html>
