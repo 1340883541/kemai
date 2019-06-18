@@ -476,6 +476,10 @@
     }
         // 刷新数据
     function refrshIndexData() {
+        indexV.isLoadFinishNew = false;
+        indexV.isLoadFinishSystem = false;
+        indexV.isLoadFinishMessage = false;
+        indexV.isLoadFinishStat = false;
         indexV.fetchNewData()
         indexV.fetchStatData();
         indexV.getMessageData();

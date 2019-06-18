@@ -180,9 +180,7 @@
                 // 根据员工id获取列表
                 getUserInfo: function() {
                     var _this = this;
-                    setTimeout(function() {
-                        wDialog.showProgress();
-                    }, 100);
+                    wDialog.showProgress();
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findRegion',
