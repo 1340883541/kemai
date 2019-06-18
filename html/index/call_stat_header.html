@@ -112,8 +112,8 @@
                 endDate:''
             },
             mounted:function(){
-                this.startDate = param.startDate||funcGetThisToday().startDate;
-                this.endDate = param.endDate||funcGetThisToday().endDate;
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
                 this.callStatus = param.callStatus;
             },
             methods:{
