@@ -4,8 +4,8 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.222:9000/', // 本地 小麦
     // baseUrl:'https://192.168.0.112:9000/', // 本地  埃文
     // baseUrl:'https://192.168.0.222:9100/', // 本地
-    // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    baseUrl: 'https://call.jindinghaiju.com/', // 正式
+    baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
+    // baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
@@ -63,103 +63,96 @@ function wApiAjax(par) {
     // console.log(JSON.stringify(newHeaders))
     // console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
     // console.log(JSON.stringify(par.url))
-    // if(true){
-    //     wDialog.toast({
-    //         msg:'系统维护中'
-    //     })
-    //     wDialog.hideProgress();
-    // }else{
-        api.ajax({
-            url: __CONFIG__.baseUrl + par.url,
-            method: par.method || 'post',
-            timeout: 120,
-            dataType: par.dataType || 'json',
-            headers: newHeaders,
-            report: par.report || false,
-            tag:par.url,
-            data: {
-                values: par.data || {},
-                files: par.files || {}
-            },
-        }, function(ret, err) {
+    api.ajax({
+        url: __CONFIG__.baseUrl + par.url,
+        method: par.method || 'post',
+        timeout: 120,
+        dataType: par.dataType || 'json',
+        headers: newHeaders,
+        report: par.report || false,
+        tag:par.url,
+        data: {
+            values: par.data || {},
+            files: par.files || {}
+        },
+    }, function(ret, err) {
+        // console.log(JSON.stringify(ret))
+        if(ret && ret.count){
+            if(ret.pageNo == 1){
+                api.toast({
+                    msg: '总共'+ret.count + '条数据',
+                    duration: 2000,
+                    location: 'bottom'
+                });
+            }
+        }
+        // if(ret && ret.reqTime){
+        //     api.toast({
+        //         msg: '请求 '+ret.reqTime + 'ms时长',
+        //         duration: 2000,
+        //         location: 'bottom'
+        //     });
+        // }
+        if (ret && ret.code != 500) {
             // console.log(JSON.stringify(ret))
-            if(ret && ret.count){
-                if(ret.pageNo == 1){
-                    api.toast({
-                        msg: '总共'+ret.count + '条数据',
-                        duration: 2000,
-                        location: 'bottom'
-                    });
+            // console.log(JSON.stringify(newHeaders))
+            // console.log(JSON.stringify(par.url))
+            if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
+                if(!isLoginPastDue){
+                    isLoginPastDue = true;
+                    wDialog.hideProgress();
+                    // 清除全局token
+                    myLocalStorage.clearItem('token');
+                    wPref.removePrefs({key:'userInfo'});
+                    wPref.removePrefs({key:'isLogin'});
+
+                    // 清除推送
+                    var ajpush = api.require('ajpush');
+                    ajpush.bindAliasAndTags({
+                        alias:'',
+                    },function(res){
+                        // 设置别名
+                        if(res.statusCode == 0){
+
+                        }
+                    })
+                    wDialog.alert({
+                        msg:'用户信息过期，请重新登录',
+                        cb:function(){
+                            api.openWin({
+                                name: 'login',
+                                url: '../login/login.html'
+                            });
+
+                        }
+                    })
                 }
             }
-            // if(ret && ret.reqTime){
-            //     api.toast({
-            //         msg: '请求 '+ret.reqTime + 'ms时长',
-            //         duration: 2000,
-            //         location: 'bottom'
-            //     });
-            // }
-            if (ret && ret.code != 500) {
-                // console.log(JSON.stringify(ret))
-                // console.log(JSON.stringify(newHeaders))
-                // console.log(JSON.stringify(par.url))
-                if(ret.code == 1001 || ret.code == 1002 || ret.code == 1003){
-                    if(!isLoginPastDue){
-                        isLoginPastDue = true;
-                        wDialog.hideProgress();
-                        // 清除全局token
-                        myLocalStorage.clearItem('token');
-                        wPref.removePrefs({key:'userInfo'});
-                        wPref.removePrefs({key:'isLogin'});
-
-                        // 清除推送
-                        var ajpush = api.require('ajpush');
-                        ajpush.bindAliasAndTags({
-                            alias:'',
-                        },function(res){
-                            // 设置别名
-                            if(res.statusCode == 0){
-
-                            }
-                        })
-                        wDialog.alert({
-                            msg:'用户信息过期，请重新登录',
-                            cb:function(){
-                                api.openWin({
-                                    name: 'login',
-                                    url: '../login/login.html'
-                                });
-
-                            }
-                        })
-                    }
+            else if(ret.code == 1005){
+                if(!isCanLetApp){
+                    isCanLetApp = true;
+                    setTimeout(function(){
+                        isCanLetApp = false;
+                    },2000)
+                    wDialog.hideProgress();
+                    wDialog.toast({
+                        msg:'系统正在维护中'
+                    })
                 }
-                else if(ret.code == 1005){
-                    if(!isCanLetApp){
-                        isCanLetApp = true;
-                        setTimeout(function(){
-                            isCanLetApp = false;
-                        },2000)
-                        wDialog.hideProgress();
-                        wDialog.toast({
-                            msg:'系统正在维护中'
-                        })
-                    }
-                }
-                else{
-                    par.success && typeof par.success === 'function' && par.success(ret);
-                }
-            } else {
-                wDialog.toast({
-                    msg: '请求失败，请重试'
-                })
-                console.log(JSON.stringify(par.url))
-                console.log(JSON.stringify(err))
-                wDialog.hideProgress();
-                par.fail && typeof par.fail === 'function' && par.fail(err);
             }
-        });
-    // }
+            else{
+                par.success && typeof par.success === 'function' && par.success(ret);
+            }
+        } else {
+            wDialog.toast({
+                msg: '请求失败，请重试'
+            })
+            console.log(JSON.stringify(par.url))
+            console.log(JSON.stringify(err))
+            wDialog.hideProgress();
+            par.fail && typeof par.fail === 'function' && par.fail(err);
+        }
+    });
 }
 /**
  * 创建一个sign
