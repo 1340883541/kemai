@@ -111,7 +111,19 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
 apiready = function(){
-    
+    new Vue({
+        el:'#add-wrapper',
+        data:{
+            orginOneList:[],
+            originTwoList:[],
+            originThreeList:[],
+            isHaveOther:false,
+            isHavePark:false,
+            isHaveOldCustomer:false,
+            isHaveCooperation:false,
+            isHaveActivity:false,
+        }
+    })
 }
 </script>
 </html>

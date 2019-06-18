@@ -273,7 +273,11 @@
                 teamEmpList:[],
                 groupList:[],
                 groupEmpList:[],
-                crewList:[]
+                crewList:[],
+                isInitDataLoadFinish:true,
+                isTeamDataLoadFinish:true,
+                isGroupDateLoadFinish:true,
+                isCrewDateLoadFinish:true
             },
             mounted: function() {
                 this.init();
@@ -288,6 +292,8 @@
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     this.jobTitle = this.userInfo.relativePosi;
                     this.currStatus = param.status;
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
                     console.log('param--------->'+JSON.stringify(param))
                     if(this.jobTitle === 'gngly' || this.jobTitle === 'qygly'){
                         this.isShowAreaBox = true;
@@ -310,7 +316,8 @@
                     var _this = this;
                     setTimeout(function(){
                         wDialog.showProgress();
-                    },10)
+                    },10);
+                    this.isInitDataLoadFinish = false;
                     console.log('manager -- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -346,7 +353,8 @@
                         },
                         success: function(res) {
                             console.log('initlist '+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isInitDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if (res.code == 1) {
                                 var jobRelaIdx = getJobRelative(_this.jobTitle);
                                 if(jobRelaIdx === 1){
@@ -406,6 +414,7 @@
                     }
                     var _this = this;
                     wDialog.showProgress();
+                    this.isTeamDataLoadFinish = false;
                     wApiAjax({
                         url:'systemResource/sysResourceListByRegion',
                         headers:{
@@ -423,7 +432,8 @@
                         },
                         success:function(res){
                             console.log('teamlist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isTeamDataLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.teamList = _this.funcFormatRequestData(res.data.teamList);
                                 _this.teamEmpList = _this.funcFormatRequestData(res.data.teamEmpList||[]);
@@ -458,6 +468,7 @@
                     // }
                     var _this = this;
                     wDialog.showProgress();
+                    this.isGroupDateLoadFinish = false;
                     console.log('group list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -487,7 +498,8 @@
                         },
                         success:function(res){
                             console.log('grouplist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isGroupDateLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.groupList =_this.funcFormatRequestData(res.data.groupList);
                                 _this.groupEmpList = _this.funcFormatRequestData(res.data.groupEmpList||[]);
@@ -514,10 +526,8 @@
                 // 获取成员数据
                 fetchCrewData:function(isFilter){
                     isFilter = isFilter || false;
-                    // if(this.areaId === '' || this.teamId === '' || this.groupId === ''){
-                    //     return
-                    // }
                     var _this = this;
+                    this.isCrewDateLoadFinish = false;
                     wDialog.showProgress();
                     console.log('crew list request'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
@@ -550,7 +560,8 @@
                         },
                         success:function(res){
                             console.log('crewlist-------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            _this.isCrewDateLoadFinish = true;
+                            _this.funcHideProgress();
                             if(res.code == 1){
                                 _this.crewList = _this.funcFormatRequestData(res.data.groupList);
                                 if(!isFilter){
@@ -603,9 +614,23 @@
                 // 筛选获取数据
                 filterGetData:function(){
                     this.fetchPosiData(true);
-                    this.fetchTeamData(true);
-                    this.fetchGroupData(true);
-                    this.fetchCrewData(true);
+                    if(this.areaId && getJobRelative(this.userInfo.relativePosi) <= 1){
+                        console.log('in1')
+                        this.fetchTeamData(true);
+                    }
+                    if(this.areaId && this.teamId  && getJobRelative(this.userInfo.relativePosi) <= 2){
+                        console.log('in2')
+                        this.fetchGroupData(true);
+                    }
+                    if(this.areaId && this.teamId && this.groupId && getJobRelative(this.userInfo.relativePosi) <= 3){
+                        console.log('in3')
+                        this.fetchCrewData(true);
+                    }
+                },
+                funcHideProgress:function(){
+                    if(this.isInitDataLoadFinish && this.isTeamDataLoadFinish && this.isGroupDateLoadFinish && this.isCrewDateLoadFinish){
+                        wDialog.hideProgress();
+                    }
                 },
                 // 格式化数据
                 funcFormatRequestData:function(data){

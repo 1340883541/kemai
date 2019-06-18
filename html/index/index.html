@@ -189,10 +189,15 @@
                 isLoadFinishNew: false,
                 isLoadFinishSystem: false,
                 isLoadFinishStat: false,
-                isLoadFinishMessage: false
+                isLoadFinishMessage: false,
+                startDate:'',
+                endDate:''
             },
             mounted: function() {
                 this.netWorkStatus();
+                this.startDate = funcGetThisTwoMonth().startDate;
+                this.endDate = funcGetThisTwoMonth().endDate;
+                console.log(this.startDate + '------------' + this.endDate)
                 // 获取数据
                 this.fetchStatData();
                 this.getMessageData();
@@ -211,7 +216,7 @@
             },
             filters: {
                 messageFilter: function(n) {
-                    return n > 99 ? '99+' : n;
+                    return n > 999999 ? '999999+' : n;
                 }
             },
             methods: {
@@ -335,7 +340,9 @@
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid
+                            employeeid: _this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate
                         },
                         success: function(res) {
                             console.log('system respose---->'+JSON.stringify(res))
@@ -392,12 +399,15 @@
                 },
                 // 跳转到系统跟进列表
                 handleSkipSystemList: function(status) {
+                    var _this = this;
                     if (this.userInfo.relativePosi == 'yg') {
                         wHrefJs.openWin({
                             name: 'systemFollowHeader',
                             path: './system_follow_header.html',
                             param: {
-                                status: status
+                                status: status,
+                                startDate:_this.startDate,
+                                endDate:_this.endDate
                             },
                             bgColor: '#f7f7f7'
                         })
@@ -406,7 +416,9 @@
                             name: 'managerSystemFollow',
                             url: 'manager_system_follow.html',
                             param: {
-                                status: status
+                                status: status,
+                                startDate:_this.startDate,
+                                endDate:_this.endDate
                             }
                         })
                     }

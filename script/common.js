@@ -209,6 +209,7 @@ function funcGetThisWeek(){
 		endDate:funcFormateDate(year,month,day-week+7)
 	}
 }
+
 // 获取到本月的起止时间
 function funcGetThisMonth(){
 	var date = new Date(),
@@ -219,6 +220,17 @@ function funcGetThisMonth(){
 	return {
 		startDate:funcFormateDate(year,month,1),
 		endDate:funcFormateDate(year,month,lastDay)
+	}
+}
+// 获取到两个月的起止时间
+function funcGetThisTwoMonth(){
+	var date = new Date(),
+		year = date.getFullYear(),
+		month = date.getMonth()+1,
+        day = date.getDate();
+	return {
+		startDate:funcFormateDate(year,month-2,day),
+		endDate:funcFormateDate(year,month,day)
 	}
 }
 // 获取到本月的起止时间
