@@ -180,7 +180,9 @@
                 // 根据员工id获取列表
                 getUserInfo: function() {
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10);
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findRegion',
@@ -193,7 +195,9 @@
                         },
                         success: function(res) {
                             console.log('change person response---'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },100);
                             if (res.code == 1) {
                                 _this.lists = res.data.map(function(v) {
                                     v.isShowDetail = true;

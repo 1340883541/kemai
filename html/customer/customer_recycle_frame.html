@@ -183,7 +183,9 @@
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10)
                     console.log(JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -215,7 +217,9 @@
                         },
                         success:function(res){
                             console.log(JSON.stringify(res))
-                            wDialog.hideProgress();
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },100);
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;
                                 if(!isLoadMore){

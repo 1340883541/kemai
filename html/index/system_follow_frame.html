@@ -195,7 +195,9 @@
                 fetchSystemData: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10);
                     console.log('request data ====> '+JSON.stringify({
                         employeeid: param.empId ? param.empId : _this.userInfo.employeeid,
                         search_cusName: _this.search_cusName,
@@ -239,7 +241,9 @@
                         },
                         success: function(res) {
                             console.log('system response -----------'+JSON.stringify(res))
-                            wDialog.hideProgress();
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },100);
                             if (res.code == 1) {
                                 if (!isLoadMore) {
                                     _this.khDataList = res.data ? res.data : [];

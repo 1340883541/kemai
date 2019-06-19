@@ -172,7 +172,9 @@
                 fetchAllotEeployee: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10);
                     console.log('allot employee frame request----'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
@@ -202,7 +204,9 @@
                             pageSize: 10
                         },
                         success: function(res) {
-                            wDialog.hideProgress();
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },100);
                             console.log(JSON.stringify(res))
                             if (res.code == 1) {
                                 if (!isLoadMore) {

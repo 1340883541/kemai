@@ -314,7 +314,9 @@
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10);
                     this.isInitDataLoadFinish = false;
                     console.log('manager -- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
@@ -627,7 +629,9 @@
                 },
                 funcHideProgress:function(){
                     if(this.isInitDataLoadFinish && this.isTeamDataLoadFinish && this.isGroupDataLoadFinish && this.isCrewDataLoadFinish){
-                        wDialog.hideProgress();
+                        setTimeout(function(){
+                            wDialog.hideProgress();
+                        },100);
                     }
                 },
                 // 格式化数据
