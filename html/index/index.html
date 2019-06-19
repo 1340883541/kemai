@@ -47,6 +47,9 @@
                             <div class="head-bb-t" v-text="newResource.num||0"></div>
                             <div class="head-bb-b" v-text="newResource.name"></div>
                         </div>
+                        <div class="index-loading flex-wrap flex-center flex-align-item" v-show="!isLoadFinishNew" style="display:none;">
+                            <img src="../../image/index_loading.gif" alt="">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,6 +64,9 @@
                     </div>
                 </div>
                 <div class="flex-con system-lis"></div>
+                <div class="index-loading flex-wrap flex-center flex-align-item" v-show="!isLoadFinishSystem" style="display:none;">
+                    <img src="../../image/index_loading.gif" alt="">
+                </div>
                 <!-- <div
                     class="flex-con system-lis"
                     v-for="(system,idx) in systemResourceFollowList"
@@ -228,9 +234,9 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     var TOKEN_DATA = myLocalStorage.getItem('token');
-                    wDialog.showProgress({
-                        modal: false
-                    });
+                    // wDialog.showProgress({
+                    //     modal: false
+                    // });
                     wApiAjax({
                         url: 'msgRemind/getRecoverySta',
                         method: 'get',
@@ -260,9 +266,9 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     TOKEN_DATA = myLocalStorage.getItem('token');
-                    wDialog.showProgress({
-                        modal: false
-                    });
+                    // wDialog.showProgress({
+                    //     modal: false
+                    // });
                     wApiAjax({
                         url: 'workbench/newAddResourceFoll',
                         headers: {
@@ -292,9 +298,9 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     TOKEN_DATA = myLocalStorage.getItem('token');
-                    wDialog.showProgress({
-                        modal: false
-                    });
+                    // wDialog.showProgress({
+                    //     modal: false
+                    // });
                     wApiAjax({
                         url: 'todayCall/index',
                         headers: {
@@ -331,9 +337,9 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     TOKEN_DATA = myLocalStorage.getItem('token');
-                    wDialog.showProgress({
-                        modal: false
-                    });
+                    // wDialog.showProgress({
+                    //     modal: false
+                    // });
                     wApiAjax({
                         url: 'systemResource/sysResourceSta',
                         headers: {
@@ -481,7 +487,7 @@
                 funcHideProgress: function() {
                     console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat)
                     if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat) {
-                        wDialog.hideProgress();
+                        // wDialog.hideProgress();
                     }
                 }
             }

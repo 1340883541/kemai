@@ -111,7 +111,20 @@
     flex-wrap: wrap;
     height: 64px;
 }
-
+.index-loading{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width:100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 1000;
+}
+.index-loading > img{
+    width:20px;
+    height: 20px;
+    opacity: .5;
+}
 .index-header .head-box .head-bb .head-bb-lis{
     position: relative;
     min-width:33.33%;
