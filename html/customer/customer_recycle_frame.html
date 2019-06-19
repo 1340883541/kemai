@@ -164,6 +164,7 @@
                 endDate:'',
                 pageNo:1,
                 totalPage:1,
+                pageSize:10,
                 khDataList:[],  // 客户信息list
                 userInfo:'',
                 isHavaMoreData:true
@@ -216,12 +217,16 @@
                             sort:_this.currSort
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },100);
                             if(res.code == 1){
-                                _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;
+                                if(res.count){
+                                    _this.isHavaMoreData = res.count > _this.pageNo * _this.pageSize ? true : false;
+                                }else{
+                                    _this.isHavaMoreData = res.data ? res.data.length >= _this.pageSize : false;
+                                }
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
                                 }
