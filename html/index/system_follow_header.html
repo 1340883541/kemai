@@ -110,7 +110,7 @@
                 currOriginTwo:'',
                 currStatus:'',
                 currHome:'',
-                currSort:0,
+                currSort:1,
                 userInfo:{}
             },
             mounted:function(){
@@ -130,6 +130,8 @@
                         this.currOriginTwo = param.currOriginTwo;
                         this.currStatus = param.currStatus;
                     }else {
+                        this.startDate = param.startDate;
+                        this.endDate = param.endDate;
                         this.currStatus = param.status;
                     }
                 },
