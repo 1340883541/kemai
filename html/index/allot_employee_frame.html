@@ -172,9 +172,7 @@
                 fetchAllotEeployee: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    setTimeout(function(){
-                        wDialog.showProgress();
-                    },10);
+                    wDialog.showProgress();
                     console.log('allot employee frame request----'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,

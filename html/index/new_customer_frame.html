@@ -181,9 +181,7 @@
                 fetchNewAdd: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    setTimeout(function(){
-                        wDialog.showProgress();
-                    },10);
+                    wDialog.showProgress();
                     var url = '';
                     if(param.empId){
                         url = 'newResource/newAddResFollListByEmp';

@@ -314,9 +314,7 @@
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;
                     var _this = this;
-                    setTimeout(function(){
-                        wDialog.showProgress();
-                    },10);
+                    wDialog.showProgress();
                     this.isInitDataLoadFinish = false;
                     console.log('manager -- request--------' + JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
