@@ -90,7 +90,7 @@
         <!-- 弹出销售 -->
         <!-- <div class="popup_curr1" v-show="popup_curr1" style="display:none;"> -->
         <div class="popup_curr1" v-show="popup_curr1">
-            <div class="mengcheng" @click.stop="popup_curr1  = popup_curr = false;isFooter=true;"></div>
+            <div class="mengcheng" @click.stop="popup_curr1  = popup_curr = false;isFooter=true;isChooseZzOrg=false;"></div>
             <div class="curr_choose_box">
                 <div class="popup_box_list">
                     <div class="curr_text_name">
@@ -110,6 +110,9 @@
                             </div>
                             <div class="name">{{item.name}}</div>
                         </div>
+                        <div class="empty-box flex-wrap flex-center flex-align-item" v-if="groupListOrg.length === 0 && groupListPer.length === 0">
+                            暂无数据
+                        </div>
                     </div>
                     <div class="content_rig">
                         <div class="cont_flex" v-for="(crew,i) in crewList" :key="crew.id" @click.stop="handleChooseCrew(crew.id,crew.name,i)">
@@ -118,6 +121,9 @@
                                 <img src="../../image/icon-danxuankuangp.png" v-else>
                             </div>
                             <div class="name_title">{{crew.name}}</div>
+                        </div>
+                        <div class="empty-box flex-wrap flex-center flex-align-item" v-if="crewList.length === 0 && isChooseZzOrg">
+                            暂无数据
                         </div>
                     </div>
                 </div>
@@ -161,7 +167,8 @@
                 groupListPer:[],
                 crewList:[],
                 currGroupOrgIdx:'',
-                currGroupPerIdx:''
+                currGroupPerIdx:'',
+                isChooseZzOrg:false
             },
             mounted: function() {
                 this.init();
@@ -238,6 +245,7 @@
                     });
                     this.empId = '';
                     this.currName = '';
+                    this.isChooseZzOrg = true;
                     if(this.currGroupOrgIdx === idx){
                         return;
                     }else{
