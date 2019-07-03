@@ -27,8 +27,9 @@
             <div class="follow-box follow-box1">
                 <div class="follow-b1-t bor-1px-b">
                     <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
-                    <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
-                    <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div>
+                    <!-- <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
+                    <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div> -->
+                    <div class="wechat" v-if="wechatCard">微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div>
                     <div class="addr">号码归属地：<span v-text="clientAddr"></span></div>
                 </div>
                 <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchCustomerState">
@@ -208,15 +209,15 @@
         }, function(ret, err){
             followRecordV.handleBack();
         });
-        // 查看微信成功
-        api.addEventListener({
-            name: 'lookWechatSuccess'
-        }, function(ret, err){
-            if( ret ){
-                followRecordV.isNotLookWechat = false;
-                followRecordV.wechatCard = ret.value.wechat;
-            }
-        });
+        // // 查看微信成功
+        // api.addEventListener({
+        //     name: 'lookWechatSuccess'
+        // }, function(ret, err){
+        //     if( ret ){
+        //         followRecordV.isNotLookWechat = false;
+        //         followRecordV.wechatCard = ret.value.wechat;
+        //     }
+        // });
         api.addEventListener({
             name: 'chooseFollowText'
         }, function(ret, err){
@@ -283,8 +284,9 @@
                 isInitFollowContent:isIos(),
 
                 // 获取微信号码
-                isNotLookWechat:true,
+                // isNotLookWechat:true,
                 wechatCard:'',
+                realWechatCard:''
             },
             mounted:function(){
                 this.init();
@@ -383,9 +385,16 @@
                                 // 获取初始化数据
                                 _this.initFollowData.clientName = res.data.name;
                                 _this.initFollowData.clientStateCode = clientStateObj.value;
-                                // 微信号
-                                _this.isNotLookWechat = Boolean(~res.data.wechat.indexOf('****'));
-                                _this.wechatCard = res.data.wechat;
+                                // // 微信号
+                                // _this.isNotLookWechat = Boolean(~res.data.wechat.indexOf('****'));
+                                // _this.wechatCard = res.data.wechat;
+                                var wechat = res.data.wechat.trim();
+                                _this.realWechatCard = wechat;
+                                if(wechat.length <= 5){
+                                    _this.wechatCard = '********';
+                                }else{
+                                    _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                }
                                 _this.followId = res.followId;
                                 _this.clientAddr = res.data.attribution || '未知';
                                 setTimeout(function(){
@@ -919,28 +928,28 @@
                 funcHideAllPopup:function(){
                     $('.follow-popup').hide();
                 },
-                // 查看微信
-                handleLookWechat:function(){
-                    var _this = this;
-                    wHrefJs.openFrame({
-                        name:'getWechat',
-                        path:'../components/getwechat/get_wechat.html',
-                        bgColor:'rgba(0,0,0,.2)',
-                        animation:{
-                            type:'none',
-                            subType:'from_bottom'
-                        },
-                        param:{
-                            cusId:_this.cusId
-                        }
-                    })
-                },
+                // // 查看微信
+                // handleLookWechat:function(){
+                //     var _this = this;
+                //     wHrefJs.openFrame({
+                //         name:'getWechat',
+                //         path:'../components/getwechat/get_wechat.html',
+                //         bgColor:'rgba(0,0,0,.2)',
+                //         animation:{
+                //             type:'none',
+                //             subType:'from_bottom'
+                //         },
+                //         param:{
+                //             cusId:_this.cusId
+                //         }
+                //     })
+                // },
                 // 复制并打开微信
                 handleClipOpenWechat:function(){
                     var clipBoard = api.require('clipBoard'),
                         _this = this;
                     clipBoard.set({
-                        value: _this.wechatCard
+                        value: _this.realWechatCard
                     }, function(ret, err) {
                         if(ret.status){
                             wDialog.toast({

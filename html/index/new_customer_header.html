@@ -125,9 +125,10 @@
                     this.currOrigin = param.currOrigin;
                     this.currOriginTwo = param.currOriginTwo;
                     this.currOriginType = param.currType;
-                    this.startDate = param.startDate;
-                    this.endDate = param.endDate;
                 }
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
+
             },
             methods:{
                 init:function(){
@@ -261,8 +262,8 @@
                 currOrigin:param.val,
                 currType:param.val == 0 ? 2 : 1,
                 currOriginTwo:'',
-                startDate:'',
-                endDate:'',
+                startDate:param.startDate,
+                endDate:param.startDate,
             }
         }
         wHrefJs.openFrame({

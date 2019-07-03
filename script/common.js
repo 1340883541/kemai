@@ -130,6 +130,37 @@ function wOpenCustomerHomeFrame(par){
         param:par.param
     })
 }
+// 防抖节流
+var wFuncDebounceThrottle = {
+    timer:null,
+    // 防抖
+    wDebounce:function(fn,delay){
+        var _this = this;
+        if (_this.timer !== null) {
+            clearTimeout(_this.timer);
+        }
+        _this.timer = setTimeout(function() {
+            _this.timer = null;
+            clearTimeout(_this.timer);
+            fn.apply(null,arguments);
+            fn = null;
+            _this = null;
+        }, delay);
+    },
+    // 节流
+    wThrottle:function(fn,delay){
+        var _this = this;
+        if (_this.timer === null) {
+            _this.timer = setTimeout(function() {
+                _this.timer = null;
+                clearTimeout(_this.timer);
+                fn.apply(null,arguments);
+                fn = null;
+                _this = null;
+            }, delay)
+        }
+    }
+}
 // 打开更多筛选
 // 目前只包含 客户来源，来源归类，归属地，时间这四种选择。
 function wOpenCustomerMoreFrame(par){

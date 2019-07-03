@@ -43,7 +43,7 @@
                     </div>
                     <div class="mger-right" v-text="allotTxt" @click.stop="handleAllotEmployee"></div>
                 </div>
-                <div class="mger-nav flex-wrap">
+                <div class="mger-nav flex-wrap" id="mger-nav">
                     <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
                     <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
                     <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
@@ -320,7 +320,9 @@
                     });
                     this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
                     this.jobTitle = this.userInfo.relativePosi;
-
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
+                    console.log('curr relative position---------->'+this.jobTitle)
                     if(this.jobTitle === 'gngly' || this.jobTitle === 'qygly'){
                         this.isShowAreaBox = true;
                         this.isCurrArea = true;
@@ -332,6 +334,8 @@
                     else if(this.jobTitle === 'zz'){
                         this.isShowGroupBox = true;
                         this.isCurrGroup = true;
+                        $('#mger-nav').hide();
+                        $('.mger-header-fix,.mger-header-place').css('height','82px');
                     }
                     else{
                         console.log('没有这个权限')

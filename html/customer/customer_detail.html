@@ -16,15 +16,18 @@
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
     <style media="screen">
-        body,html{
+        body,
+        html {
             height: 100%;
         }
-        #wrapper{
+
+        #wrapper {
             min-height: 100%;
             overflow-x: hidden;
             overflow-y: scroll;
-            -webkit-overflow-scrolling:touch;
+            -webkit-overflow-scrolling: touch;
         }
+
         .loading {
             display: inline-block;
             vertical-align: middle;
@@ -54,13 +57,15 @@
 </head>
 
 <body>
-    <div id="wrapper" v-cloak>
+    <!-- <div id="wrapper" v-cloak> -->
+    <div id="wrapper">
         <div class="cd-header" id="cd-header">
             <div class="back-box flex-wrap flex-between" id="back-box">
                 <div class="back" onclick="wBackThisFunc()"></div>
                 <div class="header-txt">
-                    <span :class="{'curr':isShowDetailBox}" @click="switchTab(true)"><i></i>跟进信息</span>
-                    <span :class="{'curr':!isShowDetailBox}" @click="switchTab(false)"><i></i>意向资料</span>
+                    <span :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)"><i></i>跟进信息</span>
+                    <span :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)"><i></i>意向资料</span>
+                    <!-- <span :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)"><i></i>历史负责人</span> -->
                 </div>
                 <div class="right"></div>
                 <div class="offline-box clear" id="follow-alert" style="display:none;" @click.stop="handleSkipFollow(0)">
@@ -71,100 +76,123 @@
                 </div>
             </div>
             <div class="hname" id="scroll-hname">
-                <span v-text="cusInfo.cusName"></span>
+                <div><span v-text="cusInfo.cusName"></span></div>
             </div>
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
             <div class="horigin">号码归属地：<span v-text="cusInfo.attribution||'未知'"></span></div>
         </div>
         <section>
             <div class="cd-caption" id="js_cd_cap">
-                <div class="cd-ct w-inline-block" v-if="!isShowWechat">
+                <!-- <div class="cd-ct w-inline-block" v-if="!isShowWechat">
                     <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="handleLookWechat">查看微信</span>
                 </div>
                 <div class="cd-ct w-inline-block" v-if="isShowWechat">
                     <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
+                </div> -->
+
+                <div class="cd-ct w-inline-block" v-if="wechatCard">
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
                 </div>
-                <div class="cd-cb">
+                <div class="cd-cb" style="min-height:20px;">
                     <div class="cd-name" v-if="cusInfo.markName">
-                        <span v-if="cusInfo.markName">销售负责人：</span><span v-if="cusInfo.markName" v-text="cusInfo.markName"></span>
+                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i></i>
                     </div>
-                    <!-- <span class="line"><em v-if="cusInfo.markName && cusInfo.chanName" style="font-style:normal;color:#eee;">|</em></span> -->
                     <div class="cd-name" v-if="cusInfo.chanName">
-                        <span v-if="cusInfo.chanName">渠道负责人：</span><span v-if="cusInfo.chanName" v-text="cusInfo.chanName"></span>
+                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i></i>
                     </div>
                 </div>
             </div>
             <div class="cd-contain">
                 <div class="cd-nav" id="js_cd_nav">
                     <div class="cd-nav-ab flex-wrap">
-                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox}" @click="switchTab(true)">跟进信息(<span v-text="cusCount"></span>) <i></i></div>
-                        <div class="flex-con cd-n" :class="{'curr':!isShowDetailBox}" @click="switchTab(false)">意向资料<i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)">跟进信息(<span v-text="cusCount"></span>) <i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)">意向资料<i></i></div>
+                        <!-- <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)">历史负责人<i></i></div> -->
                     </div>
                     <div class="cd-nav-place"></div>
                 </div>
-                <!-- <transition name="fade"> -->
-                    <div class="cd-box cd-box0" v-show="isShowDetailBox">
-                        <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
-                            <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
+                <!-- 跟进信息 -->
+                <div class="cd-box cd-box0" v-show="isShowDetailBox === 0" style="display:none;">
+                    <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
+                        <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
+                        <div class="cd-flow-tit">
+                            <span v-text="returnFollowResultTitle(flow.contactway_vaule)"></span>
+                            <div class="copy-edit flex-wrap">
+                                <span @click.stop="handleClipTxt(flow.result)">复制</span>
+                                <b>|</b>
+                                <span @click.stop="handleEditFollowRecord(flow.id)">编辑</span>
+                            </div>
+                        </div>
+                        <div class="cd-flow-t" v-if="flow.result" v-text="flow.result" v-longpress="handleLongpressClipTxt" :data-followtxt="flow.result"></div>
+                        <div class="cd-flow-audio" v-if="flow.callStatus" :class="{'disabled':flow.callStatus&&!flow.callStatusUrl}" @click="handlePlayAudio($event)">
+                            <div class="audio audio-box" v-if="flow.callStatus && flow.callStatusUrl">
+                                <audio :src="baseUrl+flow.callStatusUrl"></audio>
+                            </div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
+                        <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime||'暂未跟进'"></span></div>
+                            <div class="gj-plan gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow||'暂无计划'"></span></div>
+                            <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 意向资料 -->
+                <div class="cd-box cd-box1" v-show="isShowDetailBox === 1" style="display:none;">
+                    <div class="cd-info" v-if="cusPersonInfo">
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.city">
+                            <div class="fl left">意向城市</div>
+                            <div class="fl right" v-text="cusPersonInfo.city"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.premises">
+                            <div class="fl left">意向楼盘</div>
+                            <div class="fl right" v-text="cusPersonInfo.premises"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.housestyle">
+                            <div class="fl left">意向房型</div>
+                            <div class="fl right" v-text="cusPersonInfo.housestyle"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.purpose">
+                            <div class="fl left">购房用途</div>
+                            <div class="fl right" v-text="cusPersonInfo.purpose"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.comment">
+                            <div class="fl left">客户备注</div>
+                            <div class="fl right" v-text="cusPersonInfo.comment"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 历史负责人 -->
+                <!-- <div class="cd-box cd-box2" v-show="isShowDetailBox === 2">
+                    <div class="cd-filter-box">
+                        <span>变更负责人筛选</span><i></i>
+                    </div>
+                    <div class="emp-filter-popup" @touchmove.stop.prevent>
+                        <ul>
+                            <li>全部</li>
+                            <li class="curr">销售负责人变更</li>
+                            <li>渠道负责人变更</li>
+                        </ul>
+                    </div>
+                    <div class="cd-employee-lists">
+                        <div class="cd-flow cd-employee-lis">
+                            <div class="cd-emp-icon cd-emp-icon0"></div>
                             <div class="cd-flow-tit">
-                                <span v-text="returnFollowResultTitle(flow.contactway_vaule)"></span>
-                                <div class="copy-edit flex-wrap">
-                                    <span @click.stop="handleClipTxt(flow.result)">复制</span>
-                                    <b>|</b>
-                                    <span @click.stop="handleEditFollowRecord(flow.id)">编辑</span>
-                                </div>
-                                <!-- <i></i> -->
+                                <span>2019/06/28 12:21:09</span>
                             </div>
-                            <div class="cd-flow-t" v-if="flow.result" v-text="flow.result" v-longpress="handleLongpressClipTxt" :data-followtxt="flow.result"></div>
-                            <!-- <div class="cd-flow-all">全文</div> -->
-                            <div class="cd-flow-audio" v-if="flow.callStatus" :class="{'disabled':flow.callStatus&&!flow.callStatusUrl}" @click="handlePlayAudio($event)">
-                                <div class="audio audio-box" v-if="flow.callStatus && flow.callStatusUrl">
-                                    <audio :src="baseUrl+flow.callStatusUrl"></audio>
-                                </div>
-                                <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
-                            </div>
-                            <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
-                            <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
+                            <div class="cd-flow-timebox">
                                 <i class="top-icon"></i>
-                                <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime||'暂未跟进'"></span></div>
-                                <div class="gj-plan gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow||'暂无计划'"></span></div>
-                                <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
+                                <div class="gj-time gj"><span>销售负责人变更, 销售顾问: </span><span class="emp-acount">史淘淘</span></div>
                             </div>
                         </div>
                     </div>
-                <!-- </transition> -->
-                <!-- <transition name="fade1"> -->
-                    <div class="cd-box cd-box1" v-show="!isShowDetailBox">
-                        <div class="cd-info" v-if="cusPersonInfo">
-                            <div class="cd-info-lis clear" v-if="cusPersonInfo.city">
-                                <div class="fl left">意向城市</div>
-                                <div class="fl right" v-text="cusPersonInfo.city"></div>
-                            </div>
-                            <div class="cd-info-lis clear" v-if="cusPersonInfo.premises">
-                                <div class="fl left">意向楼盘</div>
-                                <div class="fl right" v-text="cusPersonInfo.premises"></div>
-                            </div>
-                            <div class="cd-info-lis clear" v-if="cusPersonInfo.housestyle">
-                                <div class="fl left">意向房型</div>
-                                <div class="fl right" v-text="cusPersonInfo.housestyle"></div>
-                            </div>
-                            <div class="cd-info-lis clear" v-if="cusPersonInfo.purpose">
-                                <div class="fl left">购房用途</div>
-                                <div class="fl right" v-text="cusPersonInfo.purpose"></div>
-                            </div>
-                            <div class="cd-info-lis clear" v-if="cusPersonInfo.comment">
-                                <div class="fl left">客户备注</div>
-                                <div class="fl right" v-text="cusPersonInfo.comment"></div>
-                            </div>
-                        </div>
-                    </div>
-                <!-- </transition> -->
+                </div> -->
             </div>
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
                     <div class="flex-con skip-follow-btn follow-btn" @click.stop.prevent="handleSkipFollow(1)">去跟进</div>
-                    <!-- <div class="flex-con phone-follow-btn follow-btn" @click="callPhone(0)"><i></i>电话跟进</div> -->
-                    <!-- <div class="flex-con note-follow-btn follow-btn disabled" @click="skipNoteList"><i></i>短信跟进</div> -->
                 </div>
             </div>
             <input type="hidden" id="scroll-val" value="0">
@@ -189,12 +217,12 @@
         // 下拉加载更多
         api.addEventListener({
             name: 'scrolltobottom',
-            extra:{
-                threshold:8
+            extra: {
+                threshold: 8
             }
-        }, function(ret, err){
-            if(cusDetailV.isShowDetailBox){
-                if(++cusDetailV.pageNo <= cusDetailV.totalPage){
+        }, function(ret, err) {
+            if (cusDetailV.isShowDetailBox === 0) {
+                if (++cusDetailV.pageNo <= cusDetailV.totalPage) {
                     cusDetailV.fetchData(true);
                 }
             }
@@ -203,71 +231,72 @@
         // 跟进成功
         api.addEventListener({
             name: 'followRecordSuccessRefresh'
-        }, function(ret, err){
+        }, function(ret, err) {
             cusDetailV.pageNo = 1;
             cusDetailV.fetchData();
         });
-        // 查看微信成功
-        api.addEventListener({
-            name: 'lookWechatSuccess'
-        }, function(ret, err){
-            if( ret ){
-                cusDetailV.isShowWechat = true;
-                cusDetailV.wechatCard = ret.value.wechat;
-            }
-        });
+        // // 查看微信成功
+        // api.addEventListener({
+        //     name: 'lookWechatSuccess'
+        // }, function(ret, err) {
+        //     if (ret) {
+        //         cusDetailV.isShowWechat = true;
+        //         cusDetailV.wechatCard = ret.value.wechat;
+        //     }
+        // });
         cusDetailV = new Vue({
-            el:'#wrapper',
-            data:{
-                cusId:0,
-                cusPhone:'',
-                pageNo:1,
-                totalPage:1,
-                isShowDetailBox:true,
-                cusPersonInfo:{}, // 意向资料
-                cusInfoList:[], // 跟进信息列表
-                cusInfo:{},   // 跟进信息
-                wechatCard:'',  // 微信号
-                cusCount:0,
-                isShowWechat:false,
-                minePhone:'',
+            el: '#wrapper',
+            data: {
+                cusId: 0,
+                cusPhone: '',
+                pageNo: 1,
+                totalPage: 1,
+                isShowDetailBox: 0,
+                cusPersonInfo: {}, // 意向资料
+                cusInfoList: [], // 跟进信息列表
+                cusInfo: {}, // 跟进信息
+                wechatCard: '', // 微信号
+                realWechatCard:'',
+                cusCount: 0,
+                // isShowWechat: false,
+                minePhone: '',
 
 
                 // 当前播放的dom
-                baseUrl:__CONFIG__.baseUrl,
-                currHandlePlayTag:null,
-                isHandlePlay:false,
+                baseUrl: __CONFIG__.baseUrl,
+                currHandlePlayTag: null,
+                isHandlePlay: false,
 
                 // 存在补录的跟进id
-                followRootId:''
+                followRootId: ''
             },
-            created:function(){
+            created: function() {
                 this.cusId = param.cusId;
                 this.cusPhone = param.cusPhone;
                 this.userInfo = wPref.getPrefs({
-                    key:'userInfo'
+                    key: 'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
             },
-            mounted:function(){
+            mounted: function() {
                 this.getUserInfo();
                 this.fetchData();
             },
-            watch:{
-                isShowDetailBox:function(nv){
-                    if(nv === false){
+            watch: {
+                isShowDetailBox: function(nv) {
+                    if (nv === 0) {
                         $('#scroll-val').val('0');
                         $('#back-box .header-txt').hide();
                         $('#back-box').removeClass('curr');
                     }
                 },
-                value:function(nv){
-                    if(nv.length >= 6){
+                value: function(nv) {
+                    if (nv.length >= 6) {
                         this.isActive = true;
                     }
                 }
             },
-            methods:{
+            methods: {
                 getUserInfo: function() {
                     var _this = this
                     wApiAjax({
@@ -282,316 +311,315 @@
                         },
                         success: function(res) {
                             // console.log(JSON.stringify(res))
-                            if(res.code == 200){
-                                _this.minePhone = res.info.phone.substring(0,3)+'****'+res.info.phone.substring(7);
-                                if(_this.userInfo.phone != res.info.phone){
+                            if (res.code == 200) {
+                                _this.minePhone = res.info.phone.substring(0, 3) + '****' + res.info.phone.substring(7);
+                                if (_this.userInfo.phone != res.info.phone) {
                                     _this.userInfo.phone = res.info.phone;
                                     wPref.setPrefs({
-                                        key:'userInfo',
-                                        value:_this.userInfo
+                                        key: 'userInfo',
+                                        value: _this.userInfo
                                     })
                                 }
                             }
                         }
                     })
                 },
-                fetchData:function(isLoadMore){
+                fetchData: function(isLoadMore) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'customer/getcusinfo',
-                        headers:{
-                            "token":TOKEN_DATA
+                        url: 'customer/getcusinfo',
+                        headers: {
+                            "token": TOKEN_DATA
                         },
-                        data:{
-                            employeeid:_this.userInfo.employeeid,
-                            customerid:_this.cusId,
-                            pageNo:_this.pageNo,
-                            pageSize:10
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            customerid: _this.cusId,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
                         },
-                        success:function(res){
-                            console.log('customer detail---'+JSON.stringify(res))
+                        success: function(res) {
+                            console.log('customer detail---' + JSON.stringify(res))
                             wDialog.hideProgress();
-                            if(res.code == 1){
-                                if(!isLoadMore){
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
                                     _this.cusInfo = res.data.cusInfo;
                                     // 判断是否存在有未跟进的
                                     _this.followRootId = res.data.cusInfo.followId || '';
                                     res.data.cusInfo && res.data.cusInfo.existCallLogState == 0 ? $('#follow-alert').show() : $('#follow-alert').hide();
-                                    if(res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1){
-                                        _this.isShowWechat = false;
+                                    // if (res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1) {
+                                    //     _this.isShowWechat = false;
+                                    // } else {
+                                    //     _this.isShowWechat = true;
+                                    //     _this.wechatCard = res.data.cusInfo.wechat.trim();
+                                    // }
+                                    var wechat = res.data.cusInfo.wechat.trim();
+                                    _this.realWechatCard = wechat;
+                                    if(wechat.length <= 5){
+                                        _this.wechatCard = '********';
                                     }else{
-                                        _this.isShowWechat = true;
-                                        _this.wechatCard = res.data.cusInfo.wechat.trim();
+                                        _this.wechatCard = '****'+wechat.slice(wechat.length-4);
                                     }
                                     _this.cusPersonInfo = res.data.cusPurInfo[0];
                                     _this.cusInfoList = res.data.cusFllowInfo;
                                     _this.totalPage = Math.ceil(res.followcount / res.pageSize);
                                     _this.cusCount = res.followcount;
-                                    _this.$nextTick(function(){
-                                        var sinnerWid = $('#scroll-hname').width();
-                                        var sspWid = $('#scroll-hname > span').outerWidth();
-                                        var caWid = Math.floor(sspWid - sinnerWid);
-                                        var step = 80;
-                                        var initStep = 0;
-                                        if(caWid > 0){
+                                    _this.$nextTick(function() {
+                                        var sinnerWid = $('#scroll-hname > div').width();
+                                        var sspWid = $('#scroll-hname span').outerWidth();
+                                        var caWid = Math.ceil(sspWid - sinnerWid);
+                                        if (caWid > 0) {
+                                            var domSpan = $('#scroll-hname > div').eq(0).html();
+                                            $('#scroll-hname > div').append(domSpan);
+                                            var stepTime = Math.ceil(sspWid * 10);
                                             xunhuanScroll();
-                                            function xunhuanScroll(){
-                                                $('#scroll-hname > span').animate({
-                                                    'margin-left':-caWid
-                                                },caWid * 12,'linear',function(){
-                                                    $('#scroll-hname > span').css({
-                                                        'margin-left':0
+                                            function xunhuanScroll() {
+                                                $('#scroll-hname span').eq(0).animate({
+                                                    'margin-left': -(sspWid)
+                                                },stepTime, 'linear', function() {
+                                                    var domSpan = $('#scroll-hname span').eq(0).clone();
+                                                    $('#scroll-hname > div').append(domSpan);
+                                                    $('#scroll-hname span').eq(0).remove();
+                                                    $('#scroll-hname span').css({
+                                                        'margin-left': 0
                                                     });
                                                     xunhuanScroll();
-                                                })
+                                                });
                                             }
                                         }
                                     })
-                                }
-                                else{
-                                    if(res.data && res.data.cusFllowInfo){
+                                } else {
+                                    if (res.data && res.data.cusFllowInfo) {
                                         _this.cusInfoList = _this.cusInfoList.concat(res.data.cusFllowInfo);
                                     }
                                 }
 
-                            }else{
+                            } else {
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg: res.msg
                                 })
                             }
                         }
                     })
                 },
                 // 跟进内容题目
-                returnFollowResultTitle:function(i){
+                returnFollowResultTitle: function(i) {
                     // 电话
-                    if(i === 1){
+                    if (i === 1) {
                         return '通过电话联系客户';
                     }
                     // 短信
-                    else if(i === 2){
+                    else if (i === 2) {
                         return '通过短信联系客户';
                     }
                     // 邮箱
-                    else if(i === 3){
+                    else if (i === 3) {
                         return '通过邮箱联系客户';
                     }
                     // 微信、qq
-                    else if(i === 4){
+                    else if (i === 4) {
                         return '通过微信和QQ联系客户';
                     }
                     // 面访
-                    else if(i === 9){
+                    else if (i === 9) {
                         return '通过面访联系客户';
-                    }
-                    else{
+                    } else {
                         return '通过微信和QQ联系客户';
                     }
                 },
                 // 复制跟进内容
-                handleLongpressClipTxt:function(el){
+                handleLongpressClipTxt: function(el) {
                     var followTxt = el.getAttribute('data-followtxt');
                     var clipBoard = api.require('clipBoard'),
                         _this = this;
                     clipBoard.set({
                         value: followTxt
                     }, function(ret, err) {
-                        if(ret.status){
+                        if (ret.status) {
                             wDialog.toast({
-                                msg:'复制成功'
+                                msg: '复制成功'
                             });
                         }
                     });
                 },
-                handleClipTxt:function(txt) {
+                handleClipTxt: function(txt) {
                     var clipBoard = api.require('clipBoard');
                     clipBoard.set({
-                        value:txt
+                        value: txt
                     }, function(ret, err) {
-                        if(ret.status){
+                        if (ret.status) {
                             wDialog.toast({
-                                msg:'复制成功'
+                                msg: '复制成功'
                             });
                         }
                     });
                 },
                 // 跳转到跟进页面
-                handleSkipFollow:function(i){
+                handleSkipFollow: function(i) {
                     var _this = this;
                     api.openWin({
                         name: 'followRecord',
                         url: '../follow/follow_record.html',
                         pageParam: {
-                            id:_this.cusId,
-                            phone:_this.cusPhone,
-                            followId:i == 0 ? _this.followRootId : '',
-                            isWork:param.isWork
+                            id: _this.cusId,
+                            phone: _this.cusPhone,
+                            followId: i == 0 ? _this.followRootId : '',
+                            isWork: param.isWork
                         },
                         slidBackEnabled: false
                     });
                 },
                 // 编辑跟进记录
-                handleEditFollowRecord:function(id){
+                handleEditFollowRecord: function(id) {
                     var _this = this;
                     api.openWin({
                         name: 'followRecord',
                         url: '../follow/follow_record.html',
                         pageParam: {
-                            id:_this.cusId,
-                            phone:_this.cusPhone,
-                            followId:id,
-                            isEditFollow:true,
-                            isWork:param.isWork
+                            id: _this.cusId,
+                            phone: _this.cusPhone,
+                            followId: id,
+                            isEditFollow: true,
+                            isWork: param.isWork
                         },
                         slidBackEnabled: false
                     });
                 },
                 // 切换 跟进信息 和 意向资料
-                switchTab:function(bool){
-                    this.isShowDetailBox = bool;
+                switchTab: function(idx) {
+                    this.isShowDetailBox = idx;
                 },
                 // 判断是通过什么方式联系的，显示不同的icon
-                judgeIcon:function(i){
+                judgeIcon: function(i) {
                     var iconClass = 'cd-flow-sicon';
                     // 电话
-                    if(i === 1){
-                        return iconClass+'3';
+                    if (i === 1) {
+                        return iconClass + '3';
                     }
                     // 短信
-                    else if(i === 2){
-                        return iconClass+'6';
+                    else if (i === 2) {
+                        return iconClass + '6';
                     }
                     // 邮箱
-                    else if(i === 3){
-                        return iconClass+'4';
+                    else if (i === 3) {
+                        return iconClass + '4';
                     }
                     // 微信、qq
-                    else if(i === 4){
-                        return iconClass+'2';
+                    else if (i === 4) {
+                        return iconClass + '2';
                     }
                     // 面访
-                    else if(i === 9){
-                        return iconClass+'1';
-                    }
-                    else{
-                        return iconClass+'4';
+                    else if (i === 9) {
+                        return iconClass + '1';
+                    } else {
+                        return iconClass + '4';
                     }
                 },
-                // 查看微信
-                handleLookWechat:function(){
-                    var _this = this;
-                    wHrefJs.openFrame({
-                        name:'getWechat',
-                        path:'../components/getwechat/get_wechat.html',
-                        bgColor:'rgba(0,0,0,.2)',
-                        animation:{
-                            type:'none',
-                            subType:'from_bottom'
-                        },
-                        param:{
-                            cusId:_this.cusId
-                        }
-                    })
-                },
+                // // 查看微信
+                // handleLookWechat: function() {
+                //     var _this = this;
+                //     wHrefJs.openFrame({
+                //         name: 'getWechat',
+                //         path: '../components/getwechat/get_wechat.html',
+                //         bgColor: 'rgba(0,0,0,.2)',
+                //         animation: {
+                //             type: 'none',
+                //             subType: 'from_bottom'
+                //         },
+                //         param: {
+                //             cusId: _this.cusId
+                //         }
+                //     })
+                // },
                 // 复制并打开微信
-                handleClipOpenWechat:function(){
+                handleClipOpenWechat: function() {
                     var clipBoard = api.require('clipBoard'),
                         _this = this;
                     clipBoard.set({
-                        value: _this.wechatCard
+                        value: _this.realWechatCard
                     }, function(ret, err) {
-                        if(ret.status){
+                        if (ret.status) {
                             wDialog.toast({
-                                msg:'复制成功'
+                                msg: '复制成功'
                             });
-                            setTimeout(function(){
+                            setTimeout(function() {
                                 var systemType = api.systemType;
                                 // android
-                                if(systemType === 'android'){
+                                if (systemType === 'android') {
                                     api.openApp({
                                         androidPkg: 'com.tencent.mm',
                                         mimeType: 'text/html',
                                         uri: ''
                                     }, function(ret, err) {
                                         if (ret) {
-                                            // alert(JSON.stringify(ret));
                                         } else {
                                             alert('您还未安装微信');
                                         }
                                     });
                                 }
                                 // ios
-                                else if(systemType === 'ios'){
+                                else if (systemType === 'ios') {
                                     api.openApp({
-                                        iosUrl:'weixin://'
+                                        iosUrl: 'weixin://'
                                     }, function(ret, err) {
                                         if (ret) {
-                                            // alert(JSON.stringify(ret));
                                         } else {
                                             alert('您还未安装微信');
                                         }
                                     });
 
-                                }
-                                else{
+                                } else {
                                     console.log('不是android或ios机型')
                                     return;
                                 }
 
-                            },500);
+                            }, 500);
                         }
                     });
                 },
                 // 播放
-                handlePlayAudio:function(e){
+                handlePlayAudio: function(e) {
                     var tag = e.currentTarget;
                     var _this = this;
-                    if(!$(tag).hasClass('disabled')){
+                    if (!$(tag).hasClass('disabled')) {
                         var audioEle = $(tag).find('.audio-box audio')[0];
                         var audioTxtEle = $(tag).find('.audio-txt')[0];
-                        if(audioEle){
-                            if(_this.currHandlePlayTag === audioEle){
-                                if(_this.isHandlePlay = !_this.isHandlePlay){;
+                        if (audioEle) {
+                            if (_this.currHandlePlayTag === audioEle) {
+                                if (_this.isHandlePlay = !_this.isHandlePlay) {;
                                     $(audioTxtEle).removeClass('playing');
-                                    audioEle.removeEventListener('ended',function(){})
+                                    audioEle.removeEventListener('ended', function() {})
                                     audioEle.pause()
-                                }else{
+                                } else {
                                     $(audioTxtEle).addClass('playing');
                                     audioEle.play();
-                                    audioEle.addEventListener('ended',function(){
+                                    audioEle.addEventListener('ended', function() {
                                         // console.log('innnn-----------end1')
                                         $(audioTxtEle).removeClass('playing');
                                     })
                                 }
-                            }else{
-                                $('.audio-box audio').each(function(i,d){
-                                    if(audioEle === d){
-                                            $(audioTxtEle).addClass('playing');
-                                            _this.isHandlePlay = false;
-                                            audioEle.load();
-                                            audioEle.play();
-                                            audioEle.addEventListener('ended',function(){
-                                                // console.log('innnn-----------end2')
-                                                $(audioTxtEle).removeClass('playing');
-                                            })
-                                            _this.currHandlePlayTag = audioEle;
-                                    }else{
+                            } else {
+                                $('.audio-box audio').each(function(i, d) {
+                                    if (audioEle === d) {
+                                        $(audioTxtEle).addClass('playing');
+                                        _this.isHandlePlay = false;
+                                        audioEle.load();
+                                        audioEle.play();
+                                        audioEle.addEventListener('ended', function() {
+                                            $(audioTxtEle).removeClass('playing');
+                                        })
+                                        _this.currHandlePlayTag = audioEle;
+                                    } else {
                                         $(d).parent().siblings('.audio-txt').removeClass('playing');
-                                        d.removeEventListener('ended',function(){})
+                                        d.removeEventListener('ended', function() {})
                                         d.pause();
                                     }
                                 });
                             }
-                            // audioEle.addEventListener('ended',function(){
-                            //     console.log('innnn-----------end')
-                            //     $(audioTxtEle).removeClass('playing');
-                            // })
-                        }
-                        else{
+                        } else {
                             wDialog.toast({
-                                msg:'暂没有播放文件'
+                                msg: '暂没有播放文件'
                             })
                         }
                     }
@@ -602,32 +630,33 @@
         var isEventScroll = true;
         var capOffsetTop = $('#js_cd_cap').offset().top - 40;
         var navOffsetTop = $("#js_cd_nav").offset().top;
-        $(window).on('scroll',function(){
-            if(isEventScroll){
+        $(window).on('scroll', function() {
+            if (isEventScroll) {
+                console.log('scrollTop ----> '+$(this).scrollTop())
                 var val = $('#scroll-val').val();
                 isEventScroll = false;
                 var wTop = $(this).scrollTop();
                 // console.log(wTop)
-                if(wTop >= capOffsetTop){
+                if (wTop >= capOffsetTop) {
                     $('#back-box').addClass('curr');
-                    if(wTop >= navOffsetTop){
+                    if (wTop >= navOffsetTop) {
                         // console.log('--------------------'+val);
-                        if(val == 0){
+                        if (val == 0) {
                             $('#scroll-val').val('1');
                             $('#back-box .header-txt').show();
                         }
-                    }else{
+                    } else {
                         $('#scroll-val').val('0');
                         $('#back-box .header-txt').hide();
                     }
-                }else{
+                } else {
                     $('#scroll-val').val('0');
                     $('#back-box .header-txt').hide();
                     $('#back-box').removeClass('curr');
                 }
-                setTimeout(function(){
+                setTimeout(function() {
                     isEventScroll = true;
-                },10);
+                }, 10);
             }
         })
     }

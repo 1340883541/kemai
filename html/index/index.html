@@ -131,9 +131,9 @@
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
-        <!-- <div class="skip-add" @click.stop="handleSkipAddCustomer">
+        <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
-        </div> -->
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -197,7 +197,7 @@
                 isLoadFinishStat: false,
                 isLoadFinishMessage: false,
                 startDate:'',
-                endDate:''
+                endDate:'',
             },
             mounted: function() {
                 this.netWorkStatus();
@@ -275,7 +275,9 @@
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid
+                            employeeid: _this.userInfo.employeeid,
+                            startTime: funcGetThisToday().startDate,
+                            endTime: funcGetThisToday().endDate,
                         },
                         success: function(res) {
                             console.log('new respose---->'+JSON.stringify(res))
@@ -432,12 +434,15 @@
                 // 跳转新增
                 skipNewCustomer: function(val) {
                     var self = this;
+                    console.log('userinfo ------>  '+JSON.stringify(this.userInfo))
                     if (this.userInfo.relativePosi == 'yg') {
                         wHrefJs.openWin({
                             name: 'newCustomerHeader',
                             path: './new_customer_header.html',
                             param: {
-                                val: val
+                                val: val,
+                                startDate: funcGetThisToday().startDate,
+                                endDate: funcGetThisToday().endDate,
                             },
                             bgColor: '#f7f7f7'
                         })
@@ -446,7 +451,9 @@
                             name: 'managerNewFollow',
                             path: 'manager_new_follow.html',
                             param: {
-                                val: val
+                                val: val,
+                                startDate: funcGetThisToday().startDate,
+                                endDate: funcGetThisToday().endDate,
                             },
                             bgColor: '#f7f7f7'
                         })

@@ -39,7 +39,7 @@
                         <div class="desc" v-text="currNowLocationTxt"></div>
                     </div>
                 </div>
-                <div class="mger-nav flex-wrap">
+                <div class="mger-nav flex-wrap" id="mger-nav">
                     <div
                         class="flex-con"
                         :class="{'curr':isCurrArea}"
@@ -306,9 +306,13 @@
                     this.isShowTeamBox = true;
                     this.isCurrTeam = true;
                 }
-                else{
+                else if(this.jobTitle == 'zz'){
                     this.isShowGroupBox = true;
                     this.isCurrGroup = true;
+                    $('#mger-nav').hide();
+                    $('.mger-header-fix,.mger-header-place').css('height','82px');
+                }else{
+                    console.log('没有权限')
                 }
                 this.fetchCallData();
             },
