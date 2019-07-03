@@ -168,7 +168,13 @@
                                     pwd: hex_md5(self.pwd)
                                 },
                                 success: function(res) {
-                                    // 6--账号不存在 4--登录成功  3--该员工账号未进行授权  5--账号密码错误/未分配角色   7--该员工手机号码未验证
+                                    console.log('-------------login-----------------'+JSON.stringify(res))
+                                    // 2--该员工账号已被删除  6--账号不存在 4--登录成功  3--该员工账号未进行授权  5--账号密码错误/未分配角色   7--该员工手机号码未验证
+                                    if(res.code == 2){
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
+                                    }
                                     if (res.code == 6) {
                                         wDialog.toast({
                                             msg: res.msg
@@ -215,7 +221,6 @@
                                             self.sign = "登录中"
                                             self.login_hide = true
                                             console.log("-------login------------"+JSON.stringify(api.pageParam))
-                                            console.log('-------------login-suc-----------------'+JSON.stringify(res))
                                             api.sendEvent({
                                                 name: 'loginSuc',
                                                 extra: {

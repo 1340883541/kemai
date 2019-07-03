@@ -122,7 +122,7 @@
             name: 'filterCustomerList'
         }, function(ret, err){
             var obj = ret.value;
-            console.log(JSON.stringify(obj))
+            // console.log(JSON.stringify(obj))
             if(obj){
                 if(typeof obj.status != 'undefined'){
                     nCustomerFrame.search_status = obj.status;
@@ -266,7 +266,7 @@
                             pageSize:10,
                         },
                         success:function(res){
-                            console.log('customer frame response--------'+JSON.stringify(res))
+                            // console.log('customer frame response--------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
