@@ -47,13 +47,45 @@
             <div class="form-div">
                 <div class="row flex-wrap flex-align">
                     <div class="input-box flex-con">
-                        <input type="text" maxlength="20" placeholder="请输入个人账号" v-model="phone" v-on:input="tel_focus">
-                        <div class="tips_img" v-show="defult_hide"><img src="../../image/icon-qingkong-w.png" @click="empty_tel"></div>
+                        <input
+                            type="text"
+                            maxlength="20"
+                            placeholder="请输入个人账号"
+                            v-model="phone"
+                            @blur.stop="isShowDeleteCountIcon = false"
+                            @focus.stop="phone.trim() === '' ? isShowDeleteCountIcon = false : isShowDeleteCountIcon = true"
+                        />
+                        <div
+                            class="tips_img"
+                            v-show="isShowDeleteCountIcon"
+                            style="display:none;"
+                            @click.stop="handleCleanAcount"
+                        ><img src="../../image/login_del.png"></div>
                     </div>
                 </div>
                 <div class="row flex-wrap flex-align">
-                    <div class="input-box flex-con input_pasd"><input type="password" maxlength="16" placeholder="请输入密码" v-model="pwd" v-on:input="pwd_focus">
-                        <div class="tips_img" v-show="defult_hideImg"><img src="../../image/icon-qingkong-w.png" @click="empty_pwd"></div>
+                    <div class="input-box flex-con input_pasd">
+                        <input
+                            type="password"
+                            maxlength="16"
+                            placeholder="请输入密码"
+                            v-model="pwd"
+                            @blur.stop="isShowDeletePwdIcon = false"
+                            @focus.stop="pwd.trim() === '' ? isShowDeletePwdIcon = false : isShowDeletePwdIcon = true"
+                            ref="pwd"
+                        />
+                        <div
+                            class="tips_img1"
+                            v-show="isShowDeletePwdIcon"
+                            style="display:none;"
+                            @click.stop="handleCleanPwd"
+                        ><img src="../../image/login_del.png"></div>
+                        <div
+                            class="tips_img"
+                            v-show="pwd.trim()"
+                            style="display:none;"
+                            @click.stop="handleChangePwdType"
+                        ><img v-if="isLookPwdIcon" src="../../image/pwd_look.png"><img v-else src="../../image/pwd_nolook.png"></div>
                     </div>
                 </div>
                 <div class="submit-btn space-between">
@@ -79,7 +111,6 @@
 <script>
     var indexV = null;
     apiready = function() {
-        // console.log('index')
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err) {
@@ -101,32 +132,50 @@
                 phone: '',
                 pwd: '',
                 sign: '登录',
-                defult_hide: false,
-                defult_hideImg: false,
+                isShowDeleteCountIcon: false,
+                isShowDeletePwdIcon: false,
+                isLookPwdIcon:false,
                 login_hide: false,
             },
+            watch:{
+                phone:function(n){
+                    if(n.trim() === ''){
+                        this.phone = '';
+                        this.isShowDeleteCountIcon = false;
+                    }
+                    else{
+                        this.isShowDeleteCountIcon = true;
+                    }
+                },
+                pwd:function(n){
+                    if(n.trim() === ''){
+                        this.pwd = '';
+                        this.isShowDeletePwdIcon = false;
+                    }
+                    else{
+                        this.isShowDeletePwdIcon = true;
+                    }
+                }
+            },
             methods: {
-                pwd_focus:function() {
-                    var _this = this;
-                    var pwdExp = /^[a-zA-Z0-9]+$/;
-                    if (!pwdExp.test(_this.pwd)) {};
-                    _this.defult_hideImg = true;
-                },
-                tel_focus:function() {
-                    var _this = this;;
-                    _this.defult_hide = true;
-                },
-                empty_pwd:function() {
+                handleCleanPwd: function() {
                     var _this = this;
                     _this.pwd = "";
-                    _this.defult_hideImg = false;
                 },
-                empty_tel:function() {
+                handleCleanAcount: function() {
                     var _this = this;
                     _this.phone = "";
-                    _this.defult_hide = false;
                 },
-
+                // 切换password样式
+                handleChangePwdType:function(){
+                    if(this.isLookPwdIcon){
+                        this.isLookPwdIcon = false;
+                        this.$refs.pwd.setAttribute('type','password');
+                    }else{
+                        this.isLookPwdIcon = true;
+                        this.$refs.pwd.setAttribute('type','text');
+                    }
+                },
                 login: function() {
                     var self = this;
                     var accountExp = /^([A-Za-z0-9]{3,20})$/;
@@ -168,11 +217,16 @@
                                     pwd: hex_md5(self.pwd)
                                 },
                                 success: function(res) {
-                                    console.log('-------------login-----------------'+JSON.stringify(res))
-                                    // 2--该员工账号已被删除  6--账号不存在 4--登录成功  3--该员工账号未进行授权  5--账号密码错误/未分配角色   7--该员工手机号码未验证
-                                    if(res.code == 2){
+                                    console.log('-------------login-----------------' + JSON.stringify(res))
+                                    // 0 其他提示狀態 2--该员工账号已被删除  6--账号不存在 4--登录成功  3--该员工账号未进行授权  5--账号密码错误/未分配角色   7--该员工手机号码未验证
+                                    if (res.code == 0) {
                                         wDialog.toast({
-                                            msg:res.msg
+                                            msg: res.msg
+                                        })
+                                    }
+                                    if (res.code == 2) {
+                                        wDialog.toast({
+                                            msg: res.msg
                                         })
                                     }
                                     if (res.code == 6) {
@@ -194,21 +248,23 @@
                                         if (res.data.platAccount[0].isvalidate == 1) {
                                             // 推送的
                                             var ajpush = api.require('ajpush');
-                                            if(api.systemType === 'andriod'){
+                                            if (api.systemType === 'andriod') {
                                                 ajpush.init(function(ret) {
-                                                    if (ret && ret.status){
+                                                    if (ret && ret.status) {
                                                         //success
                                                     }
                                                 });
                                             }
                                             ajpush.bindAliasAndTags({
-                                                alias:res.configEnv + '_' +res.data.platAccount[0].employeeid,
-                                            },function(res){
+                                                alias: res.configEnv + '_' + res.data.platAccount[0].employeeid,
+                                            }, function(res) {
                                                 // console.log(JSON.stringify(res))
                                                 // 设置别名
-                                                if(res.statusCode == 0){}
+                                                if (res.statusCode == 0) {}
                                             })
-                                            var userInfo = Object.assign({},{relativePosi:res.rolescode},res.data.platAccount[0])
+                                            var userInfo = Object.assign({}, {
+                                                relativePosi: res.rolescode
+                                            }, res.data.platAccount[0])
                                             wPref.setPrefs({
                                                 key: 'userInfo',
                                                 value: JSON.stringify(userInfo)
@@ -220,7 +276,7 @@
                                             })
                                             self.sign = "登录中"
                                             self.login_hide = true
-                                            console.log("-------login------------"+JSON.stringify(api.pageParam))
+                                            console.log("-------login------------" + JSON.stringify(api.pageParam))
                                             api.sendEvent({
                                                 name: 'loginSuc',
                                                 extra: {

@@ -141,6 +141,10 @@
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
     apiready = function() {
+        console.log('设备型号--'+api.deviceModel)
+        console.log('手机平台的系统版本--'+api.systemVersion)
+        console.log('系统类型--'+api.systemType)
+        
         // 讯飞语音识别
         var voiceRecognizer = api.require('voiceRecognizer');
         voiceRecognizer.createUtility({

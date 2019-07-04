@@ -33,10 +33,14 @@
     transition: all .2s ease;
 }
 .index-header .index-title.fixbg{
-    background-image: -webkit-linear-gradient(left, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
-    background-image: -o-linear-gradient(left, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
-    background-image: linear-gradient(to right, rgba(33, 110, 255, 0.95) 0%, rgba(36, 140, 250, 0.95) 100%);
+    background-image: -webkit-linear-gradient(left, rgba(33, 110, 255, 1) 0%, rgba(36, 140, 250, 1) 100%);
+    background-image: -o-linear-gradient(left, rgba(33, 110, 255, 1) 0%, rgba(36, 140, 250, 1) 100%);
+    background-image: linear-gradient(to right, rgba(33, 110, 255, 1) 0%, rgba(36, 140, 250, 1) 100%);
 }
+/*.index-header .index-title.fixbg .index-tilte-txt{
+    text-align: center;
+    font-size: 18px;
+}*/
 .index-header .offline-box{
     position: absolute;
     left: 0;top:48px;
