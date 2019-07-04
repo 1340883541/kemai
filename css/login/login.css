@@ -1,34 +1,41 @@
-body,html{
-    width:100%;
-    height:100%;
+body, html {
+    width: 100%;
+    height: 100%;
 }
-body{
-   background:url('../../image/img-denglu-bg.jpg') no-repeat ;
-   background-size: cover;
-   /*background-attachment:fixed;*/
+
+body {
+    background: url('../../image/img-denglu-bg.jpg') no-repeat;
+    background-size: cover;
+    /*background-attachment:fixed;*/
 }
-#wrap{
-    width:100%;
-    height:100%;
+
+#wrap {
+    width: 100%;
+    height: 100%;
     padding-top: 26.666vw;
 }
-.logo{
+
+.logo {
     width: 84px;
     height: 40px;
     margin: auto;
 }
-.logo img{
-    width:100%;
-    height:100%;
+
+.logo img {
+    width: 100%;
+    height: 100%;
 }
-#main{
+
+#main {
     padding: 60px 28px 60px 30px;
     overflow: hidden;
 }
-.row{
+
+.row {
     position: relative;
     margin-bottom: 20px;
 }
+
 .input-box>input {
     width: 100%;
     height: 48px;
@@ -36,80 +43,86 @@ body{
     padding-bottom: 12px;
     padding-left: 15px;
     line-height: 24px;
-	background-color: rgba(255, 255, 255, 0.1);
-	border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
-	border: solid 1px rgba(255, 255, 255, 0.8);
+    border: solid 1px rgba(255, 255, 255, 0.4);
     font-size: 15px;
     font-family: PingFangSC-Regular;
-	letter-spacing: 0.5px;
-	color: #fff;
+    letter-spacing: 0.5px;
+    color: #fff;
 }
-.input_pasd>input{
-    border:solid 1px rgba(255, 255, 255, 0.4);
+
+.input_pasd>input {
+    border: solid 1px rgba(255, 255, 255, 0.8);
 }
+
 .input-box>input::input-placeholder {
     font-size: 15px;
     font-family: PingFangSC-Regular;
-	font-weight: normal;
-	font-stretch: normal;
-	letter-spacing: 0.5px;
-	color: #fff;
+    font-weight: normal;
+    font-stretch: normal;
+    letter-spacing: 0.5px;
+    color: #fff;
     opacity: 0.5;
 }
 
 .input-box>input::-webkit-input-placeholder {
     font-size: 15px;
     font-family: PingFangSC-Regular;
-	letter-spacing: 0.5px;
-	color: #fff;
+    letter-spacing: 0.5px;
+    color: #fff;
     opacity: 0.5;
 }
 
 .input-box>input::-ms-input-placeholder {
     font-size: 15px;
     font-family: PingFangSC-Regular;
-	letter-spacing: 0.5px;
-	color: #fff;
+    letter-spacing: 0.5px;
+    color: #fff;
 }
 
 .input-box>input::-moz-input-placeholder {
     font-size: 15px;
     font-family: PingFangSC-Regular;
-	letter-spacing: 0.5px;
-	color: #fff;
+    letter-spacing: 0.5px;
+    color: #fff;
 }
-.tips_img{
+
+.tips_img {
     position: absolute;
     right: 0;
     top: 0;
-    width:40px;
+    width: 40px;
     height: 48px;
     overflow: hidden;
 }
-.tips_img1{
+
+.tips_img1 {
     position: absolute;
     right: 40px;
     top: 0;
-    width:30px;
+    width: 30px;
     height: 48px;
     overflow: hidden;
 }
-.tips_img1 img,
-.tips_img img{
+
+.tips_img1 img, .tips_img img {
     width: 20px;
     height: 20px;
     display: block;
     margin: 14px auto;
 }
+
 .submit-btn {
     margin-top: 40px;
     width: 100%;
 }
-.submit-btn .text-align{
+
+.submit-btn .text-align {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,38 +131,23 @@ body{
     height: 48px;
     line-height: 48px;
     background-color: #ffffff;
-
-	box-shadow: 0px 8px 12px 0px
-		rgba(0, 0, 0, 0.05),
-		0px 4px 18px 0px
-		rgba(79, 114, 243, 0.4);
-    -webkit-box-shadow: 0px 8px 12px 0px
-		rgba(0, 0, 0, 0.05),
-		0px 4px 18px 0px
-		rgba(79, 114, 243, 0.4);
-    -moz-box-shadow: 0px 8px 12px 0px
-		rgba(0, 0, 0, 0.05),
-		0px 4px 18px 0px
-		rgba(79, 114, 243, 0.4);
-    -ms-box-shadow: 0px 8px 12px 0px
-		rgba(0, 0, 0, 0.05),
-		0px 4px 18px 0px
-		rgba(79, 114, 243, 0.4);
-    -o-box-shadow: 0px 8px 12px 0px
-		rgba(0, 0, 0, 0.05),
-		0px 4px 18px 0px
-		rgba(79, 114, 243, 0.4);
-	border-radius: 4px;
+    box-shadow: 0px 8px 12px 0px rgba(0, 0, 0, 0.05), 0px 4px 18px 0px rgba(79, 114, 243, 0.4);
+    -webkit-box-shadow: 0px 8px 12px 0px rgba(0, 0, 0, 0.05), 0px 4px 18px 0px rgba(79, 114, 243, 0.4);
+    -moz-box-shadow: 0px 8px 12px 0px rgba(0, 0, 0, 0.05), 0px 4px 18px 0px rgba(79, 114, 243, 0.4);
+    -ms-box-shadow: 0px 8px 12px 0px rgba(0, 0, 0, 0.05), 0px 4px 18px 0px rgba(79, 114, 243, 0.4);
+    -o-box-shadow: 0px 8px 12px 0px rgba(0, 0, 0, 0.05), 0px 4px 18px 0px rgba(79, 114, 243, 0.4);
+    border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
     font-family: PingFangSC-Medium;
-	font-size: 0.36rem;
-	color: #1b6efb;
+    font-size: 0.36rem;
+    color: #1b6efb;
 }
-.submit-btn img{
-    width:20px;
-    height:20px;
-    margin-right:4px;
+
+.submit-btn img {
+    width: 20px;
+    height: 20px;
+    margin-right: 4px;
 }

@@ -46,14 +46,14 @@
         <div id="main" class="flex-con">
             <div class="form-div">
                 <div class="row flex-wrap flex-align">
-                    <div class="input-box flex-con">
+                    <div class="input-box flex-con" :class="{input_pasd:isAccountFocus}">
                         <input
                             type="text"
                             maxlength="20"
                             placeholder="请输入个人账号"
                             v-model="phone"
-                            @blur.stop="isShowDeleteCountIcon = false"
-                            @focus.stop="phone.trim() === '' ? isShowDeleteCountIcon = false : isShowDeleteCountIcon = true"
+                            @blur.stop="isShowDeleteCountIcon = false;isAccountFocus = false;"
+                            @focus.stop="phone.trim() === '' ? isShowDeleteCountIcon = false : isShowDeleteCountIcon = true;isAccountFocus = true;"
                         />
                         <div
                             class="tips_img"
@@ -64,14 +64,14 @@
                     </div>
                 </div>
                 <div class="row flex-wrap flex-align">
-                    <div class="input-box flex-con input_pasd">
+                    <div class="input-box flex-con" :class="{input_pasd:isPwdFocus}">
                         <input
                             type="password"
                             maxlength="16"
                             placeholder="请输入密码"
                             v-model="pwd"
-                            @blur.stop="isShowDeletePwdIcon = false"
-                            @focus.stop="pwd.trim() === '' ? isShowDeletePwdIcon = false : isShowDeletePwdIcon = true"
+                            @blur.stop="isShowDeletePwdIcon = false;isPwdFocus = false;"
+                            @focus.stop="pwd.trim() === '' ? isShowDeletePwdIcon = false : isShowDeletePwdIcon = true;isPwdFocus = true;"
                             ref="pwd"
                         />
                         <div
@@ -85,7 +85,7 @@
                             v-show="pwd.trim()"
                             style="display:none;"
                             @click.stop="handleChangePwdType"
-                        ><img v-if="isLookPwdIcon" src="../../image/pwd_look.png"><img v-else src="../../image/pwd_nolook.png"></div>
+                        ><img v-if="isLookPwdIcon" src="../../image/pwd_nolook.png"><img v-else src="../../image/pwd_look.png"></div>
                     </div>
                 </div>
                 <div class="submit-btn space-between">
@@ -136,6 +136,8 @@
                 isShowDeletePwdIcon: false,
                 isLookPwdIcon:false,
                 login_hide: false,
+                isAccountFocus:false,
+                isPwdFocus:false
             },
             watch:{
                 phone:function(n){
