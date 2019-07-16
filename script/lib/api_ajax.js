@@ -4,8 +4,8 @@ var __CONFIG__ = {
     // baseUrl:'https://192.168.0.222:9000/', // 本地 小麦
     // baseUrl:'https://192.168.0.112:9000/', // 本地  埃文
     // baseUrl:'https://192.168.0.222:9100/', // 本地
-    // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    baseUrl: 'https://call.jindinghaiju.com/', // 正式
+    baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
+    // baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA'
 }
 // Object.assign pollify
@@ -62,7 +62,7 @@ function wApiAjax(par) {
     }
     // console.log(JSON.stringify(newHeaders))
     // console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
-    // console.log(JSON.stringify(par.url))
+    // console.log('url-------------------'+JSON.stringify(par.url))
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
@@ -129,6 +129,7 @@ function wApiAjax(par) {
                 }
             }
             else if(ret.code == 1005){
+                console.log(JSON.stringify(ret))
                 if(!isCanLetApp){
                     isCanLetApp = true;
                     setTimeout(function(){
