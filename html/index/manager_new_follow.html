@@ -93,7 +93,7 @@
                 >
                     <div class="mger-lt w-elli org-lt" v-text="team.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
+                        <div class="mger-lpro-curr" :style="'width:'+(team.percent?team.percent:0.1)+'%;'">
                             <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
                         </div>
                     </div>
@@ -111,7 +111,7 @@
                 >
                     <div class="mger-lt w-elli emp-lt" v-text="team.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+team.percent+'%;'">
+                        <div class="mger-lpro-curr" :style="'width:'+(team.percent?team.percent:0.1)+'%;'">
                             <span :class="[team.percent <= 80?'right':'left']" v-text="team.percent+'%'"></span>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
                 >
                     <div class="mger-lt w-elli org-lt" v-text="group.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
+                        <div class="mger-lpro-curr" :style="'width:'+(group.percent?group.percent:0.1)+'%;'">
                             <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
                         </div>
                     </div>
@@ -150,7 +150,7 @@
                 >
                     <div class="mger-lt w-elli emp-lt" v-text="group.name"></div>
                     <div class="mger-lpro">
-                        <div class="mger-lpro-curr" :style="'width:'+group.percent+'%;'">
+                        <div class="mger-lpro-curr" :style="'width:'+(group.percent?group.percent:0.1)+'%;'">
                             <span :class="[group.percent <= 80?'right':'left']" v-text="group.percent+'%'"></span>
                         </div>
                     </div>

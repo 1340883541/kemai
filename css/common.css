@@ -722,160 +722,97 @@
     font-size: .32rem;
     /*font-weight: bold;*/
 }
-/*跟进记录弹窗*/
-.w-follow-popup{
+/*popup select 弹窗*/
+
+.w-popup-select {
     position: fixed;
     left: 0;
-    top: 0;
-    z-index: 9999;
+    bottom: 0;
+    z-index: 1000;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.4);
-    overflow: scroll;
-}
-/*.w-follow-popup .w-follow-bg{
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,.4);
-    padding-top: .28rem;
-}*/
-.w-follow-popup .w-follow-popup-box{
-    /*position: absolute;
-    left: .3rem;
-    right: .3rem;
-    top: 50%;
-    transform:translateY(-50%);*/
-    width:calc(100% - .6rem);
+    height: auto;
     background-color: #fff;
-    padding:.3rem;
-    border-radius: .3rem;
 }
-.w-follow-popup .w-follow-t{
-    height: .64rem;
-    line-height: .64rem;
-    color:#2e2e2e;
-    font-size: .36rem;
+
+.w-popup-select .popup-select-t {
+    position: relative;
+    height: 56px;
+    line-height: 56px;
+    text-align: center;
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+.w-popup-select .popup-select-t .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 56px;
+    height: 56px;
+    background: url('../image/icon-guanbi.png') no-repeat center;
+    background-size: 20px;
+}
+
+.w-popup-select .popup-select-nav{
+    position: relative;
+    height: 50px;
+    line-height: 50px;
+    width:100%;
+    background-color: #fbfbfb;
+    color:#999;
+    font-size: 16px;
     font-weight: bold;
     text-align: center;
 }
-.w-follow-popup .w-follow-inp{
+.w-popup-select .popup-select-nav > div{
     position: relative;
-    height: .94rem;
-    padding-top: .3rem;
-    line-height: .64rem;
-    font-size: .28rem;
+    overflow: hidden;
 }
-
-.w-follow-popup .w-follow-inp .w-follow-inp-cap{
-    color:#888;
-}
-.w-follow-popup .w-follow-inp .client-state-icon{
-    position: absolute;
-    right: .1rem;
-    bottom: .26rem;
-    width: 0;
-    height: 0;
-    border-top: .12rem solid #d2d2d2;
-    border-left: .1rem solid transparent;
-    border-right: .1rem solid transparent;
-}
-.w-follow-popup .w-follow-inp .w-follow-inp-lis{
-    position: absolute;
-    right: -.1rem;
-    top: .8rem;
-    z-index: 20;
-    margin-top: .13rem;
-    box-sizing: content-box;
-    background-color: #fff;
-    border:1px solid #bfbfbf;
-    /*display: none;*/
-}
-.w-follow-popup .w-follow-inp .w-follow-inp-lis ul{
-    /*max-height: 3.6rem;*/
-    /*overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling:touch;*/
-}
-.w-follow-popup .w-follow-inp .w-follow-inp-lis:before{
+.w-popup-select .popup-select-nav > div:after{
     content: '';
     position: absolute;
-    right: .18rem;
-    top: -.14rem;
-    width: .23rem;
-    height: .15rem;
-    background: url('../image/jianjiaotop.png') no-repeat center;
-    background-size: .23rem .15rem;
+    left:0;
+    bottom: 0;
+    width:100%;
+    height: 2px;
+    background-color: #0c7ff9;
+    display: none;
 }
-.w-follow-popup .w-follow-inp .w-follow-inp-lis li{
-    padding:0 .3rem;
-    height: .72rem;
-    line-height: .72rem;
-    color:#222;
-    font-size: .24rem;
+.w-popup-select .popup-select-nav > div.curr{
+    color:#0c7ff9;
 }
-.w-follow-popup .w-follow-inp > input{
-    padding:.16rem 0;
-    line-height: .32rem;
+.w-popup-select .popup-select-nav > div.curr:after{
+    display: block;
 }
-.w-follow-popup .w-follow-textarea{
-    padding-top: .3rem;
-    font-size: .28rem;
+.w-popup-select .popup-select-b {
+    padding-top: 15px;
+    height: 300px;
+    max-height: 300px;
+    box-sizing: content-box;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 }
-.w-follow-popup .w-follow-textarea .w-follow-inp-cap{
-    color:#888;
+
+.w-popup-select .popup-select-b ul li {
+    line-height: 50px;
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+    font-weight: bold;
+    width:100%;
+    padding:0 15px;
 }
-.w-follow-popup .w-follow-textarea > textarea{
-    padding: .1rem 0;
-    line-height: .32rem;
-    height: 1.46rem;
-    /*border:1px solid #dcdcdc;*/
-    margin-top: -.1rem;
-    border-radius: 3px;
+
+.w-popup-select .popup-select-b ul li.curr {
+    color: rgb(12, 127, 249);
 }
-.w-follow-popup .shortcut-list{
+.w-popup-select-bg {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 900;
     width: 100%;
-    height: 32px;
-    overflow-y: visible;
-    overflow-x: scroll;
-    -webkit-overflow-scrolling:touch;
-    line-height: 20px;
-}
-.w-follow-popup .shortcut-list .shortcut-lis{
-    width: auto;
-    height: 32px;
-}
-.w-follow-popup .shortcut-list .shortcut-lis > span{
-    padding:5px 8px;
-    margin-right: 5px;
-    border:1px solid #eee;
-    border-radius: 15px;
-    font-size: 14px;
-    color:#999;
-    text-align: center;
-}
-.w-follow-popup .w-follow-btn{
-    margin-top: .48rem;
-    color:#fff;
-    font-size: .3rem;
-    text-align: center;
-}
-.w-follow-popup .w-follow-btn > .one{
-    width:49%;
-    height: .72rem;
-    line-height: .76rem;
-    border-radius: 4px;
-    background-image: -moz-linear-gradient( 0deg, rgb(85,203,249) 0%, rgb(23,114,254) 100%);
-    background-image: -webkit-linear-gradient( 0deg, rgb(85,203,249) 0%, rgb(23,114,254) 100%);
-    background-image: -ms-linear-gradient( 0deg, rgb(85,203,249) 0%, rgb(23,114,254) 100%);
-}
-.w-follow-popup .w-follow-btn > .two{
-    width:48%;
-    height: .72rem;
-    line-height: .76rem;
-    border-radius: 4px;
-    background-image: linear-gradient(90deg, #ffca00 0%,  #fe9606 100%);
-}
-.w-follow-popup .w-follow-btn > .one.gray-bg,
-.w-follow-popup .w-follow-btn > .two.gray-bg{
-    background:#ccc;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .4);
 }

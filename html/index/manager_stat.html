@@ -84,7 +84,7 @@
                     @click.stop="handleChooseArea(area.name,area.id)"
                 >
                     <div class="mger-lt w-elli org-lt" v-text="area.name"></div>
-                    <div class="mger-lcount" :style="'width:'+area.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(area.percent?area.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="area.count"></span>次
                     </div>
@@ -100,7 +100,7 @@
                     @click.stop="handleChooseTeam(team.name,team.id)"
                 >
                     <div class="mger-lt w-elli org-lt" v-text="team.name"></div>
-                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(team.percent?team.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="team.count"></span>次
                     </div>
@@ -114,7 +114,7 @@
                     @click.stop="handleChooseCrew('team',team.id)"
                 >
                     <div class="mger-lt w-elli emp-lt" v-text="team.name"></div>
-                    <div class="mger-lcount" :style="'width:'+team.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(team.percent?team.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="team.count"></span>次
                     </div>
@@ -132,7 +132,7 @@
                     @click.stop="handleChooseGroup(group.name,group.id)"
                 >
                     <div class="mger-lt w-elli org-lt" v-text="group.name"></div>
-                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(group.percent?group.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="group.count"></span>次
                     </div>
@@ -146,7 +146,7 @@
                     @click.stop="handleChooseCrew('group',group.id)"
                 >
                     <div class="mger-lt w-elli emp-lt" v-text="group.name"></div>
-                    <div class="mger-lcount" :style="'width:'+group.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(group.percent?group.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="group.count"></span>次
                     </div>
@@ -164,7 +164,7 @@
                     @click.stop="handleChooseCrew('crew',crew.id)"
                 >
                     <div class="mger-lt w-elli emp-lt" v-text="crew.name"></div>
-                    <div class="mger-lcount" :style="'width:'+crew.percent+'%'"></div>
+                    <div class="mger-lcount" :style="'width:'+(crew.percent?crew.percent:0.1)+'%'"></div>
                     <div class="mger-ldesc">
                         <span v-text="crew.count"></span>次
                     </div>
@@ -402,7 +402,7 @@
                     // if(this.step)
                     if(data && data.length == 1){
                         return data.map(function(v){
-                            v.count == 0 ? v.percent = 0 : v.percent = 100;
+                            v.count == 0 ? v.percent = 0.1 : v.percent = 100;
                             return v;
                         });
                     }else{
@@ -411,7 +411,7 @@
                         });
                         var max = Math.max.apply(null,list);
                         return data.map(function(v){
-                            max == 0 ? v.percent = 0 : v.percent = Math.floor((v.count / max) * 100);
+                            max == 0 ? v.percent = 0.1 : v.percent = Math.floor((v.count / max) * 100) || 0.1;
                             return v;
                         });
                     }

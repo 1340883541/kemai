@@ -276,9 +276,10 @@
                                                 key: 'isLogin',
                                                 value: 1
                                             })
+                                            myLocalStorage.setItem('permissionList',JSON.stringify(res.permSetting))
                                             self.sign = "登录中"
                                             self.login_hide = true
-                                            console.log("-------login------------" + JSON.stringify(api.pageParam))
+                                            // console.log("-------login------------" + JSON.stringify(api.pageParam))
                                             api.sendEvent({
                                                 name: 'loginSuc',
                                                 extra: {

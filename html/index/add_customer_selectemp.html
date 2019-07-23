@@ -8,28 +8,27 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>新增客户-首页</title>
+    <title>选择销售员工|选择渠道员工-首页</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
-    <!-- <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" /> -->
 </head>
 
 <body>
-    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
-    <div id="add-wrapper" class="add-select-wrapper">
+    <div id="add-wrapper" class="add-wrapper" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop="handleBack"></div>
-                <div class="center">选择销售员工|选择渠道员工</div>
-                <div class="right">确定</div>
+                <div class="left back" @click.stop="api.closeWin();"></div>
+                <div class="center" v-text="titleText"></div>
+                <div class="right" @click.stop="handleSureSelect">确定</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
         <div class="emp-search-box">
             <div class="add-emp-cap">直接搜索</div>
-            <div class="emp-search-inp">
+            <div class="emp-search-inp" @click.stop="handleSkipSearchEmp">
                 <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" readonly disabled>
                 <i class="search-icon"></i>
             </div>
@@ -38,38 +37,28 @@
             <div class="add-emp-cap">按部门搜索</div>
             <div class="emp-select-lists">
                 <ul>
-                    <li class="flex-wrap flex-between bor-1px-b">
+                    <li class="flex-wrap flex-between bor-1px-b" v-show="isShowAreaSelect" style="display:none;">
                         <div class="left">区域</div>
-                        <div class="right">请选择员工区域</div>
+                        <div class="right w-elli" @click.stop="handleSelectArea">{{areaName ? areaName : '请选择员工区域'}}</div>
                     </li>
                     <li class="flex-wrap flex-between bor-1px-b">
                         <div class="left">部门</div>
-                        <div class="right">请选择员工部门</div>
+                        <div class="right w-elli" @click.stop="handleSelectDepartment">{{departmentName ? departmentName : '请选择员工部门'}}</div>
                     </li>
                     <li class="flex-wrap flex-between bor-1px-b">
                         <div class="left">员工</div>
-                        <div class="right">请选择对应员工</div>
+                        <div class="right w-elli" @click.stop="handleSelectEmployee">{{employeeName ? employeeName : '请选择对应员工'}}</div>
                     </li>
                 </ul>
             </div>
         </div>
-
-        <div class="popup-bg follow-popup"></div>
-        <!-- 选择员工 -->
-        <div class="choose-employee-popup">
-            <div class="choose-employee-t bor-1px-b">选择员工<i class="close"></i></div>
-            <div class="choose-employee-b">
-                <ul>
-                    <li class="curr">232</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                </ul>
-            </div>
-        </div>
+        <popup-select
+            :is-show-popup-select.sync="isShowPopupSelect"
+            :curr-popup-select-data="currPopupSelectData"
+            :popup-select-data-list="popupSelectDataList"
+            :origin="currOrigin"
+            @choose-popup-select-data="choosePopupSelectData"
+        ></popup-select>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -80,8 +69,245 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    apiready = function(){
-
+    var selectEmpV = null;
+    apiready = function() {
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
+        selectEmpV = new Vue({
+            el: '#add-wrapper',
+            data: {
+                titleText: '',
+                test: '',
+                userInfo:{},
+                isShowAreaSelect:false,
+                areaList:[],
+                areaName:'',
+                areaId:'',
+                departmentList:[],
+                departmentName:'',
+                departmentId:'',
+                employeeList:[],
+                employeeName:'',
+                employeeId:'',
+                // 筛选框
+                isShowPopupSelect:false,
+                popupSelectDataList:[],
+                currOrigin:'',
+                currPopupSelectData:''
+            },
+            mounted: function() {
+                this.userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                this.isShowAreaSelect = this.userInfo.relativePosi === 'gngly' ? true : false;
+                // 国内管理员
+                if(this.isShowAreaSelect){
+                    this.fetchAreaData();
+                }else{
+                    this.fetchDepartmentData();
+                }
+                this.titleText = param.origin === 'selectChannel' ? '选择渠道员工' : '选择销售员工';
+            },
+            methods: {
+                // 获取区域数据
+                fetchAreaData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'newResource/regionList',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(res.data){
+                                    _this.areaList = res.data.map(function(v){
+                                        v.value = v.id;
+                                        return v;
+                                    });
+                                }
+                            }
+                        }
+                    });
+                },
+                // 获取部门数据
+                fetchDepartmentData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'dataSource/getTeamsByEmp',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(res.data){
+                                    _this.departmentList = res.data.map(function(v){
+                                        v.value = v.teamId;
+                                        v.name = v.teamName;
+                                        return v;
+                                    });
+                                }
+                            }
+                        }
+                    });
+                },
+                // 确定当前选中的员工
+                handleSureSelect:function(){
+                    if(this.employeeId === ''){
+                        wDialog.toast({
+                            msg:'请先选择员工'
+                        });
+                        return;
+                    }
+                    var returnObj = {
+                        origin:param.origin,
+                        empId:this.employeeId,
+                        empName:this.employeeName
+                    }
+                    var returnStr = JSON.stringify(returnObj);
+                    api.execScript({
+                        name: 'addCustomer',
+                        script: 'getEmpInfo('+returnStr+');'
+                    });
+                    api.closeWin();
+                },
+                // 选择区域
+                handleSelectArea:function(){
+                    this.isShowPopupSelect = true;
+                    this.currPopupSelectData = this.areaId;
+                    this.popupSelectDataList = this.areaList;
+                    this.currOrigin = 'oneSelect';
+                },
+                // 选择部门
+                handleSelectDepartment:function(){
+                    if(this.departmentList.length == 0){
+                        wDialog.toast({
+                            msg:'请先选择区域'
+                        })
+                        return;
+                    }
+                    this.isShowPopupSelect = true;
+                    this.currPopupSelectData = this.departmentId;
+                    this.popupSelectDataList = this.departmentList;
+                    this.currOrigin = 'twoSelect';
+                },
+                // 选择员工
+                handleSelectEmployee:function(){
+                    if(this.employeeList.length == 0){
+                        wDialog.toast({
+                            msg:'请先选择部门或区域'
+                        })
+                        return;
+                    }
+                    this.isShowPopupSelect = true;
+                    this.currPopupSelectData = this.employeeId;
+                    this.popupSelectDataList = this.employeeList;
+                    this.currOrigin = 'threeSelect';
+                },
+                // 获取筛选的数据
+                choosePopupSelectData:function(res){
+                    console.log(JSON.stringify(res))
+                    if(res.origin === 'oneSelect'){
+                        this.areaId = res.id;
+                        this.areaName = res.name;
+                        this.departmentName = '';
+                        this.departmentId = '';
+                        this.employeeId = '';
+                        this.employeeName = '';
+                        this.fetchAreaNextAllData();
+                    }
+                    else if(res.origin === 'twoSelect'){
+                        this.departmentName = res.teamName;
+                        this.departmentId = res.teamId;
+                        this.employeeId = '';
+                        this.employeeName = '';
+                        this.fetchDepartmentNextEmpData();
+                    }
+                    else if(res.origin === 'threeSelect'){
+                        this.employeeId = res.empId;
+                        this.employeeName = res.nameAndPhone;
+                    }
+                },
+                // 获取区域下的部门和员工信息
+                fetchAreaNextAllData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/getTeamsByRegion',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            region:_this.areaId,
+                            type:param.origin === 'selectChannel' ? 4 : 0
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                if(res.empList){
+                                    _this.employeeList = res.empList.map(function(v){
+                                        v.name = v.nameAndPhone;
+                                        v.value = v.empId;
+                                        return v;
+                                    })
+                                }
+                                if(res.teamList){
+                                    _this.departmentList = res.teamList.map(function(v){
+                                        v.name = v.teamName;
+                                        v.value = v.teamId;
+                                        return v;
+                                    })
+                                }
+                                console.log(JSON.stringify(_this.employeeList))
+                                console.log(JSON.stringify(_this.departmentList))
+                            }
+                        }
+                    });
+                },
+                // 获取部门下的员工信息
+                fetchDepartmentNextEmpData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/getEmpByTeamId',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            teamId:_this.departmentId,
+                            type:param.origin === 'selectChannel' ? 4 : 0
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            console.log(JSON.stringify(res))
+                            if(res.code == 1 && res.data){
+                                _this.employeeList = res.data.map(function(v){
+                                    v.name = v.nameAndPhone;
+                                    v.value = v.empId;
+                                    return v;
+                                })
+                                console.log(JSON.stringify(_this.employeeList))
+                            }
+                        }
+                    })
+                },
+                // 跳转到直接搜索
+                handleSkipSearchEmp:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomerSearchEmp',
+                        url:'./add_customer_searchemp.html',
+                        param:param.origin === 'selectChannel' ? 4 : 0
+                    });
+                }
+            }
+        })
     }
 </script>
+
 </html>

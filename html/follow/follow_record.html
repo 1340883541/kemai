@@ -186,6 +186,49 @@
                 </ul>
             </div>
         </div>
+        <!-- 拨打电话确认 -->
+        <div class="callphone-sure-popup" v-show="isShowSureCallPhonePopup" @click.stop="isShowSureCallPhonePopup = false" style="display:none;">
+            <div class="callphone-sure-box" @click.stop.prevent>
+                <div class="callphone-sure-content">确认用<span v-text="currCallPhoneWayTxt"></span>拨打吗？</div>
+                <div class="callphone-sure-btn clear">
+                    <div class="fl left" @click.stop="isShowSureCallPhonePopup = false;">
+                        取消
+                    </div>
+                    <div class="fr right" @click.stop="handleSureCallPhone">
+                        确认拨打
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 选择联系方式 -->
+        <div class="choose-concatway-popup" v-show="isShowConcatWayPopup && isHaveRemarkPhone" @click.stop="isShowConcatWayPopup = false" style="display:none;">
+            <div class="concatway-pop-box" @click.stop.prevent>
+                <div class="concatway-cap bor-1px-b">请选择联系方式<i @click.stop="isShowConcatWayPopup = false"></i></div>
+                <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===0}" v-if="cusPhone" @click.stop="currCheckPhone = 0;currCallCusPhone = cusPhone;">
+                    <div class="lis-left flex-vertical flex-wrap flex-center">
+                        <p class="p1">联系方式(<span v-text="cusPhone"></span>)</p>
+                        <p class="p2" v-if="!isTruePhone">系统检测出本号码为非手机号码</p>
+                    </div>
+                    <i class="check-icon"></i>
+                </div>
+                <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===1}" v-if="cusOtherPhone1" @click.stop="currCheckPhone = 1;currCallCusPhone = cusOtherPhone1;">
+                    <div class="lis-left flex-vertical flex-wrap flex-center">
+                        <p class="p1">备用联系(<span v-text="cusOtherPhone1"></span>)</p>
+                        <p class="p2" v-if="!isTrueOhterPhone1">系统检测出本号码为非手机号码</p>
+                    </div>
+                    <i class="check-icon checked"></i>
+                </div>
+                <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===2}" v-if="cusOtherPhone2" @click.stop="currCheckPhone = 2;currCallCusPhone = cusOtherPhone2;">
+                    <div class="lis-left flex-vertical flex-wrap flex-center">
+                        <p class="p1">备用联系(<span v-text="cusOtherPhone2"></span>)</p>
+                        <p class="p2" v-if="!isTrueOhterPhone2">系统检测出本号码为非手机号码</p>
+                    </div>
+                    <i class="check-icon"></i>
+                </div>
+                <div class="concatway-place"></div>
+                <div class="sure-call-btn bor-1px-t" :class="{curr:isCanCallPhone}" @click.stop="handleSureCallPhone">确认拨打</div>
+            </div>
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -196,6 +239,7 @@
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/permission.js"></script>
 <script type="text/javascript">
     var followRecordV = null;
     apiready = function(){
@@ -203,7 +247,6 @@
         $api.fixStatusBar($('#fh-place')[0]);
         $api.fixStatusBar($('#fh-bg')[0]);
         var param = api.pageParam;
-        console.log('follow record param-----> ' +JSON.stringify(param))
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err){
@@ -236,7 +279,6 @@
                 isExistNoFollowRecord:false,
                 isEditFollow:false,
                 cusId:'',
-                cusPhone:'',
                 cusFollowId:'',
                 isWork:'', //是否资源客户1-我的客户，2-资源客户
                 userInfo:{},
@@ -249,6 +291,7 @@
                 talkedState:'',// 通话结果状态
                 isShowTalkingResult:false, // 只有直接拨打才会有通话结果
                 isSaveTalkingRecord:false,
+                isSavePrevNormalTalkingRecord:false,
 
                 followId:'',
                 clientAddr:'', // 归属地
@@ -286,17 +329,43 @@
                 // 获取微信号码
                 // isNotLookWechat:true,
                 wechatCard:'',
-                realWechatCard:''
+                realWechatCard:'',
+
+                // 备用电话
+                // 当前拨打的电话
+                currCallCusPhone:'',
+
+                cusPhone:'',
+                isTruePhone:false,
+                cusOtherPhone1:'',
+                isTrueOhterPhone1:false,
+                cusOtherPhone2:'',
+                isTrueOhterPhone2:false,
+                // 显示联系弹窗
+                isShowConcatWayPopup:false,
+                // 当前拨打电话的方式
+                isShowSureCallPhonePopup:false,
+                currCallPhoneWayTxt:'',
+                currCallPhoneWayVal:0,
+                currCheckPhone:'',
+                // 备注电话
+                isHaveRemarkPhone:false
             },
             mounted:function(){
                 this.init();
                 this.fetchTalkingState();
                 this.getFollowWay();
+                this.fetchCusPhoneData();
+            },
+            computed:{
+                isCanCallPhone:function(){
+                    return this.currCheckPhone !== '';
+                }
             },
             methods:{
                 init:function(){
                     // 获取页面传入的值
-                    if(param.followId == '' || param.followId == undefined){
+                    if(param.followId == '' || param.followId == undefined || param.followId == 'undefined'){
                         this.isExistNoFollowRecord = false;
                     }
                     else{
@@ -320,6 +389,36 @@
                         key:'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                // 获取客户电话
+                fetchCusPhoneData:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'ema/otherPhone',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            customerid:_this.cusId
+                        },
+                        success:function(res){
+                            // console.log('---------------------'+JSON.stringify(res))
+                            if(res.code == 1){
+                                if(res.data.otherphone1 || res.data.otherphone2){
+                                    _this.isHaveRemarkPhone = true;
+                                }
+                                else{
+                                    _this.currCallCusPhone = res.data.phone;
+                                }
+                                _this.cusPhone = res.data.phone;
+                                _this.isTruePhone = wValidate.checkPhone(_this.cusPhone).status;
+                                _this.cusOtherPhone1 = res.data.otherphone1;
+                                _this.isTrueOhterPhone1 = wValidate.checkPhone(_this.cusOtherPhone1).status;
+                                _this.cusOtherPhone2 = res.data.otherphone2;
+                                _this.isTrueOhterPhone2 = wValidate.checkPhone(_this.cusOtherPhone2).status;
+                            }
+                        }
+                    })
                 },
                 // 获取通话状态
                 fetchTalkingState:function(){
@@ -390,12 +489,18 @@
                                 // _this.wechatCard = res.data.wechat;
                                 var wechat = res.data.wechat.trim();
                                 _this.realWechatCard = wechat;
-                                if(wechat.length <= 5){
-                                    _this.wechatCard = '********';
+                                var mapType = res.mapType || {};
+                                var isWechat = permissionSetting.FOLLOWRECORD.fnWechat(mapType.markType,mapType.subType);
+                                if(isWechat){
+                                    _this.wechatCard = wechat;
                                 }else{
-                                    _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                    if(wechat.length <= 5){
+                                        _this.wechatCard = '********';
+                                    }else{
+                                        _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                    }
                                 }
-                                _this.followId = res.followId;
+                                // _this.followId = res.followId;
                                 _this.clientAddr = res.data.attribution || '未知';
                                 setTimeout(function(){
                                     _this.isCanCall = true;
@@ -443,6 +548,7 @@
                             if(res.code == 1){
                                 _this.followWayList = res.data ? res.data.followUpWay : [];
                                 var url = _this.isEditFollow ? 'customer/cusFollowEditInfo' : 'customer/getFollowRecordEchoData';
+                                // console.log('url------------------'+url);
                                 _this.getClientInfo(_this.isEditFollow,url);
                             }
                         }
@@ -463,7 +569,7 @@
                         success:function(res){
                             if(res.code == 1){
                                 _this.shortcutFollowList = res.data;
-                                _this.$nextTick(function(){
+                                // _this.$nextTick(function(){
                                     // var sWid = 0;
                                     // var len = $('#shortcut-lis > li').length;
                                     // $('#shortcut-lis > li').each(function(i,ele){
@@ -473,7 +579,7 @@
                                     //         $('#shortcut-lis').width(sWid).css('opacity',1);
                                     //     }
                                     // });
-                                })
+                                // })
                             }
                         }
                     })
@@ -682,79 +788,171 @@
                       }
                   });
                 },
+                // 拨打电话前调用
+                fnCallBeforeRequest:function(cb){
+                    var _this = this;
+                    console.log(JSON.stringify({
+                        employeeid:_this.userInfo.employeeid,
+                        customerid:_this.cusId
+                    }))
+                    wApiAjax({
+                        url:'ema/existCallLog',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:_this.cusId
+                        },
+                        success:function(res){
+                            console.log('拨打电话前执行的操作========'+JSON.stringify(res))
+                            if(res.code == 1){
+                                // 有正常的通话没有添加跟进记录
+                                if(res.data.existCallLogState == 0){
+                                    wDialog.confirm({
+                                        msg:'当前客户上次通话后未添加跟进记录，是否补录？',
+                                        button:['是','否'],
+                                        sureCb:function(){
+                                            _this.isSavePrevNormalTalkingRecord = true;
+                                            _this.isShowTalkingResult = false;
+                                            _this.followId = res.data.followId;
+                                            $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
+                                        },
+                                        cancelCb:function(){
+                                            _this.isSavePrevNormalTalkingRecord = false;
+                                            _this.followId = res.data.tempFollowId;
+                                            cb && typeof cb === 'function' && cb();
+                                        }
+                                    })
+                                }else{
+                                    _this.followId = res.data.tempFollowId;
+                                    cb && typeof cb === 'function' && cb();
+                                }
+                            }
+                        }
+                    })
+                },
                 // 直接拨打电话
                 handleCallFollowNormal:function(){
-                    this.isShowTalkingResult = true;
-                    $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
+                    var _this = this;
+                    if(this.isCanCall){
+                        this.currCallPhoneWayTxt = '普通电话';
+                        this.currCallPhoneWayVal = 0;
+                        this.fnCallBeforeRequest(function(){
+                            if(_this.isHaveRemarkPhone){
+                                _this.isShowConcatWayPopup = true;
+                            }else{
+                                _this.isShowSureCallPhonePopup = true;
+                            }
+                        })
+                    }else{
+                        wDialog.toast({
+                            msg:"正在加载客户信息，请稍等.."
+                        })
+                    }
+                },
+                fnCallNormalPhone:function(){
+                    var _this = this;
+                    $('#call-phone-normal-btn').addClass('w-event-none gray-bg');
+
+                    _this.isShowTalkingResult = true;
+                    _this.followWayState = '电话';
                     api.call({
                         type: 'tel_prompt',
-                        number: this.cusPhone
+                        number:_this.currCallCusPhone
                     });
+                    setTimeout(function(){
+                        $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
+                    },300);
                 },
-                // 电话跟进
+                // 办公电话
                 handleCallFollow:function(){
+                    var _this = this;
                     if(this.isCanCall){
-                        this.isShowTalkingResult = false;
-                        $('#call-phone-normal-btn').addClass('w-event-none gray-bg');
-                        if(this.isFirstCallClick){
-                            this.isFirstCallClick =  false;
-                            var _this = this;
-                            console.log('call phone request ---> ' + JSON.stringify({
+                        this.currCallPhoneWayTxt = '办公电话';
+                        this.currCallPhoneWayVal = 1;
+                        this.fnCallBeforeRequest(function(){
+                            if(_this.isHaveRemarkPhone){
+                                _this.isShowConcatWayPopup = true;
+                            }else{
+                                _this.isShowSureCallPhonePopup = true;
+                            }
+                        })
+                    }else{
+                        wDialog.toast({
+                            msg:"正在加载客户信息，请稍等.."
+                        })
+                    }
+                },
+                fnCallWorkPhone:function(){
+                    var _this = this;
+                    _this.isShowTalkingResult = false;
+                    if(_this.isFirstCallClick){
+                        _this.isFirstCallClick =  false;
+                        console.log('call phone request ---> ' + JSON.stringify({
+                            account:_this.userInfo.account,
+                            customerNumber:_this.currCallCusPhone,
+                            cusid:_this.cusId,
+                            empid:_this.userInfo.employeeid,
+                            is_work:_this.isWork,
+                            followId:_this.followId
+                        }));
+                        $('#call-phone-btn').addClass('w-event-none gray-bg');
+                        wApiAjax({
+                            url:'ema/makeCall',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
                                 account:_this.userInfo.account,
                                 customerNumber:_this.cusPhone,
                                 cusid:_this.cusId,
                                 empid:_this.userInfo.employeeid,
                                 is_work:_this.isWork,
                                 followId:_this.followId
-                            }));
-                            wApiAjax({
-                                url:'ema/makeCall',
-                                headers:{
-                                    token:TOKEN_DATA
-                                },
-                                data:{
-                                    account:_this.userInfo.account,
-                                    customerNumber:_this.cusPhone,
-                                    cusid:_this.cusId,
-                                    empid:_this.userInfo.employeeid,
-                                    is_work:_this.isWork,
-                                    followId:_this.followId
-                                },
-                                success:function(res){
-                                    console.log('call phone response ----> '+JSON.stringify(res))
-                                    if(res.code == 200){
-                                        $('#call-phone-btn').addClass('w-event-none gray-bg');
-                                        // 跟进方式变成电话
-                                        _this.followWayState = '电话';
-                                        _this.followWayStateCode = 1;
-                                        wDialog.toast({
-                                            msg: '拨打电话中，请注意接听'
-                                        });
-                                    }else{
-                                        _this.isFirstCallClick = true;
-                                        wDialog.toast({
-                                            msg:res.msg||'客户号码异常'
-                                        });
-                                        $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
-                                    }
-                                },
-                                fail:function(err){
+                            },
+                            success:function(res){
+                                // console.log('call phone response ----> '+JSON.stringify(res))
+                                if(res.code == 200){
+                                    // 跟进方式变成电话
+                                    _this.followWayState = '电话';
+                                    _this.followWayStateCode = 1;
+                                    wDialog.toast({
+                                        msg: '拨打电话中，请注意接听'
+                                    });
+                                }else{
+                                    $('#call-phone-btn').removeClass('w-event-none gray-bg');
                                     _this.isFirstCallClick = true;
                                     wDialog.toast({
-                                        msg:'电话拨打失败'
+                                        msg:res.msg||'客户号码异常'
                                     });
-                                    $('#call-phone-normal-btn').removeClass('w-event-none gray-bg');
                                 }
-                            })
-                        }else{
-                            wDialog.toast({
-                                msg:"正在拨打电话中，请稍等.."
-                            })
-                        }
+                            },
+                            fail:function(err){
+                                _this.isFirstCallClick = true;
+                                wDialog.toast({
+                                    msg:'电话拨打失败'
+                                });
+                                $('#call-phone-btn').removeClass('w-event-none gray-bg');
+                            }
+                        })
                     }else{
                         wDialog.toast({
-                            msg:"正在加载客户信息，请稍等.."
+                            msg:"正在拨打电话中，请稍等.."
                         })
+                    }
+                },
+                // 确定拨打电话
+                handleSureCallPhone:function(){
+                    if(this.isShowConcatWayPopup) this.isShowConcatWayPopup = false;
+                    if(this.isShowSureCallPhonePopup) this.isShowSureCallPhonePopup = false;
+                    // 普通电话确定
+                    if(this.currCallPhoneWayVal === 0){
+                        this.fnCallNormalPhone();
+                    }
+                    // 办公电话
+                    else{
+                        this.fnCallWorkPhone();
                     }
                 },
                 // 保存跟进记录
@@ -765,6 +963,11 @@
                         wDialog.showProgress({
                             msg:'正在保存中，请稍等...'
                         });
+                        // 由上一次的普通电话记录
+                        if(this.isSavePrevNormalTalkingRecord){
+                            this.funcSaveFollowRecord('customer/saveCallFollowPlus');
+                            return;
+                        }
                         if(this.isShowTalkingResult){
                             if(this.isSaveTalkingRecord){
                                 this.funcSaveFollowRecord('customer/saveCallFollowPlus');
@@ -781,7 +984,7 @@
                         })
                     }
                 },
-                // 保存不同电话跟进
+                // 保存普通电话跟进
                 funcSaveNormalCallRecord:function(url){
                     var _this = this;
                     if(!this.talkedState){
@@ -795,7 +998,7 @@
                     console.log('save or edit follow record request data: ' + JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
                         customerid:_this.cusId,
-                        customerNumber:_this.cusPhone,
+                        customerNumber:_this.currCallCusPhone,
                         followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
                         status:_this.talkedState,
                         is_work:_this.isWork
@@ -808,7 +1011,7 @@
                         data:{
                             employeeid:_this.userInfo.employeeid,
                             customerid:_this.cusId,
-                            customerNumber:_this.cusPhone,
+                            customerNumber:_this.currCallCusPhone,
                             followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
                             status:_this.talkedState,
                             is_work:_this.isWork
@@ -881,8 +1084,12 @@
                                 },200);
                                 // 跟进成功推送
                                 api.sendEvent({
-                                    name: 'followRecordSuccessRefresh'
+                                    name: 'followRecordSuccessRefresh',
+                                    extra:{
+                                        idName:param.idName
+                                    }
                                 });
+
 
                             }
                             else{
@@ -995,6 +1202,10 @@
                 }
             }
         });
+    }
+    // 通话完成
+    function callPhoneFinish(){
+        $('#call-phone-btn').removeClass('w-event-none gray-bg');
     }
     // ios 填写客户姓名
     function funcSaveCustomerName(name){

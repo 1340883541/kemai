@@ -24,16 +24,44 @@
         #wrap{
             position: relative;
         }
+        .filter-lists .filter-lis{
+            border:1px solid #fff;
+        }
+        .filter-lists .filter-lis.curr{
+            border: 1px solid #0c7ff9;
+        }
+        .filter-lists .filter-lis > i{
+            position: absolute;
+            right: -1px;
+            bottom: -1px;
+            width: 24px;
+            height: 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            display: none;
+        }
+        .filter-lists .filter-lis.curr > i{
+            background-image: url('../../image/postion_checked_curr.png');
+            display: block;
+        }
+        .filter-lists .filter-lis.disabled{
+            border:1px solid #b3cde5;
+        }
+        .filter-lists .filter-lis.disabled > i{
+            background-image: url('../../image/postion_checked_dis.png');
+            display: block;
+        }
     </style>
 </head>
 
 <body>
     <div id="wrap" v-cloak>
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
-            <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
+            <div class="filter-lis" v-for="(khdata,index) in khDataList" :key="index" :id="'cus-lis-'+index" @click.stop="skipCustomerDetail(khdata.id,khdata.phone,'cus-lis-'+index)">
                 <div class="filter-lt flex-wrap flex-between">
                     <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name"></span></div>
-                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
+                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone,'cus-lis-'+index)">去跟进</div>
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
@@ -44,6 +72,7 @@
                         <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
                     </div>
                 </div>
+                <i></i>
             </div>
             <!-- 无更多数据 -->
             <div class="not-more-filter" id="not-more">没有更多数据</div>
@@ -114,8 +143,15 @@
         api.addEventListener({
             name: 'followRecordSuccessRefresh'
         }, function(ret, err){
-            nCustomerFrame.pageNo = 1;
-            nCustomerFrame.fetchListData();
+            console.log(JSON.stringify(ret))
+            if(ret.value.idName){
+                var id = ret.value.idName;
+                console.log('----------'+id)
+                $('#'+id).addClass('disabled')
+            }else{
+                nCustomerFrame.pageNo = 1;
+                nCustomerFrame.fetchListData();
+            }
         });
         // 筛选客户状态
         api.addEventListener({
@@ -272,6 +308,7 @@
                                 _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
+                                    $('.filter-lis').removeClass('disabled curr')
                                     // _this.totalPage = Math.ceil(res.count / res.pageSize);
                                 }
                                 else{
@@ -292,26 +329,30 @@
                     });
                 },
                 // 跳转客户详情
-                skipCustomerDetail: function(id,phone) {
+                skipCustomerDetail: function(id,phone,idName) {
+                    $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: './customer_detail.html',
                         param: {
                             cusId: id,
                             cusPhone:phone,
-                            isWork:1
+                            isWork:1,
+                            idName:idName
                         }
                     })
                 },
                 // 跳转到跟进页面
-                handleSkipFollow:function(id,phone){
+                handleSkipFollow:function(id,phone,idName){
+                    $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     api.openWin({
                         name: 'followRecord',
                         url: '../follow/follow_record.html',
                         pageParam: {
                             id:id,
                             phone:phone,
-                            isWork:1
+                            isWork:1,
+                            idName:idName
                         },
                         slidBackEnabled: false
                     });

@@ -146,10 +146,10 @@
     content:'';
     position: absolute;
     right: 0;
-    top:0;
+    bottom:0;
     width: 24px;
     height: 24px;
-    background: url('../../image/postion_checked.png') no-repeat center;
+    background: url('../../image/postion_checked_curr.png') no-repeat center;
     background-size: 24px;
 }
 

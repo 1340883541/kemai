@@ -65,7 +65,7 @@
                 <div class="header-txt">
                     <span :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)"><i></i>跟进信息</span>
                     <span :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)"><i></i>意向资料</span>
-                    <!-- <span :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)"><i></i>历史负责人</span> -->
+                    <span :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)"><i></i>历史负责人</span>
                 </div>
                 <div class="right"></div>
                 <div class="offline-box clear" id="follow-alert" style="display:none;" @click.stop="handleSkipFollow(0)">
@@ -81,7 +81,7 @@
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
             <div class="horigin">号码归属地：<span v-text="cusInfo.attribution||'未知'"></span></div>
         </div>
-        <section>
+        <div id="section-content">
             <div class="cd-caption" id="js_cd_cap">
                 <!-- <div class="cd-ct w-inline-block" v-if="!isShowWechat">
                     <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="handleLookWechat">查看微信</span>
@@ -91,14 +91,14 @@
                 </div> -->
 
                 <div class="cd-ct w-inline-block" v-if="wechatCard">
-                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipWechat">复制</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span>
                 </div>
                 <div class="cd-cb" style="min-height:20px;">
                     <div class="cd-name" v-if="cusInfo.markName">
-                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i></i>
+                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i v-if="isShowAllotMarketIcon" @click.stop="handleSkipChangeAllot(0)"></i>
                     </div>
                     <div class="cd-name" v-if="cusInfo.chanName">
-                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i></i>
+                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i v-if="isShowAllotChannelIcon" @click.stop="handleSkipChangeAllot(4)"></i>
                     </div>
                 </div>
             </div>
@@ -107,7 +107,7 @@
                     <div class="cd-nav-ab flex-wrap">
                         <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)">跟进信息(<span v-text="cusCount"></span>) <i></i></div>
                         <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)">意向资料<i></i></div>
-                        <!-- <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)">历史负责人<i></i></div> -->
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)">历史负责人<i></i></div>
                     </div>
                     <div class="cd-nav-place"></div>
                 </div>
@@ -130,7 +130,8 @@
                             </div>
                             <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
                         </div>
-                        <div class="cd-flow-p w-inline-block" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
+                        <div class="cd-flow-p fl" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
+                        <div style="clear:both;"></div>
                         <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
                             <i class="top-icon"></i>
                             <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime||'暂未跟进'"></span></div>
@@ -165,30 +166,37 @@
                     </div>
                 </div>
                 <!-- 历史负责人 -->
-                <!-- <div class="cd-box cd-box2" v-show="isShowDetailBox === 2">
+                <div class="cd-box cd-box2" v-show="isShowDetailBox === 2" style="display:none;">
                     <div class="cd-filter-box">
-                        <span>变更负责人筛选</span><i></i>
+                        <span @click.stop="isShowHistoryPri = !isShowHistoryPri">{{currHistoryPrincipalTxt!=='0'?'已选"'+currHistoryPrincipalTxt+'"':'变更负责人筛选'}}</span><i></i>
                     </div>
-                    <div class="emp-filter-popup" @touchmove.stop.prevent>
+                    <div class="emp-filter-popup" id="emp-filter-popup" @touchmove.stop.prevent v-show="isShowHistoryPri" @click.stop="isShowHistoryPri=false" style="display:none;">
                         <ul>
-                            <li>全部</li>
-                            <li class="curr">销售负责人变更</li>
-                            <li>渠道负责人变更</li>
+                            <li :class="{curr:currHistoryPrincipalVal===''}" @click.stop="handleChanageHistoryPriFilter('','全部')">全部</li>
+                            <li :class="{curr:currHistoryPrincipalVal===0}" @click.stop="handleChanageHistoryPriFilter(0,'销售负责人变更')">销售负责人变更</li>
+                            <li :class="{curr:currHistoryPrincipalVal===4}" @click.stop="handleChanageHistoryPriFilter(4,'渠道负责人变更')">渠道负责人变更</li>
                         </ul>
                     </div>
                     <div class="cd-employee-lists">
-                        <div class="cd-flow cd-employee-lis">
-                            <div class="cd-emp-icon cd-emp-icon0"></div>
+                        <div
+                            v-for="(history,index) in historyPrincipalList"
+                            :key="index"
+                            class="cd-flow cd-employee-lis"
+                        >
+                            <div
+                                class="cd-emp-icon"
+                                :class="[history.type == 4 ? 'cd-emp-icon0' : 'cd-emp-icon1']"
+                            ></div>
                             <div class="cd-flow-tit">
-                                <span>2019/06/28 12:21:09</span>
+                                <span v-text="history.createtime"></span>
                             </div>
                             <div class="cd-flow-timebox">
                                 <i class="top-icon"></i>
-                                <div class="gj-time gj"><span>销售负责人变更, 销售顾问: </span><span class="emp-acount">史淘淘</span></div>
+                                <div class="gj-time gj"><span>销售负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div>
                             </div>
                         </div>
                     </div>
-                </div> -->
+                </div>
             </div>
             <div class="cd-btm-btn">
                 <div class="cd-btn flex-wrap">
@@ -196,7 +204,7 @@
                 </div>
             </div>
             <input type="hidden" id="scroll-val" value="0">
-        </section>
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -207,6 +215,7 @@
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/permission.js"></script>
 <script>
     var cusDetailV = null;
     apiready = function() {
@@ -226,6 +235,13 @@
                     cusDetailV.fetchData(true);
                 }
             }
+        });
+        // 监听分配成功重新加载
+        api.addEventListener({
+            name: 'allotEmployeeSuccess'
+        }, function(ret, err){
+            cusDetailV.pageNo = 1;
+            cusDetailV.fetchData();
         });
 
         // 跟进成功
@@ -268,7 +284,16 @@
                 isHandlePlay: false,
 
                 // 存在补录的跟进id
-                followRootId: ''
+                followRootId: '',
+                // 历史负责人
+                historyPrincipalList:[],
+                isShowHistoryPri:false,
+                currHistoryPrincipalTxt:'0',
+                currHistoryPrincipalVal:'',
+
+                // 是否显示分配编辑的图标
+                isShowAllotMarketIcon:permissionSetting.CUSDETAIL.fnMarketAllot(),
+                isShowAllotChannelIcon:permissionSetting.CUSDETAIL.fnChannelAllot(),
             },
             created: function() {
                 this.cusId = param.cusId;
@@ -281,6 +306,7 @@
             mounted: function() {
                 this.getUserInfo();
                 this.fetchData();
+                this.$nextTick(fnListenScroll)
             },
             watch: {
                 isShowDetailBox: function(nv) {
@@ -310,7 +336,6 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
-                            // console.log(JSON.stringify(res))
                             if (res.code == 200) {
                                 _this.minePhone = res.info.phone.substring(0, 3) + '****' + res.info.phone.substring(7);
                                 if (_this.userInfo.phone != res.info.phone) {
@@ -327,7 +352,9 @@
                 fetchData: function(isLoadMore) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    wDialog.showProgress();
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },80)
                     wApiAjax({
                         url: 'customer/getcusinfo',
                         headers: {
@@ -340,10 +367,13 @@
                             pageSize: 10
                         },
                         success: function(res) {
-                            console.log('customer detail---' + JSON.stringify(res))
-                            wDialog.hideProgress();
+                            // console.log('customer detail---' + JSON.stringify(res))
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },200);
                             if (res.code == 1) {
                                 if (!isLoadMore) {
+
                                     _this.cusInfo = res.data.cusInfo;
                                     // 判断是否存在有未跟进的
                                     _this.followRootId = res.data.cusInfo.followId || '';
@@ -356,15 +386,24 @@
                                     // }
                                     var wechat = res.data.cusInfo.wechat.trim();
                                     _this.realWechatCard = wechat;
-                                    if(wechat.length <= 5){
-                                        _this.wechatCard = '********';
+                                    var mapType = res.data.mapType || {};
+                                    var isWechat = permissionSetting.CUSDETAIL.fnWechat(mapType.markType,mapType.subType);
+                                    if(isWechat){
+                                        _this.wechatCard = wechat;
                                     }else{
-                                        _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                        if(wechat.length <= 5){
+                                            _this.wechatCard = '********';
+                                        }else{
+                                            _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                        }
                                     }
                                     _this.cusPersonInfo = res.data.cusPurInfo[0];
                                     _this.cusInfoList = res.data.cusFllowInfo;
                                     _this.totalPage = Math.ceil(res.followcount / res.pageSize);
                                     _this.cusCount = res.followcount;
+                                    if(res.data.historyPrincipal &&  res.data.historyPrincipal[0]){
+                                        _this.historyPrincipalList = res.data.historyPrincipal;
+                                    }
                                     _this.$nextTick(function() {
                                         var sinnerWid = $('#scroll-hname > div').width();
                                         var sspWid = $('#scroll-hname span').outerWidth();
@@ -388,6 +427,11 @@
                                                 });
                                             }
                                         }
+                                        //计算弹窗的高度
+                                        var hei = $(window).height() - $('#cd-header').outerHeight() - 130;
+                                        $('#emp-filter-popup').css({
+                                            'min-height':hei
+                                        });
                                     })
                                 } else {
                                     if (res.data && res.data.cusFllowInfo) {
@@ -402,6 +446,38 @@
                             }
                         }
                     })
+                },
+                handleChanageHistoryPriFilter:function(val,name){
+                    if(this.currHistoryPrincipalVal === val){
+                        this.isShowHistoryPri = false;
+                    }else{
+                        this.isShowHistoryPri = false;
+                        wDialog.showProgress();
+                        var _this = this;
+                        this.currHistoryPrincipalVal = val;
+                        this.currHistoryPrincipalTxt = name;
+                        console.log(JSON.stringify({
+                            customerid:_this.cusId,
+                            type:val
+                        }))
+                        wApiAjax({
+                            url:'customer/getHistoryChargeByType',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                customerid:_this.cusId,
+                                type:val
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                wDialog.hideProgress();
+                                if(res.code == 1){
+                                    _this.historyPrincipalList = res.data;
+                                }
+                            }
+                        })
+                    }
                 },
                 // 跟进内容题目
                 returnFollowResultTitle: function(i) {
@@ -443,6 +519,20 @@
                         }
                     });
                 },
+                // 变更负责人
+                handleSkipChangeAllot:function(i){
+                    // i 0 销售负责人 1 渠道负责人
+                    wHrefJs.openWin({
+                        name:'changePerson',
+                        url:'../index/change_person.html',
+                        param:{
+                            origin:'customerDetail',
+                            cusId:param.cusId,
+                            type:i
+                        }
+                    })
+                },
+                // 复制微信
                 handleClipTxt: function(txt) {
                     var clipBoard = api.require('clipBoard');
                     clipBoard.set({
@@ -465,7 +555,8 @@
                             id: _this.cusId,
                             phone: _this.cusPhone,
                             followId: i == 0 ? _this.followRootId : '',
-                            isWork: param.isWork
+                            isWork: param.isWork,
+                            idName:param.idName||''
                         },
                         slidBackEnabled: false
                     });
@@ -532,8 +623,8 @@
                 //         }
                 //     })
                 // },
-                // 复制并打开微信
-                handleClipOpenWechat: function() {
+                // 复制微信
+                handleClipWechat:function(){
                     var clipBoard = api.require('clipBoard'),
                         _this = this;
                     clipBoard.set({
@@ -541,40 +632,46 @@
                     }, function(ret, err) {
                         if (ret.status) {
                             wDialog.toast({
-                                msg: '复制成功'
+                                msg: '已复制'
                             });
-                            setTimeout(function() {
-                                var systemType = api.systemType;
-                                // android
-                                if (systemType === 'android') {
-                                    api.openApp({
-                                        androidPkg: 'com.tencent.mm',
-                                        mimeType: 'text/html',
-                                        uri: ''
-                                    }, function(ret, err) {
-                                        if (ret) {
-                                        } else {
-                                            alert('您还未安装微信');
-                                        }
-                                    });
-                                }
-                                // ios
-                                else if (systemType === 'ios') {
-                                    api.openApp({
-                                        iosUrl: 'weixin://'
-                                    }, function(ret, err) {
-                                        if (ret) {
-                                        } else {
-                                            alert('您还未安装微信');
-                                        }
-                                    });
-
+                        }
+                    });
+                },
+                // 复制并打开微信
+                handleClipOpenWechat: function() {
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: _this.realWechatCard
+                    }, function(ret, err) {
+                        var systemType = api.systemType;
+                        // android
+                        if (systemType === 'android') {
+                            api.openApp({
+                                androidPkg: 'com.tencent.mm',
+                                mimeType: 'text/html',
+                                uri: ''
+                            }, function(ret, err) {
+                                if (ret) {
                                 } else {
-                                    console.log('不是android或ios机型')
-                                    return;
+                                    alert('您还未安装微信');
                                 }
+                            });
+                        }
+                        // ios
+                        else if (systemType === 'ios') {
+                            api.openApp({
+                                iosUrl: 'weixin://'
+                            }, function(ret, err) {
+                                if (ret) {
+                                } else {
+                                    alert('您还未安装微信');
+                                }
+                            });
 
-                            }, 500);
+                        } else {
+                            console.log('不是android或ios机型')
+                            return;
                         }
                     });
                 },
@@ -626,13 +723,16 @@
                 }
             }
         })
+    }
+    // 监听屏幕滚动
+    function fnListenScroll(){
         // 屏幕滚动
         var isEventScroll = true;
         var capOffsetTop = $('#js_cd_cap').offset().top - 40;
         var navOffsetTop = $("#js_cd_nav").offset().top;
         $(window).on('scroll', function() {
             if (isEventScroll) {
-                console.log('scrollTop ----> '+$(this).scrollTop())
+                // console.log('scrollTop ----> '+$(this).scrollTop())
                 var val = $('#scroll-val').val();
                 isEventScroll = false;
                 var wTop = $(this).scrollTop();

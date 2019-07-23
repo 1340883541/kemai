@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>购房需求</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+    <style>
+        .add-box{
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
+    <div id="add-wrapper-2" class="add-wrapper">
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">购房需求</div>
+                <div class="right"></div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="add-box">
+            <div class="add-form">
+                <div class="add-lis">
+                    <div class="add-cap">购房用途</div>
+                    <div class="add-select w-elli" @click.stop="handleChooseNeedForm('useHouse')">
+                        {{currUseHouseTxt?currUseHouseTxt:'请选择'}}
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">预算资金</div>
+                    <div class="add-select w-elli" @click.stop="handleChooseNeedForm('budgetMoney')">
+                        {{currBudgetMoneyTxt?currBudgetMoneyTxt:'请选择'}}
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">意向物业</div>
+                    <div class="add-switch">
+                        <ul class="clear flex-wrap" id="customer-classify">
+                            <li
+                                class="flex-con flex-4h flex-wrap flex-center flex-align-item"
+                                v-for="rEstate in realEstateList"
+                                :key="rEstate.value"
+                                :class="{curr:rEstate.value === currRealEstate}"
+                                v-text="rEstate.name"
+                                @click.stop="currRealEstate = rEstate.value"
+                            ></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">意向城市</div>
+                    <div class="add-select w-elli" @click.stop="handleOpenCountryPopup">
+                        {{intentionCityTxt?intentionCityTxt:'请选择'}}
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">意向楼盘</div>
+                    <div class="add-select w-elli" @click.stop="handleChooseNeedForm('intentionHouse')">
+                        {{currIntentionHouseTxt?currIntentionHouseTxt:'请选择'}}
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">意向房型</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" placeholder="请输入" v-model="intHouseClass" maxlength="6">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">意向户型</div>
+                    <div class="add-select w-elli" @click.stop="isShowHouseTypeSelect = true;currHouseTypeNav = 0;">
+                        {{intentionHouseTypeTxt?intentionHouseTypeTxt:'请选择'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="add-save">
+            <div class="save-btn" @click.stop="handleFinishSave">完成</div>
+        </div>
+        <div class="add-save-place"></div>
+        <!-- 选择意向城市 -->
+        <div v-show="isShowIntentionCity" style="display:none;">
+            <div class="w-popup-select-bg" @touchmove.stop.prevent @click.stop="isShowIntentionCity = false"></div>
+            <div class="w-popup-select">
+                <div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>请选择<i class="close" @click.stop="isShowIntentionCity = false"></i></div>
+                <div class="popup-select-nav flex-wrap" @touchmove.stop.prevent>
+                    <div class="flex-con" :class="{curr:currIntentionNav===0}" @click.stop="handleChooseIntentionNav(0)">国家</div>
+                    <div class="flex-con" :class="{curr:currIntentionNav===1}" @click.stop="handleChooseIntentionNav(1)">城市</div>
+                    <div class="flex-con" :class="{curr:currIntentionNav===2}" @click.stop="handleChooseIntentionNav(2)">区域</div>
+                </div>
+                <div class="popup-select-b">
+                    <ul v-show="currIntentionNav === 0" style="display:none;">
+                        <li
+                            v-for="country in countryList"
+                            :key="country.value"
+                            :class="{curr:country.value === currCountryVal}"
+                            v-text="country.name"
+                            @click.stop="handleChooseIntentionCity(0,country.name,country.value)"
+                        ></li>
+                    </ul>
+                    <ul v-show="currIntentionNav === 1" style="display:none;">
+                        <li
+                            v-for="city in cityList"
+                            :key="city.value"
+                            :class="{curr:city.value === currCityVal}"
+                            v-text="city.name"
+                            @click.stop="handleChooseIntentionCity(1,city.name,city.value)"
+                        ></li>
+                    </ul>
+                    <ul v-show="currIntentionNav === 2" style="display:none;">
+                        <li
+                            v-for="area in areaList"
+                            :key="area.value"
+                            :class="{curr:area.value === currAreaVal}"
+                            v-text="area.name"
+                            @click.stop="handleChooseIntentionCity(2,area.name,area.value)"
+                        ></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 选择户型 -->
+        <div v-show="isShowHouseTypeSelect" style="display:none;">
+            <div class="w-popup-select-bg" @touchmove.stop.prevent @click.stop="isShowHouseTypeSelect = false"></div>
+            <div class="w-popup-select">
+                <div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>请选择省市<i class="close" @click.stop="isShowHouseTypeSelect = false"></i></div>
+                <div class="popup-select-nav flex-wrap" @touchmove.stop.prevent>
+                    <div class="flex-con" :class="{curr:currHouseTypeNav === 0}" @click.stop="currHouseTypeNav = 0">卧室</div>
+                    <div class="flex-con" :class="{curr:currHouseTypeNav === 1}" @click.stop="currHouseTypeNav = 1">卫生间</div>
+                    <div class="flex-con" :class="{curr:currHouseTypeNav === 2}" @click.stop="currHouseTypeNav = 2">车位</div>
+                </div>
+                <div class="popup-select-b">
+                    <ul v-show="currHouseTypeNav === 0" style="display:none;">
+                        <li
+                            v-for="idx in 6"
+                            :class="{curr:currHouseType1Txt===idx+'室'}"
+                            :key="idx"
+                            @click.stop="handleChooseHouseType(0,idx+'室')"
+                        >{{idx}}室</li>
+                    </ul>
+                    <ul v-show="currHouseTypeNav === 1" style="display:none;">
+                        <li
+                            v-for="idx in 6"
+                            :class="{curr:currHouseType2Txt===idx+'卫'}"
+                            :key="idx"
+                            @click.stop="handleChooseHouseType(1,idx+'卫')"
+                        >{{idx}}卫</li>
+                    </ul>
+                    <ul v-show="currHouseTypeNav === 2" style="display:none;">
+                        <li
+                            v-for="idx in 6"
+                            :class="{curr:currHouseType3Txt===idx+'车位'}"
+                            :key="idx"
+                            @click.stop="handleChooseHouseType(2,idx+'车位')"
+                        >{{idx}}车位</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- 公共单独弹窗 -->
+        <popup-select
+            :is-show-popup-select.sync="isShowPopupSelect"
+            :popup-select-data-list="popupSelectDataList"
+            :curr-popup-select-data="currPopupSelectData"
+            @choose-popup-select-data="choosePopupSelectData"
+            :origin="currOrigin"
+        ></popup-select>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+var addCustomerPerfect2V = null;
+apiready = function(){
+    $api.fixStatusBar($('#fh-fixed')[0]);
+    $api.fixStatusBar($('#fh-place')[0]);
+    var param = api.pageParam;
+    api.addEventListener({
+        name: 'keyback'
+    }, function(ret, err){
+        addCustomerPerfect2V.handleBack();
+    });
+
+    addCustomerPerfect2V = new Vue({
+        el:'#add-wrapper-2',
+        data:{
+
+            // 购房用途
+            useHouseList:[],
+            currUseHouseVal:0,
+            currUseHouseTxt:'',
+            // 预算资金
+            budgetMoneyList:[],
+            currBudgetMoneyVal:0,
+            currBudgetMoneyTxt:'',
+            // 意向物业
+            realEstateList:[],
+            currRealEstate:0,
+            // 国家城市区域
+            isShowIntentionCity:false,
+            currIntentionNav:0,
+
+            countryList:[],
+            currCountryVal:0,
+            currCountryTxt:'',
+            cityList:[],
+            currCityVal:0,
+            currCityTxt:'',
+            areaList:[],
+            currAreaVal:0,
+            currAreaTxt:'',
+            // 意向楼盘
+            intentionHouseList:[],
+            currIntentionHouseTxt:'',
+            currIntentionHouseVal:0,
+            isChangeCityVal:false,
+            // 意向房型
+            intHouseClass:'',
+            // 意向户型
+            isShowHouseTypeSelect:false,
+            currHouseTypeNav:0,
+            currHouseType1Txt:'', //卧室
+            currHouseType2Txt:'',//卫生间
+            currHouseType3Txt:'',//车位
+            // 其他一级公用弹窗
+            isShowPopupSelect:false,
+            currPopupSelectData:0,
+            popupSelectDataList:[],
+            currOrigin:''
+        },
+        computed:{
+            intentionCityTxt:function(){
+                return (this.currCountryTxt + ' ' + this.currCityTxt + ' ' + this.currAreaTxt).trim();
+            },
+            intentionHouseTypeTxt:function(){
+                return (this.currHouseType1Txt + ' ' + this.currHouseType2Txt + ' ' + this.currHouseType3Txt).trim();
+            }
+        },
+        mounted:function(){
+            this.fetchUseHouseData();
+            this.fetchBudgetMoneyData();
+            this.fetchRealEstateData();
+            this.fetchCountryData();
+        },
+        methods:{
+            choosePopupSelectData:function(res){
+                console.log(JSON.stringify(res))
+                if(res.origin === 'useHouse'){
+                    this.currUseHouseVal = res.value;
+                    this.currUseHouseTxt = res.name;
+                }
+                else if(res.origin === 'budgetMoney'){
+                    this.currBudgetMoneyVal = res.value;
+                    this.currBudgetMoneyTxt = res.name;
+                }
+                else if(res.origin === 'intentionHouse'){
+                    this.currIntentionHouseVal = res.value;
+                    this.currIntentionHouseTxt = res.name;
+                }
+                else{
+                    console.log('传值错误')
+                }
+            },
+            handleChooseNeedForm:function(origin){
+                if(origin !== 'intentionHouse'){
+                    this.currOrigin = origin;
+                    this.isShowPopupSelect = true;
+                }
+                if(origin === 'useHouse'){
+                    this.currPopupSelectData = this.currUseHouseVal;
+                    this.popupSelectDataList = this.useHouseList;
+                }
+                else if(origin === 'budgetMoney'){
+                    this.currPopupSelectData = this.currBudgetMoneyVal;
+                    this.popupSelectDataList = this.budgetMoneyList;
+                }
+                else if(origin === 'intentionHouse'){
+                    if(this.currCityVal){
+                        if(this.isChangeCityVal){
+                            var _this = this;
+                            wDialog.showProgress();
+                            wApiAjax({
+                                url:'dataSource/selectPremises',
+                                headers:{
+                                    token:TOKEN_DATA
+                                },
+                                data:{
+                                    cityId:_this.currCityVal
+                                },
+                                success:function(res){
+                                    wDialog.hideProgress();
+                                    if(res.code == 1){
+                                        _this.isChangeCityVal = false;
+                                        _this.currOrigin = origin;
+                                        _this.isShowPopupSelect = true;
+                                        _this.intentionHouseList = res.data;
+                                        _this.popupSelectDataList = res.data;
+                                        _this.currPopupSelectData = _this.currIntentionHouseVal;
+                                    }
+                                }
+                            })
+                        }else{
+                            this.currOrigin = origin;
+                            this.isShowPopupSelect = true;
+                            this.popupSelectDataList = this.intentionHouseList;
+                            this.currPopupSelectData = this.currIntentionHouseVal;
+                        }
+                    }else{
+                        wDialog.toast({
+                            msg:'请先选择意向城市'
+                        })
+                    }
+                }else{
+                    console.log('传值错误')
+                }
+            },
+            // 打开国家城市弹窗
+            handleOpenCountryPopup:function(){
+                this.isShowIntentionCity = true;
+                this.currIntentionNav = 0;
+            },
+            // 选择意向城市的nav
+            handleChooseIntentionNav:function(i){
+                if(this.currIntentionNav === i) return;
+                this.currIntentionNav = i;
+            },
+            // 选择意向城市
+            handleChooseIntentionCity:function(i,name,value){
+                // 选择国家
+                if(i === 0){
+                    if(this.currCountryVal === value){
+                        this.currIntentionNav = 1;
+                    }
+                    else{
+                        // 需要请求接口
+                        this.currCountryVal = value;
+                        this.currCountryTxt = name;
+                        this.currCityVal = 0;
+                        this.currCityTxt = '';
+                        this.currAreaVal = 0;
+                        this.currAreaTxt = '';
+                        this.currIntentionHouseTxt = '';
+                        this.currIntentionHouseVal = 0;
+                        var _this = this;
+                        this.fnFetchData(4,value,function(res){
+                            if(res.code == 1){
+                                _this.cityList = res.data;
+                                _this.currIntentionNav = 1;
+                            }
+                        });
+                    }
+                }
+                // 选择城市
+                else if(i === 1){
+                    if(this.currCityVal === value){
+                        this.currIntentionNav = 2;
+                    }
+                    else{
+                        // 需要请求接口
+                        this.currCityVal = value;
+                        this.currCityTxt = name;
+                        this.isChangeCityVal = true;
+                        this.currAreaVal = 0;
+                        this.currAreaTxt = '';
+                        this.currIntentionHouseTxt = '';
+                        this.currIntentionHouseVal = 0;
+                        var _this = this;
+                        this.fnFetchData(17,value,function(res){
+                            if(res.code == 1){
+                                _this.areaList = res.data;
+                                _this.currIntentionNav = 2;
+                            }
+                        });
+                    }
+                }
+                // 选择区域
+                else{
+                    this.currAreaVal = value;
+                    this.currAreaTxt = name;
+                    this.isShowIntentionCity = false;
+                }
+            },
+            // 选择意向户型nav
+            handleChooseHouseType:function(i,txt){
+                this['currHouseType'+(i+1)+'Txt'] = txt;
+                this.currHouseTypeNav = i+1;
+                if(i===2){
+                    this.isShowHouseTypeSelect = false;
+                }
+            },
+            // 完成保存
+            handleFinishSave:function(){
+                var _this = this;
+                wDialog.showProgress({
+                    msg:'正在保存中'
+                });
+                console.log(JSON.stringify({
+                    demand_id:param.demandId,
+                    demand_country:_this.currCountryVal,
+                    demand_city:_this.currCityVal,
+                    demand_district:_this.currAreaVal,
+                    demand_premises:_this.currIntentionHouseVal,
+                    demand_budget:_this.currBudgetMoneyVal,
+                    demand_wuye:_this.currRealEstate,
+                    demand_purpose:_this.currUseHouseVal,
+                    demand_housestyle:_this.intHouseClass,
+                    demand_hallsnum:_this.currHouseType1Txt,
+                    demand_toiletnum:_this.currHouseType2Txt,
+                    demand_parkingnum:_this.currHouseType3Txt
+                }))
+                wApiAjax({
+                    url:'customer/editDemand',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        demand_id:param.demandId,
+                        demand_country:_this.currCountryVal,
+                        demand_city:_this.currCityVal,
+                        demand_district:_this.currAreaVal,
+                        demand_premises:_this.currIntentionHouseVal,
+                        demand_budget:_this.currBudgetMoneyVal,
+                        demand_wuye:_this.currRealEstate,
+                        demand_purpose:_this.currUseHouseVal,
+                        demand_housestyle:_this.intHouseClass,
+                        demand_hallsnum:_this.currHouseType1Txt,
+                        demand_toiletnum:_this.currHouseType2Txt,
+                        demand_parkingnum:_this.currHouseType3Txt
+                    },
+                    success:function(res){
+                        wDialog.hideProgress();
+                        console.log(JSON.stringify(res))
+                        if(res.code == 1){
+                            wDialog.alert({
+                                msg:'完善购物需求成功',
+                                cb:function(){
+                                    api.closeToWin({
+                                        name: 'main'
+                                    });
+                                }
+                            })
+                        }
+                    }
+                })
+            },
+            // 返回
+            handleBack:function(){
+                if(this.currUseHouseVal || this.currBudgetMoneyVal || this.currRealEstate || this.currCityVal || this.currIntentionHouseVal || this.intHouseClass || this.currHouseType1Txt || this.currHouseType2Txt || this.currHouseType3Txt){
+                    wDialog.confirm({
+                        msg:'是否放弃当前编辑？',
+                        button:['是','否'],
+                        sureCb:function(){
+                            api.closeWin();
+                        }
+                    })
+                }else{
+                    api.closeWin();
+                }
+            },
+            // 获取购房用途数据
+            fetchUseHouseData:function(){
+                var _this = this;
+                this.fnFetchData(3,'',function(res){
+                    if(res.code == 1){
+                        _this.useHouseList = res.data||[];
+                    }
+                })
+            },
+            // 获取预算资金
+            fetchBudgetMoneyData:function(){
+                var _this = this;
+                this.fnFetchData(2,'',function(res){
+                    if(res.code == 1){
+                        _this.budgetMoneyList = res.data;
+                    }
+                })
+            },
+            // 获取意向物业
+            fetchRealEstateData:function(){
+                var _this = this;
+                this.fnFetchData(7,'',function(res){
+                    if(res.code == 1){
+                        _this.realEstateList = res.data;
+                    }
+                })
+            },
+            // 获取国家信息
+            fetchCountryData:function(){
+                var _this = this;
+                this.fnFetchData(5,'',function(res){
+                    if(res.code == 1){
+                        _this.countryList = res.data;
+                    }
+                })
+            },
+            fnFetchData:function(type,fId,cb){
+                wDialog.showProgress();
+                wApiAjax({
+                    url:'dataSource/getConfigByType',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        type:type,
+                        fatherId:fId,
+                    },
+                    success:function(res){
+                        wDialog.hideProgress();
+                        if(res.code == 1){
+                            cb && typeof cb === 'function' && cb(res);
+                        }
+                    }
+                })
+            },
+        }
+    })
+}
+</script>
+
+</html>

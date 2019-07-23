@@ -49,21 +49,52 @@
 .add-box{
     padding:0 20px;
 }
+.add-sex-lis{
+    margin-top: 10px;
+}
 .add-box .add-lis .add-cap{
+    position: relative;
     padding: 20px 0;
     line-height: 24px;
     font-size: 18px;
     color:#333;
     font-weight: bold;
 }
+.add-box .add-lis .add-cap .select-sex{
+    position: absolute;
+    right: 0;
+    top: 14px;
+    width:140px;
+    height: 32px;
+    line-height: 32px;
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+    color:#666;
+    background-color: #f6f6f6;
+    border-radius: 16px;
+}
+.add-box .add-lis .add-cap .select-sex span.left.curr{
+    color:#fff;
+    background-color: #0c7ff9;
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+}
+.add-box .add-lis .add-cap .select-sex span.right.curr{
+    color:#fff;
+    background-color: #0c7ff9;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
 .add-box .add-lis .add-inp{
     position: relative;
-    height: 46px;
+    height: 40px;
 }
 .add-box .add-lis .add-inp > input{
     width:100%;
-    height: 46px;
-    padding:13px 0;
+    height: 40px;
+    padding-bottom: 15px;
+    padding-top: 5px;
     line-height: 20px;
     font-size: 16px;
     color:#333;
@@ -80,26 +111,35 @@
 .add-box .add-lis .add-switch{
     width:100%;
     overflow-x: scroll;
+    overflow-y: hidden;
     -webkit-overflow-scrolling:touch;
 }
 .add-box .add-lis .add-switch ul{
-    min-width: 100%;
-    width: 600px;
-    opacity: 0;
+    white-space: nowrap;
+    height: 36px;
 }
 .add-box .add-lis .add-switch ul li{
-    float: left;
-    height: 36px;
-    line-height: 34px;
     background-color: #f1f1f1;
     border:1px solid #f1f1f1;
-    border-radius: 18px;
+    border-radius: 6px;
     text-align: center;
-    padding:0 19px;
     color:#666;
     font-size: 14px;
-    margin-right: 15px;
-    box-sizing: border-box;
+    margin-right: 12px;
+    white-space: normal;
+    /*box-sizing: border-box;*/
+}
+.add-box .add-lis .add-switch ul li.flex-4h{
+    min-width: 19.5vw;
+}
+.add-box .add-lis .add-switch ul li.flex-3h{
+    min-width: 22.66666vw;
+}
+.add-box .add-lis .add-switch ul li.flex-2h-max{
+    max-width: 28vw;
+}
+.add-box .add-lis .add-switch ul li:last-child{
+    margin-right: 0;
 }
 .add-box .add-lis .add-switch ul li.curr{
     color:#0c7ff9;
@@ -117,6 +157,28 @@
     padding-top:10px;
     padding-bottom: 10px;
     line-height: 24px;
+}
+.add-box .add-lis .add-select > input{
+    width:100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: transparent;
+    padding:0 15px;
+    color:#666;
+}
+.add-box .add-lis .add-select > input::-webkit-input-placeholder{
+    color:#666;
+}
+.add-box .add-lis .add-select > input::-moz-input-placeholder{
+    color:#666;
+}
+.add-box .add-lis .add-select > input::-ms-input-placeholder{
+    color:#666;
+}
+.add-box .add-lis .add-select > input:input-placeholder{
+    color:#666;
 }
 .add-box .add-lis .add-select:after{
     content: '';
@@ -138,6 +200,7 @@
     position: fixed;
     left: 0;
     bottom: 0;
+    z-index: 11;
     width:100%;
     height: 60px;
     padding:8px 15px;
@@ -151,7 +214,7 @@
 .add-save .save-btn{
     width:100%;
     height: 100%;
-    border-radius: 22px;
+    border-radius:5px;
     line-height: 44px;
     text-align: center;
     font-size: 17px;
@@ -233,6 +296,9 @@
     color:#333;
     font-size: 15px;
 }
+.add-select-box .add-select-lis > .has-search[readonly]{
+    background-color: #f7f7f7;
+}
 .add-select-box .add-select-lis > .search-btn{
     position: absolute;
     right: 0;
@@ -257,6 +323,9 @@
     line-height: 20px;
     color:#666;
     font-size: 14px;
+}
+.add-search-box li.curr{
+    color:#0c7ff9;
 }
 .add-emp-cap{
     height: 40px;

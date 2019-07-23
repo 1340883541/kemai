@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客户地址</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+    <style>
+        .add-wrapper{
+            background-color: #f4f4f4;
+        }
+        .add-box{
+            background-color: #fff;
+        }
+        .addr-form{
+            margin-right: -20px;
+
+        }
+        .addr-lis{
+            height: 50px;
+            line-height: 50px;
+        }
+        .addr-lis .left{
+            width:80px;
+            color:#333;
+            font-size: 15px;
+        }
+        .addr-lis .right{
+            width: calc(100% - 80px);
+            text-align: right;
+        }
+        .addr-lis .right >input{
+            display: block;
+            width:100%;
+            height: 50px;
+            line-height: 24px;
+            padding: 13px 0;
+            font-size: 15px;
+            color:#333;
+            text-align: right;
+            padding-right: 15px;
+        }
+        .addr-lis .right > span{
+            position: relative;
+            display: block;
+            padding-right: 30px;
+            font-size: 15px;
+            color:#333;
+        }
+        .addr-lis .right > span:after{
+            content:'';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30px;
+            height: 100%;
+            background: url('../../image/icon-gr-jiantou.png') no-repeat center;
+            background-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="customer-address" class="add-wrapper" v-cloak> -->
+    <div id="customer-address" class="add-wrapper">
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">客户地址</div>
+                <div class="right" @click.stop="handleSureChoose">确定</div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="add-box">
+            <div class="addr-form">
+                <div class="addr-lis bor-1px-b flex-wrap">
+                    <div class="left">请选择省份</div>
+                    <div class="right" @click.stop="handleGotoSelectProvince">
+                        <span class="w-elli">{{currProvinceTxt?currProvinceTxt:'请选择省'}}</span>
+                    </div>
+                </div>
+                <div class="addr-lis bor-1px-b flex-wrap">
+                    <div class="left">请选择市</div>
+                    <div class="right" @click.stop="handleGotoSelectCity">
+                        <span class="w-elli">{{currCityTxt?currCityTxt:'请选择市'}}</span>
+                    </div>
+                </div>
+                <div class="addr-lis flex-wrap">
+                    <div class="left">详细地址</div>
+                    <div class="right">
+                        <input type="text" placeholder="请输入" v-model.trim="detailAddress">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 选择省市 -->
+        <div v-show="isShowAreaCitySelect" style="display:none;">
+            <div class="w-popup-select-bg" @touchmove.stop.prevent @click.stop="isShowAreaCitySelect = false"></div>
+            <div class="w-popup-select">
+                <div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>请选择省市<i class="close" @click.stop="isShowAreaCitySelect = false"></i></div>
+                <div class="popup-select-nav flex-wrap">
+                    <div
+                        class="flex-con"
+                        :class="{curr:isShowProvince}"
+                        @click.stop="handleGotoSelectProvince"
+                    >{{currProvinceTxt?currProvinceTxt:'选择省'}}</div>
+                    <div
+                        class="flex-con"
+                        :class="{curr:isShowCity}"
+                        @click.stop="handleGotoSelectCity"
+                    >选择市</div>
+                </div>
+                <div class="popup-select-b">
+                    <ul v-show="isShowProvince" style="display:none;">
+                        <li
+                            v-for="prov in provinceList"
+                            :key="prov.id"
+                            :class="{'curr':currProvinceId === prov.id}"
+                            @click.stop="handleChooseProvince(prov.id,prov.name)"
+                        >{{prov.name}}</li>
+                    </ul>
+                    <ul v-show="isShowCity" style="display:none;">
+                        <li
+                            v-for="city in cityList"
+                            :key="city.value"
+                            :class="{'curr':currCityId === city.value}"
+                            @click.stop="handleChooseCity(city.value,city.name)"
+                        >{{city.name}}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var addCustomerPerfect1V = null;
+
+    apiready = function(){
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        addCustomerPerfect1V = new Vue({
+            el:'#customer-address',
+            data:{
+                // 选择省市
+                isShowAreaCitySelect:false,
+                // 省份
+                provinceList:[],
+                isShowProvince:false,
+                currProvinceId:'',
+                currProvinceTxt:'',
+                // 城市
+                cityList:[],
+                isShowCity:false,
+                currCityId:'',
+                currCityTxt:'',
+                detailAddress:''
+            },
+            mounted:function(){
+                this.fetchProvinceData();
+            },
+            methods:{
+                // 获取省份列表
+                fetchProvinceData:function(){
+                    wDialog.showProgress();
+                    var _this = this;
+                    wApiAjax({
+                        url:'newResource/provinceList',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.provinceList = res.data;
+                            }
+                        }
+                    })
+                },
+                // 获取城市列表
+                fetchCityData:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'dataSource/searchCity',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            provinceId:_this.currProvinceId
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.cityList = res.data;
+                            }
+                        }
+                    })
+                },
+                // 选择省份
+                handleChooseProvince:function(id,name){
+                    this.isShowProvince = false;
+                    this.isShowCity = true;
+                    if(this.currProvinceId !== id){
+                        this.currProvinceId = id;
+                        this.currProvinceTxt = name;
+                        this.currCityId = '';
+                        this.currCityTxt = '';
+                        this.fetchCityData();
+                    }
+                },
+                // 选择市
+                handleChooseCity:function(id,name){
+                    this.currCityId = id;
+                    this.currCityTxt = name;
+                    this.isShowAreaCitySelect = false;
+                },
+                // 去选择省
+                handleGotoSelectProvince:function(){
+                    this.isShowAreaCitySelect = true;
+                    this.isShowProvince = true;
+                    this.isShowCity = false;
+                },
+                // 去选择市
+                handleGotoSelectCity:function(){
+                    if(this.currProvinceId || this.currProvinceTxt){
+                        this.isShowAreaCitySelect = true;
+                        this.isShowProvince = false;
+                        this.isShowCity = true;
+                    }
+                    else{
+                        wDialog.toast({
+                            msg:'请先选择省份'
+                        })
+                    }
+                },
+                // 确认选择
+                handleSureChoose:function(){
+                    var rObj = {
+                        cityId:this.currCityId,
+                        cityName:this.currCityTxt,
+                        provId:this.currProvinceId,
+                        provName:this.currProvinceTxt,
+                        detail:this.detailAddress
+                    };
+                    var rStr = JSON.stringify(rObj);
+                    api.execScript({
+                        name: 'addCustomerPerfect1',
+                        script: 'getCustomerAddress(\''+rStr+'\');'
+                    });
+                    api.closeWin();
+                }
+            }
+        })
+    }
+</script>
+
+</html>

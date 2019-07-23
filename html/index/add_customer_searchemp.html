@@ -16,50 +16,33 @@
 </head>
 
 <body>
-    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
-    <div id="add-wrapper" class="add-select-wrapper flex-wrap flex-vertical">
+    <div id="add-wrapper" class="add-select-wrapper flex-wrap flex-vertical" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop="handleBack"></div>
-                <div class="center">选择销售员工|选择渠道员工</div>
-                <div class="right">确定</div>
+                <div class="left back" @click="api.closeWin();"></div>
+                <div class="center" v-text="titleText"></div>
+                <div class="right" @click.stop="handleSureChooseEmp">确定</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
         <div class="emp-search-box">
             <div class="add-emp-cap">直接搜索</div>
             <div class="emp-search-inp">
-                <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息">
+                <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" @input.stop="handleSeachEmp" v-model="empName">
                 <i class="search-icon"></i>
-                <i class="detal-icon"></i>
+                <i class="detal-icon" @click.stop="empName = '';"></i>
             </div>
         </div>
         <div class="add-search-box flex-con">
             <ul>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li
+                    class="bor-1px-b w-elli"
+                    v-for="emp in empList"
+                    :class="{curr:empId === emp.empId}"
+                    :key="emp.empid"
+                    @click.stop="handleChooseEmp(emp.name,emp.phone,emp.rolesname,emp.empid)"
+                    v-text="emp.name+'--'+emp.phone+'--'+emp.rolesname"
+                ></li>
             </ul>
         </div>
     </div>
@@ -72,6 +55,82 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+    var searchEmpV = null;
+    apiready = function() {
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
+        searchEmpV = new Vue({
+            el: '#add-wrapper',
+            data: {
+                titleText: '',
+                isShowSelectEmpPopup: false,
+                empName: '',
+                empList:[],
+                empId:'',
+                isChooseEmp:false,
+                isLoadSearchData:true,
+            },
+            mounted: function() {
+                this.titleText = param.origin === 'selectChannel' ? '选择渠道员工' : '选择销售员工';
+            },
+            methods: {
+                handleSeachEmp: function() {
+                    wFuncDebounceThrottle.wDebounce(this.fnSearchEmp, 300);
+                },
+                fnSearchEmp: function() {
+                    console.log(this.empName)
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/searchEmp',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            empNameOrPhone:_this.empName,
+                            type:param.origin === 'selectChannel' ? 4 : 0
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 1){
+                                _this.empList = res.data;
+                            }
+                        }
+                    })
+                },
+                // 选择员工
+                handleChooseEmp:function(name,phone,rolesname,id){
+                    this.empName = name+'--'+phone+'--'+rolesname;
+                    this.empId = id;
+                    this.isChooseEmp = true;
+                },
+                // 确定选择员工
+                handleSureChooseEmp:function(){
+                    if(!this.isChooseEmp){
+                        wDialog.toast({
+                            msg:'请先选择一个员工'
+                        })
+                        return;
+                    }
+                    var sendParam = {
+                        origin:param.origin,
+                        empId:this.empId,
+                        empName:this.empName
+                    }
+                    var sendParamStr = JSON.stringify(sendParam);
+                    api.execScript({
+                        name: 'addCustomer',
+                        script: 'getEmpInfo('+sendParamStr+');'
+                    });
+                    api.closeToWin({
+                        name: 'addCustomer'
+                    });
+
+                }
+            }
+        })
+    }
 </script>
 
 </html>

@@ -24,24 +24,60 @@
         #wrap{
             position: relative;
         }
+        .filter-lists .filter-lis .filter-lb .lis.flb-cls2{
+            color:#ccc;
+            line-height: 1.2em;
+        }
+        .change-allot-btn{
+            width: 60px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            margin-top: 9px;
+            overflow: hidden;
+            background: url('../../image/icon-danxuankuang.png') no-repeat right center;
+            background-size:  20px;
+        }
+        .filter-lists .filter-lis.curr .change-allot-btn{
+            background-image: url('../../image/icon-danxuankuangp.png');
+        }
+        .filter-lists .filter-lis .filter-lt .rela{
+            height: 16px;
+            line-height: 16px;
+            background-color: #f3a135;
+            font-size: 13px;
+            color:#fff;
+            padding:0 4px;
+            text-align: center;
+            margin-top: 17px;
+            margin-left: 2px;
+            max-width:90px;
+        }
     </style>
 </head>
 
 <body>
-    <div id="wrap">
-        <div class="filter-lists" v-if="employeeList && employeeList.length > 0" v-cloak>
-            <div class="filter-lis" v-for="employee in employeeList" :key="employee.id">
+    <div id="change-person-frame" v-cloak>
+        <div class="filter-lists" v-if="employeeList && employeeList.length > 0">
+            <div
+                v-for="employee in employeeList"
+                :key="employee.id"
+                class="filter-lis"
+                :class="{curr:empId===employee.empid}"
+                @click.stop="handleSureAllotEmp(employee.empid)"
+            >
                 <div class="filter-lt flex-wrap flex-between">
                     <div class="flex-wrap filter-lcap">
-                        <span class="cname w-elli" v-text="employee.cusnmae"></span>
+                        <span class="cname w-elli" v-text="employee.name"></span>
+                        <span class="rela" v-text="employee.rolesname"></span>
                     </div>
-                    <div class="cphone" @click.stop="handleSkipChangeAllot(employee.cusid,employee.phone)">去分配</div>
+                    <div class="change-allot-btn"></div>
                 </div>
                 <div class="filter-lb">
-                    <div class="lis flb-cls1">号码归属地: <span v-text="employee.attribution||'未知'"></span></div>
-                    <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status" :class="[employee.followtime?'green-col':'orange-col']" v-text="showFollowTxt(employee.followtime)"></span></div>
-                    <div class="lis flb-cls2">分配时间: <span v-text="employee.createtime||'暂未分配'"></span></div>
-                    <div class="lis flb-cls2" v-if="employee.followtime">跟进时间: <span v-text="employee.followtime"></span></div>
+                    <div class="lis flb-cls1">电话号码: <span v-text="employee.phone"></span></div>
+                    <div class="lis flb-cls2"><span>{{employee.regionName}}{{employee.teamName?' | ':''}}{{employee.teamName}}{{employee.groupName?' | ':''}}{{employee.groupName}}</span></div>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -60,7 +96,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var allotEmployeeFrameV = null;
+    var changePersonSearchFrameV = null;
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
@@ -91,65 +127,30 @@
             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
-            allotEmployeeFrameV.pageNo = 1;
-            allotEmployeeFrameV.fetchAllotEeployee(false, api.refreshHeaderLoadDone);
-        });
-        // 筛选客户状态
-        api.addEventListener({
-            name: 'filterAllotEmployee'
-        }, function(ret, err){
-            var obj = ret.value;
-            if(obj){
-                if(typeof obj.startDate != 'undefined'){
-                    allotEmployeeFrameV.startDate = obj.startDate;
-                }
-                if(typeof obj.endDate != 'undefined'){
-                    allotEmployeeFrameV.endDate = obj.endDate;
-                }
-                if(typeof obj.origin != 'undefined'){
-                    allotEmployeeFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
-                    allotEmployeeFrameV.currType = obj.type;
-                }
-                $('#not-more').hide();
-                allotEmployeeFrameV.pageNo = 1;
-                allotEmployeeFrameV.fetchAllotEeployee();
-            }
+            changePersonSearchFrameV.pageNo = 1;
+            changePersonSearchFrameV.fetchAllotEeployee(false, api.refreshHeaderLoadDone);
         });
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err) {
-            if (++allotEmployeeFrameV.pageNo <= allotEmployeeFrameV.totalPage) {
-                allotEmployeeFrameV.fetchAllotEeployee(true);
+            if (++changePersonSearchFrameV.pageNo <= changePersonSearchFrameV.totalPage) {
+                changePersonSearchFrameV.fetchAllotEeployee(true);
             } else {
                 $('#not-more').show();
             }
         });
-        api.addEventListener({
-            name: 'allotEmployeeSuccess'
-        }, function(ret, err){
-            wDialog.showProgress();
-            allotEmployeeFrameV.pageNo = 1;
-            allotEmployeeFrameV.fetchAllotEeployee();
-        });
-
         var param = api.pageParam;
-        allotEmployeeFrameV = new Vue({
-            el: '#wrap',
+        changePersonSearchFrameV = new Vue({
+            el: '#change-person-frame',
             data: {
                 // 筛选条件
                 search_cusName: '', // 搜索客户名
-                currOrigin:'',
-                currType:'',
-                startDate:'',
-                endDate:'',
-
-
                 employeeList: [], //客户
+                empId:'',
                 pageNo: 1,
                 totalPage: 1,
                 userInfo: '',
-                areaId:''
             },
             mounted: function() {
                 this.init();
@@ -161,12 +162,6 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
-                    this.currType = param.currType;
-                    this.currOrigin = param.currOrigin;
-                    // this.startDate = param.startDate;
-                    // this.endDate = param.endDate;
-                    this.areaId = param.region
                 },
                 // 获取今日新增列表
                 fetchAllotEeployee: function(isLoadMore, callback) {
@@ -175,31 +170,14 @@
                     setTimeout(function(){
                         wDialog.showProgress();
                     },10);
-                    console.log('allot employee frame request----'+JSON.stringify({
-                        employeeid:_this.userInfo.employeeid,
-                        startTime:_this.startDate,
-                        endTime:_this.endDate,
-                        region:_this.areaId,
-                        cusSource:_this.currOrigin,
-                        type:_this.currType,
-                        search_empName:_this.search_cusName,
-                        pageNo: _this.pageNo,
-                        pageSize: 10
-                    }));
                     wApiAjax({
-                        url: 'newResource/allocationList',
+                        url: 'customer/searchEmp',
                         headers: {
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid:_this.userInfo.employeeid,
-                            startTime:_this.startDate,
-                            endTime:_this.endDate,
-                            region:_this.areaId,
-                            cusSource:_this.currOrigin,
-                            // type:_this.currType,
-                            type:1,
-                            search_empName:_this.search_cusName,
+                            empNameOrPhone:_this.search_cusName,
+                            type:param.type,
                             pageNo: _this.pageNo,
                             pageSize: 10
                         },
@@ -207,7 +185,7 @@
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },100);
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             if (res.code == 1) {
                                 if (!isLoadMore) {
                                     _this.employeeList = res.data ? res.data : [];
@@ -230,23 +208,57 @@
                         }
                     })
                 },
-                showFollowTxt:function(ft){
-                    if(ft){
-                        return '已跟进'
-                    }
-                    else{
-                        return '未跟进'
-                    }
-                },
-                handleSkipChangeAllot:function(id){
-                    wHrefJs.openWin({
-                        name: 'changePerson',
-                        path: 'change_person.html',
-                        param:{
-                            cusId:id,
-                            type:0
-                        }
+                handleSureAllotEmp:function(eid){
+                    this.empId = eid;
+                    var _this = this;
+                    wDialog.confirm({
+                        msg: '确认分配给当前员工吗?',
+                        sureCb: function() {
+                            wDialog.showProgress({
+                                msg: '正在分配中...'
+                            })
+                            console.log('allot employeed req------' + JSON.stringify({
+                                employeeid: _this.empId,
+                                customerid: _this.cusId
+                            }))
+                            wApiAjax({
+                                method: "post",
+                                url: 'newResource/changeSales',
+                                withCredentials: true,
+                                headers: {
+                                    "token": TOKEN_DATA,
+                                },
+                                data: {
+                                    employeeid: _this.empId,
+                                    customerid: param.cusId,
+                                    type:param.type === undefined ? 0 : param.type
+                                },
+                                success: function(res) {
+                                    console.log('allot response' + JSON.stringify(res));
+                                    wDialog.hideProgress();
+                                    if (res.code == 1) {
+                                        api.sendEvent({
+                                            name: 'allotEmployeeSuccess'
+                                        });
+                                        wDialog.alert({
+                                            msg: '分配成功',
+                                            cb: function() {
+                                                if(param.origin === 'customerDetail'){
+                                                    api.closeToWin({
+                                                        name:'customerDetail'
+                                                    });
+                                                }else{
+                                                    api.closeToWin({
+                                                        name: 'allotEmployeeHeader'
+                                                    });
 
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        }
                     })
                 }
             }
@@ -254,13 +266,13 @@
     }
     // 获取搜索的内容
     function getSearchValue(val) {
-        allotEmployeeFrameV.search_cusName = val;
-        allotEmployeeFrameV.pageNo = 1;
-        allotEmployeeFrameV.fetchAllotEeployee();
+        changePersonSearchFrameV.search_cusName = val;
+        changePersonSearchFrameV.pageNo = 1;
+        changePersonSearchFrameV.fetchAllotEeployee();
     }
     // 清空搜索的内容
     function clearSearchValue() {
-        allotEmployeeFrameV.search_cusName = '';
+        changePersonSearchFrameV.search_cusName = '';
     }
 </script>
 

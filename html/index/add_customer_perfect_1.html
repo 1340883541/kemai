@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>完善信息</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/mdater.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+    <style>
+        .add-box{
+            padding-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="add-wrapper-perfect1" class="add-wrapper" v-cloak>
+        <div class="add-header">
+            <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                <div class="left back" @click.stop="handleBack"></div>
+                <div class="center">完善信息</div>
+                <div class="right"></div>
+            </div>
+            <div class="fh-place" id="fh-place"></div>
+        </div>
+        <div class="add-box">
+            <div class="add-form">
+                <div class="add-lis">
+                    <div class="add-cap">质量等级</div>
+                    <div class="add-switch">
+                        <ul class="clear flex-wrap">
+                            <template v-for="mass in massLevelList">
+                                <li
+                                    class="flex-con flex-3h flex-wrap flex-center flex-align-item"
+                                    :class="{curr:currMassLevel === mass.value}"
+                                    v-text="mass.name"
+                                    @click.stop="currMassLevel = mass.value"
+                                ></li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-lis add-sex-lis">
+                    <div class="add-cap bor-1px-b">性别
+                        <div class="select-sex flex-wrap" v-if="sexList && sexList.length > 0">
+                            <span
+                                class="flex-con left"
+                                :class="{curr:currSex === sexList[0].value}"
+                                @click.stop="currSex = sexList[0].value"
+                                v-text="sexList[0].name"
+                            ></span>
+                            <span
+                                class="flex-con right"
+                                :class="{curr:currSex === sexList[1].value}"
+                                @click.stop="currSex = sexList[1].value"
+                                v-text="sexList[1].name"
+                            >女</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">身份证号</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" placeholder="请输入身份证号" v-model="idcard" maxlength="6">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">出生日期</div>
+                    <div class="add-select w-elli">
+                        <input type="text" id="choose-date" v-model="currDate" placeholder="请选择" readonly="true">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">所属行业</div>
+                    <div class="add-select w-elli" @click.stop="isShowPopupSelect = true">
+                        {{currTradeTxt ? currTradeTxt : '请选择'}}
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">婚姻状况</div>
+                    <div class="add-switch">
+                        <ul class="clear flex-wrap">
+                            <li
+                                class="flex-con flex-2h-max flex-wrap flex-center flex-align-item"
+                                :class="{curr:currMarry===0}"
+                                @click.stop="currMarry === 0 ? currMarry = '' : currMarry = 0"
+                            >未婚</li>
+                            <li
+                                class="flex-con flex-2h-max flex-wrap flex-center flex-align-item"
+                                :class="{curr:currMarry===1}"
+                                @click.stop="currMarry === 1 ? currMarry = '' : currMarry = 1"
+                            >已婚</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">电子邮箱</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" placeholder="请输入电子邮箱" v-model="email" maxlength="6">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">微信号码</div>
+                    <div class="add-inp flex-wrap bor-1px-b">
+                        <input type="text" class="flex-con" placeholder="请输入微信号码" v-model="wechat" maxlength="6">
+                    </div>
+                </div>
+                <div class="add-lis">
+                    <div class="add-cap">客户地址</div>
+                    <div class="add-select w-elli" @click.stop="handleSkipChooseAddress">
+                        {{cusAddress?cusAddress:'请选择'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="add-save">
+            <div class="save-btn" @click.stop="handleSavePerfectCustomer">下一步</div>
+        </div>
+        <div class="add-save-place"></div>
+        <!-- 所属行业弹窗 -->
+        <popup-select
+            :is-show-popup-select.sync="isShowPopupSelect"
+            :curr-popup-select-data="currTradeVal"
+            popup-select-title="请选择所属行业"
+            :popup-select-data-list="tradeList"
+            @choose-popup-select-data="handleGetChooseTrade"
+        ></popup-select>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/mdater.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var addCustomerPerfect1V = null;
+    apiready = function(){
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            addCustomerPerfect1V.handleBack();
+        });
+
+        var param = api.pageParam;
+        $api.fixStatusBar($('#fh-fixed')[0]);
+        $api.fixStatusBar($('#fh-place')[0]);
+        addCustomerPerfect1V = new Vue({
+            el:'#add-wrapper-perfect1',
+            data:{
+                massLevelList:[],
+                currMassLevel:'',
+                //性别
+                currSex:0,
+                sexList:[],
+                // 婚姻状况
+                currMarry:'',
+                // 所属行业弹窗
+                currTradeVal:0,
+                currTradeTxt:'',
+                tradeList:[],
+                isShowPopupSelect:false,
+                // 出生日期
+                currDate:'',
+                idcard:'',
+                email:'',
+                wechat:'',
+
+                // 客户地址
+                provId:'',
+                cityId:'',
+                detail:'',
+                cusAddress:''
+            },
+            mounted:function(){
+                this.fetchMassLevel();
+                this.fetchSexData();
+                this.fetchTradeData();
+                var _this = this;
+                this.$nextTick(function(){
+                    // 初始化日历
+                    $('#choose-date').mdater({
+                        minDate : new Date('2008-01-01'),
+                        sureCb(date){
+                            _this.currDate = date;
+                            $(this).val(date);
+                        }
+                    });
+                })
+            },
+            methods:{
+                // 返回main
+                handleBack:function(){
+                    if(this.currMassLevel || this.idcard || this.currDate || this.currTradeVal || this.currMarry || this.email || this.wechat || this.provId){
+                        wDialog.confirm({
+                            msg:'是否放弃当前编辑？',
+                            button:['是','否'],
+                            sureCb:function(){
+                                api.closeToWin({
+                                    name: 'main'
+                                });
+                            }
+                        })
+                    }else{
+                        api.closeToWin({
+                            name: 'main'
+                        });
+                    }
+                },
+                // 获取质量等级
+                fetchMassLevel:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'dataSource/cusLevel',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                _this.massLevelList = res.data || [];
+                            }
+                        }
+                    })
+                },
+                // 获取性别信息
+                fetchSexData:function(){
+                    var _this = this;
+                    this.fnFetchData(6,'',function(res){
+                        _this.sexList = res.data || [];
+                        _this.currSex = _this.sexList[0] ? _this.sexList[0].value : 0;
+                    });
+                },
+                // 获取所属行业信息
+                fetchTradeData:function(){
+                    var _this = this;
+                    this.fnFetchData(1,'',function(res){
+                        _this.tradeList = res.data || [];
+                    });
+                },
+                fnFetchData:function(type,fId,cb){
+                    wApiAjax({
+                        url:'dataSource/getConfigByType',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            type:type,
+                            fatherId:fId,
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                cb && typeof cb === 'function' && cb(res);
+                            }
+                        }
+                    })
+                },
+                // 获取所选择的行业
+                handleGetChooseTrade:function(res){
+                    this.currTradeVal = res.value;
+                    this.currTradeTxt = res.name;
+                },
+                // 跳转到选择客户地址
+                handleSkipChooseAddress:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomerAddress',
+                        url:'./add_customer_address.html'
+                    })
+                },
+                // 保存完善信息
+                handleSavePerfectCustomer:function(){
+                    var _this = this;
+                    wDialog.showProgress({
+                        msg:'正在保存中'
+                    });
+                    console.log('保存的requestdata'+JSON.stringify({
+                        id:param.cusId,
+                        level:_this.currMassLevel,
+                        sex:_this.currSex,
+                        idcard:_this.idcard,
+                        customer_age:_this.currDate,
+                        industry:_this.currTradeVal,
+                        maritalstatus:_this.currMarry,
+                        email:_this.email,
+                        wechat:_this.wechat,
+                        province:_this.provId,
+                        city:_this.cityId,
+                        datailaddress:_this.detail
+                    }));
+                    wApiAjax({
+                        url:'customer/editCus',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            id:param.cusId,
+                            level:_this.currMassLevel,
+                            sex:_this.currSex,
+                            idcard:_this.idcard,
+                            customer_age:_this.currDate,
+                            industry:_this.currTradeVal,
+                            maritalstatus:_this.currMarry,
+                            email:_this.email,
+                            wechat:_this.wechat,
+                            province:_this.provId,
+                            city:_this.cityId,
+                            datailaddress:_this.detail
+                        },
+                        success:function(res){
+                            console.log('保存返回的数据'+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                wDialog.toast({
+                                    msg:'保存成功'
+                                })
+                                setTimeout(function(){
+                                    wHrefJs.openWin({
+                                        name:'addCustomerPerfect2',
+                                        url:'./add_customer_perfect_2.html',
+                                        param:{
+                                            demandId:param.demandId
+                                        }
+                                    })
+                                },300);
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+    function getCustomerAddress(res) {
+        res = res ? JSON.parse(res) : {};
+        console.log('客户地址+==='+JSON.stringify(res))
+        addCustomerPerfect1V.cusAddress = res.provName+' '+res.cityName+' '+res.detail;
+        addCustomerPerfect1V.provId = res.provId;
+        addCustomerPerfect1V.cityId = res.cityId;
+        addCustomerPerfect1V.detail = res.detail;
+    }
+</script>
+
+</html>

@@ -344,11 +344,11 @@ body, html {
     display: block;
     position: absolute;
     z-index: 0;
-    right: 2px;
-    top: 8px;
-    border-width: 7px;
-    border-style: solid;
-    border-color: transparent transparent transparent #1b78f9;
+    right: 10px;
+    top: 9px;
+    border-left: 6px solid #1b78f9;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
 }
 
 .call-phone-box {
@@ -861,10 +861,10 @@ body, html {
 }
 
 .follow-r-m-header .fh-fixed .left {
-    width: 54px;
+    width: 40px;
     height: 40px;
-    background: url('../../image/icon-gl-jiantou.png') no-repeat 8px center;
-    background-size: 13px;
+    background: url('../../image/icon-dh-fanhui.png') no-repeat 8px center;
+    background-size: 24px;
     text-align: right;
 }
 
@@ -943,7 +943,7 @@ body, html {
 .check {
     width: 18px;
     height: 18px;
-    background: url(../../image/icon-xz-gouxuan.png) no-repeat center center;
+    background: url('../../image/icon-danxuankuang.png') no-repeat center center;
     background-size: cover;
     border: 0px;
     border: 1px solid #4c9ff8;
@@ -1063,4 +1063,141 @@ body, html {
     pointer-events: none;
     cursor: default;
     opacity: 0.6;
+}
+/*联系方式弹窗*/
+.choose-concatway-popup{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width:100%;
+    height: 100%;
+    z-index: 10000;
+    background-color: rgba(0,0,0,.3);
+}
+.choose-concatway-popup .concatway-pop-box{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-cap{
+    position: relative;
+    width: 100%;
+    height: 56px;
+    text-align: center;
+    line-height: 56px;
+    color:#333;
+    font-size: 18px;
+    font-weight: bold;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-cap > i{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 56px;
+    height: 56px;
+    background:url('../../image/icon-guanbi.png') no-repeat center;
+    background-size: 20px;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-lis{
+    position: relative;
+    padding-left: 15px;
+    padding-right: 50px;
+    height: 56px;
+}
+
+.choose-concatway-popup .concatway-pop-box .concatway-lis .lis-left{
+    height: 100%;
+}
+
+.choose-concatway-popup .concatway-pop-box .concatway-lis .lis-left > .p1{
+    line-height: 24px;
+    font-size: 18px;
+    color:#333;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-lis .lis-left > .p2{
+    line-height: 18px;
+    font-size: 11px;
+    color:#fa9551;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-lis > .check-icon{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width:50px;
+    height: 100%;
+    background: url('../../image/icon-danxuankuang.png') no-repeat center;
+    background-size: 20px;
+}
+.choose-concatway-popup .concatway-pop-box .concatway-lis.checked > .check-icon{
+    background-image: url('../../image/icon-danxuankuangp.png');
+}
+.choose-concatway-popup .concatway-pop-box .concatway-place{
+    height: 10px;
+    background-color: #fcfcfc;
+}
+.choose-concatway-popup .concatway-pop-box .sure-call-btn{
+    height: 56px;
+    line-height: 56px;
+    text-align: center;;
+    background-color: #fff;
+    color:#ccc;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all .3s ease;
+    pointer-events: none;
+}
+.choose-concatway-popup .concatway-pop-box .sure-call-btn.curr{
+    color:#0c7ff9;
+    pointer-events: visible;
+}
+/*确认拨打电话弹窗*/
+.callphone-sure-popup{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background-color: rgba(0,0,0,.3);
+}
+.callphone-sure-popup .callphone-sure-box{
+    position: absolute;
+    left: 13%;
+    top: 50%;
+    background-color: #fff;
+    width: 74%;
+    height: auto;
+    padding:30px 15px 20px;
+    text-align: center;
+    transform: translateY(-50%);
+    border-radius: 8px;
+}
+.callphone-sure-popup .callphone-sure-box .callphone-sure-content{
+    line-height: 24px;
+    font-size: 17px;
+    color:#333;
+    margin-bottom: 30px;
+}
+.callphone-sure-popup .callphone-sure-box .callphone-sure-btn .left{
+    width: 48%;
+    line-height: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background-color: #f6f6f6;
+    color:#666;
+    font-size: 15px;
+}
+.callphone-sure-popup .callphone-sure-box .callphone-sure-btn .right{
+    width: 48%;
+    line-height: 36px;
+    height: 36px;
+    border-radius: 4px;
+    background-image: linear-gradient(90deg, #085eff 0%, #0c7ff9 100%);
+    color:#fff;
+    font-size: 15px;
 }

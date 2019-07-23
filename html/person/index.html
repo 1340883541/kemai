@@ -92,10 +92,18 @@
                     <div class="person_center account_security">
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-gy.png"></div>
-
                         </div>
                         <div class="account_rig underline_rig" @click="about">
                             <span>关于客脉</span>
+                            <div><img src="../../image/icon-gr-jiantou.png"></div>
+                        </div>
+                    </div>
+                    <div class="person_center account_security">
+                        <div class="account_left">
+                            <div><img src="../../image/icon-gy-bj.png"></div>
+                        </div>
+                        <div class="account_rig underline_rig" @click="aboutLocal">
+                            <span>关于本机</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
@@ -176,6 +184,12 @@
                     wHrefJs.openWin({
                         name: 'about',
                         path: './about.html',
+                    })
+                },
+                aboutLocal:function(){
+                    wHrefJs.openWin({
+                        name: 'aboutLocal',
+                        path: './about_local.html',
                     })
                 },
                 setting_tel: function() {

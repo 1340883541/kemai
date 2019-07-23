@@ -24,6 +24,26 @@
             min-height: 0;
             height: 100vh;
         }
+
+        .search-emp-box {
+            width: 100%;
+            height: 56px;
+            background-color: #f7f7f7;
+            padding: 10px 15px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .search-emp-box>.search-emp {
+            width: 100%;
+            height: 36px;
+            line-height: 36px;
+            background: #fff url('../../image/add_search.png') no-repeat 10px center;
+            background-size: 16px;
+            border-radius: 4px;
+            padding-left: 30px;
+            padding-right: 20px;
+        }
     </style>
 </head>
 
@@ -33,6 +53,9 @@
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
                 <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap">变更销售负责人<i></i></span></div>
+            </div>
+            <div class="search-emp-box" @click.stop="handleSkipSearchChange">
+                <div class="search-emp w-elli">请输入员工名称或电话，选择正确的员工信息</div>
             </div>
         </div>
         <div class="change_person_box">
@@ -68,7 +91,7 @@
         </div>
         <!-- 底部 -->
         <div class="immediate_box" v-show="isFooter">
-            <div class="allocation">立即分配</div>
+            <div class="allocation" v-text="footAllotTxt"></div>
         </div>
 
 
@@ -88,8 +111,7 @@
 
 
         <!-- 弹出销售 -->
-        <!-- <div class="popup_curr1" v-show="popup_curr1" style="display:none;"> -->
-        <div class="popup_curr1" v-show="popup_curr1">
+        <div class="popup_curr1" v-show="popup_curr1" style="display:none;">
             <div class="mengcheng" @click.stop="popup_curr1  = popup_curr = false;isFooter=true;isChooseZzOrg=false;"></div>
             <div class="curr_choose_box">
                 <div class="popup_box_list">
@@ -100,7 +122,7 @@
                 </div>
                 <div class="all_box">
                     <div class="content_lef">
-                        <div class="lists_group" v-if="groupListOrg && groupListOrg.length>0" v-for="(item,a) in groupListOrg" :class="{'curr':currGroupOrgIdx === a}" :key="'org'+a"  @click.stop="handleChooseZzOrg(item.gruopName,item.emp,a)">
+                        <div class="lists_group" v-if="groupListOrg && groupListOrg.length>0" v-for="(item,a) in groupListOrg" :class="{'curr':currGroupOrgIdx === a}" :key="'org'+a" @click.stop="handleChooseZzOrg(item.gruopName,item.emp,a)">
                             <div>{{item.gruopName}}</div>
                         </div>
                         <div class="flex_cont_img" v-if="groupListPer && groupListPer.length>0" v-for="(item,a) in groupListPer" :key="'per'+a" @click.stop="handleChooseZzPer(item.empid,item.name,a)">
@@ -164,11 +186,13 @@
                 teamName: '',
                 groupName: '',
                 groupListOrg: [],
-                groupListPer:[],
-                crewList:[],
-                currGroupOrgIdx:'',
-                currGroupPerIdx:'',
-                isChooseZzOrg:false
+                groupListPer: [],
+                crewList: [],
+                currGroupOrgIdx: '',
+                currGroupPerIdx: '',
+                isChooseZzOrg: false,
+
+                footAllotTxt:'立即分配'
             },
             mounted: function() {
                 this.init();
@@ -178,6 +202,11 @@
                 init: function() {
                     var _this = this;
                     this.cusId = param.cusId;
+                    if(param.origin === 'customerDetail'){
+                        this.footAllotTxt = '立即更换';
+                    }else{
+                        this.footAllotTxt = '立即分配';
+                    }
                     // 获取用户信息
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
@@ -187,9 +216,9 @@
                 // 根据员工id获取列表
                 getUserInfo: function() {
                     var _this = this;
-                    setTimeout(function(){
+                    setTimeout(function() {
                         wDialog.showProgress();
-                    },10);
+                    }, 80);
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findRegion',
@@ -201,16 +230,28 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
-                            console.log('change person response---'+JSON.stringify(res))
-                            setTimeout(function(){
+                            // console.log('change person response---' + JSON.stringify(res))
+                            setTimeout(function() {
                                 wDialog.hideProgress();
-                            },100);
+                            }, 200);
                             if (res.code == 1) {
                                 _this.lists = res.data.map(function(v) {
                                     v.isShowDetail = true;
                                     return v;
                                 })
                             }
+                        }
+                    })
+                },
+                // 跳转到搜索数据的页面
+                handleSkipSearchChange:function(){
+                    wHrefJs.openWin({
+                        name:'changePersonSearchHeader',
+                        url:'./change_person_search_header.html',
+                        param:{
+                            origin:param.origin,
+                            type:param.type,
+                            cusId:param.cusId
                         }
                     })
                 },
@@ -237,43 +278,43 @@
                     }
                 },
                 // 选择小组
-                handleChooseZzOrg:function(name,lists,idx){
+                handleChooseZzOrg: function(name, lists, idx) {
                     console.log(JSON.stringify(lists))
-                    this.groupListPer = this.groupListPer.map(function(v,idx){
+                    this.groupListPer = this.groupListPer.map(function(v, idx) {
                         v.isChecked = false;
                         return v;
                     });
                     this.empId = '';
                     this.currName = '';
                     this.isChooseZzOrg = true;
-                    if(this.currGroupOrgIdx === idx){
+                    if (this.currGroupOrgIdx === idx) {
                         return;
-                    }else{
+                    } else {
                         this.groupName = name;
                         this.currGroupOrgIdx = idx;
                         var crewList = lists || [];
-                        this.crewList = crewList.map(function(v){
+                        this.crewList = crewList.map(function(v) {
                             v.isChecked = false;
                             return v;
                         });
                     }
-                    console.log('crewList---------'+JSON.stringify(this.crewList))
+                    console.log('crewList---------' + JSON.stringify(this.crewList))
                 },
                 // 选择小组同级员工
-                handleChooseZzPer:function(id,name,i){
+                handleChooseZzPer: function(id, name, i) {
                     this.groupName = '';
                     this.currGroupOrgIdx = '';
                     this.crewList = [];
-                    if(this.empId === id){
+                    if (this.empId === id) {
                         this.empId = '';
                         this.currName = '';
                         this.groupListPer[i].isChecked = false;
-                    }else{
+                    } else {
                         this.empId = id;
                         this.currName = name;
-                        this.groupListPer = this.groupListPer.map(function(v,idx){
+                        this.groupListPer = this.groupListPer.map(function(v, idx) {
                             v.isChecked = false;
-                            if(i===idx){
+                            if (i === idx) {
                                 v.isChecked = true;
                             }
                             return v;
@@ -281,29 +322,29 @@
                     }
                 },
                 // 选择员工
-                handleChooseCrew(id,name,i){
-                    if(this.empId === id){
+                handleChooseCrew(id, name, i) {
+                    if (this.empId === id) {
                         this.empId = '';
                         this.currName = '';
                         this.crewList[i].isChecked = false;
-                    }else{
+                    } else {
                         this.empId = id;
                         this.currName = name;
-                        this.crewList = this.crewList.map(function(v,idx){
-                            if(i===idx){
+                        this.crewList = this.crewList.map(function(v, idx) {
+                            if (i === idx) {
                                 v.isChecked = true;
-                            }else{
+                            } else {
                                 v.isChecked = false;
                             }
                             return v;
                         })
                     }
                 },
-                handleSureAllotYg:function(){
+                handleSureAllotYg: function() {
                     var _this = this;
-                    if(!this.empId){
+                    if (!this.empId) {
                         wDialog.toast({
-                            msg:'请先选择一个员工'
+                            msg: '请先选择一个员工'
                         });
                         return;
                     }
@@ -311,9 +352,9 @@
                         msg: '确认分配给当前员工吗?',
                         sureCb: function() {
                             wDialog.showProgress({
-                                msg:'正在分配中...'
+                                msg: '正在分配中...'
                             })
-                            console.log('allot employeed req------'+JSON.stringify({
+                            console.log('allot employeed req------' + JSON.stringify({
                                 employeeid: _this.empId,
                                 customerid: _this.cusId
                             }))
@@ -326,7 +367,8 @@
                                 },
                                 data: {
                                     employeeid: _this.empId,
-                                    customerid: _this.cusId
+                                    customerid: _this.cusId,
+                                    type:param.type === undefined ? 0 : param.type
                                 },
                                 success: function(res) {
                                     console.log('allot response' + JSON.stringify(res));
@@ -354,7 +396,7 @@
                         msg: '确认分配给当前员工吗?',
                         sureCb: function() {
                             wDialog.showProgress({
-                                msg:'正在分配中'
+                                msg: '正在分配中'
                             })
                             wApiAjax({
                                 method: "post",
@@ -365,7 +407,8 @@
                                 },
                                 data: {
                                     employeeid: _this.empId,
-                                    customerid: _this.cusId
+                                    customerid: _this.cusId,
+                                    type:param.type === undefined ? 0 : param.type
                                 },
                                 success: function(res) {
                                     console.log('allot response' + JSON.stringify(res));
@@ -379,7 +422,7 @@
                                             cb: function() {
                                                 api.closeWin();
                                             }
-                                        })
+                                        });
                                     }
                                 }
                             })
@@ -416,8 +459,8 @@
                             console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if (res.code == 1) {
-                                _this.groupListOrg  =  res.groupList;
-                                _this.groupListPer = res.zzList.map(function(v){
+                                _this.groupListOrg = res.groupList;
+                                _this.groupListPer = res.zzList.map(function(v) {
                                     v.isChecked = false;
                                     return v;
                                 });

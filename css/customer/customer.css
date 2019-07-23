@@ -154,7 +154,7 @@
     height: 20px;
     padding: 0 5px;
     text-align: center;
-    margin-left: 15px;
+    margin-left: 8px;
     vertical-align: bottom;
     line-height: 22px;
 }
@@ -258,6 +258,7 @@
     margin-right: -15px;
     padding: 0 15px;
     background-color: #f6f6f6;
+    font-size: 14px;
 }
 .cd-filter-box > i{
     padding-left: 12px;
@@ -346,8 +347,8 @@
     position: absolute;
     left: 0;right: 0;
     top:40px;
+    bottom: -74px;
     z-index: 100000;
-    height: 100%;
     background-color: rgba(0,0,0,.4);
 }
 .cd-contain .cd-box2 .emp-filter-popup ul{
@@ -546,14 +547,13 @@
     background-image: url('../../image/icon-yuyin.gif');
 }
 .cd-contain .cd-flow .cd-flow-audio .audio-txt>span {
-    padding-top: 2px;
     opacity: .9;
 }
 .cd-contain .cd-flow .cd-flow-p {
     position: relative;
     width: auto;
     height:20px;
-    line-height:22px;
+    line-height:20px;
     padding:0 10px;
     text-align: center;
     font-size: 13px;
@@ -627,12 +627,11 @@
 }
 .cd-contain .cd-flow .cd-flow-timebox .gj{
     position: relative;
-    /*line-height: 1em;*/
+    line-height: 18px;
     font-size: 13px;
-    color:#666;
-    margin-bottom:5px;
+    color: #666;
+    margin-bottom: 5px;
     padding-left: 16px;
-    padding-top: 5px;
 }
 .cd-contain .cd-employee-lis .cd-flow-timebox .gj{
     padding: 0;

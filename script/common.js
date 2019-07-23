@@ -15,7 +15,6 @@ if ('addEventListener' in document) {
         }
     }, false);
 };
-
 // 判断是否登录
 function checkLogin() {
     var isLogin = wPref.getPrefs({
@@ -53,6 +52,55 @@ Vue.component('empty-con', {
         }
     }
 });
+// 弹窗select组件
+Vue.component('popup-select',{
+    template:'<div><div class="w-popup-select-bg" style="display:none;" @touchmove.stop.prevent  @click.stop="handleClosePopupSelect" v-show="isShowPopupSelect"></div>'+
+            '<div class="w-popup-select" style="display:none;" v-show="isShowPopupSelect">'+
+                '<div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>{{popupSelectTitle}}<i class="close" @click.stop="handleClosePopupSelect"></i></div>'+
+                '<div class="popup-select-b">'+
+                    '<ul>'+
+                        '<li class="w-elli" v-for="(popupSelect,index) in popupSelectDataList" :key="index" v-text="popupSelect.name" :class="{\'curr\':currPopupSelectData === popupSelect.value}" @click.stop="handleChoosePopupSelectData(popupSelect)"></li>'+
+                    '</ul>'+
+                '</div>'+
+            '</div></div>',
+    props:{
+        isShowPopupSelect:{
+            type:Boolean,
+            default:false,
+        },
+        currPopupSelectData:{
+            type:Number,
+            default:''
+        },
+        popupSelectTitle:{
+            type:String,
+            default:'请选择'
+        },
+        popupSelectDataList:{
+            type:Array,
+            default:[]
+        },
+        origin:{
+            type:String,
+            default:''
+        }
+    },
+    methods:{
+        // 隐藏 select 弹窗
+        handleClosePopupSelect:function(){
+            this.$emit('update:isShowPopupSelect',false);
+        },
+        // select弹窗选择
+        handleChoosePopupSelectData:function(data){
+            if(this.currPopupSelectData !== data.value){
+                data = data || {};
+                data.origin = this.origin;
+                this.$emit('choose-popup-select-data',data);
+            }
+            this.handleClosePopupSelect();
+        }
+    }
+})
 // 打开客户来源筛选框
 function wOpenCustomerOriginFrame(par){
     par = par || {};
@@ -145,7 +193,7 @@ var wFuncDebounceThrottle = {
             fn.apply(null,arguments);
             fn = null;
             _this = null;
-        }, delay);
+        }, delay||200);
     },
     // 节流
     wThrottle:function(fn,delay){
@@ -157,7 +205,7 @@ var wFuncDebounceThrottle = {
                 fn.apply(null,arguments);
                 fn = null;
                 _this = null;
-            }, delay)
+            }, delay||200)
         }
     }
 }
@@ -509,7 +557,7 @@ var wHrefJs = {
 		 */
         api.openFrame({
             name: par.name,
-            url: par.path,
+            url: par.path||par.url,
             rect: {
                 x: par.x,
                 y: par.y,

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>变更销售负责人</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        .w-header .w-header-cap{
+            height: 42px;
+            padding:5px 0;
+            padding-left: 15px;
+        }
+        .emp-search-inp{
+            position: relative;
+            width:100%;
+            height: 32px;
+            line-height: 32px;
+            background-color: #fff;
+            border-radius: 4px;
+        }
+        .emp-search-inp > .search-icon{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width:30px;
+            height: 32px;
+            background:url('../../image/add_search.png') no-repeat center;
+            background-size: 16px;
+            opacity: .8;
+        }
+        .emp-search-inp > .clean-icon{
+            position: absolute;
+            right: 0;
+            top: 0;
+            width:28px;
+            height: 32px;
+            background:url('../../image/add_detal.png') no-repeat center;
+            background-size: 16px;
+        }
+        .emp-search-inp > input{
+            width:100%;
+            height: 100%;
+            padding-top:6px;
+            padding-bottom: 6px;
+            line-height: 20px;
+            padding-left: 30px;
+            padding-right: 28px;
+            color:#333;
+            font-size: 14px;
+            border-radius: 4px;
+        }
+        .emp-search-cancel{
+            background-color: transparent;
+            width: 60px;
+            height: 32px;
+            line-height: 32px;
+            text-align: center;
+            color:#fff;
+            font-size: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="change-person-header" class="follow-wrapper">
+        <div class="w-header">
+            <div class="w-header-cap flex-wrap">
+                <div class="flex-con emp-search-inp">
+                    <i class="search-icon"></i>
+                    <i class="clean-icon" @click.stop="handleCleanSearch"></i>
+                    <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" @input.stop="handleSearchInp" ref="emp-search" v-model="searchInp">
+                </div>
+                <button class="emp-search-cancel" @click.stop="handleCancelSearch">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    $api.fixStatusBar($('.w-header')[0]);
+    var param = api.pageParam;
+    var y = $('.w-header').outerHeight(),
+        h = $(window).height() - y;
+    wHrefJs.openFrame({
+        name:'changePersonSearchFrame',
+        url:'./change_person_search_frame.html',
+        y:y,
+        h:h,
+        bounces:true,
+        bgColor:'#f7f7f7',
+        param:param
+    });
+    new Vue({
+        el:'#change-person-header',
+        data:{
+            searchInp:''
+        },
+        mounted:function(){
+            var _this = this;
+            setTimeout(function(){
+                _this.$refs['emp-search'].focus();
+            },400);
+        },
+        methods:{
+            // 清空
+            handleCleanSearch:function(){
+                var _this = this;
+                api.execScript({
+                    frameName: 'changePersonSearchFrame',
+                    script: 'clearSearchValue();'
+                });
+            },
+            // 取消
+            handleCancelSearch:function(){
+                api.closeWin();
+            },
+            // 搜索
+            handleSearchInp:function(){
+                wFuncDebounceThrottle.wDebounce(this.fnSearchEmp, 300);
+            },
+            fnSearchEmp:function(){
+                var _this = this;
+                api.execScript({
+                    frameName: 'changePersonSearchFrame',
+                    script: 'getSearchValue(\''+this.searchInp+'\');'
+                });
+            }
+        }
+    })
+}
+</script>
+
+</html>

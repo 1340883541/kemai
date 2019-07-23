@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-关于本机</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/about.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+
+        #main {
+            margin-top: 30px;
+        }
+
+        .local-lis {
+            height: 50px;
+            line-height: 50px;
+            padding: 0 15px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            color: #333;
+            background-color: #fff;
+        }
+
+        .local-lis .left {
+            text-align: left
+        }
+
+        .local-lis .right {
+            text-align: right;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap">
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back" onclick="api.closeWin();"></div>
+                    <div class="u-center">关于本机</div>
+                    <div class="u-right"></div>
+                </div>
+            </div>
+        </div>
+        <div id="main" class="flex-con">
+            <div class="local-lis clear">
+                <div class="fl left">设备型号</div>
+                <div class="fr right" v-text="model"></div>
+            </div>
+            <div class="local-lis clear">
+                <div class="fl left">手机系统版本</div>
+                <div class="fr right" v-text="version"></div>
+            </div>
+            <div class="local-lis clear">
+                <div class="fl left">系统类型</div>
+                <div class="fr right" v-text="type"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    apiready = function() {
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+
+        console.log('设备型号--' + api.deviceModel)
+        console.log('手机平台的系统版本--' + api.systemVersion)
+        console.log('系统类型--' + api.systemType)
+        new Vue({
+            el: '#wrap',
+            data: {
+                model: api.deviceModel,
+                version: api.systemVersion,
+                type: api.systemType
+            }
+        })
+    }
+</script>
+
+</html>

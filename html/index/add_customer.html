@@ -16,8 +16,7 @@
 </head>
 
 <body>
-    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
-    <div id="add-wrapper" class="add-wrapper">
+    <div id="add-wrapper" class="add-wrapper" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
@@ -44,12 +43,13 @@
                 <div class="add-lis">
                     <div class="add-cap">来源归类</div>
                     <div class="add-switch">
-                        <ul class="clear" id="customer-classify">
+                        <ul class="clear flex-wrap">
                             <li
                                 v-for="(cusClass,idx) in customerClassList"
                                 :key="idx"
                                 @click.stop="handleSwitchCustomerClass(idx,cusClass.value)"
                                 v-text="cusClass.name"
+                                class="flex-con flex-wrap flex-4h flex-center flex-align-item"
                                 :class="{'curr':idx === customerClassCurrIndex}"
                             ></li>
                         </ul>
@@ -57,20 +57,20 @@
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">客户来源</div>
-                    <div class="add-select">
-                        请选择
+                    <div class="add-select w-elli" @click.stop="handleSkipSelectCustomerOrigin">
+                        {{saveFormData.customerOriginTxt.trim() ? saveFormData.customerOriginTxt : '请选择'}}
                     </div>
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">销售员工</div>
-                    <div class="add-select">
-                        请选择
+                    <div class="add-select w-elli" @click.stop="handleSkipSelectMarketEmp">
+                        {{saveFormData.customerMarketEmpName ? saveFormData.customerMarketEmpName : '请选择'}}
                     </div>
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">渠道员工</div>
-                    <div class="add-select">
-                        请选择
+                    <div class="add-select w-elli" @click.stop="handleSkipSelectChannelEmp">
+                        {{saveFormData.customerChannelEmpName ? saveFormData.customerChannelEmpName : '请选择'}}
                     </div>
                 </div>
                 <div class="add-lis">
@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="add-save">
-            <div class="save-btn":class="{'no-event':!isCanSaveFormData}" @click.stop="handleSaveAddCustomer($event)">保存</div>
+            <div class="save-btn":class="{'no-event':!isCanSaveFormData}" @click.stop="handleSaveAddCustomer($event)">完成</div>
         </div>
         <div class="add-save-place"></div>
     </div>
@@ -96,7 +96,6 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var addV = null;
-
     apiready = function(){
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
@@ -116,26 +115,37 @@
                     customerPhoneAddr:'',
                     customerPhoneAddrTxt:'',
                     customerClassifyId:'',
-                    customerOriginId:'',
+                    customerOriginTxt:'',
                     customerRemark:'',
+                    customerMarketEmpName:'',
+                    customerMarketEmpId:'',
+                    customerChannelEmpName:'',
+                    customerChannelEmpId:'',
                 },
                 isCanSaveFormData:false,
                 // customer switch
                 customerClassCurrIndex:'',
                 customerOriginCurrIndex:'',
                 customerClassList:[],
-                customerOriginList:[],
                 isShowPhoneAddr:false,
 
-                userInfo:{}
+                userInfo:{},
+                // 客户来源信息
+                saveOriginInfo:{
+                    sourceid:'', // 选择的上一级id
+                    network:'', //公司网络资源 name
+                    channelid:'', // 合作资源
+                    showeid:'', // 展会
+                    supercustid:'',//老客户介绍id
+                },
             },
             mounted:function(){
-
                 this.userInfo = wPref.getPrefs({
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                this.fetchCustomerData();
+                this.fetchCustomerClass();
+                this.fetchCustomerEmp();
             },
             watch:{
                 saveFormData:{
@@ -153,48 +163,74 @@
                 }
             },
             methods:{
-                // 获取客户来源数据
-                fetchCustomerData:function(){
+                // 获取来源归类数据
+                fetchCustomerClass:function(){
                     var _this = this;
                     wApiAjax({
-                        url:'customer/addNewCusSourse',
-                        method:'get',
+                        url:'dataSource/resourcetype',
                         headers:{
                             token:TOKEN_DATA
                         },
                         success:function(res){
                             if(res.code == 1){
-                                _this.customerOriginList = res.cusSource || [];
-                                _this.customerClassList = res.classifySource || [];
-                                // 客户来源滚动
-                                _this.$nextTick(function(){
-                                    var sWid = 0;
-                                    var len = $('#customer-origin > li').length;
-                                    $('#customer-origin > li').each(function(i,ele){
-                                        // $(ele).width($(ele).outerWidth())
-                                        sWid += ($(ele).outerWidth() + 15);
-                                        if(i === len-1){
-                                            $('#customer-origin').width(sWid).css('opacity',1);
-                                        }
-                                    });
-                                });
-                                // 来源归类滚动
-                                _this.$nextTick(function(){
-                                    var sWid = 0;
-                                    var len = $('#customer-classify > li').length;
-                                    $('#customer-classify > li').each(function(i,ele){
-                                        // $(ele).width($(ele).outerWidth())
-                                        sWid += ($(ele).outerWidth() + 15);
-                                        if(i === len-1){
-                                            $('#customer-classify').width(sWid).css('opacity',1);
-                                        }
-                                    });
-                                });
-                            }else{
-                                wDialog.toast({
-                                    msg:res.message
-                                })
+                                _this.customerClassList = res.data || [];
                             }
+                        }
+                    })
+                },
+                // 获取客户的渠道员工和销售员工信息
+                fetchCustomerEmp:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/addNewCusNeed',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            if(res.code == 1){
+                                if(res.data){
+                                    // 销售员工
+                                    var marketInfo = res.data[0];
+                                    if(marketInfo && marketInfo.marketEmpId){
+                                        _this.saveFormData.customerMarketEmpId = marketInfo.marketEmpId;
+                                        _this.saveFormData.customerMarketEmpName = marketInfo.market;
+                                    }
+                                    // 渠道员工
+                                    var channelInfo = res.data[1];
+                                    if(channelInfo && channelInfo.marketEmpId){
+                                        _this.saveFormData.customerMarketEmpId = channelInfo.channelEmpId;
+                                        _this.saveFormData.customerMarketEmpName = channelInfo.channel;
+                                    }
+                                }
+                            }
+                        }
+                    })
+                },
+                handleSkipSelectCustomerOrigin:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomerSelectOrigin',
+                        path:'./add_customer_selectorigin.html',
+                        param:{
+                            origin:'selectOringin'
+                        }
+                    })
+                },
+                handleSkipSelectMarketEmp:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomerSelectEmp',
+                        path:'./add_customer_selectemp.html',
+                        param:{
+                            origin:'selectMarket'
+                        }
+                    })
+                },
+                handleSkipSelectChannelEmp:function(){
+                    wHrefJs.openWin({
+                        name:'addCustomerSelectEmp',
+                        path:'./add_customer_selectemp.html',
+                        param:{
+                            origin:'selectChannel'
                         }
                     })
                 },
@@ -242,11 +278,6 @@
                     this.customerClassCurrIndex = i;
                     this.saveFormData.customerClassifyId = id;
                 },
-                // 切换客户来源
-                handleSwitchCustomerOrigin:function(i,id){
-                    this.customerOriginCurrIndex = i;
-                    this.saveFormData.customerOriginId = id;
-                },
                 // 保存新增
                 handleSaveAddCustomer:function(e){
                     var saveData = this.saveFormData;
@@ -262,7 +293,7 @@
                         });
                         return false;
                     }
-                    if(saveData.customerOriginId == ''){
+                    if(saveData.customerOriginTxt == ''){
                         wDialog.toast({
                             msg:'请选择客户来源'
                         });
@@ -274,7 +305,7 @@
                         });
                         return false;
                     }
-                    this.funcSaveAddCustomer();
+                    this.fnSaveAddCustomer();
                 },
                 handleBack:function(){
                     var isCanBack = true;
@@ -297,34 +328,67 @@
                     }
                 },
                 // 保存新增客户
-                funcSaveAddCustomer:function(){
+                fnSaveAddCustomer:function(){
                     var _this = this;
                     wDialog.showProgress({
                         msg:'正在保存中'
                     })
+                    console.log('请求的数据===='+JSON.stringify({
+                        name:_this.saveFormData.customerName,
+                        phone:_this.saveFormData.customerPhone,
+                        resourcetype:_this.saveFormData.customerClassifyId,
+                        // 客户来源筛选信息
+                        sourceid:_this.saveOriginInfo.sourceid, // 选择的上一级id
+                        network:_this.saveOriginInfo.network, //公司网络资源 name
+                        channelid:_this.saveOriginInfo.channelid, // 合作资源
+                        showeid:_this.saveOriginInfo.showeid, // 展会
+                        supercustid:_this.saveOriginInfo.supercustid,//老客户介绍id
+
+                        qudaoId:_this.saveFormData.customerChannelEmpId,
+                        empId:_this.saveFormData.customerMarketEmpId,
+                        comment:_this.saveFormData.customerRemark,
+                    }))
                     wApiAjax({
-                        url:'customer/addNewCus',
+                        url:'customer/saveCus',
                         headers:{
                             'token':TOKEN_DATA
                         },
                         data:{
-                            cusName:_this.saveFormData.customerName,
-                            cellphoneNum:_this.saveFormData.customerPhone,
-                            provinceAndcity:_this.saveFormData.customerPhoneAddr,
-                            cusSourceId:_this.saveFormData.customerOriginId,
-                            classifySourceId:_this.saveFormData.customerClassifyId,
+                            name:_this.saveFormData.customerName,
+                            phone:_this.saveFormData.customerPhone,
+                            resourcetype:_this.saveFormData.customerClassifyId,
+                            // 客户来源筛选信息
+                            sourceid:_this.saveOriginInfo.sourceid, // 选择的上一级id
+                            network:_this.saveOriginInfo.network, //公司网络资源 name
+                            channelid:_this.saveOriginInfo.channelid, // 合作资源
+                            showeid:_this.saveOriginInfo.showeid, // 展会
+                            supercustid:_this.saveOriginInfo.supercustid,//老客户介绍id
+
+                            qudaoId:_this.saveFormData.customerChannelEmpId,
+                            empId:_this.saveFormData.customerMarketEmpId,
                             comment:_this.saveFormData.customerRemark,
-                            empId:_this.userInfo.employeeid,
                         },
                         success:function(res){
+                            console.log('保存返回的信息====='+JSON.stringify(res))
                             wDialog.hideProgress();
-                            if(res.code == 200){
-                                wDialog.toast({
-                                    msg:'新增客户成功'
-                                });
-                                setTimeout(function(){
-                                    api.closeWin();
-                                },400);
+                            if(res.code == 1){
+                                wDialog.confirm({
+                                    msg:'客户基础信息创建成功是否继续完善信息？',
+                                    button:['是','否'],
+                                    sureCb:function(){
+                                        wHrefJs.openWin({
+                                            name:'addCustomerPerfect1',
+                                            path:'./add_customer_perfect_1.html',
+                                            param:{
+                                                cusId:res.data.cusId,
+                                                demandId:res.data.demandId
+                                            }
+                                        })
+                                    },
+                                    cancelCb:function(){
+                                        api.closeWin();
+                                    }
+                                })
                             }else{
                                 wDialog.toast({
                                     msg:res.msg||'新增客户保存失败'
@@ -335,6 +399,62 @@
                 }
             }
         })
+    }
+    // 获取销售员工或渠道信息
+    function getEmpInfo(empInfo){
+        console.log(JSON.stringify(empInfo))
+        if(empInfo.origin === 'selectMarket'){
+            addV.saveFormData.customerMarketEmpName = empInfo.empName;
+            addV.saveFormData.customerMarketEmpId = empInfo.empId;
+        }else{
+            addV.saveFormData.customerChannelEmpName = empInfo.empName;
+            addV.saveFormData.customerChannelEmpId = empInfo.empId;
+        }
+    }
+    // 获取客户来源信息
+    function getCustomerOrigin(cusInfo){
+        console.log(JSON.stringify(cusInfo))
+        addV.saveFormData.customerOriginTxt = cusInfo.currOriginOneTxt + ' ' + cusInfo.currOriginTwoTxt + ' '  + cusInfo.currOriginThreeTxt + ' '  + cusInfo.queryName + ' '  + cusInfo.searchName + ' '  + cusInfo.inputName;
+        // 获取需要保存的来源信息
+        // 公司合作资源
+        if(cusInfo.currOriginTwoVal === 17){
+            addV.saveOriginInfo.sourceid = cusInfo.currOriginTwoVal;
+            addV.saveOriginInfo.channelid = cusInfo.currOriginThreeVal;
+        }else{
+            if(cusInfo.currOriginThreeVal || cusInfo.currOriginTwoVal ||  cusInfo.currOriginOneVal){
+                addV.saveOriginInfo.sourceid = cusInfo.currOriginThreeVal ? cusInfo.currOriginThreeVal : cusInfo.currOriginTwoVal ? cusInfo.currOriginTwoVal : cusInfo.currOriginOneVal;
+
+                // 先把值为空
+                addV.saveOriginInfo.supercustid = '';
+                addV.saveOriginInfo.channelid = '';
+                addV.saveOriginInfo.activity = '';
+                addV.saveOriginInfo.showeid = '';
+                addV.saveOriginInfo.network = '';
+                // 销售渠道合作资源  有协议
+                if(cusInfo.currOriginTwoVal === 4 || cusInfo.currOriginTwoVal === 13){
+                    addV.saveOriginInfo.channelid = cusInfo.queryValue;
+                }
+                // 销售渠道 老客户介绍
+                if(cusInfo.currOriginTwoVal === 10 || cusInfo.currOriginTwoVal === 14){
+                    addV.saveOriginInfo.supercustid = cusInfo.searchValue;
+                }
+                // 公司 渠道组织活动
+                if(cusInfo.currOriginTwoVal === 18 || cusInfo.currOriginTwoVal === 11){
+                    addV.saveOriginInfo.activity = cusInfo.queryValue;
+                }
+                // 公司展会
+                if(cusInfo.currOriginTwoVal === 16){
+                    addV.saveOriginInfo.showeid = cusInfo.queryValue;
+                }
+                // 公司资源 网络 其他
+                if(cusInfo.currOriginTwoVal === 15 && cusInfo.currOriginThreeVal === 23){
+                    addV.saveOriginInfo.network = cusInfo.inputName;
+                }
+            }else{
+                console.log('很有可能没有选择')
+            }
+        }
+        console.log('addV的数据=============='+JSON.stringify(addV.saveOriginInfo))
     }
 </script>
 

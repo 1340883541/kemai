@@ -12,94 +12,115 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
 </head>
 
 <body>
-    <!-- <div id="add-wrapper" class="add-wrapper" v-cloak> -->
-    <div id="add-wrapper" class="add-select-wrapper flex-wrap flex-vertical">
+    <div id="add-select-wrapper" class="add-select-wrapper flex-wrap flex-vertical" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
                 <div class="center">新增客户</div>
-                <div class="right">确定</div>
+                <div class="right" @click.stop="handleSureAddCustomer">确定</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
         <div class="add-select-box">
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                @click.stop="handleSelectOneCustomerOrigin"
+            >
                 <div class="left">客户来源</div>
-                <div class="right">请选择</div>
+                <div class="right w-elli">{{currOriginOneTxt?currOriginOneTxt:'请选择'}}</div>
             </div>
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowTwoLevelOrigin"
+                @click.stop="handleSelectTwoCustomerOrigin"
+                style="display:none;"
+            >
                 <div class="left">二级来源</div>
-                <div class="right">自由资源</div>
+                <div class="right w-elli">{{currOriginTwoTxt?currOriginTwoTxt:'请选择'}}</div>
             </div>
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowThreeLevelOrigin"
+                @click.stop="handleSelectThreeCustomerOrigin"
+                style="display:none;"
+            >
                 <div class="left">三级来源</div>
-                <div class="right">其他</div>
+                <div class="right w-elli">{{currOriginThreeTxt?currOriginThreeTxt:'请选择'}}</div>
             </div>
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
+            <!-- <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowCooperation"
+                style="display:none;"
+            >
                 <div class="left">合作渠道客户</div>
                 <div class="right search-right">
                     <input type="text" placeholder="请输入">
                 </div>
+            </div> -->
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowQuerySearchClass"
+                style="display:none;"
+            >
+                <input type="text" class="has-search" :placeholder="nextClassPlaceholder" :readonly="isSelectQueryResult" v-model="queryName" @input.stop="handleQueryInput">
+                <div class="search-btn"  @click.stop="isSelectQueryResult = false;queryName = '';queryValue = '';" v-show="isSelectQueryResult">修改</div>
+            </div>
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowInputClass"
+                style="display:none;"
+            >
+                <input type="text" class="no-search" :placeholder="nextClassPlaceholder" v-model="inputName">
             </div>
 
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
-                <input type="text" class="no-search" placeholder="请输入来源网络信息">
-            </div>
-
-            <div class="add-select-lis bor-1px-b flex-wrap flex-between">
-                <input type="text" class="has-search" placeholder="请输入客户准确联系方式">
-                <div class="search-btn">搜索</div>
+            <div
+                class="add-select-lis bor-1px-b flex-wrap flex-between"
+                v-show="isShowFullSearchClass"
+                style="display:none;"
+            >
+                <input type="text" class="has-search" :placeholder="nextClassPlaceholder" :readonly="!isCanSearch" v-model="searchName">
+                <div class="search-btn" @click.stop="handleSearch" v-show="isCanSearch">搜索</div>
+                <div class="search-btn" @click.stop="isCanSearch = true;searchName = '';searchValue = '';" v-show="!isCanSearch">修改</div>
             </div>
         </div>
-        <div class="add-search-box flex-con">
+        <div class="add-search-box flex-con" style="display:none;" v-show="isShowQueryResultList">
             <ul>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
-                <li class="bor-1px-b w-elli">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈</li>
+                <li
+                    class="bor-1px-b w-elli"
+                    v-for="query in querySearList"
+                    :key="query.value"
+                    :class="{curr:queryValue === query.value}"
+                    @click.stop="handleSelectQueryInfo(query.name,query.value)"
+                >{{query.name}}</li>
             </ul>
         </div>
 
         <div class="popup-bg follow-popup" style="display:none;"></div>
         <!-- 选择员工 -->
-        <div class="choose-employee-popup" style="display:none;">
+        <!-- <div class="choose-employee-popup" style="display:none;" v-show="querySearList.length > 0">
             <div class="choose-employee-t bor-1px-b">选择员工<i class="close"></i></div>
             <div class="choose-employee-b">
                 <ul>
-                    <li class="curr">232</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
-                    <li>哈哈哈哈</li>
+                    <li
+                        v-for="query in querySearList"
+                        class="curr"
+                        :key="query.value"
+                    >{{query.name}}</li>
                 </ul>
             </div>
-        </div>
+        </div> -->
+        <popup-select
+            :is-show-popup-select.sync="isShowPopupSelect"
+            :curr-popup-select-data="currPopupSelectData"
+            :popup-select-data-list="popupSelectDataList"
+            :origin="currOrigin"
+            @choose-popup-select-data="choosePopupSelectData"
+        ></popup-select>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -110,18 +131,395 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+var addCusSelectOriginV = null;
 apiready = function(){
-    new Vue({
-        el:'#add-wrapper',
+    $api.fixStatusBar($('#fh-fixed')[0]);
+    $api.fixStatusBar($('#fh-place')[0]);
+    api.addEventListener({
+        name: 'keyback'
+    }, function(ret, err){
+        addCusSelectOriginV.handleBack();
+    });
+
+    addCusSelectOriginV = new Vue({
+        el:'#add-select-wrapper',
         data:{
-            orginOneList:[],
+            // 1级
+            originOneList:[],
+            currOriginOneTxt:'',
+            currOriginOneVal:'',
+            // 2级
             originTwoList:[],
+            currOriginTwoTxt:'',
+            currOriginTwoVal:'',
+            // 3级
             originThreeList:[],
-            isHaveOther:false,
-            isHavePark:false,
-            isHaveOldCustomer:false,
-            isHaveCooperation:false,
-            isHaveActivity:false,
+            currOriginThreeTxt:'',
+            currOriginThreeVal:'',
+            isShowTwoLevelOrigin:false,
+            isShowThreeLevelOrigin:false,
+
+            // 需要的查询类型
+            nextClassPlaceholder:'',
+            isShowQuerySearchClass:false,
+            isShowInputClass:false,
+            isShowFullSearchClass:false,
+            // 查询的接口地址
+            searchUrl:'',
+
+            // 弹窗相关
+            isShowPopupSelect:false,
+            currPopupSelectData:'',
+            popupSelectDataList:[],
+
+            // 模糊查询结果
+            isShowQueryResultList:false,
+            isCanSearch:true,
+
+            // 入参
+            currOrigin:'',
+            // 输入搜索
+            queryValue:'',
+            queryName:'',
+            searchName:'',
+            searchValue:'',
+            inputName:'',
+            querySearList:[],
+
+            isSelectQueryResult:false,
+            requestParam:{},
+            referField:''
+        },
+        mounted:function(){
+            this.fetchCustomerOriginData();
+        },
+        methods:{
+            handleBack:function(){
+                if(this.currOriginOneVal){
+                    var _this = this;
+                    wDialog.confirm({
+                        msg:'当前选择了客户来源，是否要继续返回?',
+                        button:['是','否'],
+                        sureCb:function(){
+                            api.closeWin();
+                        }
+                    })
+                }else{
+                    api.closeWin();
+                }
+            },
+            // 确认新增
+            handleSureAddCustomer:function(){
+                if(this.isShowQuerySearchClass){
+                    if(this.queryValue === ''){
+                        wDialog.toast({
+                            msg:'来源详情不能为空'
+                        })
+                        return;
+                    }
+                }
+                if(this.isShowFullSearchClass){
+                    if(this.searchValue === ''){
+                        wDialog.toast({
+                            msg:'来源详情不能为空'
+                        })
+                        return;
+                    }
+                }
+                if(!this.currOriginOneVal){
+                    wDialog.toast({
+                        msg:'请先选择客户来源'
+                    })
+                    return;
+                }
+                var returnObj = {
+                    currOriginOneVal:this.currOriginOneVal,
+                    currOriginOneTxt:this.currOriginOneTxt,
+                    currOriginTwoVal:this.currOriginTwoVal,
+                    currOriginTwoTxt:this.currOriginTwoTxt,
+                    currOriginThreeVal:this.currOriginThreeVal,
+                    currOriginThreeTxt:this.currOriginThreeTxt,
+                    queryValue:this.queryValue,
+                    queryName:this.queryName,
+                    searchValue:this.searchValue,
+                    searchName:this.searchName,
+                    inputName:this.inputName
+                };
+                var returnStr = JSON.stringify(returnObj);
+                api.execScript({
+                    name: 'addCustomer',
+                    script: 'getCustomerOrigin('+returnStr+');'
+                });
+                api.closeWin();
+            },
+            // 获取客户来源
+            fetchCustomerOriginData:function(){
+                var _this = this;
+                setTimeout(function(){
+                    wDialog.showProgress();
+                },10)
+                wApiAjax({
+                    url:'dataSource/cusSourse',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    success:function(res){
+                        setTimeout(function(){
+                            wDialog.hideProgress();
+                        },100)
+                        if(res.code == 1){
+                            _this.originOneList = res.data;
+                        }
+                    }
+                })
+            },
+            // 选择1级来源
+            handleSelectOneCustomerOrigin:function(){
+                this.isShowPopupSelect = true;
+                this.popupSelectDataList = this.originOneList;
+                this.currPopupSelectData = this.currOriginOneVal;
+                this.currOrigin = 'oneSelect';
+            },
+            // 选择二级来源
+            handleSelectTwoCustomerOrigin:function(){
+                this.isShowPopupSelect = true;
+                this.popupSelectDataList = this.originTwoList;
+                this.currPopupSelectData = this.currOriginTwoVal;
+                this.currOrigin = 'twoSelect';
+            },
+            // 选择三级来源
+            handleSelectThreeCustomerOrigin:function(){
+                this.isShowPopupSelect = true;
+                this.popupSelectDataList = this.originThreeList;
+                this.currPopupSelectData = this.currOriginThreeVal;
+                this.currOrigin = 'threeSelect';
+            },
+            fnCleanInputContent:function(){
+                this.queryName = '';
+                this.queryValue = '';
+                this.searchName = '';
+                this.searchValue = '';
+                this.inputName = '';
+            },
+            // 选择模拟查询的结果
+            handleSelectQueryInfo:function(name,value){
+                this.isSelectQueryResult = true;
+                this.queryValue = value;
+                this.queryName = name;
+                this.isShowQueryResultList = false;
+            },
+            // 模糊查询
+            handleQueryInput:function(){
+                // if(!this.isSelectQueryResult){
+                    wFuncDebounceThrottle.wDebounce(this.fetchQueryData);
+                // }
+            },
+            fetchQueryData:function(){
+                var _this = this;
+                this.requestParam[this.referField] = this.queryName;
+                console.log(JSON.stringify(this.requestParam))
+                console.log(_this.searchUrl)
+                wApiAjax({
+                    url:_this.searchUrl,
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:_this.requestParam,
+                    success:function(res){
+                        console.log('search result --- > ' + JSON.stringify(res))
+                        if(res.code == 1 && res.data && res.data.length > 0){
+                            _this.querySearList = res.data || [];
+                            _this.isShowQueryResultList = true;
+                        }else{
+                            _this.querySearList = [];
+                            _this.isShowQueryResultList = false;
+                        }
+                    }
+                })
+            },
+            // 搜索
+            handleSearch:function(){
+                var _this = this;
+                this.requestParam[this.referField] = this.searchName;
+                console.log(JSON.stringify(this.requestParam))
+                wApiAjax({
+                    url:_this.searchUrl,
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:_this.requestParam,
+                    success:function(res){
+                        // console.log('search result --- > ' + JSON.stringify(res))
+                        if(res.code == 1 && res.data){
+                            _this.searchName = res.data && res.data.name || '';
+                            _this.searchValue = res.data && res.data.id || '';
+                            _this.isCanSearch = false;
+                        }else{
+                            wDialog.toast({
+                                msg:'暂没有你搜索的内容'
+                            })
+                        }
+                    }
+                })
+            },
+            // 选择的结果
+            choosePopupSelectData:function(res){
+                console.log(JSON.stringify(res))
+                // 选择一级，2,3，4级联动
+                if(res.origin === 'oneSelect'){
+                    if(this.currOriginOneVal === res.val) return;
+                    this.fnCleanInputContent();
+                    this.currOriginOneVal = res.value;
+                    this.currOriginOneTxt = res.name;
+                    this.currOriginTwoVal = '';
+                    this.currOriginTwoTxt = '';
+                    this.currOriginThreeVal = '';
+                    this.currOriginThreeTxt = '';
+                    this.fnRenderTwoData(res);
+                }
+                // 选择第二级
+                else if(res.origin === 'twoSelect'){
+                    if(this.currOriginTwoVal === res.value) return;
+                    this.fnCleanInputContent();
+                    this.currOriginTwoVal = res.value;
+                    this.currOriginTwoTxt = res.name;
+                    this.currOriginThreeVal = '';
+                    this.currOriginThreeTxt = '';
+                    this.fnRenderThreeData(res);
+                }
+                // 选择三级
+                else if(res.origin === 'threeSelect'){
+                    if(this.currOriginThreeVal === res.value) return;
+                    this.fnCleanInputContent();
+                    this.currOriginThreeVal = res.value;
+                    this.currOriginThreeTxt = res.name;
+                    this.fnRenderFourData(res);
+                }
+                else{
+                    console.log('origin 不对')
+                }
+                this.isShowQueryResultList = false;
+                this.isCanSearch = true;
+                this.isSelectQueryResult = false;
+            },
+            fnRenderTwoData:function(res){
+                console.log('in two')
+                // 第二级 目前暂只考虑二级为select
+                // 默认需要展开第一级下来的所有，第一个的内容
+                if(res.type === 'select'){
+                    this.originTwoList = res.secondLevel;
+                    var twoLevel = res.secondLevel[0];
+                    this.isShowTwoLevelOrigin = true;
+                    this.currOriginTwoTxt = twoLevel.name;
+                    this.currOriginTwoVal = twoLevel.value;
+                    this.fnRenderThreeData(twoLevel);
+                }
+                else{
+                    console.log('目前暂只考虑二级为select')
+                }
+            },
+            // 手动获取第三级数据
+            fetchOriginThreeData:function(){
+                var _this = this;
+                wApiAjax({
+                    url:_this.searchUrl,
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    success:function(res){
+                        if(res.code == 1){
+                            _this.originThreeList = res.data;
+                        }
+                        wDialog.hideProgress();
+                    }
+                })
+            },
+            fnRenderThreeData:function(res){
+                console.log('in three')
+                // 第三级
+                var threeLevel = res.thirdLevel;
+                if(res.existsChild === 1){
+                    this.isShowInputClass = false;
+                    this.isShowQuerySearchClass = false;
+                    this.isShowFullSearchClass = false;
+                    if(res.type === 'select'){
+                        this.isShowThreeLevelOrigin = true;
+                        this.isShowInputClass = false;
+                        this.isShowQuerySearchClass = false;
+                        this.isShowFullSearchClass = false;
+                        this.originThreeList = threeLevel;
+                        this.currOriginThreeVal = threeLevel[0].value;
+                        this.currOriginThreeTxt = threeLevel[0].name;
+                        this.searchUrl = threeLevel[0].url;
+                        // 第三级筛选请求
+                        if(threeLevel[0].url){
+                            wDialog.showProgress();
+                            this.fetchOriginThreeData();
+                        }
+                        this.fnRenderFourData(threeLevel[0]);
+                    }
+                    else{
+                        this.isShowThreeLevelOrigin = false;
+                        this.nextClassPlaceholder = threeLevel[0].name;
+                        this.searchUrl = threeLevel[0].url;
+                        if(res.type === 'input'){
+                            this.isShowInputClass = true;
+                        }
+                        else if(res.type === 'fuzQuery'){
+                            this.isShowQuerySearchClass = true;
+                            this.getRequestParam(threeLevel[0]);
+                        }
+                        else if(res.type === 'search'){
+                            this.isShowFullSearchClass = true;
+                            this.getRequestParam(threeLevel[0]);
+                        }
+                        else{
+                            console.log('第三级咱没有找到合适的类型')
+                        }
+                    }
+                }else{
+                    this.isShowInputClass = false;
+                    this.isShowQuerySearchClass = false;
+                    this.isShowFullSearchClass = false;
+                    this.isShowThreeLevelOrigin = false;
+                }
+            },
+            fnRenderFourData:function(res){
+                console.log('in four')
+                // 默认展开第4级
+                if(res.existsChild === 1){
+                    var fourLevel = res.fourLevel;
+                    this.nextClassPlaceholder = fourLevel.name;
+                    this.searchUrl = fourLevel.url;
+                    if(fourLevel.type === 'input'){
+                        this.isShowInputClass = true;
+                    }
+                    else if(fourLevel.type === 'fuzQuery'){
+                        this.isShowQuerySearchClass= true;
+                        this.getRequestParam(fourLevel);
+                    }
+                    else if(fourLevel.type === 'search'){
+                        this.isShowFullSearchClass= true;
+                        this.getRequestParam(fourLevel);
+                    }
+                    else{
+                        console.log('目前只有第四级，不考虑select和没有第四级的')
+                    }
+                }else{
+                    this.isShowInputClass = false;
+                    this.isShowQuerySearchClass = false;
+                    this.isShowFullSearchClass = false;
+                }
+            },
+            getRequestParam:function(obj){
+                this.requestParam = {};
+                if(obj.inTheField !== undefined){
+                    this.referField = obj.inTheField;
+                }
+                if(obj.sourceType !== undefined){
+                    this.requestParam['type'] = obj.sourceType;
+                }
+            }
         }
     })
 }

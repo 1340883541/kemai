@@ -140,11 +140,103 @@
 <script type="text/javascript" src="./script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="./script/common.js"></script>
 <script type="text/javascript">
+    var ws = null;
+
     apiready = function() {
-        console.log('设备型号--'+api.deviceModel)
-        console.log('手机平台的系统版本--'+api.systemVersion)
-        console.log('系统类型--'+api.systemType)
-        
+        var userInfo = wPref.getPrefs({
+            key:'userInfo'
+        });
+        userInfo = userInfo ? JSON.parse(userInfo) : {};
+        if(userInfo.employeeid){
+            fnCreateWsConcat(userInfo.employeeid);
+        }
+
+        // 监听登录成功
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err){
+            if(ret.value.origin === 'index'){
+                // 打开main
+                wHrefJs.openWin({
+                    name: 'main',
+                    path: './html/main.html',
+                    reload:true
+                });
+            }
+            // 获取用户信息
+            var userInfo = wPref.getPrefs({
+                key:'userInfo'
+            });
+            userInfo = userInfo ? JSON.parse(userInfo) : {};
+            console.log(JSON.stringify(userInfo))
+            fnCreateWsConcat(userInfo.employeeid);
+        });
+        // 监听退出登录
+        api.addEventListener({
+            name: 'loginOutSuc'
+        }, function(ret, err){
+            fnCloseWsConcat();
+        });
+
+        // 创建socket连接
+        function fnCreateWsConcat(empid){
+            // console.log('innnnnnnnnnnnnnnn create websocket')
+            if ('WebSocket' in window){
+                ws = new WebSocket(__CONFIG__.wsUrl + empid);
+                fnEventWsMessage();
+            } else{
+                console.log("当前浏览器不支持WebSocket");
+            }
+        }
+        // 监听socket发送的内容
+        function fnEventWsMessage(){
+            ws.onmessage=function (event) {
+                // console.log("innnnnnnnnnnnnnnn WebSocket获取消息");
+                console.log(event.data);
+                var data= JSON.parse(event.data);
+                if(data.code == 3001){
+                    // console.log('打电话已经结束')
+                    api.execScript({
+                        name: 'followRecord',
+                        script: 'callPhoneFinish();'
+                    });
+
+                }
+            }
+        }
+        // 关闭socket连接
+        function fnCloseWsConcat(){
+            if(ws) ws.close();
+        }
+
+    	// var  ws=null;
+        // //判断当前浏览器是否支持WebSocket
+        // if ('WebSocket' in window){
+        //     console.log('in')
+        //     ws=new WebSocket('wss://192.168.0.222:9000/websocket');
+        // } else{
+        //     console.log("当前浏览器不支持WebSocket");
+        // }
+        // //连接发生错误的回调方法
+        // ws.onerror=function (e) {
+        //     console.log("WebSocket连接发生错误！");
+        // }
+        //
+        // ws.onopen=function () {
+        //     console.log("WebSocket连接成功！")
+        // }
+        //
+        // ws.onmessage=function (event) {
+        //     console.log(event.data);
+        // }
+        //
+        // ws.onclose=function () {
+        //     console.log("WebSocket连接关闭");
+        // }
+        // setTimeout(function(){
+        //     console.log('WebSocket发送消息')
+		//     ws.send('token="3333-32233"');
+        // },4000)
         // 讯飞语音识别
         var voiceRecognizer = api.require('voiceRecognizer');
         voiceRecognizer.createUtility({
@@ -256,20 +348,6 @@
         }
         api.setStatusBarStyle({
             style: 'dark'
-        });
-        // 登录成功
-        api.addEventListener({
-            name: 'loginSuc'
-        }, function(ret, err){
-            // console.log('----index-------------------'+JSON.stringify(ret))
-            if(ret.value.origin === 'index'){
-                // 打开main
-                wHrefJs.openWin({
-                    name: 'main',
-                    path: './html/main.html',
-                    reload:true
-                });
-            }
         });
         if (checkLogin()) {
             // 打开main

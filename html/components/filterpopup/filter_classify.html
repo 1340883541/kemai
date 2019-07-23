@@ -56,22 +56,21 @@ apiready = function(){
             fetchClassifyData:function(){
                 var _this = this;
                 var classifyData = window.localStorage.getItem('classifyData');
-                if(classifyData){
+                if(classifyData && classifyData !== 'undefined'){
                     this.classifyData = JSON.parse(classifyData);
                 }
                 else{
                     wDialog.showProgress();
                     wApiAjax({
-                        url:'customer/addNewCusSourse',
-                        method:'get',
+                        url:'dataSource/resourcetype',
                         headers:{
                             token:TOKEN_DATA
                         },
                         success:function(res){
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.classifyData = res.classifySource || [];
-                                window.localStorage.setItem('classifyData',JSON.stringify(res.classifySource));
+                                _this.classifyData = res.data || [];
+                                window.localStorage.setItem('classifyData',JSON.stringify(res.data));
                             }else{
                                 wDialog.toast({
                                     msg:res.message

@@ -175,14 +175,14 @@ body{
     width: .4rem;
     height: .4rem;
     margin: .04rem auto 0;
-    background-image: url('../../image/icon-xz-weigouxuan.png');
+    background-image: url('../../image/icon-danxuankuangp.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: .4rem;
     transition:all .2s ease;
 }
 .note-tem-contain .note-tem-list li.curr .check-box > .check-icon{
-    background-image: url('../../image/icon-xz-gouxuan.png');
+    background-image: url('../../imageicon-danxuankuang.png');
 }
 .note-tem-contain .note-tem-list li .not-tem-info{
     padding-right: .3rem;
