@@ -31,9 +31,15 @@ var permissionSetting = {
                     }
                     return (v.coding == '007001' || v.coding == '007002' || v.coding == '007003' || v.coding == '007004')
                 });
+                console.log(code)
+                console.log(markType)
+                console.log(subType)
                 // 有这个权限
                 if(some){
+                    console.log('innnnnnnnnnnn')
                     console.log(code)
+                    console.log(markType)
+                    console.log(subType)
                     // 微信号查看 - 销售负责人为自己/不为自己  - 明文/密文
                     if(code == '007001'){
                         if(markType == 0){

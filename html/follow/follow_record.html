@@ -29,7 +29,7 @@
                     <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
                     <!-- <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
                     <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div> -->
-                    <div class="wechat" v-if="wechatCard">微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div>
+                    <div class="wechat" v-if="wechatCard">微信号：<span v-text="wechatCard"></span><span class="look" @click.stop="handleClipWechat">复制</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span></div>
                     <div class="addr">号码归属地：<span v-text="clientAddr"></span></div>
                 </div>
                 <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchCustomerState">
@@ -630,7 +630,19 @@
                     this.funcHideAllPopup();
                     this.talkedState = val;
                     this.talkedResult = name;
-                    console.log(this.talkedResult)
+                    console.log(this.talkedState)
+                    if(this.talkedState == 1){
+                        this.followContent = '';
+                    }
+                    else if(this.talkedState == 2){
+                        this.followContent = '未接听';
+                    }
+                    else if(this.talkedState == 5){
+                        this.followContent = '客户号码异常';
+                    }
+                    else{
+                        console.log('通话结果状态错误')
+                    }
                 },
                 // 选择通话结果
                 handleSwitchCustomerResult:function(){
@@ -1151,6 +1163,20 @@
                 //         }
                 //     })
                 // },
+                // 复制微信
+                handleClipWechat:function(){
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: _this.realWechatCard
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            wDialog.toast({
+                                msg: '已复制'
+                            });
+                        }
+                    });
+                },
                 // 复制并打开微信
                 handleClipOpenWechat:function(){
                     var clipBoard = api.require('clipBoard'),
@@ -1158,45 +1184,34 @@
                     clipBoard.set({
                         value: _this.realWechatCard
                     }, function(ret, err) {
-                        if(ret.status){
-                            wDialog.toast({
-                                msg:'复制成功'
+                        var systemType = api.systemType;
+                        // android
+                        if (systemType === 'android') {
+                            api.openApp({
+                                androidPkg: 'com.tencent.mm',
+                                mimeType: 'text/html',
+                                uri: ''
+                            }, function(ret, err) {
+                                if (ret) {
+                                } else {
+                                    alert('您还未安装微信');
+                                }
                             });
-                            setTimeout(function(){
-                                var systemType = api.systemType;
-                                // android
-                                if(systemType === 'android'){
-                                    api.openApp({
-                                        androidPkg: 'com.tencent.mm',
-                                        mimeType: 'text/html',
-                                        uri: ''
-                                    }, function(ret, err) {
-                                        if (ret) {
-                                            // alert(JSON.stringify(ret));
-                                        } else {
-                                            alert('您还未安装微信');
-                                        }
-                                    });
+                        }
+                        // ios
+                        else if (systemType === 'ios') {
+                            api.openApp({
+                                iosUrl: 'weixin://'
+                            }, function(ret, err) {
+                                if (ret) {
+                                } else {
+                                    alert('您还未安装微信');
                                 }
-                                // ios
-                                else if(systemType === 'ios'){
-                                    api.openApp({
-                                        iosUrl:'weixin://'
-                                    }, function(ret, err) {
-                                        if (ret) {
-                                            // alert(JSON.stringify(ret));
-                                        } else {
-                                            alert('您还未安装微信');
-                                        }
-                                    });
+                            });
 
-                                }
-                                else{
-                                    console.log('不是android或ios机型')
-                                    return;
-                                }
-
-                            },500);
+                        } else {
+                            console.log('不是android或ios机型')
+                            return;
                         }
                     });
                 }
