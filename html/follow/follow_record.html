@@ -490,7 +490,7 @@
                                 var wechat = res.data.wechat.trim();
                                 _this.realWechatCard = wechat;
                                 var mapType = res.mapType || {};
-                                var isWechat = permissionSetting.FOLLOWRECORD.fnWechat(mapType.markType,mapType.subType);
+                                var isWechat = permissionSetting.FOLLOWRECORD.fnWechat(mapType.markType);
                                 if(isWechat){
                                     _this.wechatCard = wechat;
                                 }else{
@@ -869,6 +869,7 @@
 
                     _this.isShowTalkingResult = true;
                     _this.followWayState = '电话';
+                    _this.followWayStateCode = 1;
                     api.call({
                         type: 'tel_prompt',
                         number:_this.currCallCusPhone

@@ -168,7 +168,7 @@
                 <!-- 历史负责人 -->
                 <div class="cd-box cd-box2" v-show="isShowDetailBox === 2" style="display:none;">
                     <div class="cd-filter-box">
-                        <span @click.stop="isShowHistoryPri = !isShowHistoryPri">{{currHistoryPrincipalTxt!=='0'?'已选"'+currHistoryPrincipalTxt+'"':'变更负责人筛选'}}</span><i></i>
+                        <span @click.stop="isShowHistoryPri = !isShowHistoryPri">{{currHistoryPrincipalTxt!=='0'?'已选"'+currHistoryPrincipalTxt+'"':'变更负责人筛选'}}</span><i @click.stop="isShowHistoryPri = !isShowHistoryPri"></i>
                     </div>
                     <div class="emp-filter-popup" id="emp-filter-popup" @touchmove.stop.prevent v-show="isShowHistoryPri" @click.stop="isShowHistoryPri=false" style="display:none;">
                         <ul>
@@ -192,7 +192,7 @@
                             </div>
                             <div class="cd-flow-timebox">
                                 <i class="top-icon"></i>
-                                <div class="gj-time gj"><span>销售负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div>
+                                <div class="gj-time gj"><span>负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div>
                             </div>
                         </div>
                     </div>
@@ -203,7 +203,6 @@
                     <div class="flex-con skip-follow-btn follow-btn" @click.stop.prevent="handleSkipFollow(1)">去跟进</div>
                 </div>
             </div>
-            <input type="hidden" id="scroll-val" value="0">
         </div>
     </div>
 </body>
@@ -310,11 +309,10 @@
             },
             watch: {
                 isShowDetailBox: function(nv) {
-                    if (nv === 0) {
-                        $('#scroll-val').val('0');
-                        $('#back-box .header-txt').hide();
-                        $('#back-box').removeClass('curr');
-                    }
+
+                    var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+                    var navOffsetTop = $("#js_cd_nav").offset().top;
+                    fnCalcScroll(capOffsetTop,navOffsetTop);
                 },
                 value: function(nv) {
                     if (nv.length >= 6) {
@@ -387,7 +385,7 @@
                                     var wechat = res.data.cusInfo.wechat.trim();
                                     _this.realWechatCard = wechat;
                                     var mapType = res.data.mapType || {};
-                                    var isWechat = permissionSetting.CUSDETAIL.fnWechat(mapType.markType,mapType.subType);
+                                    var isWechat = permissionSetting.CUSDETAIL.fnWechat(mapType.markType);
                                     if(isWechat){
                                         _this.wechatCard = wechat;
                                     }else{
@@ -732,33 +730,28 @@
         var navOffsetTop = $("#js_cd_nav").offset().top;
         $(window).on('scroll', function() {
             if (isEventScroll) {
-                console.log('scrollTop ----> '+$(this).scrollTop())
-                var val = $('#scroll-val').val();
+                // console.log('scrollTop ----> '+$(this).scrollTop())
                 isEventScroll = false;
-                var wTop = $(this).scrollTop();
-                // console.log(wTop)
-                if (wTop >= capOffsetTop) {
-                    $('#back-box').addClass('curr');
-                    if (wTop >= navOffsetTop) {
-                        // console.log('--------------------'+val);
-                        if (val == 0) {
-                            $('#scroll-val').val('1');
-                            $('#back-box .header-txt').show();
-                        }
-                    } else {
-                        $('#scroll-val').val('0');
-                        $('#back-box .header-txt').hide();
-                    }
-                } else {
-                    $('#scroll-val').val('0');
-                    $('#back-box .header-txt').hide();
-                    $('#back-box').removeClass('curr');
-                }
-                setTimeout(function() {
-                    isEventScroll = true;
-                }, 10);
+                fnCalcScroll(capOffsetTop,navOffsetTop);
+                isEventScroll = true;
             }
         })
+    }
+    // 计算滚动
+    function fnCalcScroll(capOffsetTop,navOffsetTop){
+        var wTop = $(this).scrollTop();
+        if (wTop >= capOffsetTop) {
+            if (wTop >= navOffsetTop) {
+                $('#back-box').addClass('curr show-nav');
+                // console.log('innnn1  头部导航')
+            } else {
+                $('#back-box').removeClass('show-nav').addClass('curr');
+                // console.log('innnn2 改变颜色')
+            }
+        } else {
+            $('#back-box').removeClass('curr show-nav');
+            // console.log('innnn3  顶部')
+        }
     }
 </script>
 

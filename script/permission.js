@@ -21,7 +21,7 @@ var permissionSetting = {
         code:'007000',
         perList:[],
         // wechat
-        fnWechat:function(markType,subType){
+        fnWechat:function(markType){
             permissionSetting.init.call(this);
             if(this.perList.length !== 0){
                 var code = '';
@@ -33,7 +33,6 @@ var permissionSetting = {
                 });
                 console.log(code)
                 console.log(markType)
-                console.log(subType)
                 // 有这个权限
                 if(some){
                     console.log('innnnnnnnnnnn')
@@ -45,40 +44,24 @@ var permissionSetting = {
                             return false;
                         }
                     }
-                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/明文
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/密文
                     if(code == '007002'){
+                        return false;
+                    }
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 明文/明文
+                    if(code == '007003'){
+                        return true;
+                    }
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/明文
+                    if(code == '007004'){
                         if(markType == 0){
                             return false;
                         }else{
-                            return true ;
-                        }
-                    }
-                    // 微信号查看 - 销售负责人不为自己但是属于自己部门下的员工  - 明文/密文
-                    if(code == '007003'){
-                        if(markType == 0){
-                            return true;
-                        }else{
-                            if(subType == 0){
-                                return true;
-                            }else{
-                                return false;
-                            }
-                        }
-                    }
-                    // 微信号查看 - 销售负责人不为自己但是属于自己部门下的员工  - 明文/密文
-                    if(code == '007004'){
-                        if(markType == 0){
-                            return true;
-                        }else{
-                            if(subType == 0){
-                                return false;
-                            }else{
-                                return true;
-                            }
+                            return true
                         }
                     }
                 }
-                // 没有  默认是00700101
+                // 没有  默认是007001
                 else{
                     return markType == 0 ? true : false;
                 }
@@ -116,9 +99,8 @@ var permissionSetting = {
         code:'008000',
         perList:[],
         // wechat
-        fnWechat:function(markType,subType){
+        fnWechat:function(markType){
             permissionSetting.init.call(this);
-            console.log('innnn22222222222222')
             if(this.perList.length !== 0){
                 var code = '';
                 var some = this.perList.some(function(v){
@@ -129,7 +111,6 @@ var permissionSetting = {
                 });
                 console.log(code)
                 console.log(markType)
-                console.log(subType)
                 // 有这个权限
                 if(some){
                     console.log('innnnnnnnnnnn')
@@ -141,36 +122,20 @@ var permissionSetting = {
                             return false;
                         }
                     }
-                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/明文
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/密文
                     if(code == '008002'){
+                        return false;
+                    }
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 明文/明文
+                    if(code == '008003'){
+                        return true;
+                    }
+                    // 微信号查看 - 销售负责人为自己/不为自己  - 密文/明文
+                    if(code == '008004'){
                         if(markType == 0){
                             return false;
                         }else{
-                            return true ;
-                        }
-                    }
-                    // 微信号查看 - 销售负责人不为自己但是属于自己部门下的员工  - 明文/密文
-                    if(code == '008003'){
-                        if(markType == 0){
-                            return true;
-                        }else{
-                            if(subType == 0){
-                                return true;
-                            }else{
-                                return false;
-                            }
-                        }
-                    }
-                    // 微信号查看 - 销售负责人不为自己但是属于自己部门下的员工  - 明文/密文
-                    if(code == '008004'){
-                        if(markType == 0){
-                            return true;
-                        }else{
-                            if(subType == 0){
-                                return false;
-                            }else{
-                                return true;
-                            }
+                            return true
                         }
                     }
                 }
