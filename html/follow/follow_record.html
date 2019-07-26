@@ -895,14 +895,14 @@
                 fnCallWorkPhone:function(){
                     var _this = this;
                     _this.isShowTalkingResult = false;
-                    console.log('call phone request ---> ' + JSON.stringify({
-                        account:_this.userInfo.account,
-                        customerNumber:_this.currCallCusPhone,
-                        cusid:_this.cusId,
-                        empid:_this.userInfo.employeeid,
-                        is_work:_this.isWork,
-                        followId:_this.followId
-                    }));
+                    // console.log('call phone request ---> ' + JSON.stringify({
+                    //     account:_this.userInfo.account,
+                    //     customerNumber:_this.currCallCusPhone,
+                    //     cusid:_this.cusId,
+                    //     empid:_this.userInfo.employeeid,
+                    //     is_work:_this.isWork,
+                    //     followId:_this.followId
+                    // }));
                     $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
                     wApiAjax({
                         url:'ema/makeCall',
@@ -911,7 +911,7 @@
                         },
                         data:{
                             account:_this.userInfo.account,
-                            customerNumber:_this.cusPhone,
+                            customerNumber:_this.currCallCusPhone,
                             cusid:_this.cusId,
                             empid:_this.userInfo.employeeid,
                             is_work:_this.isWork,
