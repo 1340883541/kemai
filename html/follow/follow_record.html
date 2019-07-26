@@ -290,7 +290,6 @@
                 talkedResult:'', //通话结果
                 talkedState:'',// 通话结果状态
                 isShowTalkingResult:false, // 只有直接拨打才会有通话结果
-                isSaveTalkingRecord:false,
                 isSavePrevNormalTalkingRecord:false,
 
                 followId:'',
@@ -982,19 +981,11 @@
                             return;
                         }
                         if(this.isShowTalkingResult){
-                            if(this.isSaveTalkingRecord){
-                                this.funcSaveFollowRecord('customer/saveCallFollowPlus');
-                            }else{
-                                this.funcSaveNormalCallRecord('ema/saveComPhone');
-                            }
+                            this.funcSaveNormalCallRecord('ema/saveComPhone');
                         }else{
                             var url = this.isEditFollow ? 'customer/cusFollowEdit' : 'customer/saveCallFollowPlus';
                             this.funcSaveFollowRecord(url);
                         }
-                    }else{
-                        wDialog.toast({
-                            msg:'正在保存中,请稍等'
-                        })
                     }
                 },
                 // 保存普通电话跟进
@@ -1008,14 +999,21 @@
                         _this.isCanSaveFollowRecord = true;
                         return;
                     }
-                    console.log('save or edit follow record request data: ' + JSON.stringify({
-                        employeeid:_this.userInfo.employeeid,
-                        customerid:_this.cusId,
-                        customerNumber:_this.currCallCusPhone,
-                        followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
-                        status:_this.talkedState,
-                        is_work:_this.isWork
-                    }))
+                    // console.log('save or edit follow record request data: ' + JSON.stringify({
+                    //     employeeid:_this.userInfo.employeeid,
+                    //     customerid:_this.cusId,
+                    //     customerNumber:_this.currCallCusPhone,
+                    //     followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                    //     status:_this.talkedState,
+                    //     is_work:_this.isWork,
+                    //     nextfollow:_this.showFollowDate,
+                    //     estate:_this.clientStateCode,
+                    //     followResult:_this.followContent,
+                    //     cusname:_this.clientName,
+                    //     meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
+                    //     followUpWay:_this.followWayStateCode,
+                    //     type:param.type!==undefined ? param.type : 0
+                    // }));
                     wApiAjax({
                         url:url,
                         headers:{
@@ -1027,20 +1025,53 @@
                             customerNumber:_this.currCallCusPhone,
                             followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
                             status:_this.talkedState,
-                            is_work:_this.isWork
+                            is_work:_this.isWork,
+                            nextfollow:_this.showFollowDate,
+                            estate:_this.clientStateCode,
+                            followResult:_this.followContent,
+                            cusname:_this.clientName,
+                            meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
+                            followUpWay:_this.followWayStateCode,
+                            type:param.type!==undefined ? param.type : 0
                         },
                         success:function(res){
-                            console.log('--------------'+JSON.stringify(res))
-                            if(res.code == 1){
-                                _this.isSaveTalkingRecord = true;
-                                _this.funcSaveFollowRecord('customer/saveCallFollowPlus');
+                            // console.log('--------------'+JSON.stringify(res))
+                            wDialog.hideProgress();
+                            _this.isCanSaveFollowRecord = true;
+                            if(res.code == 200){
+                                if(_this.isEditFollow){
+                                    wDialog.toast({
+                                        msg:'修改跟进记录成功'
+                                    });
+                                }else{
+                                    wDialog.toast({
+                                        msg:'保存跟进记录成功'
+                                    });
+                                }
+                                setTimeout(function(){
+                                    api.closeWin();
+                                },200);
+                                var currDate = new Date();
+                                var currYear = currDate.getFullYear(),
+                                    currMonth = currDate.getMonth()+1,
+                                    currDay = currDate.getDate();
+                                var followDate = funcFormateDate(currYear,currMonth,currDay)
+                                // 跟进成功推送
+                                api.sendEvent({
+                                    name: 'followRecordSuccessRefresh',
+                                    extra:{
+                                        idName:param.idName,
+                                        cusName:_this.clientName,
+                                        followDate:followDate,
+                                        nextFollowDate:_this.showFollowDate,
+                                        cusStatus:_this.clientState
+                                    }
+                                });
                             }
                             else{
                                 wDialog.toast({
                                     msg:res.msg
-                                });
-                                wDialog.hideProgress();
-                                _this.isCanSaveFollowRecord = true;
+                                })
                             }
                         },
                         fail:function(){
@@ -1051,17 +1082,18 @@
                 // 保存跟进的两种方式
                 funcSaveFollowRecord:function(url){
                     var _this = this;
-                    console.log('save or edit follow record request data: ' + JSON.stringify({
-                        employeeid:_this.userInfo.employeeid,
-                        customerid:_this.cusId,
-                        followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
-                        nextfollow:_this.showFollowDate,
-                        estate:_this.clientStateCode,
-                        followResult:_this.followContent,
-                        cusname:_this.clientName,
-                        meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
-                        followUpWay:_this.followWayStateCode
-                    }))
+                    // console.log('save or edit follow record request data: ' + JSON.stringify({
+                    //     employeeid:_this.userInfo.employeeid,
+                    //     customerid:_this.cusId,
+                    //     followId:_this.cusFollowId ? _this.cusFollowId : _this.followId,
+                    //     nextfollow:_this.showFollowDate,
+                    //     estate:_this.clientStateCode,
+                    //     followResult:_this.followContent,
+                    //     cusname:_this.clientName,
+                    //     meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
+                    //     followUpWay:_this.followWayStateCode,
+                    //     type:param.type!==undefined ? param.type : 0
+                    // }))
                     wApiAjax({
                         url:url,
                         headers:{
@@ -1076,7 +1108,8 @@
                             followResult:_this.followContent,
                             cusname:_this.clientName,
                             meetaddress:_this.followWayStateCode == 9 ? _this.followAddress : '',
-                            followUpWay:_this.followWayStateCode
+                            followUpWay:_this.followWayStateCode,
+                            type:param.type!==undefined ? param.type : 0
                         },
                         success:function(res){
                             console.log(JSON.stringify(res))
@@ -1107,11 +1140,10 @@
                                         idName:param.idName,
                                         cusName:_this.clientName,
                                         followDate:followDate,
-                                        nextFollowDate:_this.showFollowDate
+                                        nextFollowDate:_this.showFollowDate,
+                                        cusStatus:_this.clientState
                                     }
                                 });
-
-
                             }
                             else{
                                 wDialog.toast({

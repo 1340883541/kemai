@@ -67,7 +67,7 @@
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
                     <div class="flex-wrap filter-lb1">
                         <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
-                        <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'无'"></span></div>
+                        <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'无'" class="cus-status"></span></div>
                         <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'" class="cus-follow-date"></span></div>
                         <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'" class="cus-next-follow-date"></span></div>
                     </div>
@@ -148,6 +148,7 @@
                 var id = ret.value.idName;
                 $('#'+id).addClass('disabled')
                 $('#' + id + ' .cus-name').text(ret.value.cusName);
+                $('#' + id + ' .cus-status').text(ret.value.cusStatus);
                 $('#' + id + ' .cus-follow-date').text(ret.value.followDate);
                 $('#' + id + ' .cus-next-follow-date').text(ret.value.nextFollowDate);
             }else{
