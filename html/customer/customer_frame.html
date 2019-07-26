@@ -60,7 +60,7 @@
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis" v-for="(khdata,index) in khDataList" :key="index" :id="'cus-lis-'+index" @click.stop="skipCustomerDetail(khdata.id,khdata.phone,'cus-lis-'+index)">
                 <div class="filter-lt flex-wrap flex-between">
-                    <div class="flex-wrap filter-lcap"><span class="cname w-elli" v-text="khdata.name"></span></div>
+                    <div class="flex-wrap filter-lcap"><span class="cname w-elli cus-name" v-text="khdata.name"></span></div>
                     <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone,'cus-lis-'+index)">去跟进</div>
                 </div>
                 <div class="filter-lb">
@@ -68,8 +68,8 @@
                     <div class="flex-wrap filter-lb1">
                         <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
                         <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'无'"></span></div>
-                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
-                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
+                        <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'" class="cus-follow-date"></span></div>
+                        <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'" class="cus-next-follow-date"></span></div>
                     </div>
                 </div>
                 <i></i>
@@ -146,8 +146,10 @@
             console.log(JSON.stringify(ret))
             if(ret.value.idName){
                 var id = ret.value.idName;
-                console.log('----------'+id)
                 $('#'+id).addClass('disabled')
+                $('#' + id + ' .cus-name').text(ret.value.cusName);
+                $('#' + id + ' .cus-follow-date').text(ret.value.followDate);
+                $('#' + id + ' .cus-next-follow-date').text(ret.value.nextFollowDate);
             }else{
                 nCustomerFrame.pageNo = 1;
                 nCustomerFrame.fetchListData();

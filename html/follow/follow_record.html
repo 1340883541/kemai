@@ -1095,11 +1095,19 @@
                                 setTimeout(function(){
                                     api.closeWin();
                                 },200);
+                                var currDate = new Date();
+                                var currYear = currDate.getFullYear(),
+                                    currMonth = currDate.getMonth()+1,
+                                    currDay = currDate.getDate();
+                                var followDate = funcFormateDate(currYear,currMonth,currDay)
                                 // 跟进成功推送
                                 api.sendEvent({
                                     name: 'followRecordSuccessRefresh',
                                     extra:{
-                                        idName:param.idName
+                                        idName:param.idName,
+                                        cusName:_this.clientName,
+                                        followDate:followDate,
+                                        nextFollowDate:_this.showFollowDate
                                     }
                                 });
 
