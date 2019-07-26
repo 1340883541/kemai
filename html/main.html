@@ -112,7 +112,6 @@
 <script type="text/javascript" src="../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../script/common.js"></script>
 <script type="text/javascript">
-    var isReFreshLogin = false;
     function isIphoneX(){
         return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
     }
@@ -159,13 +158,6 @@
         // }, function(ret, err){
         //     $('#follow-p').hide();
         // });
-
-        // 登录成功
-        api.addEventListener({
-            name: 'loginSuc'
-        }, function(ret, err) {
-            isReFreshLogin = true;
-        });
         openFrameGroup(0);
     };
     // 底部按钮切换
@@ -191,9 +183,15 @@
                     frameName: 'index',
                     script: 'refrshIndexData();'
                 });
-                isReFreshLogin = false;
             }
-            setFrameGroup(i, isReFreshLogin);
+            if(i == 2){
+                api.execScript({
+                    name: 'main',
+                    frameName: 'person',
+                    script: 'refrshPersonData();'
+                });
+            }
+            setFrameGroup(i);
         }
     }
     var frameList = [{
@@ -229,12 +227,12 @@
     }
 
     // 设置frameGroup的index
-    function setFrameGroup(index, isReload) {
+    function setFrameGroup(index) {
         api.setFrameGroupIndex({
             name: 'mainFrameGroup',
             index: index,
             scroll: true,
-            reload: isReload
+            reload: false
         });
     }
 </script>

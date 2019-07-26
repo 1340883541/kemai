@@ -89,7 +89,7 @@
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
-                    <div class="person_center account_security">
+                    <!-- <div class="person_center account_security">
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-gy.png"></div>
                         </div>
@@ -97,13 +97,13 @@
                             <span>关于客脉</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="person_center account_security">
                         <div class="account_left">
                             <div><img src="../../image/icon-gy-bj.png"></div>
                         </div>
                         <div class="account_rig underline_rig" @click="aboutLocal">
-                            <span>关于本机</span>
+                            <span>设备信息</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div>
@@ -141,7 +141,15 @@
         api.addEventListener({
             name: 'loginSuc'
         }, function(ret, err) {
-            // console.log('----------person----------'+JSON.stringify(ret));
+            if (ret.value.origin != 'index') {
+                indexV.init();
+                indexV.getUserInfo();
+            }
+        });
+        // 监听登陆成功
+        api.addEventListener({
+            name: 'loginSuc'
+        }, function(ret, err) {
             if (ret.value.origin != 'index') {
                 indexV.init();
                 indexV.getUserInfo();
@@ -225,12 +233,12 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
-                            // console.log(JSON.stringify(res))
+                            // console.log('个人中心信息：-----'+JSON.stringify(res))
                             if (res.code == 200) {
                                 _this.name = res.info.name;
                                 _this.post_pos = res.info.job;
                                 _this.tel = res.info.phone;
-                                _this.answernum = res.info.answernum
+                                _this.answernum = res.info.answernum;
                             } else {
                                 wDialog.toast({
                                     msg: res.msg
@@ -305,6 +313,11 @@
                 }
             }
         })
+    }
+    // 获取个人中心信息失败，重新获取
+    function refrshPersonData(){
+        indexV.init();
+        indexV.getUserInfo();
     }
 </script>
 
