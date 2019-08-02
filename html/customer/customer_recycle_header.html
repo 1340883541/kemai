@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" @touchmove.stop.prevent>
         <div id="follow-p"></div>
         <div class="w-header">
             <div class="w-header-cap">
@@ -35,7 +35,14 @@
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
                         <i class="close" @click="clearSearchVal"></i>
-                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                        <input
+                            type="search"
+                            @keyup.enter="submitSeach"
+                            id="search-inp"
+                            @focus.stop="handleSearchFocus"
+                            @blur.stop="handleSearchBlur"
+                            v-model="searchVal"
+                        >
                     </form>
                     <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
                 </div>
@@ -130,7 +137,8 @@
                 startDate:'',
                 endDate:'',
                 // 当前归属地，所有归属地缓存
-                currHome:''
+                currHome:'',
+                isFocus:false
             },
             mounted:function(){
             },
@@ -141,6 +149,18 @@
                     setTimeout(function(){
                         $('#search-inp').focus();
                     },200);
+                },
+                // 获取焦点
+                handleSearchFocus:function(){
+                    this.isFocus = true;
+                },
+                // 失去焦点
+                handleSearchBlur:function(){
+                    if(api.systemType !== 'ios' && this.isFocus){
+                        fnBlur();
+                        var softInput = api.require('softInputMgr');
+                        softInput.toggleKeyboard();
+                    }
                 },
                 // 取消搜索
                 cancelSearch:function(){
@@ -245,6 +265,9 @@
                 }
             }
         });
+    }
+    function fnBlur(){
+        $('#search-inp')[0].blur();
     }
 
 </script>

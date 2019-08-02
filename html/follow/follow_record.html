@@ -12,10 +12,11 @@
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/lib/mdater.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
 </head>
 <body>
-    <div id="follow-wrapper" class="follow-wrapper">
+    <div id="follow-wrapper" class="follow-wrapper" v>
         <div class="follow-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop.prevent="handleBack"></div>
@@ -29,8 +30,11 @@
                     <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
                     <!-- <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
                     <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div> -->
-                    <div class="wechat" v-if="wechatCard">微信号：<span v-text="wechatCard"></span><span class="look" @click.stop="handleClipWechat">复制</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span></div>
-                    <div class="addr">号码归属地：<span v-text="clientAddr"></span></div>
+                    <div class="wechat clear" v-if="wechatCard">
+                        <div class="fl left w-elli"><span>微信号：</span><span v-text="wechatCard"></span></div>
+                        <div class="fr right"><span class="look" @click.stop="handleClipWechat">复制</span><span class="line">|</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span></div>
+                    </div>
+                    <div class="addr">号码归属：<span v-text="clientAddr"></span></div>
                 </div>
                 <div class="follow-b1-b follow-box-ls flex-wrap flex-between" @click.stop="handleSwitchCustomerState">
                     <div class="left">客户状态</div>
@@ -117,7 +121,7 @@
 
         <!-- 电话跟进 -->
         <div class="call-phone-box" v-if="!isExistNoFollowRecord && !isEditFollow">
-            <div class="call-phone-fixed bor-1px-t flex-wrap flex-between">
+            <div class="call-phone-fixed bor-1px-t flex-wrap flex-between" id="call-phone-fixed">
                 <div class="call-btn call-btn1 w-event-none gray-bg flex-wrap flex-center flex-align-item" id="call-phone-normal-btn" @click="handleCallFollowNormal"><i></i>普通电话</div>
                 <div class="call-btn call-btn2 w-event-none gray-bg flex-wrap flex-center flex-align-item" id="call-phone-btn" @click="handleCallFollow"><i></i>办公电话<span class="w-event-none">推荐</span></div>
             </div>
@@ -234,6 +238,7 @@
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
 <script type="text/javascript" src="../../script/lib/mdater.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -242,6 +247,10 @@
 <script type="text/javascript" src="../../script/permission.js"></script>
 <script type="text/javascript">
     var followRecordV = null;
+    if(isIphoneX()){
+        $('#call-phone-fixed,.call-phone-box').css('padding-bottom','44px');
+        $('.concatway-pop-box').css('padding-bottom','32px');
+    }
     apiready = function(){
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
@@ -510,10 +519,9 @@
                                     var sWid = 0;
                                     var len = $('#shortcut-time > li').length;
                                     $('#shortcut-time > li').each(function(i,ele){
-                                        $(ele).width($(ele).outerWidth())
                                         sWid += ($(ele).outerWidth() + 15);
                                         if(i === len-1){
-                                            $('#shortcut-time').width(sWid).css('opacity',1);
+                                            $('#shortcut-time').width(sWid-15).css('opacity',1);
                                         }
                                     });
                                     // 初始化日历

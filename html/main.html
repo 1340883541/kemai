@@ -18,7 +18,7 @@
             left: 0;
             bottom: 0;
             z-index: 9;
-            height: 1rem;
+            height: auto;
             width: 100%;
             text-align: center;
         }
@@ -112,11 +112,8 @@
 <script type="text/javascript" src="../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../script/common.js"></script>
 <script type="text/javascript">
-    function isIphoneX(){
-        return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
-    }
     if(isIphoneX()){
-        $('#footer').css('height','84px')
+        $('#footer').css('padding-bottom','32px')
     }
     apiready = function(){
         // 安卓 关闭app
@@ -209,7 +206,7 @@
     }];
     // 打开frame组
     function openFrameGroup(i) {
-        var h = $(window).height() - $('.footer').height();
+        var h = $(window).height() - $('.footer').outerHeight();
         api.openFrameGroup({
             name: 'mainFrameGroup',
             background: '#fff',

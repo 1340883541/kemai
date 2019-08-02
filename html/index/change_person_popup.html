@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>弹窗</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
+</head>
+
+<body>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    apiready = function(){
+        wDialog.confirm({
+            msg: '确认分配给当前员工吗?',
+            overlayClose:false,
+            sureCb: function() {
+                api.execScript({
+                    frameName: 'changePersonSearchFrame',
+                    script: 'sureAllotEmp()'
+                });
+                api.closeFrame();
+            },
+            cancelCb:function(){
+                api.closeFrame();
+            }
+        })
+    }
+</script>
+
+</html>

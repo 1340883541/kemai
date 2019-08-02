@@ -48,17 +48,17 @@
 }
 .w-header .search-box .search-inp {
     position: absolute;
-    left: 0.3rem;
-    right:.3rem;
+    left: 15px;
+    right:15px;
     top: 0;
     z-index: 10;
     height: 100%;
     padding: 4px 0;
-    -webkit-transition: all .3s ease-in;
-    -moz-transition: all .3s ease-in;
-    -ms-transition: all .3s ease-in;
-    -o-transition: all .3s ease-in;
-    transition: all .3s ease-in;
+    -webkit-transition: all .2s;
+    -moz-transition: all .2s;
+    -ms-transition: all .2s;
+    -o-transition: all .2s;
+    transition: all .2s;
 }
 .w-header .search-box .customer-search{
     left:.3rem;
@@ -122,6 +122,8 @@
     bottom: 4px;
     width: 100%;
     text-align: center;
+    line-height: 38px;
+    overflow: hidden;
 }
 
 .w-header .search-box.curr .search-inp .search-pop {
@@ -129,33 +131,17 @@
 }
 
 .w-header .search-box .search-inp .search-pop>i {
-    position: relative;
-    top: -1px;
-    display: inline-block;
-    width: 16px;
-    height: 16px;
+    padding-left: 16px;
     background: url('../image/shousuo.png') no-repeat center;
-    background-size: contain;
-    margin-right: .1rem;
-    vertical-align: middle;
+    background-size: 16px;
+    margin-right: 5px;
 }
 
 .w-header .search-box .search-inp .search-pop>span {
-    display: inline-block;
     color: #ccc;
-    font-size: .28rem;
-    vertical-align: middle;
-    line-height: 1em;
-    padding-top: 2px;
+    font-size: 14px;
 }
 
-.w-header .search-box .search-inp .search-pop:after {
-    content: '';
-    display: inline-block;
-    width: 0;
-    height: 100%;
-    vertical-align: middle;
-}
 
 .w-header .search-box .cancel-box {
     position: absolute;
@@ -471,17 +457,22 @@
     font-size: 13px;
 }
 .filter-lists .filter-lis .filter-lb .lis.flb-cls1 .follow-status.orange-col{
-    color:#fff9f2;
-    background-color: #ff9402;
+    color:#ff9402;
+    background-color: rgba(255,148,2,.05);
+    border-radius: 2px;
 }
 .filter-lists .filter-lis .filter-lb .lis.flb-cls1 .follow-status.green-col{
-    color:#f2fcf7;
-    background-color: #00bf6d;
+    color:#00bf6d;;
+    background-color: rgba(0,191,109,.05);
+    border-radius: 2px;
 }
 .filter-lists .filter-lis .filter-lb .lis.flb-cls2{
     color:#999;
     line-height: 1em;
     padding: 5px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .filter-lists .filter-lis .filter-lb .lis.flb-cls2 > span{
     color:#666;

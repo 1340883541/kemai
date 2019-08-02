@@ -18,7 +18,7 @@
         html,
         body,
         #wrap {
-            height: 100%;
+            min-height: 100%;
             background-color: #f7f7f7;
         }
         #wrap{
@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <div id="wrap" v-cloak>
+    <div id="wrap" v-cloak @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="filter-lt flex-wrap flex-between">
@@ -38,7 +38,7 @@
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无编号'"></span></div>
                     <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
                         <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'暂无'"></span></div>
                         <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'"></span></div>
                         <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'"></span></div>
@@ -149,7 +149,12 @@
                 nCustomerRecycleFrameV.fetchListData();
             }
         });
-
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            nCustomerRecycleFrameV.isKeybordshow = true;
+        });
         // vue实例
         nCustomerRecycleFrameV = new Vue({
             el: '#wrap',
@@ -167,7 +172,8 @@
                 pageSize:10,
                 khDataList:[],  // 客户信息list
                 userInfo:'',
-                isHavaMoreData:true
+                isHavaMoreData:true,
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -179,6 +185,15 @@
                         key:'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'customerRecycleHeader',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){

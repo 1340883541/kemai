@@ -12,16 +12,13 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/change_person.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
     <style>
         .follow-wrapper {
-            position: fixed;
-            left: 0;
-            top: 0;
             width: 100%;
-            min-height: 0;
             height: 100vh;
         }
 
@@ -44,11 +41,20 @@
             padding-left: 30px;
             padding-right: 20px;
         }
+        h2{
+            height: 40px;
+        }
+        h2:nth-child(odd){
+            background-color: #ccc;
+        }
+        h2:nth-child(even){
+            background-color: #f289c2;
+        }
     </style>
 </head>
 
 <body>
-    <div id="change_person" class="follow-wrapper">
+    <div id="change_person" class="follow-wrapper flex-wrap flex-vertical" v-cloak>
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
@@ -58,46 +64,48 @@
                 <div class="search-emp w-elli">请输入员工名称或电话，选择正确的员工信息</div>
             </div>
         </div>
-        <div class="change_person_box">
-            <div class="change_person_list" v-for="(list,i) in lists" :key="i">
-                <div class="change_person_city bor-1px-b" @click="list.isShowDetail = !list.isShowDetail">
-                    <div class="imgCity">
-                        <img src="../../image/icon-jiantou-r.png" v-show="!list.isShowDetail">
-                        <img src="../../image/icon-jiantoudown.png" v-show="list.isShowDetail">
+        <div class="change_person_box flex-con">
+            <div class="change-person-content">
+                <div class="change_person_list" v-for="(list,i) in lists" :key="i">
+                    <div class="change_person_city bor-1px-b" @click="list.isShowDetail = !list.isShowDetail">
+                        <div class="imgCity">
+                            <img src="../../image/icon-jiantou-r.png" v-show="!list.isShowDetail">
+                            <img src="../../image/icon-jiantoudown.png" v-show="list.isShowDetail">
+                        </div>
+                        <div class="text regionName w-elli" v-text="list.regionName"></div>
                     </div>
-                    <div class="text regionName w-elli" v-text="list.regionName"></div>
-                </div>
-                <div class="sale_box" v-if="list.isShowDetail">
-                    <div class="sale_list bor-1px-b" v-for="(middleVal,middleKey) in list.teamList" :key="middleKey" @click="handleGetOpenGroup(middleVal.teamid,middleVal.name,list.regionName,list.regionId)">
-                        <div class="text_lef">
-                            <div><img src="../../image/touxiang-tuandui.png"></div>
-                            <div class="groups w-elli">{{middleVal.name}}</div>
+                    <div class="sale_box" v-if="list.isShowDetail">
+                        <div class="sale_list bor-1px-b" v-for="(middleVal,middleKey) in list.teamList" :key="middleKey" @click="handleGetOpenGroup(middleVal.teamid,middleVal.name,list.regionName,list.regionId)">
+                            <div class="text_lef">
+                                <div><img src="../../image/touxiang-tuandui.png"></div>
+                                <div class="groups w-elli">{{middleVal.name}}</div>
+                            </div>
+                            <div class=img_rig>
+                                <img src="../../image/icon-gr-jiantou32.png">
+                            </div>
                         </div>
-                        <div class=img_rig>
-                            <img src="../../image/icon-gr-jiantou32.png">
-                        </div>
-                    </div>
-                    <div class="name_person" v-for="(item,j) in list.empList" :key="j" @click="handleSelectEmployee(item.name,item.empid,list.regionName)">
-                        <div class="name_lef">
-                            <img src="../../image/touxiang-ren.png">
-                            <div class="name w-elli">{{item.name}}</div>
-                        </div>
-                        <div class="img_rig1">
-                            <i class="uncheck" :class="{'check' : check1 == item.empid}"></i>
+                        <div class="name_person" v-for="(item,j) in list.empList" :key="j" @click="handleSelectEmployee(item.name,item.empid,list.regionName)">
+                            <div class="name_lef">
+                                <img src="../../image/touxiang-ren.png">
+                                <div class="name w-elli">{{item.name}}</div>
+                            </div>
+                            <div class="img_rig1">
+                                <i class="uncheck" :class="{'check' : check1 == item.empid}"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <!-- 底部 -->
-        <div class="immediate_box" v-show="isFooter">
+        <div class="immediate_box bor-1px-t" id="defalut-foot" v-show="isFooter">
             <div class="allocation" v-text="footAllotTxt"></div>
         </div>
 
 
 
         <!-- 选定当前 -->
-        <div class="popup_curr" v-show="popup_curr">
+        <div class="popup_curr bor-1px-t" id="check-foot" v-show="popup_curr" style="display:none;">
             <div class="popup_box">
                 <div class="curr_text">
                     <span class="choose">当前选定：</span>
@@ -110,14 +118,16 @@
         </div>
 
 
-        <!-- 弹出销售 -->
+        <!-- 弹出分配 -->
         <div class="popup_curr1" v-show="popup_curr1" style="display:none;">
-            <div class="mengcheng" @click.stop="popup_curr1  = popup_curr = false;isFooter=true;isChooseZzOrg=false;"></div>
-            <div class="curr_choose_box">
+            <div class="mengcheng" @click.stop="popup_curr1 = false;popup_curr = false;isFooter = true; isChooseZzOrg=false;"></div>
+            <div class="curr_choose_box" id="check-popup-foot">
                 <div class="popup_box_list">
                     <div class="curr_text_name">
-                        <span class="choose">当前选定：</span>
-                        <span class="check-txt" v-html="currSelectedEmployeeTxt"></span>
+                        <div class="w-elli-2">
+                            <span class="choose">当前选定：</span>
+                            <span class="check-txt" v-html="currSelectedEmployeeTxt"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="all_box">
@@ -158,6 +168,7 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -165,6 +176,10 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var followRecordV = null;
+    if(isIphoneX()){
+        $('#defalut-foot,#check-foot').css('padding-bottom','42px');
+        $('#check-popup-foot').css('padding-bottom','32px');
+    }
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
@@ -219,6 +234,7 @@
                     setTimeout(function() {
                         wDialog.showProgress();
                     }, 80);
+                    var now = Date.now();
                     wApiAjax({
                         method: "post",
                         url: 'newResource/findRegion',
@@ -230,6 +246,7 @@
                             employeeid: _this.userInfo.employeeid
                         },
                         success: function(res) {
+                            console.log(Date.now() - now);
                             // console.log('change person response---' + JSON.stringify(res))
                             setTimeout(function() {
                                 wDialog.hideProgress();
@@ -437,7 +454,6 @@
                     this.empId = '';
                     this.currName = '';
                     this.currGroupOrgIdx = '';
-
                     this.popup_curr1 = true;
                     this.cityName = areaName;
                     this.teamName = name;

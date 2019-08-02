@@ -12,6 +12,7 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
 </head>
 
@@ -37,7 +38,7 @@
                     <div class="add-cap">手机号码</div>
                     <div class="add-inp flex-wrap bor-1px-b">
                         <input type="text" class="flex-con" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
-                        <span class="phone-addr bor-1px-l" v-show="isShowPhoneAddr" style="display:none;">号码归属地: {{saveFormData.customerPhoneAddrTxt}}</span>
+                        <span class="phone-addr bor-1px-l" v-show="isShowPhoneAddr" style="display:none;">号码归属: {{saveFormData.customerPhoneAddrTxt}}</span>
                     </div>
                 </div>
                 <div class="add-lis">
@@ -89,6 +90,7 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>

@@ -21,7 +21,7 @@ body, html {
     top: 0;
     width: 100%;
     height: 120px;
-    background-image: linear-gradient(90deg, rgba(84, 203, 248, 1) 0%, rgba(13, 100, 250, 1) 100%);
+    background: linear-gradient(90deg, #139cff 0%, #0038f1 100%);
     box-sizing: content-box;
 }
 
@@ -37,7 +37,7 @@ body, html {
     z-index: 99;
     width: 100%;
     height: 40px;
-    background-image: linear-gradient(90deg, rgba(84, 203, 248, 0.95) 0%, rgba(13, 100, 250, 0.95) 100%);
+    background: linear-gradient(90deg, #139cff 0%, #0038f1 100%);
     color: #fff;
     line-height: 40px;
     box-sizing: content-box;
@@ -107,42 +107,49 @@ body, html {
 
 .follow-box1 .follow-b1-t .wechat {
     height: auto;
-    line-height: 28px;
+    line-height: 24px;
     color: #333;
     font-size: 16px;
 }
 
-.follow-box1 .follow-b1-t .wechat .look {
-    position: relative;
-    top: -1px;
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 8px;
-    font-size: 12px;
-    color: #333;
-    text-align: center;
-    padding: 0 6px;
-    line-height: 18px;
+@media screen and (max-width: 320px) {
+    .wechat > .left{
+        font-size: 14px;
+    }
+}
+.wechat > .left{
+    width:calc(100% - 120px);
 }
 
-.follow-box1 .follow-b1-t .wechat .look:after {
-    content: " ";
+.wechat .right {
+    position: relative;
+    background-color: #f6f6f6;
+    color:#666;
+    font-size: 12px;
+    text-align: center;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 12px;
+}
+.wechat .right:after{
+    content:'';
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 9;
-    width: 200%;
+    width:200%;
     height: 200%;
-    border: 1px solid #999;
-    -webkit-transform-origin: left top;
     transform-origin: left top;
-    -webkit-transform: scale(0.5);
-    transform: scale(0.5);
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    -ms-border-radius: 4px;
-    -o-border-radius: 4px;
-    border-radius: 4px;
+    transform: scale(.5);
+    border:1px solid #ccc;
+    border-radius: 24px;
+}
+.wechat .right > span.look{
+    position: relative;
+    z-index: 99;
+    padding:0 10px;
+}
+.wechat .right > span.line{
+    color:#ccc;
 }
 
 .follow-box1 .follow-b1-t .addr {
@@ -231,7 +238,6 @@ body, html {
 }
 
 .follow-box2 .follow-time .shortcut-time li {
-    width: 48px;
     height: 28px;
     line-height: 26px;
     border: 1px solid #f1f1f1;
@@ -241,6 +247,10 @@ body, html {
     color: #666;
     margin-right: 15px;
     border-radius: 14px;
+    padding:0 10px;
+}
+.follow-box2 .follow-time .shortcut-time li:last-child{
+    margin-right: 0;
 }
 
 .follow-box2 .follow-time .shortcut-time li.curr {
@@ -354,6 +364,7 @@ body, html {
 .call-phone-box {
     width: 100%;
     height: 64px;
+    box-sizing: content-box;
 }
 
 .call-phone-box .call-phone-fixed {
@@ -361,7 +372,6 @@ body, html {
     left: 0;
     bottom: 0;
     width: 100%;
-    height: 64px;
     padding: 12px 15px;
     z-index: 999;
     background-color: #fff;
@@ -820,7 +830,7 @@ body, html {
     left: 0;
     bottom: 0;
     z-index: 1002;
-    background-color: rgb(244, 244, 244);
+    background-color: #fff;
     height: auto;
     width: 100%;
     text-align: center;
@@ -839,10 +849,14 @@ body, html {
     line-height: 56px;
     font-size: 18px;
     color: #ff5000;
-    margin-bottom: 14px;
     background-color: #fff;
 }
 
+.delete-popup .delete-palce{
+    width:100%;
+    height: 14px;
+    background-color: #f4f4f4;
+}
 .delete-popup .delete-cancel {
     height: 56px;
     line-height: 56px;
@@ -935,7 +949,8 @@ body, html {
     height: 18px;
     display: block;
     border-radius: 18px;
-    border: 1px solid #c9c9c9;
+    background: url('../../image/icon-danxuankuang.png') no-repeat center center;
+    background-size: 18px;
     margin: auto;
     margin-top: 15px;
 }
@@ -943,10 +958,9 @@ body, html {
 .check {
     width: 18px;
     height: 18px;
-    background: url('../../image/icon-danxuankuang.png') no-repeat center center;
-    background-size: cover;
     border: 0px;
-    border: 1px solid #4c9ff8;
+    background: url('../../image/icon-danxuankuangp.png') no-repeat center center;
+    background-size: 18px;
 }
 
 .quick_lag_ul .quick_lag_li .li_text {
@@ -1062,7 +1076,7 @@ body, html {
 .disabled {
     pointer-events: none;
     cursor: default;
-    opacity: 0.6;
+    opacity: 0.4;
 }
 /*联系方式弹窗*/
 .choose-concatway-popup{

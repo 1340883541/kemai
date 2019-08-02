@@ -60,9 +60,12 @@
 .margin-top30{
     margin-top: 30px;
 }
+.margin-top20{
+    margin-top: 5px;
+}
 .f-curr{
     background: rgb(236, 245, 255) !important;
-    border: 1px solid rgb(12,127,249);
+    border: 1px solid rgb(12,127,249) !important;
     color: #0c7ff9 !important;
 }
 .filter-m-body{
@@ -135,6 +138,7 @@
 .filter-m-date input{
     width: 44.4%;
     height: 36px;
+    line-height: 34px;
     float: left;
     padding-left: 15px;
     padding-right: 15px;
@@ -163,11 +167,11 @@
     line-height: 36px;
 }
 .uncheck{
-    background: url(../../../image/icon-xz-wgx.png) no-repeat center 11px;
+    background: url('../../../image/icon-xz-wgx.png') no-repeat center 11px;
   	background-size: 14px;
 }
 .check{
-    background: url(../../../image/icon-xz-gx.png) no-repeat center 11px !important;
+    background: url('../../../image/icon-xz-gx.png') no-repeat center 11px !important;
     background-size: 14px !important;
 }
 .filter-m-khly .p2.border-1px:after{
@@ -201,7 +205,8 @@
 	font-family: "PingFangSC-Regular";
 	font-size: 13px;
 	color: #666666;
-    background: rgb(246, 246, 246);
+    background:#f6f6f6;
+    border:1px solid #f6f6f6;
     border-radius: 4px;
     margin-right: 3.3%;
     margin-bottom: 3.3%;

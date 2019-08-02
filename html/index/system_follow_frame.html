@@ -18,7 +18,7 @@
         html,
         body,
         #wrap {
-            height: 100%;
+            min-height: 100%;
             background-color: #f7f7f7;
         }
         #wrap{
@@ -35,7 +35,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
             <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="filter-lt flex-wrap flex-between">
@@ -152,6 +152,12 @@
                 sCusSystemFrameV.fetchSystemData();
             }
         });
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            sCusSystemFrameV.isKeybordshow = true;
+        });
         sCusSystemFrameV = new Vue({
             el: '#wrap',
             data: {
@@ -167,7 +173,8 @@
                 pageNo: 1,
                 totalPage: 1,
                 khDataList: [], // 客户数据列表
-                userInfo: ''
+                userInfo: '',
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -191,6 +198,15 @@
                         this.startDate = param.startDate;
                         this.endDate = param.endDate;
                         this.currStatus = param.status;
+                    }
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'systemFollowHeader',
+                            script: 'fnBlur();'
+                        });
                     }
                 },
                 // 获取系统跟进列表

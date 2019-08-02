@@ -20,7 +20,6 @@ if (typeof Object.assign != 'function') {
         if (target == null) {
             throw new TypeError('Cannot convert undefined or null to object');
         }
-
         target = Object(target);
         for (var index = 1; index < arguments.length; index++) {
             var source = arguments[index];

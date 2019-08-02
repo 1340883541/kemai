@@ -1,3 +1,7 @@
+// 判断是不是iphone x/xr/xs/xs max
+function isIphoneX(){
+    return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
+}
 // // vue 懒加载
 // Vue.use(VueLazyload, {
 //     error: '../../wgt/img_loadx@2x.jpg',
@@ -27,80 +31,75 @@ function checkLogin() {
 };
 // 空页面公共组件
 // txt => 内容
-Vue.component('empty-con', {
-    template: '<div class="w-empty" v-if="isShow" @touchstart="touchstart(event)">' +
-        '<div class="w-empty-img">' +
-        '<slot><img src="../../image/img-wushuju.png" alt=""></slot>' +
-        '</div>' +
-        '<div class="w-empey-txt" v-text="txt"></div>' +
-        '</div>',
-    props: {
-        isShow: {
-            type: Boolean,
-            default: false
-        },
-        txt: {
-            type: String,
-            default: ''
-        }
-    },
-    methods: {
-        touchstart: function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        }
-    }
-});
-// 弹窗select组件
-Vue.component('popup-select',{
-    template:'<div><div class="w-popup-select-bg" style="display:none;" @touchmove.stop.prevent  @click.stop="handleClosePopupSelect" v-show="isShowPopupSelect"></div>'+
-            '<div class="w-popup-select" style="display:none;" v-show="isShowPopupSelect">'+
-                '<div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>{{popupSelectTitle}}<i class="close" @click.stop="handleClosePopupSelect"></i></div>'+
-                '<div class="popup-select-b">'+
-                    '<ul>'+
-                        '<li class="w-elli" v-for="(popupSelect,index) in popupSelectDataList" :key="index" v-text="popupSelect.name" :class="{\'curr\':currPopupSelectData === popupSelect.value}" @click.stop="handleChoosePopupSelectData(popupSelect)"></li>'+
-                    '</ul>'+
-                '</div>'+
-            '</div></div>',
-    props:{
-        isShowPopupSelect:{
-            type:Boolean,
-            default:false,
-        },
-        currPopupSelectData:{
-            type:Number,
-            default:''
-        },
-        popupSelectTitle:{
-            type:String,
-            default:'请选择'
-        },
-        popupSelectDataList:{
-            type:Array,
-            default:[]
-        },
-        origin:{
-            type:String,
-            default:''
-        }
-    },
-    methods:{
-        // 隐藏 select 弹窗
-        handleClosePopupSelect:function(){
-            this.$emit('update:isShowPopupSelect',false);
-        },
-        // select弹窗选择
-        handleChoosePopupSelectData:function(data){
-            if(this.currPopupSelectData !== data.value){
-                data = data || {};
-                data.origin = this.origin;
-                this.$emit('choose-popup-select-data',data);
+if(Vue){
+    Vue.component('empty-con', {
+        template: '<div class="w-empty" v-if="isShow">'+
+            '<div class="w-empty-img">' +
+            '<slot><img src="../../image/img-wushuju.png" alt=""></slot>' +
+            '</div>' +
+            '<div class="w-empey-txt" v-text="txt"></div>' +
+            '</div>',
+        props: {
+            isShow: {
+                type: Boolean,
+                default: false
+            },
+            txt: {
+                type: String,
+                default: ''
             }
-            this.handleClosePopupSelect();
         }
-    }
-})
+    });
+    // 弹窗select组件
+    Vue.component('popup-select',{
+        template:'<div><div class="w-popup-select-bg" style="display:none;" @touchmove.stop.prevent  @click.stop="handleClosePopupSelect" v-show="isShowPopupSelect"></div>'+
+                '<div class="w-popup-select" style="display:none;" v-show="isShowPopupSelect">'+
+                    '<div class="popup-select-t bor-1px-b" @touchmove.stop.prevent>{{popupSelectTitle}}<i class="close" @click.stop="handleClosePopupSelect"></i></div>'+
+                    '<div class="popup-select-b">'+
+                        '<ul>'+
+                            '<li class="w-elli" v-for="(popupSelect,index) in popupSelectDataList" :key="index" v-text="popupSelect.name" :class="{\'curr\':currPopupSelectData === popupSelect.value}" @click.stop="handleChoosePopupSelectData(popupSelect)"></li>'+
+                        '</ul>'+
+                    '</div>'+
+                '</div></div>',
+        props:{
+            isShowPopupSelect:{
+                type:Boolean,
+                default:false,
+            },
+            currPopupSelectData:{
+                type:Number,
+                default:''
+            },
+            popupSelectTitle:{
+                type:String,
+                default:'请选择'
+            },
+            popupSelectDataList:{
+                type:Array,
+                default:[]
+            },
+            origin:{
+                type:String,
+                default:''
+            }
+        },
+        methods:{
+            // 隐藏 select 弹窗
+            handleClosePopupSelect:function(){
+                this.$emit('update:isShowPopupSelect',false);
+            },
+            // select弹窗选择
+            handleChoosePopupSelectData:function(data){
+                if(this.currPopupSelectData !== data.value){
+                    data = data || {};
+                    data.origin = this.origin;
+                    this.$emit('choose-popup-select-data',data);
+                }
+                this.handleClosePopupSelect();
+            }
+        }
+    })
+}
 // 打开客户来源筛选框
 function wOpenCustomerOriginFrame(par){
     par = par || {};
@@ -283,9 +282,10 @@ function funcGetThisWeek(){
 		month = date.getMonth()+1,
 		week = date.getDay(),
 		day = date.getDate();
+    var endDate = new Date(year,month,day-week+7);
 	return {
 		startDate:funcFormateDate(year,month,day-week+1),
-		endDate:funcFormateDate(year,month,day-week+7)
+		endDate:funcFormateDate(endDate.getFullYear(),endDate.getMonth(),endDate.getDate())
 	}
 }
 
@@ -863,29 +863,76 @@ var wDialog = {
     },
     alert: function(par) {
         par = par || {};
-        api.alert({
-            title: par.title || '',
-            msg: par.msg,
-            buttons: par.button || ['确定']
-        }, function(ret, err) {
-            if (ret.buttonIndex == 1) {
-                par.cb && typeof par.cb === 'function' && par.cb();
-            }
-        });
+        if($(document).dialog && typeof $(document).dialog === 'function'){
+            $(document).dialog({
+    			type:'alert',
+    			content:par.msg || par.title || '',
+    			buttonTextConfirm:par.button ? par.button[0] ? par.button[0] : '确定' : '确定',
+    			onClickConfirmBtn:function(){
+                    par.cb && typeof par.cb === 'function' && par.cb()
+                }
+    		})
+        }else{
+            api.alert({
+                title: par.title || '',
+                msg: par.msg,
+                buttons: par.button || ['确定']
+            }, function(ret, err) {
+                if (ret.buttonIndex == 1) {
+                    par.cb && typeof par.cb === 'function' && par.cb();
+                }
+            });
+        }
     },
     confirm: function(par) {
         par = par || {};
-        api.confirm({
-            title: '',
-            msg: par.msg,
-            buttons: par.button || ['确定', '取消']
-        }, function(ret, err) {
-            if (ret.buttonIndex == 1) {
-                par.sureCb && typeof par.sureCb === 'function' && par.sureCb();
-            } else {
-                par.cancelCb && typeof par.cancelCb === 'function' && par.cancelCb();
+        if($(document).dialog && typeof $(document).dialog === 'function'){
+    		$(document).dialog({
+    			type:'confirm',
+    			content:par.msg || par.title || '',
+                overlayClose:par.overlayClose === undefined ? true : par.overlayClose,
+    			buttonTextConfirm:par.button ? par.button[0] ? par.button[0] : '确定' : '确定',
+    			buttonTextCancel:par.button ? par.button[1] ? par.button[1] : '取消' : '取消',
+    			onClickConfirmBtn:function(){
+                    par.sureCb && typeof par.sureCb === 'function' && par.sureCb();
+                },
+    			onClickCancelBtn:function(){
+                    par.cancelCb && typeof par.cancelCb === 'function' && par.cancelCb();
+                }
+    		})
+        }else{
+            var isIos = api.systemType === 'ios';
+            var btn;
+            if(isIos){
+                if(Object.prototype.toString.call(par.button)==='[object Array]'){
+                    btn = par.button.reverse() || ['确定', '取消'].reverse();
+                }else{
+                    btn = ['取消','确定'];
+                }
             }
-        });
+            else{
+                btn = par.button || ['确定', '取消'];
+            }
+            api.confirm({
+                title: '',
+                msg: par.msg,
+                buttons: btn
+            }, function(ret, err) {
+                if (ret.buttonIndex == 1) {
+                    if(isIos){
+                        par.cancelCb && typeof par.cancelCb === 'function' && par.cancelCb();
+                    }else{
+                        par.sureCb && typeof par.sureCb === 'function' && par.sureCb();
+                    }
+                } else {
+                    if(isIos){
+                        par.sureCb && typeof par.sureCb === 'function' && par.sureCb();
+                    }else{
+                        par.cancelCb && typeof par.cancelCb === 'function' && par.cancelCb();
+                    }
+                }
+            });
+        }
     },
     // 弹出带两个或三个按钮和输入框的对话框
     prompt: function(par) {

@@ -18,7 +18,7 @@
         html,
         body,
         #wrap {
-            height: 100%;
+            min-height: 100%;
             background-color: #f7f7f7;
         }
         #wrap{
@@ -56,7 +56,7 @@
 </head>
 
 <body>
-    <div id="wrap" v-cloak>
+    <div id="wrap" v-cloak @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis" v-for="(khdata,index) in khDataList" :key="index" :id="'cus-lis-'+index" @click.stop="skipCustomerDetail(khdata.id,khdata.phone,'cus-lis-'+index)">
                 <div class="filter-lt flex-wrap flex-between">
@@ -66,7 +66,7 @@
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
                     <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
                         <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'无'" class="cus-status"></span></div>
                         <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'" class="cus-follow-date"></span></div>
                         <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'" class="cus-next-follow-date"></span></div>
@@ -205,6 +205,12 @@
             }
         });
         var param = api.pageParam;
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            nCustomerFrame.isKeybordshow = true;
+        });
         // vue实例
         nCustomerFrame = new Vue({
             el: '#wrap',
@@ -229,7 +235,8 @@
                 khDataList:[],  // 客户信息list
                 userInfo:'',
                 jobTitle:'',
-                isHavaMoreData:true
+                isHavaMoreData:true,
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -257,6 +264,15 @@
                     this.endTimeCreate = param.endTimeCreate;
 
                     this.jobTitle = this.userInfo.relativePosi;
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            frameName: 'customer',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){

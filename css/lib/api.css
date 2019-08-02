@@ -146,6 +146,8 @@ textarea {
     /*ios android去除自带阴影的样式*/
     outline: none;
     border: 0;
+    -webkit-appearance: none;
+    border-radius: 0;
 }
 [type="checkbox"], [type="radio"] {
     box-sizing: border-box;

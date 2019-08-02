@@ -18,7 +18,7 @@
         html,
         body,
         #wrap {
-            height: 100%;
+            min-height: 100%;
             background-color: #f7f7f7;
         }
         #wrap{
@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" v-cloak @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
             <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="filter-lt flex-wrap flex-between">
@@ -40,7 +40,7 @@
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'无'"></span></div>
-                    <div class="lis flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
+                    <div class="lis flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
                     <div class="lis flb-cls2">新增时间: <span v-text="khdata.createtime||'暂无新增'"></span></div>
                 </div>
             </div>
@@ -144,6 +144,12 @@
         });
 
         var param = api.pageParam;
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            newCustomerFrame.isKeybordshow = true;
+        });
         newCustomerFrame = new Vue({
             el: '#wrap',
             data: {
@@ -160,7 +166,8 @@
                 khDataList: [], //客户来源列表
                 pageNo: 1,
                 totalPage: 1,
-                userInfo: ''
+                userInfo: '',
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -176,6 +183,15 @@
                     this.currType = param.currType;
                     this.startDate = param.startDate;
                     this.endDate = param.endDate;
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'newCustomerHeader',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取今日新增列表
                 fetchNewAdd: function(isLoadMore, callback) {

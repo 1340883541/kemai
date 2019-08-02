@@ -28,7 +28,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" v-cloak  @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="employeeList && employeeList.length > 0" v-cloak>
             <div class="filter-lis" v-for="employee in employeeList" :key="employee.id">
                 <div class="filter-lt flex-wrap flex-between">
@@ -38,7 +38,7 @@
                     <div class="cphone" @click.stop="handleSkipChangeAllot(employee.cusid,employee.phone)">去分配</div>
                 </div>
                 <div class="filter-lb">
-                    <div class="lis flb-cls1">号码归属地: <span v-text="employee.attribution||'未知'"></span></div>
+                    <div class="lis flb-cls1">号码归属: <span v-text="employee.attribution||'未知'"></span></div>
                     <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status" :class="[employee.followtime?'green-col':'orange-col']" v-text="showFollowTxt(employee.followtime)"></span></div>
                     <div class="lis flb-cls2">分配时间: <span v-text="employee.createtime||'暂未分配'"></span></div>
                     <div class="lis flb-cls2" v-if="employee.followtime">跟进时间: <span v-text="employee.followtime"></span></div>
@@ -134,6 +134,12 @@
         });
 
         var param = api.pageParam;
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            allotEmployeeFrameV.isKeybordshow = true;
+        });
         allotEmployeeFrameV = new Vue({
             el: '#wrap',
             data: {
@@ -149,7 +155,8 @@
                 pageNo: 1,
                 totalPage: 1,
                 userInfo: '',
-                areaId:''
+                areaId:'',
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -167,6 +174,16 @@
                     // this.startDate = param.startDate;
                     // this.endDate = param.endDate;
                     this.areaId = param.region
+                },
+
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'allotEmployeeHeader',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取今日新增列表
                 fetchAllotEeployee: function(isLoadMore, callback) {
@@ -252,6 +269,7 @@
             }
         });
     }
+
     // 获取搜索的内容
     function getSearchValue(val) {
         allotEmployeeFrameV.search_cusName = val;

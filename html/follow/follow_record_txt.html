@@ -12,21 +12,17 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
     <style>
         .follow-wrapper {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            min-height: 0;
             height: 100vh;
         }
     </style>
 </head>
 
 <body>
-    <div id="follow-wrapper" class="follow-wrapper" v-cloak>
+    <div id="follow-wrapper" class="follow-wrapper" v-cloak @touchmove.stop.prevent>
         <div class="follow-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop.prevent="handleBack"></div>
@@ -37,7 +33,7 @@
         </div>
         <div class="follow-box follow-box4">
             <div class="follow-content default">
-                <textarea placeholder="跟进内容..." @focus.stop.prevent="handleFollowContentFocus" v-model="followContent" id="inp-textarea" @blur.stop.prevent="handleFollowContentBlur" ref="followTextarea"></textarea>
+                <textarea placeholder="跟进内容..." @focus.stop.prevent="handleFollowContentFocus" @click.stop v-model="followContent" id="inp-textarea" @blur.stop.prevent="handleFollowContentBlur" ref="followTextarea"></textarea>
                 <span v-if="isShowContentDelete" class="del-icon" @click.stop.prevent="handleCleanFollowContent"></span>
             </div>
             <div class="follow-shortcut-choose-box">
@@ -79,12 +75,14 @@
         <div class="delete-popup follow-popup" id="delete-popup" style="display:none;">
             <div class="delete-cap bor-1px-b">确认清空吗？</div>
             <div class="delete-clean bor-1px-b" @click.stop.prevent="handleSureCleanFollowContent">清空</div>
+            <div class="delete-palce"></div>
             <div class="delete-cancel bor-1px-t" @click.stop.prevent="funcHideAllPopup">取消</div>
         </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -92,8 +90,32 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var followRecordV = null;
+    if(isIphoneX()){
+        $('#delete-popup').css('padding-bottom','32px');
+    }
     apiready = function() {
         var voiceRecognizer = api.require('voiceRecognizer');
+        // 系统键盘隐藏的回调
+        // IOS 有效
+        api.addEventListener({
+            name: 'keyboardhide'
+        }, function(ret, err){
+            if(followRecordV.isKeyboardCurr){
+                $('#foot-t').css({
+                    'padding-bottom':'32px',
+                })
+            }
+        });
+        // 系统键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            $('#foot-t').css({
+                'padding-bottom':ret.h+'px',
+            })
+        });
+
+
         if(!isIos()){
             voiceRecognizer.createUtility({
                 android_appid:'5cd92221',
@@ -281,6 +303,9 @@
                     // 语音输入
                     else {
                         this.isKeyboardCurr = false;
+                        $('#foot-t').css({
+                            'padding-bottom':'0',
+                        })
                         setTimeout(function() {
                             _this.isAudioCurr = true;
                         }, 100)

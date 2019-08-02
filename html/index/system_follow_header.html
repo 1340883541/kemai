@@ -23,7 +23,7 @@
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" @touchmove.stop.prevent>
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
@@ -34,7 +34,14 @@
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
                         <i class="close" @click="clearSearchVal"></i>
-                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                        <input
+                            type="search"
+                            @keyup.enter="submitSeach"
+                            id="search-inp"
+                            @focus.stop="handleSearchFocus"
+                            @blur.stop="handleSearchBlur"
+                            v-model="searchVal"
+                        >
                     </form>
                     <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
                 </div>
@@ -111,7 +118,8 @@
                 currStatus:'',
                 currHome:'',
                 currSort:1,
-                userInfo:{}
+                userInfo:{},
+                isFocus:false
             },
             mounted:function(){
                 this.init();
@@ -133,6 +141,18 @@
                         this.startDate = param.startDate;
                         this.endDate = param.endDate;
                         this.currStatus = param.status;
+                    }
+                },
+                // 获取焦点
+                handleSearchFocus:function(){
+                    this.isFocus = true;
+                },
+                // 失去焦点
+                handleSearchBlur:function(){
+                    if(api.systemType !== 'ios' && this.isFocus){
+                        fnBlur();
+                        var softInput = api.require('softInputMgr');
+                        softInput.toggleKeyboard();
                     }
                 },
                 clickFilterFn:function(e,i) {
@@ -260,6 +280,9 @@
                 type:'none'
             }
         })
+    }
+    function fnBlur(){
+        $('#search-inp')[0].blur();
     }
 </script>
 

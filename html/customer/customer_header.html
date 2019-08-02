@@ -16,14 +16,14 @@
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
     <style media="screen">
         html,body,#wrap{
-            height: 100%;
+            min-height: 100%;
             background-color: #f7f7f7;
         }
     </style>
 </head>
 
 <body>
-    <div id="wrap">
+    <div id="wrap" @touchmove.stop.prevent>
         <div id="follow-p"></div>
         <div class="w-header">
             <div class="w-header-cap">
@@ -34,7 +34,14 @@
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
                         <i class="close" @click="clearSearchVal"></i>
-                        <input type="search" @keyup.enter="submitSeach" id="search-inp" v-model="searchVal">
+                        <input
+                            type="search"
+                            @keyup.enter="submitSeach"
+                            id="search-inp"
+                            @focus.stop="handleSearchFocus"
+                            @blur.stop="handleSearchBlur"
+                            v-model="searchVal"
+                        >
                     </form>
                     <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
                 </div>
@@ -156,7 +163,8 @@
                 endTimeCreate:'',
                 // 排序方式
                 currSort:0,
-                jobTitle:''
+                jobTitle:'',
+                isFocus:false
             },
             mounted:function(){
                 // console.log('customer header------------------'+JSON.stringify(this.$data))
@@ -173,6 +181,18 @@
                     setTimeout(function(){
                         $('#search-inp').focus();
                     },200);
+                },
+                // 获取焦点
+                handleSearchFocus:function(){
+                    this.isFocus = true;
+                },
+                // 失去焦点
+                handleSearchBlur:function(){
+                    if(api.systemType !== 'ios' && this.isFocus){
+                        fnBlur();
+                        var softInput = api.require('softInputMgr');
+                        softInput.toggleKeyboard();
+                    }
                 },
                 // 取消搜索
                 cancelSearch:function(){
@@ -192,7 +212,6 @@
                 // 搜索
                 submitSeach:function(){
                     api.execScript({
-                        name:'main',
                         frameName: 'customerFrame',
                         script: 'getSearchValue(\''+this.searchVal+'\');'
                     });
@@ -310,7 +329,9 @@
             });
         });
     }
-
+    function fnBlur(){
+        $('#search-inp')[0].blur();
+    }
 </script>
 
 </html>

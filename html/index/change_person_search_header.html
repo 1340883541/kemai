@@ -12,8 +12,12 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <style>
+        #change-person-header{
+            min-height: 100%;
+        }
         .w-header .w-header-cap{
             height: 42px;
             padding:5px 0;
@@ -71,13 +75,21 @@
 </head>
 
 <body>
-    <div id="change-person-header" class="follow-wrapper">
+    <div id="change-person-header" class="follow-wrapper" @touchmove.stop.prevent>
         <div class="w-header">
             <div class="w-header-cap flex-wrap">
                 <div class="flex-con emp-search-inp">
                     <i class="search-icon"></i>
-                    <i class="clean-icon" @click.stop="handleCleanSearch"></i>
-                    <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" @input.stop="handleSearchInp" ref="emp-search" v-model="searchInp">
+                    <i class="clean-icon" ref="clean-icon" @click.stop="handleCleanSearch"></i>
+                    <input
+                        type="text"
+                        placeholder="请输入员工名称或电话"
+                        @input.stop="handleSearchInp"
+                        id="search-inp"
+                        @focus.stop="handleSearchFocus"
+                        @blur.stop="handleSearchBlur"
+                        v-model="searchInp"
+                    >
                 </div>
                 <button class="emp-search-cancel" @click.stop="handleCancelSearch">取消</button>
             </div>
@@ -86,6 +98,7 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -109,7 +122,8 @@ apiready = function(){
     new Vue({
         el:'#change-person-header',
         data:{
-            searchInp:''
+            searchInp:'',
+            isFocus:false
         },
         mounted:function(){
             var _this = this;
@@ -118,10 +132,23 @@ apiready = function(){
             // 清空
             handleCleanSearch:function(){
                 var _this = this;
+                this.searchInp = '';
                 api.execScript({
                     frameName: 'changePersonSearchFrame',
                     script: 'clearSearchValue();'
                 });
+            },
+            // 获取焦点
+            handleSearchFocus:function(){
+                this.isFocus = true;
+            },
+            // 失去焦点
+            handleSearchBlur:function(){
+                if(api.systemType !== 'ios' && this.isFocus){
+                    fnBlur();
+                    var softInput = api.require('softInputMgr');
+                    softInput.toggleKeyboard();
+                }
             },
             // 取消
             handleCancelSearch:function(){
@@ -140,6 +167,9 @@ apiready = function(){
             }
         }
     })
+}
+function fnBlur(){
+    $('#search-inp')[0].blur();
 }
 </script>
 

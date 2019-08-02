@@ -53,9 +53,9 @@
     transition: all .2s;
 }
 .cd-header .back-box.curr{
-    background-image: linear-gradient(90deg,
-		#0d64fa 0%,
-		#54cbf8 100%);
+    background: -webkit-linear-gradient(left, #139cff 0%, #0038f1 100%);
+    background: -o-linear-gradient(left, #139cff 0%, #0038f1 100%);
+    background: linear-gradient(to right, #139cff 0%, #0038f1 100%);
     opacity: 1;
 }
 .cd-header .back-box .back{
@@ -143,44 +143,53 @@
     box-shadow:0px 8px 12px 8px rgba(0, 0, 0, 0.03);
     padding: 20px 17px 18px;
 }
-
+@media screen and (max-width: 320px) {
+    .cd-caption{
+        padding: 16px 12px 14px;
+    }
+    .cd-caption .cd-ct > .left{
+        font-size: 14px;
+    }
+}
+.cd-caption .cd-ct > .left{
+    width:calc(100% - 120px);
+}
 .cd-caption .cd-ct {
-    line-height: 20px;
+    line-height: 24px;
     font-size: 16px;
     color: #333;
     margin-bottom: 10px;
 }
 
-.cd-caption .cd-ct .look {
+.cd-caption .cd-ct .right {
     position: relative;
-    z-index: 10;
-    font-size: 14px;
-    height: 20px;
-    padding: 0 5px;
+    background-color: #f6f6f6;
+    color:#666;
+    font-size: 12px;
     text-align: center;
-    margin-left: 8px;
-    vertical-align: bottom;
-    line-height: 22px;
+    height: 24px;
+    line-height: 24px;
+    border-radius: 12px;
 }
-
-.cd-caption .cd-ct .look:after {
-    content: " ";
+.cd-caption .cd-ct .right:after{
+    content:'';
     position: absolute;
     left: 0;
     top: 0;
-    z-index: 9;
-    width: 200%;
+    width:200%;
     height: 200%;
-    border: 1px solid #999;
-    -webkit-transform-origin: left top;
     transform-origin: left top;
-    -webkit-transform: scale(0.5);
-    transform: scale(0.5);
-    -webkit-border-radius: 1px;
-    -moz-border-radius: 1px;
-    -ms-border-radius: 1px;
-    -o-border-radius: 1px;
-    border-radius: 1px;
+    transform: scale(.5);
+    border:1px solid #ccc;
+    border-radius: 24px;
+}
+.cd-caption .cd-ct .right > span.look{
+    position: relative;
+    z-index: 99;
+    padding:0 10px;
+}
+.cd-caption .cd-ct .right > span.line{
+    color:#ccc;
 }
 
 .cd-caption .cd-cb {

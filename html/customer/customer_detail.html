@@ -79,7 +79,7 @@
                 <div><span v-text="cusInfo.cusName"></span></div>
             </div>
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
-            <div class="horigin">号码归属地：<span v-text="cusInfo.attribution||'未知'"></span></div>
+            <div class="horigin">号码归属：<span v-text="cusInfo.attribution||'未知'"></span></div>
         </div>
         <div id="section-content">
             <div class="cd-caption" id="js_cd_cap">
@@ -90,8 +90,9 @@
                     <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
                 </div> -->
 
-                <div class="cd-ct w-inline-block" v-if="wechatCard">
-                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipWechat">复制</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span>
+                <div class="cd-ct clear" v-if="wechatCard">
+                    <div class="fl left w-elli"><span>微信号：</span><span v-text="wechatCard"></span></div>
+                    <div class="fr right"><span class="look" @click.stop="handleClipWechat">复制</span><span class="line">|</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span></div>
                 </div>
                 <div class="cd-cb" style="min-height:20px;">
                     <div class="cd-name" v-if="cusInfo.markName">
@@ -209,7 +210,6 @@
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
-<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>

@@ -12,6 +12,7 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/person/person.css" />
 </head>
 
@@ -25,8 +26,8 @@
             <div class="header_main">
                 <div class="header_text">
                     <div class="flex_con">
-                        <div class="name" v-text="name"></div>
-                        <div class="post" v-if="post_pos" v-text="post_pos"></div>
+                        <div class="name w-elli" v-text="name">还好</div>
+                        <div class="post" v-if="post_pos" v-text="post_pos">32sdsd</div>
                     </div>
                     <div class="flex_con contact_number">
                         <div class="cont_tel">
@@ -119,6 +120,7 @@
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
 <script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<!-- <script type="text/javascript" src="../../script/lib/dialog.js"></script> -->
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
@@ -130,7 +132,6 @@
     var indexV = null;
     apiready = function() {
         $api.fixStatusBar($('.header')[0]);
-        $api.fixStatusBar($('.header_title')[0]);
         // 监听设置成功
         api.addEventListener({
             name: 'setJtPhoneSuc'
@@ -233,7 +234,7 @@
                             employeeid: _this.userInfo.employeeid,
                         },
                         success: function(res) {
-                            // console.log('个人中心信息：-----'+JSON.stringify(res))
+                            console.log('个人中心信息：-----'+JSON.stringify(res))
                             if (res.code == 200) {
                                 _this.name = res.info.name;
                                 _this.post_pos = res.info.job;

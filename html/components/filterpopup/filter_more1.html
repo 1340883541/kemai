@@ -97,24 +97,27 @@
                     </div>
                     <!-- 号码归属地 -->
                     <div class="filter-m-ylgs margin-top30">
-                        <p class="p1 clear" @click.stop="isUnwindHomePosi=!isUnwindHomePosi">号码归属地<i class="icon-b-jiantou" :class={'pack-up':!isUnwindHomePosi}></i></p>
+                        <p class="p1 clear" @click.stop="isUnwindHomePosi=!isUnwindHomePosi">号码归属<i class="icon-b-jiantou" :class={'pack-up':!isUnwindHomePosi}></i></p>
                         <ul class="filter-m-ylgs-info clear" v-if="isUnwindHomePosi">
-                            <li :class="{'f-curr':currHome==''}" @click.stop="handlePitchHome('')">全部</li>
+                            <li :class="{'f-curr':currHome==''}" @click.stop="handlePitchHome('','全部')">全部</li>
                             <li
                                 v-if="homeposiData && homeposiData.length>0"
                                 v-for="home in homeposiData"
                                 :key="home.id"
                                 :class="{'f-curr':currHome==home.id}"
-                                @click.stop="handlePitchHome(home.id)"
+                                @click.stop="handlePitchHome(home.id,home.name)"
                                 v-text="home.name"
                             ></li>
+                        </ul>
+                        <ul class="filter-m-ylgs-info clear" v-show="!isUnwindHomePosi && currHomeName" style="display:none;">
+                            <li class="f-curr" v-text="currHomeName"></li>
                         </ul>
                     </div>
                     <!-- 客户来源 -->
                     <div class="filter-m-ylgs filter-m-khly margin-top30">
                         <p class="p1 clear">客户来源</p>
                         <div class="filter-m-khyl-list" v-if="originAllData.corSour">
-                            <p class="p2 margin-top30 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.corSour.corSourParValue,1)">
+                            <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.corSour.corSourParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.corSour.corSourParValue?'check':'uncheck']"></i><span v-text="originAllData.corSour.corSourParName"></span>
                             </p>
                             <ul class="filter-m-khly-info clear">
@@ -128,7 +131,7 @@
                             </ul>
                         </div>
                         <div class="filter-m-khyl-list" v-if="originAllData.net">
-                            <p class="p2 margin-top30 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.net.halParValue,1)">
+                            <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.net.halParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.net.halParValue?'check':'uncheck']"></i><span v-text="originAllData.net.netParName"></span>
                             </p>
                             <ul class="filter-m-khly-info clear">
@@ -142,7 +145,7 @@
                             </ul>
                         </div>
                         <div class="filter-m-khyl-list" v-if="originAllData.halt">
-                            <p class="p2 margin-top30 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.halt.halParValue,1)">
+                            <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.halt.halParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.halt.halParValue?'check':'uncheck']"></i><span v-text="originAllData.halt.halParName"></span>
                             </p>
                             <ul class="filter-m-khly-info clear">
@@ -203,6 +206,7 @@ apiready = function() {
 
             // 是否展开
             isUnwindHomePosi:true,
+            currHomeName:'',
             isShowNextFollowDateChoose:true
         },
         mounted:function(){
@@ -396,8 +400,9 @@ apiready = function() {
                 this.currStatus = val;;
             },
             // 筛选客户状态
-            handlePitchHome:function(val){
+            handlePitchHome:function(val,name){
                 this.currHome = val;
+                this.currHomeName = name;
             },
             // 筛选客户来源
             handleChooseCustomerOrigin:function(rl,value,type,fValue) {

@@ -12,56 +12,98 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <style>
         html,
-        body,
-        #wrap {
-            height: 100%;
+        body{
+            min-height: 100%;
             background-color: #f7f7f7;
+        }
+        #change-person-frame{
+            min-height: 100%;
         }
         #wrap{
             position: relative;
         }
-        .filter-lists .filter-lis .filter-lb .lis.flb-cls2{
-            color:#ccc;
-            line-height: 1.2em;
+        .filter-lists{
+            width:100%;
+            padding-top: 0;
         }
-        .change-allot-btn{
-            width: 60px;
-            height: 32px;
-            line-height: 32px;
+        .filter-lists .filter-lis{
+            width:100%;
+            margin:0;
+            padding: 0;
+            position: relative;
+        }
+        .filter-lists .filter-lis > .left{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width:50px;
+            height: 100%;
             text-align: center;
-            color: #fff;
-            font-size: 14px;
-            margin-top: 9px;
-            overflow: hidden;
-            background: url('../../image/icon-danxuankuang.png') no-repeat right center;
-            background-size:  20px;
+            padding-top: 28px;
         }
-        .filter-lists .filter-lis.curr .change-allot-btn{
+        .filter-lists .filter-lis > .left > i{
+            padding-left: 20px;
+            padding-top: 20px;
+            background-position: center bottom;
+            background-repeat: no-repeat;
+            background-image: url('../../image/icon-danxuankuang.png');
+            background-size: 20px;
+        }
+        .filter-lists .filter-lis.curr > .left > i{
             background-image: url('../../image/icon-danxuankuangp.png');
         }
-        .filter-lists .filter-lis .filter-lt .rela{
-            height: 16px;
-            line-height: 16px;
-            background-color: #f3a135;
+        .filter-lists .filter-lis > .right{
+            width:100%;
+            padding-left: 50px;
+        }
+        .filter-lists .filter-lis .right-box{
+            width:100%;
+            padding:15px 15px 10px 0;
+        }
+        .filter-lists .filter-lis .r-cap{
+            height:24px;
+            line-height: 24px;
+        }
+        .filter-lists .filter-lis .r-cap .name{
+            font-size: 16px;
+            color:#333;
+            font-weight: bold;
+            margin-right: 5px;
+            max-width: 60%;
+        }
+        .filter-lists .filter-lis .r-cap .phone{
             font-size: 13px;
-            color:#fff;
-            padding:0 4px;
-            text-align: center;
-            margin-top: 17px;
-            margin-left: 2px;
-            max-width:90px;
+            color:#999;
+        }
+        .filter-lists .filter-lis .r-desc{
+            line-height:24px;
+        }
+        .filter-lists .filter-lis .r-desc .rela{
+            font-size: 13px;
+            color:#ff9402;
+            background-color: rgba(255,148,2,.1);
+            padding: 0 3px;
+            margin-right: 5px;
+        }
+        .filter-lists .filter-lis .r-desc .rela-detail{
+            color:#333;
+            word-break: break-all;
+        }
+        .filter-lists .filter-lis .r-desc .line{
+            color:#ccc;
         }
     </style>
 </head>
 
 <body>
-    <div id="change-person-frame" v-cloak>
+    <div id="change-person-frame" v-cloak  @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="employeeList && employeeList.length > 0">
-            <div
+            <!-- <div
                 v-for="employee in employeeList"
                 :key="employee.id"
                 class="filter-lis"
@@ -79,6 +121,26 @@
                     <div class="lis flb-cls1">电话号码: <span v-text="employee.phone"></span></div>
                     <div class="lis flb-cls2"><span>{{employee.regionName}}{{employee.teamName?' | ':''}}{{employee.teamName}}{{employee.groupName?' | ':''}}{{employee.groupName}}</span></div>
                 </div>
+            </div> -->
+            <div
+                v-for="employee in employeeList"
+                :key="employee.id"
+                class="filter-lis"
+                :class="{curr:empId===employee.empid}"
+                @click.stop="handleSureAllotEmp(employee.empid)"
+            >
+                <div class="left"><i></i></div>
+                <div class="right">
+                    <div class="bor-1px-b right-box">
+                        <div class="r-cap flex-wrap">
+                            <span class="name w-elli" v-text="employee.name"></span>
+                            <span class="phone" v-text="employee.phone"></span>
+                        </div>
+                        <div class="r-desc">
+                            <span class="rela" v-text="employee.rolesname"></span><span class="rela-detail">{{employee.regionName}}<span class="line">{{employee.teamName?' | ':''}}</span>{{employee.teamName}}<span class="line">{{employee.groupName?' | ':''}}</span>{{employee.groupName}}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- 无更多数据 -->
             <div class="not-more-filter" id="not-more">没有更多数据</div>
@@ -90,6 +152,7 @@
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/dialog.js"></script>
 <script type="text/javascript" src="../../script/lib/md5.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
@@ -141,6 +204,12 @@
             }
         });
         var param = api.pageParam;
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            changePersonSearchFrameV.isKeybordshow = true;
+        });
         changePersonSearchFrameV = new Vue({
             el: '#change-person-frame',
             data: {
@@ -151,6 +220,7 @@
                 pageNo: 1,
                 totalPage: 1,
                 userInfo: '',
+                isKeybordshow:false
             },
             mounted: function() {
                 this.init();
@@ -162,6 +232,15 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'changePersonSearchHeader',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取今日新增列表
                 fetchAllotEeployee: function(isLoadMore, callback) {
@@ -211,58 +290,68 @@
                 handleSureAllotEmp:function(eid){
                     this.empId = eid;
                     var _this = this;
-                    wDialog.confirm({
-                        msg: '确认分配给当前员工吗?',
-                        sureCb: function() {
-                            wDialog.showProgress({
-                                msg: '正在分配中...'
-                            })
-                            console.log('allot employeed req------' + JSON.stringify({
-                                employeeid: _this.empId,
-                                customerid: _this.cusId
-                            }))
-                            wApiAjax({
-                                method: "post",
-                                url: 'newResource/changeSales',
-                                withCredentials: true,
-                                headers: {
-                                    "token": TOKEN_DATA,
-                                },
-                                data: {
-                                    employeeid: _this.empId,
-                                    customerid: param.cusId,
-                                    type:param.type === undefined ? 0 : param.type
-                                },
-                                success: function(res) {
-                                    console.log('allot response' + JSON.stringify(res));
-                                    wDialog.hideProgress();
-                                    if (res.code == 1) {
-                                        api.sendEvent({
-                                            name: 'allotEmployeeSuccess'
+                    wHrefJs.openFrame({
+                        name:'changePersonPopup',
+                        url:'./change_person_popup.html',
+                        bgColor:'rgba(0,0,0,0)'
+                    })
+                },
+                fnSureAllot:function(){
+                    var _this = this;
+                    wDialog.showProgress({
+                        msg: '正在分配中...'
+                    })
+                    console.log('allot employeed req------' + JSON.stringify({
+                        employeeid: _this.empId,
+                        customerid: _this.cusId
+                    }))
+                    wApiAjax({
+                        method: "post",
+                        url: 'newResource/changeSales',
+                        withCredentials: true,
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            employeeid: _this.empId,
+                            customerid: param.cusId,
+                            type:param.type === undefined ? 0 : param.type
+                        },
+                        success: function(res) {
+                            console.log('allot response' + JSON.stringify(res));
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                api.sendEvent({
+                                    name: 'allotEmployeeSuccess'
+                                });
+                                wDialog.toast({
+                                    msg:'分配成功'
+                                })
+                                setTimeout(function(){
+                                    if(param.origin === 'customerDetail'){
+                                        api.closeToWin({
+                                            name:'customerDetail'
                                         });
-                                        wDialog.alert({
-                                            msg: '分配成功',
-                                            cb: function() {
-                                                if(param.origin === 'customerDetail'){
-                                                    api.closeToWin({
-                                                        name:'customerDetail'
-                                                    });
-                                                }else{
-                                                    api.closeToWin({
-                                                        name: 'allotEmployeeHeader'
-                                                    });
-
-                                                }
-                                            }
+                                    }else{
+                                        api.closeToWin({
+                                            name: 'allotEmployeeHeader'
                                         });
                                     }
-                                }
-                            })
+                                },600)
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
                         }
                     })
                 }
             }
         });
+    }
+    // 确认分配
+    function sureAllotEmp(){
+        changePersonSearchFrameV.fnSureAllot();
     }
     // 获取搜索的内容
     function getSearchValue(val) {
@@ -273,6 +362,8 @@
     // 清空搜索的内容
     function clearSearchValue() {
         changePersonSearchFrameV.search_cusName = '';
+        // changePersonSearchFrameV.pageNo = 1;
+        // changePersonSearchFrameV.fetchAllotEeployee();
     }
 </script>
 
