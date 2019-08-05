@@ -27,7 +27,7 @@
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop.prevent="handleBack"></div>
                 <div class="center">跟进记录</div>
-                <div class="right" @click.stop.prevent="handleSaveFollowContent">确认</div>
+                <div class="right" @click.stop.prevent="handleSaveFollowContent">确定</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
         <div class="delete-popup follow-popup" id="delete-popup" style="display:none;">
-            <div class="delete-cap bor-1px-b">确认清空吗？</div>
+            <div class="delete-cap bor-1px-b">确定清空吗？</div>
             <div class="delete-clean bor-1px-b" @click.stop.prevent="handleSureCleanFollowContent">清空</div>
             <div class="delete-palce"></div>
             <div class="delete-cancel bor-1px-t" @click.stop.prevent="funcHideAllPopup">取消</div>
@@ -269,7 +269,7 @@
                     $('#popup-bg,#delete-popup').show();
                     this.isAudioCurr = false;
                 },
-                // 确认清空内容
+                // 确定清空内容
                 handleSureCleanFollowContent: function() {
                     this.followContent = '';
                     this.wordStr = '';
@@ -371,7 +371,7 @@
                         })
                     }
                 },
-                // 确认编辑的内容
+                // 确定编辑的内容
                 handleSaveFollowContent: function() {
                     api.execScript({
                         name: 'followRecord',

@@ -277,15 +277,16 @@ function funcGetThisToday(){
 }
 // 获取到本周的起止时间
 function funcGetThisWeek(){
-	var date = new Date(),
-		year = date.getFullYear(),
-		month = date.getMonth()+1,
-		week = date.getDay(),
-		day = date.getDate();
-    var endDate = new Date(year,month,day-week+7);
+    var oneDayLong = 24*60*60*1000;
+    var now = new Date();
+    var mondayTime = now.getTime() - (now.getDay()-1)*oneDayLong;
+    var sundayTime = now.getTime() + (7-now.getDay())*oneDayLong;
+
+    var startDate = new Date(mondayTime)
+    var endDate = new Date(sundayTime);
 	return {
-		startDate:funcFormateDate(year,month,day-week+1),
-		endDate:funcFormateDate(endDate.getFullYear(),endDate.getMonth(),endDate.getDate())
+		startDate:funcFormateDate(startDate.getFullYear(),startDate.getMonth()+1,startDate.getDate()),
+		endDate:funcFormateDate(endDate.getFullYear(),endDate.getMonth()+1,endDate.getDate())
 	}
 }
 

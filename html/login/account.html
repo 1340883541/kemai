@@ -29,12 +29,12 @@
                   <div class="input-box flex-con"><input type="password" maxlength="20" placeholder="请输入新密码" v-model="newPwd"></div>
               </div>
               <div class="row flex-wrap flex-align">
-                  <span class="label">确认密码</span>
-                  <div class="input-box flex-con input_pasd"><input type="password" maxlength="20" placeholder="请再次确认新密码" v-model="pwd" ></div>
+                  <span class="label">确定密码</span>
+                  <div class="input-box flex-con input_pasd"><input type="password" maxlength="20" placeholder="请再次确定新密码" v-model="pwd" ></div>
               </div>
               <div class="be_careful">注意：两次输入的密码需要保持一致，密码长度为8-20位数字和字母的组合</div>
               <div class="submit-btn space-between" @click="confirm">
-                  <div class="text-align">确认</div>
+                  <div class="text-align">确定</div>
               </div>
           </div>
       </div>
@@ -98,7 +98,7 @@ apiready = function() {
                       };
                       if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                           wDialog.toast({
-                              msg:"请确认新密码"
+                              msg:"请确定新密码"
                           })
                            return
                       } else if (!pwdExp.test(self.pwd)) {

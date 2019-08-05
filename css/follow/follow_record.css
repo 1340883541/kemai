@@ -110,6 +110,7 @@ body, html {
     line-height: 24px;
     color: #333;
     font-size: 16px;
+    margin-top: 6px;
 }
 
 @media screen and (max-width: 320px) {
@@ -1078,6 +1079,10 @@ body, html {
     cursor: default;
     opacity: 0.4;
 }
+
+.quick_language .quick_lag_footer .quick_lag_f_right button.disabled {
+    opacity: 0.2;
+}
 /*联系方式弹窗*/
 .choose-concatway-popup{
     position: fixed;
@@ -1169,7 +1174,7 @@ body, html {
     color:#0c7ff9;
     pointer-events: visible;
 }
-/*确认拨打电话弹窗*/
+/*确定拨打电话弹窗*/
 .callphone-sure-popup{
     position: fixed;
     left: 0;

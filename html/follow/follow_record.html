@@ -131,7 +131,7 @@
         <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-name-popup">
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
                 <div class="left" @click.stop="funcHideAllPopup">取消</div>
-                <div class="right" @click.stop="handleSaveCustomerName">确认</div>
+                <div class="right" @click.stop="handleSaveCustomerName">确定</div>
             </div>
             <div class="follow-addr-b">
                 <textarea placeholder="输入客户姓名" id="inp-textarea-name"></textarea>
@@ -141,7 +141,7 @@
         <div class="follow-addr-popup follow-popup" style="display:none;" id="follow-addr-popup">
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
                 <div class="left" @click.stop="funcHideAllPopup">取消</div>
-                <div class="right" @click.stop="handleSaveDropAddress">确认</div>
+                <div class="right" @click.stop="handleSaveDropAddress">确定</div>
             </div>
             <div class="follow-addr-b">
                 <textarea placeholder="输入拜访地址，如：成都市奥克斯广场666号星巴客店" id="inp-textarea-addr"></textarea>
@@ -190,16 +190,16 @@
                 </ul>
             </div>
         </div>
-        <!-- 拨打电话确认 -->
+        <!-- 拨打电话确定 -->
         <div class="callphone-sure-popup" v-show="isShowSureCallPhonePopup" @click.stop="isShowSureCallPhonePopup = false" style="display:none;">
             <div class="callphone-sure-box" @click.stop.prevent>
-                <div class="callphone-sure-content">确认用<span v-text="currCallPhoneWayTxt"></span>拨打吗？</div>
+                <div class="callphone-sure-content">确定用<span v-text="currCallPhoneWayTxt"></span>拨打吗？</div>
                 <div class="callphone-sure-btn clear">
                     <div class="fl left" @click.stop="isShowSureCallPhonePopup = false;">
                         取消
                     </div>
                     <div class="fr right" @click.stop="handleSureCallPhone">
-                        确认拨打
+                        确定拨打
                     </div>
                 </div>
             </div>
@@ -230,7 +230,7 @@
                     <i class="check-icon"></i>
                 </div>
                 <div class="concatway-place"></div>
-                <div class="sure-call-btn bor-1px-t" :class="{curr:isCanCallPhone}" @click.stop="handleSureCallPhone">确认拨打</div>
+                <div class="sure-call-btn bor-1px-t" :class="{curr:isCanCallPhone}" @click.stop="handleSureCallPhone">确定拨打</div>
             </div>
         </div>
     </div>
@@ -1253,7 +1253,7 @@
     function funcSaveDropAddress(addr){
         followRecordV.followAddress = addr;
     }
-    // 确认编辑的内容
+    // 确定编辑的内容
     function funcSureFollowContent(content){
         followRecordV.followContent = decodeURI(content);
     }

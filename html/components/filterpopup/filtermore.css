@@ -93,12 +93,12 @@
     height: 16px;
     display: inline-block;
     float: right;
-    background: url('../../../image/icon-gr-jiantou32.png') no-repeat 0px 1px;
+    background: url('../../../image/icon-gr-jiantou32_down.png') no-repeat 0px 1px;
     background-size: 16px;
-    transform: rotate(90deg);
+    transition: all .2s;
 }
 .icon-b-jiantou.pack-up{
-    transform: rotate(0);
+    transform: rotate(180deg);
 }
 .filter-m-ylgs-info{
     margin-top: 15px;

@@ -161,7 +161,7 @@
 						instance.template = typeof options === 'string' ? options : options.template;
 						instance.isVisible = true;
 						instance.showToast = true;
-						instance.btns = instance.type == 'confirm' ? options.btns || ['确定', '取消'] : options.btns || ['确认'];
+						instance.btns = instance.type == 'confirm' ? options.btns || ['确定', '取消'] : options.btns || ['确定'];
 						instance.icon = options.icon || '';
 						instance.bgColor = options.bgColor || '';
 						instance.callback = options.callback || function () {};
