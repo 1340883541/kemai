@@ -96,10 +96,10 @@
                 </div>
                 <div class="cd-cb" style="min-height:20px;">
                     <div class="cd-name" v-if="cusInfo.markName">
-                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i v-if="isShowAllotMarketIcon" @click.stop="handleSkipChangeAllot(0)"></i>
+                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i v-if="isShowAllotMarketIcon" @click.stop="handleSkipChangeAllot(0,'变更销售负责人')"></i>
                     </div>
                     <div class="cd-name" v-if="cusInfo.chanName">
-                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i v-if="isShowAllotChannelIcon" @click.stop="handleSkipChangeAllot(4)"></i>
+                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i v-if="isShowAllotChannelIcon" @click.stop="handleSkipChangeAllot(4,'变更渠道负责人')"></i>
                     </div>
                 </div>
             </div>
@@ -518,7 +518,7 @@
                     });
                 },
                 // 变更负责人
-                handleSkipChangeAllot:function(i){
+                handleSkipChangeAllot:function(i,name){
                     // i 0 销售负责人 1 渠道负责人
                     wHrefJs.openWin({
                         name:'changePerson',
@@ -526,7 +526,8 @@
                         param:{
                             origin:'customerDetail',
                             cusId:param.cusId,
-                            type:i
+                            type:i,
+                            originName:name
                         }
                     })
                 },
@@ -727,7 +728,8 @@
     function fnListenScroll(){
         // 屏幕滚动
         var isEventScroll = true;
-        var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+        // var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+        var capOffsetTop = 10;
         var navOffsetTop = $("#js_cd_nav").offset().top;
         $(window).on('scroll', function() {
             if (isEventScroll) {
@@ -741,13 +743,14 @@
     // 计算滚动
     function fnCalcScroll(capOffsetTop,navOffsetTop){
         var wTop = $(this).scrollTop();
+        console.log(wTop)
         if (wTop >= capOffsetTop) {
             if (wTop >= navOffsetTop) {
                 $('#back-box').addClass('curr show-nav');
-                // console.log('innnn1  头部导航')
+                console.log('innnn1  头部导航')
             } else {
                 $('#back-box').removeClass('show-nav').addClass('curr');
-                // console.log('innnn2 改变颜色')
+                console.log('innnn2 改变颜色')
             }
         } else {
             $('#back-box').removeClass('curr show-nav');

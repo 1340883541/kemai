@@ -131,9 +131,9 @@
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
-        <div class="skip-add" @click.stop="handleSkipAddCustomer">
+        <!-- <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
-        </div>
+        </div> -->
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -156,6 +156,20 @@
             name: 'loginSuc'
         }, function(ret, err) {
             refrshIndexData();
+        });
+        // 添加打开添加图标
+        api.openFrame({
+            name: 'addCustomerIcon',
+            url: './add_customer_icon.html',
+            rect: {
+                x: $(window).width() - 65,
+                y: $(window).height() - 65,
+                w: 50,
+                h: 50
+            },
+            bounces: false,
+            bgColor: 'rgba(0,0,0,0)',
+            fixedOn:'ui_window'
         });
 
         // 下拉刷新

@@ -58,7 +58,7 @@
         <div class="w-header">
             <div class="w-header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
-                <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap">变更销售负责人<i></i></span></div>
+                <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap">{{titleName}}<i></i></span></div>
             </div>
             <div class="search-emp-box" @click.stop="handleSkipSearchChange">
                 <div class="search-emp w-elli">请输入员工名称或电话，选择正确的员工信息</div>
@@ -207,7 +207,9 @@
                 currGroupPerIdx: '',
                 isChooseZzOrg: false,
 
-                footAllotTxt:'立即分配'
+                footAllotTxt:'立即分配',
+                titleName:'',
+
             },
             mounted: function() {
                 this.init();
@@ -219,6 +221,9 @@
                     this.cusId = param.cusId;
                     if(param.origin === 'customerDetail'){
                         this.footAllotTxt = '立即更换';
+                        if(param.originName){
+                            this.titleName = param.originName || '变更销售负责人';
+                        }
                     }else{
                         this.footAllotTxt = '立即分配';
                     }
