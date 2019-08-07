@@ -891,7 +891,7 @@ var wDialog = {
     		$(document).dialog({
     			type:'confirm',
     			content:par.msg || par.title || '',
-                overlayClose:par.overlayClose === undefined ? true : par.overlayClose,
+                overlayClose:false,
     			buttonTextConfirm:par.button ? par.button[0] ? par.button[0] : '确定' : '确定',
     			buttonTextCancel:par.button ? par.button[1] ? par.button[1] : '取消' : '取消',
     			onClickConfirmBtn:function(){

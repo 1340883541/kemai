@@ -152,6 +152,7 @@
         if(userInfo.employeeid){
             fnCreateWsConcat(userInfo.employeeid);
         }
+        // 动态权限
         var resultList = api.hasPermission({
             list:['microphone','photos','notification','phone','storage']
         });
@@ -224,6 +225,39 @@
                 }
             }
         }
+        // 退出后台监听登录
+        api.addEventListener({
+            name: 'pause'
+        }, function(ret, err){
+            if(ws){
+                fnEventWsMessage();
+            }else{
+                var userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                userInfo = userInfo ? JSON.parse(userInfo) : {};
+                if(userInfo.employeeid){
+                    fnCreateWsConcat(userInfo.employeeid);
+                }
+            }
+        });
+        // 退出前台监听登录
+        api.addEventListener({
+            name: 'resume'
+        }, function(ret, err){
+            if(ws){
+                fnEventWsMessage();
+            }else{
+                var userInfo = wPref.getPrefs({
+                    key:'userInfo'
+                });
+                userInfo = userInfo ? JSON.parse(userInfo) : {};
+                if(userInfo.employeeid){
+                    fnCreateWsConcat(userInfo.employeeid);
+                }
+            }
+        });
+
         // 关闭socket连接
         function fnCloseWsConcat(){
             if(ws) ws.close();
