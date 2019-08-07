@@ -210,21 +210,21 @@
                 <div class="concatway-cap bor-1px-b">请选择联系方式<i @click.stop="isShowConcatWayPopup = false"></i></div>
                 <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===0}" v-if="cusPhone" @click.stop="currCheckPhone = 0;currCallCusPhone = cusPhone;">
                     <div class="lis-left flex-vertical flex-wrap flex-center">
-                        <p class="p1">联系方式(<span v-text="cusPhone"></span>)</p>
+                        <p class="p1">联系方式(<span v-text="showCusPhone"></span>)</p>
                         <p class="p2" v-if="!isTruePhone">系统检测出本号码为非手机号码</p>
                     </div>
                     <i class="check-icon"></i>
                 </div>
                 <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===1}" v-if="cusOtherPhone1" @click.stop="currCheckPhone = 1;currCallCusPhone = cusOtherPhone1;">
                     <div class="lis-left flex-vertical flex-wrap flex-center">
-                        <p class="p1">备用联系(<span v-text="cusOtherPhone1"></span>)</p>
+                        <p class="p1">备用联系(<span v-text="showCusOtherPhone1"></span>)</p>
                         <p class="p2" v-if="!isTrueOhterPhone1">系统检测出本号码为非手机号码</p>
                     </div>
                     <i class="check-icon checked"></i>
                 </div>
                 <div class="concatway-lis bor-1px-b" :class="{checked:currCheckPhone===2}" v-if="cusOtherPhone2" @click.stop="currCheckPhone = 2;currCallCusPhone = cusOtherPhone2;">
                     <div class="lis-left flex-vertical flex-wrap flex-center">
-                        <p class="p1">备用联系(<span v-text="cusOtherPhone2"></span>)</p>
+                        <p class="p1">备用联系(<span v-text="showCusOtherPhone2"></span>)</p>
                         <p class="p2" v-if="!isTrueOhterPhone2">系统检测出本号码为非手机号码</p>
                     </div>
                     <i class="check-icon"></i>
@@ -342,10 +342,13 @@
                 currCallCusPhone:'',
 
                 cusPhone:'',
+                showCusPhone:'',
                 isTruePhone:false,
                 cusOtherPhone1:'',
+                showCusOtherPhone1:'',
                 isTrueOhterPhone1:false,
                 cusOtherPhone2:'',
+                showCusOtherPhone2:'',
                 isTrueOhterPhone2:false,
                 // 显示联系弹窗
                 isShowConcatWayPopup:false,
@@ -355,13 +358,15 @@
                 currCallPhoneWayVal:0,
                 currCheckPhone:'',
                 // 备注电话
-                isHaveRemarkPhone:false
+                isHaveRemarkPhone:false,
+                // 是否显示微信
+                isPwdWechat:false,
             },
             mounted:function(){
                 this.init();
                 this.fetchTalkingState();
                 this.getFollowWay();
-                this.fetchCusPhoneData();
+                // this.fetchCusPhoneData();
             },
             computed:{
                 isCanCallPhone:function(){
@@ -416,12 +421,33 @@
                                 else{
                                     _this.currCallCusPhone = res.data.phone;
                                 }
-                                _this.cusPhone = res.data.phone;
                                 _this.isTruePhone = wValidate.checkPhone(_this.cusPhone).status;
-                                _this.cusOtherPhone1 = res.data.otherphone1;
                                 _this.isTrueOhterPhone1 = wValidate.checkPhone(_this.cusOtherPhone1).status;
-                                _this.cusOtherPhone2 = res.data.otherphone2;
                                 _this.isTrueOhterPhone2 = wValidate.checkPhone(_this.cusOtherPhone2).status;
+                                _this.cusPhone = res.data.phone;
+                                _this.cusOtherPhone1 = res.data.otherphone1;
+                                _this.cusOtherPhone2 = res.data.otherphone2;
+                                if(_this.isPwdWechat){
+                                    _this.showCusPhone = _this.cusPhone;
+                                    _this.showCusOtherPhone1 = _this.cusOtherPhone1;
+                                    _this.showCusOtherPhone2 = _this.cusOtherPhone2;
+                                }else{
+                                    if(_this.cusPhone <= 5){
+                                        _this.showCusPhone = '********';
+                                    }else{
+                                        _this.showCusPhone = '****' + _this.cusPhone.slice(_this.cusPhone.length-4);
+                                    }
+                                    if(_this.cusOtherPhone1 <= 5){
+                                        _this.showCusOtherPhone1 = '********';
+                                    }else{
+                                        _this.showCusOtherPhone1 = '****' + _this.cusOtherPhone1.slice(_this.cusOtherPhone1.length-4);
+                                    }
+                                    if(_this.cusOtherPhone2 <= 5){
+                                        _this.showCusOtherPhone2 = '********';
+                                    }else{
+                                        _this.showCusOtherPhone2 = '****' + _this.cusOtherPhone2.slice(_this.cusOtherPhone2.length-4);
+                                    }
+                                }
                             }
                         }
                     })
@@ -496,8 +522,8 @@
                                 var wechat = res.data.wechat.trim();
                                 _this.realWechatCard = wechat;
                                 var mapType = res.mapType || {};
-                                var isWechat = permissionSetting.FOLLOWRECORD.fnWechat(mapType.markType);
-                                if(isWechat){
+                                _this.isPwdWechat = permissionSetting.FOLLOWRECORD.fnWechat(mapType.markType);
+                                if(_this.isPwdWechat){
                                     _this.wechatCard = wechat;
                                 }else{
                                     if(wechat.length <= 5){
@@ -535,6 +561,7 @@
                                 	});
                                 })
                                 _this.getShortcutFollow();
+                                _this.fetchCusPhoneData();
                             }
                         }
                     })
