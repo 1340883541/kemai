@@ -124,6 +124,7 @@
                     customerChannelEmpName:'',
                     customerChannelEmpId:'',
                 },
+                isChannelEmp:false, //是否是渠道部
                 isCanSaveFormData:false,
                 // customer switch
                 customerClassCurrIndex:'',
@@ -289,6 +290,12 @@
                         });
                         return false;
                     }
+                    if(saveData.customerPhone.trim() == ''){
+                        wDialog.toast({
+                            msg:'请输入手机号码'
+                        });
+                        return false;
+                    }
                     if(saveData.customerClassifyId == ''){
                         wDialog.toast({
                             msg:'请选择来源归类'
@@ -298,6 +305,18 @@
                     if(saveData.customerOriginTxt == ''){
                         wDialog.toast({
                             msg:'请选择客户来源'
+                        });
+                        return false;
+                    }
+                    if(saveData.customerMarketEmpName == ''){
+                        wDialog.toast({
+                            msg:'请选择销售员工'
+                        });
+                        return false;
+                    }
+                    if(this.isChannelEmp && saveData.customerChannelEmpName == ''){
+                        wDialog.toast({
+                            msg:'渠道部需要关联渠道员工'
                         });
                         return false;
                     }
@@ -416,6 +435,11 @@
     // 获取客户来源信息
     function getCustomerOrigin(cusInfo){
         console.log(JSON.stringify(cusInfo))
+        if(cusInfo.currOriginOneVal === 2){
+            addV.isChannelEmp = true;
+        }else{
+            addV.isChannelEmp = false;
+        }
         addV.saveFormData.customerOriginTxt = cusInfo.currOriginOneTxt + ' ' + cusInfo.currOriginTwoTxt + ' '  + cusInfo.currOriginThreeTxt + ' '  + cusInfo.queryName + ' '  + cusInfo.searchName + ' '  + cusInfo.inputName;
         // 获取需要保存的来源信息
         // 公司合作资源

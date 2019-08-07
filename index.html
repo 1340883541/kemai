@@ -152,7 +152,25 @@
         if(userInfo.employeeid){
             fnCreateWsConcat(userInfo.employeeid);
         }
-
+        var resultList = api.hasPermission({
+            list:['microphone','photos','notification','phone-call','storage']
+        });
+        console.log(JSON.stringify(resultList));
+        var notOpenPowerList = resultList.filter(function(v){
+            if(!v.granted) return v;
+        });
+        if(notOpenPowerList && notOpenPowerList.length > 0){
+            var reqPowerList = notOpenPowerList.map(function(v){
+                return v.name
+            })
+            console.log(JSON.stringify(reqPowerList))
+            api.requestPermission({
+                list:reqPowerList,
+                code:1
+            }, function(ret, err){
+                console.log(JSON.stringify(ret));
+            });
+        }
         // 监听登录成功
         api.addEventListener({
             name: 'loginSuc'
