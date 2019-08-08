@@ -749,14 +749,14 @@
     // 计算滚动
     function fnCalcScroll(capOffsetTop,navOffsetTop){
         var wTop = $(this).scrollTop();
-        console.log(wTop)
+        // console.log(wTop)
         if (wTop >= capOffsetTop) {
             if (wTop >= navOffsetTop) {
                 $('#back-box').addClass('curr show-nav');
-                console.log('innnn1  头部导航')
+                // console.log('innnn1  头部导航')
             } else {
                 $('#back-box').removeClass('show-nav').addClass('curr');
-                console.log('innnn2 改变颜色')
+                // console.log('innnn2 改变颜色')
             }
         } else {
             $('#back-box').removeClass('curr show-nav');
