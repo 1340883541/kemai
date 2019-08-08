@@ -86,17 +86,17 @@
     display: block;
     width: 100%;
     height: 100%;
-    padding-left: .74rem;
-    padding-right: .52rem;
+    padding-left: 36px;
+    padding-right:26px;
 }
 
 .w-header .search-box .search-inp>form .search {
     position: absolute;
-    left: .36rem;
-    width: .32rem;
+    left: 0;
+    width: 36px;
     height: 100%;
     background: url('../image/shousuo.png') no-repeat center;
-    background-size: .32rem;
+    background-size:16px;
     display: none;
 }
 
@@ -149,10 +149,10 @@
     top: 0;
     height: 100%;
     z-index: 8;
-    padding: 0 .3rem;
+    padding: 0 15px;
     color: #fff;
-    font-size: .3rem;
-    line-height: .84rem;
+    font-size:15px;
+    line-height: 44px;
     opacity: 0;
     -webkit-transition: opacity .2s ease;
     -moz-transition: opacity .2s ease;

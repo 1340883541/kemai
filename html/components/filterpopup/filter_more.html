@@ -90,8 +90,8 @@
                                 v-text="home.name"
                             ></li>
                         </ul>
-                        <ul class="filter-m-ylgs-info clear" v-show="!isUnwindHomePosi && currHomeName" style="display:none;">
-                            <li class="f-curr" v-text="currHomeName"></li>
+                        <ul class="filter-m-ylgs-info clear" v-show="!isUnwindHomePosi" style="display:none;">
+                            <li class="f-curr" v-text="currHomeName||'全部'"></li>
                         </ul>
                     </div>
                     <!-- 客户来源 -->

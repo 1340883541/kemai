@@ -32,7 +32,7 @@
                     <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div> -->
                     <div class="wechat clear" v-if="wechatCard">
                         <div class="fl left w-elli"><span>微信号：</span><span v-text="wechatCard"></span></div>
-                        <div class="fr right"><span class="look" @click.stop="handleClipWechat">复制</span><span class="line">|</span><span class="look" @click.stop="handleClipOpenWechat">打开微信</span></div>
+                        <div class="fr right"><span class="look" @click.stop="handleClipWechat" style="padding-right:8px;">复制</span><span class="line">|</span><span class="look" @click.stop="handleClipOpenWechat" style="padding-left:8px;">打开微信</span></div>
                     </div>
                     <div class="addr">号码归属：<span v-text="clientAddr"></span></div>
                 </div>
@@ -549,7 +549,7 @@
                                     $('#shortcut-time > li').each(function(i,ele){
                                         sWid += ($(ele).outerWidth() + 15);
                                         if(i === len-1){
-                                            $('#shortcut-time').width(sWid-15).css('opacity',1);
+                                            $('#shortcut-time').width(sWid-10).css('opacity',1);
                                         }
                                     });
                                     // 初始化日历

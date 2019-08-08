@@ -147,15 +147,6 @@
                 indexV.getUserInfo();
             }
         });
-        // 监听登陆成功
-        api.addEventListener({
-            name: 'loginSuc'
-        }, function(ret, err) {
-            if (ret.value.origin != 'index') {
-                indexV.init();
-                indexV.getUserInfo();
-            }
-        });
         // 监听token，
         indexV = new Vue({
             el: '#wrap',
