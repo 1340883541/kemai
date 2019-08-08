@@ -421,12 +421,14 @@
                                 else{
                                     _this.currCallCusPhone = res.data.phone;
                                 }
-                                _this.isTruePhone = wValidate.checkPhone(_this.cusPhone).status;
-                                _this.isTrueOhterPhone1 = wValidate.checkPhone(_this.cusOtherPhone1).status;
-                                _this.isTrueOhterPhone2 = wValidate.checkPhone(_this.cusOtherPhone2).status;
                                 _this.cusPhone = res.data.phone;
                                 _this.cusOtherPhone1 = res.data.otherphone1;
                                 _this.cusOtherPhone2 = res.data.otherphone2;
+                                _this.isTruePhone = wValidate.checkPhone(_this.cusPhone).status;
+                                _this.isTrueOhterPhone1 = wValidate.checkPhone(_this.cusOtherPhone1).status;
+                                _this.isTrueOhterPhone2 = wValidate.checkPhone(_this.cusOtherPhone2).status;
+                                console.log(_this.isTrueOhterPhone1)
+                                console.log(_this.isTrueOhterPhone2)
                                 if(_this.isPwdWechat){
                                     _this.showCusPhone = _this.cusPhone;
                                     _this.showCusOtherPhone1 = _this.cusOtherPhone1;

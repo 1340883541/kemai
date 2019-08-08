@@ -213,7 +213,7 @@
         function fnEventWsMessage(){
             ws.onmessage=function (event) {
                 // console.log("innnnnnnnnnnnnnnn WebSocket获取消息");
-                console.log(event.data);
+                console.log('------------------------------'+event.data);
                 var data= JSON.parse(event.data);
                 if(data.code == 3001){
                     // console.log('打电话已经结束')
