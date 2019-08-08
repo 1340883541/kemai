@@ -197,7 +197,8 @@
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err) {
-            if (++changePersonSearchFrameV.pageNo <= changePersonSearchFrameV.totalPage) {
+            if (changePersonSearchFrameV.isHavaMoreData) {
+                ++changePersonSearchFrameV.pageNo
                 changePersonSearchFrameV.fetchAllotEeployee(true);
             } else {
                 $('#not-more').show();
@@ -218,7 +219,7 @@
                 employeeList: [], //客户
                 empId:'',
                 pageNo: 1,
-                totalPage: 1,
+                isHavaMoreData:true,
                 userInfo: '',
                 isKeybordshow:false
             },
@@ -249,6 +250,12 @@
                     setTimeout(function(){
                         wDialog.showProgress();
                     },10);
+                    console.log('request data -------------'+JSON.stringify({
+                        empNameOrPhone:_this.search_cusName,
+                        type:param.type,
+                        pageNo: _this.pageNo,
+                        pageSize: 10
+                    }))
                     wApiAjax({
                         url: 'customer/searchEmp',
                         headers: {
@@ -261,13 +268,14 @@
                             pageSize: 10
                         },
                         success: function(res) {
+                            console.log(JSON.stringify(res))
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },100);
                             if (res.code == 1) {
+                                _this.isHavaMoreData = res.data ? res.data.length >= 10 : false;
                                 if (!isLoadMore) {
                                     _this.employeeList = res.data ? res.data : [];
-                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
                                 } else {
                                     if (res.data) {
                                         _this.employeeList = _this.employeeList.concat(res.data);

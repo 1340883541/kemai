@@ -143,7 +143,6 @@
             name: 'loginSuc'
         }, function(ret, err) {
             if (ret.value.origin != 'index') {
-                indexV.init();
                 indexV.getUserInfo();
             }
         });
@@ -214,6 +213,7 @@
                 getUserInfo: function() {
                     var _this = this;
                     this.init();
+                    var TOKEN_DATA = myLocalStorage.getItem('token');
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
@@ -236,7 +236,6 @@
                                     msg: res.msg
                                 })
                             }
-
                         }
                     })
                 },
@@ -245,7 +244,7 @@
                     wDialog.confirm({
                         msg: '确定要退出登录吗？',
                         sureCb: function() {
-                            TOKEN_DATA = myLocalStorage.getItem('token')
+                            var TOKEN_DATA = myLocalStorage.getItem('token')
                             wApiAjax({
                                 method: "get",
                                 url: 'perCenter/logout',
@@ -308,7 +307,6 @@
     }
     // 获取个人中心信息失败，重新获取
     function refrshPersonData(){
-        indexV.init();
         indexV.getUserInfo();
     }
 </script>
