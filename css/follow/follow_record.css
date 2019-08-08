@@ -342,7 +342,13 @@ body, html {
     background-color: rgb(243, 247, 248);
     border-radius: 15px;
 }
-
+@media screen and (max-width:320px) {
+    .follow-box3 .follow-shortcut-choose li {
+        margin-right: 8px;
+        padding: 0 8px;
+        font-size: 13px;
+    }
+}
 .follow-box3 .follow-choose-more, .follow-box4 .follow-choose-more {
     color: #1b78f9 !important;
     text-align: center;
@@ -1012,6 +1018,7 @@ body, html {
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
+    box-sizing: content-box;
 }
 
 .quick_lag_footer.border-1px:after {

@@ -331,10 +331,10 @@
                             pageSize:10,
                         },
                         success:function(res){
-                            // console.log('customer frame response--------'+JSON.stringify(res))
+                            // console.log('customer frame response--------'+JSON.stringify(res.data))
                             wDialog.hideProgress();
                             if(res.code == 1){
-                                _this.isHavaMoreData = res.data ? res.data.length >= _this.pageNo : false;
+                                _this.isHavaMoreData = res.data ? res.data.length >= 10 : false;
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
                                     $('.filter-lis').removeClass('disabled curr')

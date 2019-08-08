@@ -140,6 +140,8 @@
                             <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
                         </div>
                     </div>
+                    <!-- 空页面 -->
+                    <empty-con :is-show="cusInfoList.length === 0" txt="暂无信息"></empty-con>
                 </div>
                 <!-- 意向资料 -->
                 <div class="cd-box cd-box1" v-show="isShowDetailBox === 1" style="display:none;">
@@ -165,6 +167,8 @@
                             <div class="fl right" v-text="cusPersonInfo.comment"></div>
                         </div>
                     </div>
+                    <!-- 空页面 -->
+                    <empty-con :is-show="!cusPersonInfo || !cusPersonInfo.city && !cusPersonInfo.premises && !cusPersonInfo.housestyle && !cusPersonInfo.purpose && !cusPersonInfo.comment" txt="暂无信息"></empty-con>
                 </div>
                 <!-- 历史负责人 -->
                 <div class="cd-box cd-box2" v-show="isShowDetailBox === 2" style="display:none;">
@@ -196,6 +200,8 @@
                                 <div class="gj-time gj"><span>负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div>
                             </div>
                         </div>
+                        <!-- 空页面 -->
+                        <empty-con :is-show="historyPrincipalList.length === 0" txt="暂无信息"></empty-con>
                     </div>
                 </div>
             </div>

@@ -72,7 +72,7 @@
             <div class="quick_lag_f_right"><button class="quick_lag_delbtn" @click.stop="detal">删除</button><button class="quick_lag_querbtn" @click.stop="confirmDel">确定</button></div>
         </div>
         <!-- 背景遮罩 -->
-        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
+        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg" @click.stop="funcHideAllPopup"></div>
         <!-- 添加快捷用语 -->
         <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-shortcut-popup">
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
@@ -96,6 +96,9 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript">
     var vuedata;
+    if(isIphoneX()){
+        $('.quick_lag_footer').css('padding-bottom','32px');
+    }
     apiready = function() {
             $api.fixStatusBar($('#fh-fixed')[0]);
             $api.fixStatusBar($('#fh-place')[0]);

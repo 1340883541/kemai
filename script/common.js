@@ -1,6 +1,7 @@
 // 判断是不是iphone x/xr/xs/xs max
 function isIphoneX(){
     return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
+    // return true;
 }
 // // vue 懒加载
 // Vue.use(VueLazyload, {

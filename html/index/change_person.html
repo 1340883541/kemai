@@ -99,7 +99,7 @@
         </div>
         <!-- 底部 -->
         <div class="immediate_box bor-1px-t" id="defalut-foot" v-show="isFooter">
-            <div class="allocation" v-text="footAllotTxt"></div>
+            <div class="allocation" v-text="footAllotTxt" @click.stop="handleToastChooseEmp"></div>
         </div>
 
 
@@ -275,6 +275,11 @@
                             type:param.type,
                             cusId:param.cusId
                         }
+                    })
+                },
+                handleToastChooseEmp:function(){
+                    wDialog.toast({
+                        msg:'请先选择一个员工'
                     })
                 },
                 // 选择变更人

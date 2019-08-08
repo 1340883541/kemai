@@ -22,9 +22,9 @@
     </style>
 </head>
 <body>
-    <div id="follow-name-pop" class="follow-wrapper" @touchstart.prenvent @touchmove.prenvent >
+    <div id="follow-name-pop" class="follow-wrapper" @click.stop="api.closeFrame();" @touchmove.prenvent >
         <!-- 修改客户姓名 -->
-        <div class="follow-addr-popup follow-popup">
+        <div class="follow-addr-popup follow-popup" @click.stop>
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
                 <div class="left" @click.stop="handleCancelCustomerShortcut">取消</div>
                 <div class="right" @click.stop="handleSaveCustomerShortcut">确定</div>

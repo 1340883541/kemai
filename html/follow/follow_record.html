@@ -126,7 +126,7 @@
                 <div class="call-btn call-btn2 w-event-none gray-bg flex-wrap flex-center flex-align-item" id="call-phone-btn" @click="handleCallFollow"><i></i>办公电话<span class="w-event-none">推荐</span></div>
             </div>
         </div>
-        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg"></div>
+        <div class="popup-bg follow-popup" style="display:none;" id="popup-bg" @click.stop="funcHideAllPopup"></div>
         <!-- 修改客户姓名 -->
         <div class="follow-addr-popup follow-popup" style="display:none;" id="customer-name-popup">
             <div class="follow-addr-t flex-wrap flex-between bor-1px-b">
@@ -249,7 +249,7 @@
     var followRecordV = null;
     if(isIphoneX()){
         $('#call-phone-fixed,.call-phone-box').css('padding-bottom','44px');
-        $('.concatway-pop-box').css('padding-bottom','32px');
+        $('.concatway-pop-box,.choose-follow-b').css('padding-bottom','32px');
     }
     apiready = function(){
         $api.fixStatusBar($('#fh-fixed')[0]);
