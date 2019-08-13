@@ -134,9 +134,10 @@ function wOpenCustomerStatusFrame(par){
         param:par.param
     })
 }
-// 打开客户来源筛选框
+// 打开客户排序筛选框
 function wOpenCustomerSortFrame(par){
     par = par || {};
+    console.log(JSON.stringify(par))
     wHrefJs.openFrame({
         name:'filterCustomerFrame',
         path:'../components/filterpopup/filter_sort.html',

@@ -141,6 +141,10 @@ apiready = function(){
             // 获取焦点
             handleSearchFocus:function(){
                 this.isFocus = true;
+                $('.w-filter-lis').removeClass('curr');
+                api.closeFrame({
+                    name: 'filterCustomerFrame'
+                });
             },
             // 失去焦点
             handleSearchBlur:function(){

@@ -26,15 +26,15 @@
             <div class="header_main">
                 <div class="header_text">
                     <div class="flex_con">
-                        <div class="name w-elli" v-text="name">还好</div>
-                        <div class="post" v-if="post_pos" v-text="post_pos">32sdsd</div>
+                        <div class="name w-elli" v-text="name"></div>
+                        <div class="post" v-if="post_pos" v-text="post_pos"></div>
                     </div>
                     <div class="flex_con contact_number">
                         <div class="cont_tel">
-                            <span>工作号:</span>
-                            <span v-text="tel" class="w-event-none"></span>
+                            <span>办公号:</span>
+                            <span v-text="tel||'未分配办公号'" :class="{'not-phone':!tel}" class="w-event-none">未分配办公号</span>
                         </div>
-                        <div class="Authentication_tel">
+                        <div class="Authentication_tel" v-show="tel" style="display:none;">
                             <img src="../../image/icon-rz.png">
                         </div>
                     </div>
@@ -56,7 +56,7 @@
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-zh.png"></div>
                         </div>
-                        <div class="account_rig" @click="account">
+                        <div class="account_rig bor-1px-b" @click="account">
                             <span>账号安全</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -65,7 +65,7 @@
                         <div class="account_left">
                             <div><img src="../../image/icon-dx-set.png"></div>
                         </div>
-                        <div class="account_rig" @click="skipNoteSet">
+                        <div class="account_rig bor-1px-b" @click="skipNoteSet">
                             <span>短信通知</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -75,7 +75,7 @@
                             <div><img src="../../image/icon-gr-sz.png"></div>
 
                         </div>
-                        <div class="account_rig" @click="message">
+                        <div class="account_rig bor-1px-b" @click="message">
                             <span>消息设置</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -85,7 +85,7 @@
                             <div><img src="../../image/icon-gr-xx.png"></div>
 
                         </div>
-                        <div class="account_rig" @click="skipMessageList">
+                        <div class="account_rig bor-1px-b" @click="skipMessageList">
                             <span>消息中心</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -94,7 +94,7 @@
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-gy.png"></div>
                         </div>
-                        <div class="account_rig underline_rig" @click="about">
+                        <div class="account_rig bor-1px-b" @click="about">
                             <span>关于客脉</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -103,7 +103,7 @@
                         <div class="account_left">
                             <div><img src="../../image/icon-gy-bj.png"></div>
                         </div>
-                        <div class="account_rig underline_rig" @click="aboutLocal">
+                        <div class="account_rig bor-1px-b" @click="aboutLocal">
                             <span>设备信息</span>
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
@@ -229,7 +229,7 @@
                             if (res.code == 200) {
                                 _this.name = res.info.name;
                                 _this.post_pos = res.info.job;
-                                _this.tel = res.info.phone;
+                                _this.tel = res.info.officephone||'';
                                 _this.answernum = res.info.answernum;
                             } else {
                                 wDialog.toast({

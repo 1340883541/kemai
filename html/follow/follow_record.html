@@ -932,14 +932,14 @@
                 fnCallWorkPhone:function(){
                     var _this = this;
                     _this.isShowTalkingResult = false;
-                    // console.log('call phone request ---> ' + JSON.stringify({
-                    //     account:_this.userInfo.account,
-                    //     customerNumber:_this.currCallCusPhone,
-                    //     cusid:_this.cusId,
-                    //     empid:_this.userInfo.employeeid,
-                    //     is_work:_this.isWork,
-                    //     followId:_this.followId
-                    // }));
+                    console.log('call phone request ---> ' + JSON.stringify({
+                        account:_this.userInfo.account,
+                        customerNumber:_this.currCallCusPhone,
+                        cusid:_this.cusId,
+                        empid:_this.userInfo.employeeid,
+                        is_work:_this.isWork,
+                        followId:_this.followId
+                    }));
                     $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
                     wApiAjax({
                         url:'ema/makeCall',
@@ -955,7 +955,7 @@
                             followId:_this.followId
                         },
                         success:function(res){
-                            // console.log('call phone response ----> '+JSON.stringify(res))
+                            console.log('call phone response ----> '+JSON.stringify(res))
                             if(res.code == 200){
                                 // 跟进方式变成电话
                                 _this.followWayState = '电话';
@@ -966,7 +966,7 @@
                             }else{
                                 $('#call-phone-normal-btn,#call-phone-btn').removeClass('w-event-none gray-bg');
                                 wDialog.toast({
-                                    msg:res.msg||'客户号码异常'
+                                    msg:res.msg||'号码异常'
                                 });
                             }
                         },

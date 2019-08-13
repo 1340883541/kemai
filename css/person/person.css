@@ -68,7 +68,6 @@
 }
 .post{
     margin-left:15px;
-    margin-top: 8px;
     padding:2px 4px;
     background-color: #f3a134;
 	border-radius: 2px;
@@ -89,6 +88,9 @@
 	font-size: 14px;
 	letter-spacing: 0.1px;
 	color: #333333;
+}
+.contact_number .not-phone{
+    color:#ccc;
 }
 .Authentication_tel{
     width:54px;
@@ -159,11 +161,6 @@
     justify-content: space-between;
     margin-left: 15px;
     width: 100%;
-    box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
-    -webkit-box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
-    -moz-box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
-    -ms-box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
-    -o-box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;
 }
 /*.underline_rig{
         box-shadow: inset 0px -0.5px 0px 0px #e9e9e9;

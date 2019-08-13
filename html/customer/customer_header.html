@@ -141,7 +141,10 @@
                 }
             }
         });
-
+        // 跳转到frame的高度等
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
         ncusHeaderV = new Vue({
             el:"#wrap",
             data:{
@@ -185,6 +188,11 @@
                 // 获取焦点
                 handleSearchFocus:function(){
                     this.isFocus = true;
+                    $('.w-filter-lis').removeClass('curr');
+                    api.closeFrame({
+                        name: 'filterCustomerFrame'
+                    });
+
                 },
                 // 失去焦点
                 handleSearchBlur:function(){
@@ -221,10 +229,6 @@
                     var tag = e.currentTarget,
                         _this = this;
                     // 1.客户来源 2客户状态  3 更多 4排序
-                    // 跳转到frame
-                    var wHei = $(window).height(),
-                        y = api.safeArea.top + $('.w-header').height(),
-                        h = wHei - y;
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
                         if(i === 1){

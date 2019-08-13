@@ -418,6 +418,10 @@
                 },
                 // 切换大区，团队
                 handleSwitchPosition:function(i){
+                    $('.filter-lis').removeClass('curr');
+                    api.closeFrame({
+                        name: 'filterCustomerFrame'
+                    });
                     if(i === 0){
                         this.isShowAreaBox = true;
                         this.isShowTeamBox = false;
