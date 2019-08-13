@@ -13,17 +13,12 @@
     <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
-    <style>
-        #filter-sort{
-            transition: opacity .3s ease;
-        }
-    </style>
 </head>
 
 <body>
     <div id="wrapper">
-        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup" id="filter-sort" style="opacity:0;">
-            <div class="w-filter-pop1" v-if="sortClass === 'class1'">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop1" v-show="sortClass === 'class1'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
@@ -31,7 +26,7 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">计划跟进时间从远到近</li>
                 </ul>
             </div>
-            <div class="w-filter-pop1" v-if="sortClass === 'class2'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class2'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">新增资源量从高到低</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">新增资源量从低到高</li>
@@ -39,13 +34,13 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">新增资源跟进量从低到高</li>
                 </ul>
             </div>
-            <div class="w-filter-pop1" v-if="sortClass === 'class3'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class3'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">通话次数从多到少</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">通话次数从少到多</li>
                 </ul>
             </div>
-            <div class="w-filter-pop1" v-if="sortClass === 'class4'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class4'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">通话时间从近到远</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">通话时间从远到近</li>
@@ -53,7 +48,7 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">通话时长从短到长</li>
                 </ul>
             </div>
-            <div class="w-filter-pop1" v-if="sortClass === 'class5'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class5'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">从未跟进到已跟进</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">从已跟进到未跟进</li>
@@ -61,14 +56,14 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">新增时间从远到近</li>
                 </ul>
             </div>
-            <div class="w-filter-pop1" v-if="sortClass === 'class6'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class6'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">系统资源量从高到低</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">系统资源量从低到高</li>
                 </ul>
             </div>
             <!-- 系统跟进 非国内管理员 -->
-            <div class="w-filter-pop1" v-if="sortClass === 'class7'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class7'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
@@ -79,7 +74,7 @@
                 </ul>
             </div>
             <!-- 客户列表  -->
-            <div class="w-filter-pop1" v-if="sortClass === 'class8'">
+            <div class="w-filter-pop1" v-show="sortClass === 'class8'" style="display:none;">
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
@@ -109,11 +104,6 @@
             mounted: function() {
                 this.currSelected = param.currSelected;
                 this.sortClass = param.sortClass;
-                this.$nextTick(function(){
-                    $('#filter-sort').css({
-                        'opacity':1
-                    });
-                })
             },
             methods: {
                 // 筛选排序

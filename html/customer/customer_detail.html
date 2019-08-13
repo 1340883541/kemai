@@ -297,7 +297,7 @@
                 currHistoryPrincipalVal:'',
 
                 // 是否显示分配编辑的图标
-                isShowAllotMarketIcon:permissionSetting.CUSDETAIL.fnMarketAllot(),
+                isShowAllotMarketIcon:false,
                 isShowAllotChannelIcon:permissionSetting.CUSDETAIL.fnChannelAllot(),
             },
             created: function() {
@@ -371,7 +371,7 @@
                             pageSize: 10
                         },
                         success: function(res) {
-                            // console.log('customer detail---' + JSON.stringify(res))
+                            console.log('customer detail---' + JSON.stringify(res))
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },200);
@@ -391,6 +391,7 @@
                                     var wechat = res.data.cusInfo.wechat.trim();
                                     _this.realWechatCard = wechat;
                                     var mapType = res.data.mapType || {};
+                                    _this.isShowAllotMarketIcon = permissionSetting.CUSDETAIL.fnMarketAllot(mapType.modMarkType);
                                     var isWechat = permissionSetting.CUSDETAIL.fnWechat(mapType.markType);
                                     if(isWechat){
                                         _this.wechatCard = wechat;

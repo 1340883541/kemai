@@ -14,23 +14,33 @@
     <link rel="stylesheet" type="text/css" href="../../../css/lib/mdater.css" />
     <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="./filtermore.css" />
+    <style>
+        .filter-m-body{
+            margin:0;
+            padding-top:15px;
+            padding-bottom: 10px;
+            overflow-y:auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling:touch;
+        }
+    </style>
 </head>
 
 <body>
     <div id="wrapper">
         <div class="w-filter-more clear" @click.stop="handleCloseFilterPopup">
             <!-- 全屏添加class width100 -->
-            <div class="w-filter-content" @click.stop.prevent>
+            <div class="w-filter-content w-filter-animte flex-wrap flex-vertical" @click.stop.prevent>
                 <!-- 关闭 -->
                 <div class="follow-header follow-r-m-header">
                     <!-- 全屏添加class width100 -->
-                    <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
+                    <div class="fh-fixed flex-wrap flex-between" id="fh-fixed" style="position:relative;">
                         <div class="left back" @click.stop="handleCloseFilterPopup"><img class="filter-m-close" src="../../../image/icon-dh-guanbi.png" /></div>
                     </div>
-                    <div class="fh-place" id="fh-place"></div>
+                    <!-- <div class="fh-place" id="fh-place"></div> -->
                 </div>
                 <!-- 筛选内容 -->
-                <div class="filter-m-body">
+                <div class="filter-m-body flex-con">
                     <!-- 来源归类 -->
                     <div class="filter-m-ylgs" v-if="isHaveClassify">
                         <p class="p1">来源归类</p>
@@ -157,7 +167,7 @@
                 </div>
                 <!-- 筛选确定/取消 -->
                 <!-- 全屏添加class width100 -->
-                <div class="filter-m-footer border-1px">
+                <div class="filter-m-footer border-1px" style="position:relative">
                     <button class="cancel-btn" @click.stop="handleCleanData">清空</button>
                     <button class="confirm-btn" @click.stop="handleSureData">确定</button>
                 </div>

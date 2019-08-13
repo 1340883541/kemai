@@ -531,7 +531,7 @@ var wHrefJs = {
         par.y = typeof par.y === 'undefined' || par.y == false ? 0 : par.y;
         par.w = typeof par.w === 'undefined' || par.w == false ? 'auto' : par.w;
         par.h = typeof par.h === 'undefined' || par.h == false ? 'auto' : par.h;
-        par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.4)' : par.bgColor;
+        par.bgColor = typeof par.bgColor === 'undefined' || par.bgColor == false ? 'rgba(0,0,0,.3)' : par.bgColor;
         par.animation = typeof par.animation === 'undefined' || par.animation == false ? {} : par.animation;
         par.animation['type'] = par.animation['type'] || 'none';
         par.animation['subType'] = par.animation['subType'] || 'from_right';

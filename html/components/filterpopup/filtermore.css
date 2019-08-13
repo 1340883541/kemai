@@ -6,7 +6,7 @@
 .w-filter-more{
     width: 100%;
     height: 100vh;
-    background-color: rgba(0,0,0,.4);
+    background-color: rgba(0,0,0,0);
 }
 .w-filter-content{
     width: 80%;
@@ -19,6 +19,39 @@
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling:touch;
+    animation: rightToLeft .2s;
+    animation-delay: .1s;
+    animation-fill-mode: forwards;
+}
+.w-filter-animte{
+    position: absolute;
+    top: 0;
+}
+@media screen and (max-width:375px){
+    .w-filter-animte{
+        left: 100%;
+    }
+    @keyframes rightToLeft {
+        0%{
+            left:100%;
+        }
+        100%{
+            left: calc(100vw - 300px);
+        }
+    }
+}
+@media screen and (min-width:376px){
+    .w-filter-animte{
+        left: 100%;
+    }
+    @keyframes rightToLeft {
+        0%{
+            left:100%;
+        }
+        100%{
+            left: 20%;
+        }
+    }
 }
 .follow-header{
     position: relative;

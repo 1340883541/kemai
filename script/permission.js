@@ -16,6 +16,34 @@ var permissionSetting = {
             console.log('获取权限配置列表失败')
         }
     },
+    ALLOT:{
+        code:'001000',
+        perList:[],
+        // 销售负责人变更
+        fnMarketAllot:function(type){
+            permissionSetting.init.call(this);
+            if(this.perList.length !== 0){
+                var isCunTime = this.perList.some(function(v){
+                    return (v.coding == '001002')
+                });
+                if(isCunTime){
+                    if(type == 1){
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }else{
+                    var some = this.perList.some(function(v){
+                        return (v.coding == '001001')
+                    });
+                    return some;
+                }
+            }else{
+                return false;
+            }
+        }
+    },
     // 客户详情
     CUSDETAIL:{
         code:'007000',
@@ -67,17 +95,30 @@ var permissionSetting = {
             }
         },
         // 销售负责人变更
-        fnMarketAllot:function(){
+        fnMarketAllot:function(type){
             permissionSetting.init.call(this);
             if(this.perList.length !== 0){
-                var some = this.perList.some(function(v){
-                    return (v.coding == '007005')
+                var isCunTime = this.perList.some(function(v){
+                    return (v.coding == '007007')
                 });
-                return some;
+                if(isCunTime){
+                    if(type == 1){
+                        return false;
+                    }
+                    else{
+                        return true;
+                    }
+                }else{
+                    var some = this.perList.some(function(v){
+                        return (v.coding == '007005')
+                    });
+                    return some;
+                }
             }else{
                 return false;
             }
         },
+
         // 渠道负责人变更
         fnChannelAllot:function(){
             permissionSetting.init.call(this);

@@ -35,7 +35,7 @@
                     <div class="flex-wrap filter-lcap">
                         <span class="cname w-elli" v-text="employee.cusnmae"></span>
                     </div>
-                    <div class="cphone" @click.stop="handleSkipChangeAllot(employee.cusid,employee.phone)">去分配</div>
+                    <div class="cphone" @click.stop="handleSkipChangeAllot(employee.cusid,employee.phone)" v-show="employee.isShowAllotBtn" style="display:none;">去分配</div>
                 </div>
                 <div class="filter-lb">
                     <div class="lis flb-cls1">号码归属: <span v-text="employee.attribution||'未知'"></span></div>
@@ -59,6 +59,7 @@
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/permission.js"></script>
 <script>
     var allotEmployeeFrameV = null;
     apiready = function() {
@@ -175,7 +176,6 @@
                     // this.endDate = param.endDate;
                     this.areaId = param.region
                 },
-
                 handleBlur:function(){
                     if(api.systemType === 'ios' && this.isKeybordshow){
                         this.isKeybordshow = false;
@@ -224,14 +224,21 @@
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },100);
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             if (res.code == 1) {
+                                var resList = [];
+                                if(res&&res.data&&res.data.length > 0){
+                                    resList = res.data.map(function(v){
+                                        v.isShowAllotBtn = permissionSetting.ALLOT.fnMarketAllot(v.modMarkType);
+                                        return v;
+                                    });
+                                }
                                 if (!isLoadMore) {
-                                    _this.employeeList = res.data ? res.data : [];
+                                    _this.employeeList = resList ? resList : [];
                                     _this.totalPage = Math.ceil(res.count / res.pageSize);
                                 } else {
-                                    if (res.data) {
-                                        _this.employeeList = _this.employeeList.concat(res.data);
+                                    if (resList) {
+                                        _this.employeeList = _this.employeeList.concat(resList);
                                     }
                                 }
 

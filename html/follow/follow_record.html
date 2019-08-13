@@ -1182,8 +1182,8 @@
                         }
                         if(!isCanDirectBack){
                             wDialog.confirm({
-                                msg:'是否放弃当前编辑？',
-                                button:['是','否'],
+                                msg:'当前记录未保存，确定退出吗?',
+                                button:['退出','继续填写'],
                                 sureCb:function(){
                                     api.closeWin();
                                 },
