@@ -11,7 +11,7 @@ var __CONFIG__ = {
     // wsUrl:'wss://192.168.0.222:9000/websocket/', //本地
     // wsUrl:'wss://192.168.0.222:9100/websocket/', //本地 正式库
     // wsUrl: 'wss://calltest.jindinghaiju.com:9000/websocket/',  // 测试
-    wsUrl: 'wss://call.jindinghaiju.com/websocket/', // 正式
+    wsUrl: 'wss://call.jindinghaiju.com:9100/websocket/', // 正式
 }
 // Object.assign pollify
 if (typeof Object.assign != 'function') {
