@@ -56,6 +56,10 @@
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
+        // 跳转到frame的高度等
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
         var param = api.pageParam;
         wHrefJs.openFrame({
             name:'openCallStatFrame',
@@ -95,10 +99,6 @@
             }
             $('.w-filter-lis').removeClass('curr');
         });
-        // 跳转到frame的高度等
-        var wHei = $(window).height(),
-            y = api.safeArea.top + $('.w-header').height(),
-            h = wHei - y;
         callStatHeaderV = new Vue({
             el:"#wrap",
             data:{
