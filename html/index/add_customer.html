@@ -9,11 +9,26 @@
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>新增客户-首页</title>
-    <script src="../../script/lib/rem.js"></script>
+    <!-- <script src="../../script/lib/rem.js"></script> -->
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
+    <style>
+        html,body{
+            position: relative;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        #add-wrapper{
+            position: absolute;
+            left: 0;
+            top:0;
+            width:100%;
+            min-height: 100%;
+        }
+    </style>
 </head>
 
 <body>
@@ -31,13 +46,13 @@
                 <div class="add-lis">
                     <div class="add-cap">客户姓名</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con" placeholder="请输入客户姓名" maxlength="6" v-model="saveFormData.customerName">
+                        <input type="text" class="flex-con js_listen_focus" placeholder="请输入客户姓名" maxlength="6" v-model="saveFormData.customerName">
                     </div>
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">手机号码</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
+                        <input type="text" class="flex-con js_listen_focus" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
                         <span class="phone-addr bor-1px-l" v-show="isShowPhoneAddr" style="display:none;">号码归属: {{saveFormData.customerPhoneAddrTxt}}</span>
                     </div>
                 </div>
@@ -77,7 +92,7 @@
                 <div class="add-lis">
                     <div class="add-cap">客户备注</div>
                     <div class="add-textarea">
-                        <textarea placeholder="描述客户的购买意向、购房需求、沟通内容等" v-model="saveFormData.customerRemark"></textarea>
+                        <textarea placeholder="描述客户的购买意向、购房需求、沟通内容等" class="js_listen_focus" v-model="saveFormData.customerRemark"></textarea>
                     </div>
                 </div>
             </div>
@@ -107,6 +122,18 @@
         }, function(ret, err){
             addV.handleBack();
         });
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            document.body.style.overflow = 'hidden';
+        });
+        // ios 监听键盘隐藏
+        api.addEventListener({
+            name: 'keyboardhide'
+        }, function(ret, err){
+            document.body.style.overflow = 'auto';
+        });
         addV = new Vue({
             el:'#add-wrapper',
             data:{
@@ -116,6 +143,7 @@
                     customerPhone:'',
                     customerPhoneAddr:'',
                     customerPhoneAddrTxt:'',
+                    customerPhoneAddrId:'',
                     customerClassifyId:'',
                     customerOriginTxt:'',
                     customerRemark:'',
@@ -153,11 +181,25 @@
             watch:{
                 saveFormData:{
                     handler:function(nv){
+                        // console.log(JSON.stringify(nv))
                         for(var k in nv){
                             if((nv[k]+'').trim() == ''){
-                                this.isCanSaveFormData = false;
-                                return;
-                                break;
+                                if(this.isChannelEmp){
+                                    this.isCanSaveFormData = false;
+                                    return;
+                                    break;
+                                }else{
+                                    if(k !== 'customerChannelEmpName'){
+                                        this.isCanSaveFormData = false;
+                                        return;
+                                        break;
+                                    }
+                                    else{
+                                        this.isCanSaveFormData = true;
+                                        return;
+                                        break;
+                                    }
+                                }
                             }
                         }
                         this.isCanSaveFormData = true;
@@ -169,12 +211,16 @@
                 // 获取来源归类数据
                 fetchCustomerClass:function(){
                     var _this = this;
+                    wDialog.showProgress();
                     wApiAjax({
                         url:'dataSource/resourcetype',
                         headers:{
                             token:TOKEN_DATA
                         },
                         success:function(res){
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },200)
                             if(res.code == 1){
                                 _this.customerClassList = res.data || [];
                             }
@@ -264,9 +310,11 @@
                             cellPhone:_this.saveFormData.customerPhone
                         },
                         success:function(res){
+                            console.log(JSON.stringify(res))
                             if(res.code == 200){
                                 _this.saveFormData.customerPhoneAddrTxt = res.data;
                                 _this.saveFormData.customerPhoneAddr = res.provinceAndcity;
+                                _this.saveFormData.customerPhoneAddrId = res.attributionid;
                             }else{
                                 wDialog.toast({
                                     msg:res.msg||'号码归属地获取失败'
@@ -357,6 +405,10 @@
                     console.log('请求的数据===='+JSON.stringify({
                         name:_this.saveFormData.customerName,
                         phone:_this.saveFormData.customerPhone,
+                        // 号码归属地
+                        attribution:_this.saveFormData.customerPhoneAddr,
+                        attributionid:_this.saveFormData.customerPhoneAddrId,
+
                         resourcetype:_this.saveFormData.customerClassifyId,
                         // 客户来源筛选信息
                         sourceid:_this.saveOriginInfo.sourceid, // 选择的上一级id
@@ -377,6 +429,10 @@
                         data:{
                             name:_this.saveFormData.customerName,
                             phone:_this.saveFormData.customerPhone,
+                            // 号码归属地
+                            attribution:_this.saveFormData.customerPhoneAddr,
+                            attributionid:_this.saveFormData.customerPhoneAddrId,
+
                             resourcetype:_this.saveFormData.customerClassifyId,
                             // 客户来源筛选信息
                             sourceid:_this.saveOriginInfo.sourceid, // 选择的上一级id

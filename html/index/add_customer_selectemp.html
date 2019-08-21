@@ -82,13 +82,22 @@
                 test: '',
                 userInfo:{},
                 isShowAreaSelect:false,
-                areaList:[],
+                areaList:[{
+                    value:'',
+                    name:'请选择员工区域'
+                }],
                 areaName:'',
                 areaId:'',
-                departmentList:[],
+                departmentList:[{
+                    value:'',
+                    name:'请选择员工部门'
+                }],
                 departmentName:'',
                 departmentId:'',
-                employeeList:[],
+                employeeList:[{
+                    value:'',
+                    name:'请选择对应员工'
+                }],
                 employeeName:'',
                 employeeId:'',
                 // 筛选框
@@ -129,6 +138,10 @@
                                         v.value = v.id;
                                         return v;
                                     });
+                                    _this.areaList.unshift({
+                                        value:'',
+                                        name:'请选择员工区域'
+                                    })
                                 }
                             }
                         }
@@ -152,6 +165,10 @@
                                         v.name = v.teamName;
                                         return v;
                                     });
+                                    _this.departmentList.unshift({
+                                        value:'',
+                                        name:'请选择员工部门'
+                                    })
                                 }
                             }
                         }
@@ -161,7 +178,7 @@
                 handleSureSelect:function(){
                     if(this.employeeId === ''){
                         wDialog.toast({
-                            msg:'请先选择员工'
+                            msg:'请选择员工'
                         });
                         return;
                     }
@@ -186,12 +203,12 @@
                 },
                 // 选择部门
                 handleSelectDepartment:function(){
-                    if(this.departmentList.length == 0){
-                        wDialog.toast({
-                            msg:'请先选择区域'
-                        })
-                        return;
-                    }
+                    // if(this.departmentList.length == 0){
+                    //     wDialog.toast({
+                    //         msg:'请先选择区域'
+                    //     })
+                    //     return;
+                    // }
                     this.isShowPopupSelect = true;
                     this.currPopupSelectData = this.departmentId;
                     this.popupSelectDataList = this.departmentList;
@@ -199,12 +216,12 @@
                 },
                 // 选择员工
                 handleSelectEmployee:function(){
-                    if(this.employeeList.length == 0){
-                        wDialog.toast({
-                            msg:'请先选择部门或区域'
-                        })
-                        return;
-                    }
+                    // if(this.employeeList.length == 0){
+                    //     wDialog.toast({
+                    //         msg:'请先选择部门或区域'
+                    //     })
+                    //     return;
+                    // }
                     this.isShowPopupSelect = true;
                     this.currPopupSelectData = this.employeeId;
                     this.popupSelectDataList = this.employeeList;
@@ -214,24 +231,42 @@
                 choosePopupSelectData:function(res){
                     console.log(JSON.stringify(res))
                     if(res.origin === 'oneSelect'){
-                        this.areaId = res.id;
+                        this.areaId = res.value;
                         this.areaName = res.name;
                         this.departmentName = '';
                         this.departmentId = '';
                         this.employeeId = '';
                         this.employeeName = '';
+                        if(!res.value){
+                            this.departmentList = [{
+                                value:'',
+                                name:'请选择员工部门'
+                            }];
+                            this.employeeList = [{
+                                value:'',
+                                name:'请选择对应员工'
+                            }];
+                            return;
+                        }
                         this.fetchAreaNextAllData();
                     }
                     else if(res.origin === 'twoSelect'){
-                        this.departmentName = res.teamName;
-                        this.departmentId = res.teamId;
+                        this.departmentName = res.name;
+                        this.departmentId = res.value;
                         this.employeeId = '';
                         this.employeeName = '';
+                        if(!res.value){
+                            this.employeeList = [{
+                                value:'',
+                                name:'请选择对应员工'
+                            }]
+                            return;
+                        }
                         this.fetchDepartmentNextEmpData();
                     }
                     else if(res.origin === 'threeSelect'){
-                        this.employeeId = res.empId;
-                        this.employeeName = res.nameAndPhone;
+                        this.employeeId = res.value;
+                        this.employeeName = res.name;
                     }
                 },
                 // 获取区域下的部门和员工信息
@@ -256,12 +291,20 @@
                                         v.value = v.empId;
                                         return v;
                                     })
+                                    _this.employeeList.unshift({
+                                        value:'',
+                                        name:'请选择对应员工'
+                                    })
                                 }
                                 if(res.teamList){
                                     _this.departmentList = res.teamList.map(function(v){
                                         v.name = v.teamName;
                                         v.value = v.teamId;
                                         return v;
+                                    })
+                                    _this.departmentList.unshift({
+                                        value:'',
+                                        name:'请选择员工部门'
                                     })
                                 }
                                 console.log(JSON.stringify(_this.employeeList))
@@ -292,6 +335,10 @@
                                     v.value = v.empId;
                                     return v;
                                 })
+                                _this.employeeList.unshift({
+                                    value:'',
+                                    name:'请选择对应员工'
+                                })
                                 console.log(JSON.stringify(_this.employeeList))
                             }
                         }
@@ -300,9 +347,12 @@
                 // 跳转到直接搜索
                 handleSkipSearchEmp:function(){
                     wHrefJs.openWin({
-                        name:'addCustomerSearchEmp',
-                        url:'./add_customer_searchemp.html',
-                        param:param.origin === 'selectChannel' ? 4 : 0
+                        name:'addCustomerSearchempHeader',
+                        url:'./add_customer_searchemp_header.html',
+                        param:{
+                            type:param.origin === 'selectChannel' ? 4 : 0,
+                            origin:param.origin
+                        }
                     });
                 }
             }

@@ -20,6 +20,19 @@
         .add-box{
             padding-bottom: 15px;
         }
+        html,body{
+            position: relative;
+            height: 100%;
+            overflow: auto;
+            -webkit-overflow-scrolling:touch;
+        }
+        #add-wrapper-perfect1{
+            position: absolute;
+            left: 0;
+            top:0;
+            width:100%;
+            min-height: 100%;
+        }
     </style>
 </head>
 
@@ -71,7 +84,7 @@
                 <div class="add-lis">
                     <div class="add-cap">身份证号</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con" placeholder="请输入身份证号" v-model="idcard" maxlength="6">
+                        <input type="text" class="flex-con" placeholder="请输入身份证号" v-model="idcard">
                     </div>
                 </div>
                 <div class="add-lis">
@@ -106,13 +119,13 @@
                 <div class="add-lis">
                     <div class="add-cap">电子邮箱</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con" placeholder="请输入电子邮箱" v-model="email" maxlength="6">
+                        <input type="text" class="flex-con" placeholder="请输入电子邮箱" v-model="email">
                     </div>
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">微信号码</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con" placeholder="请输入微信号码" v-model="wechat" maxlength="6">
+                        <input type="text" class="flex-con" placeholder="请输入微信号码" v-model="wechat">
                     </div>
                 </div>
                 <div class="add-lis">
@@ -155,6 +168,18 @@
             addCustomerPerfect1V.handleBack();
         });
 
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            document.body.style.overflow = 'hidden';
+        });
+        // ios 监听键盘隐藏
+        api.addEventListener({
+            name: 'keyboardhide'
+        }, function(ret, err){
+            document.body.style.overflow = 'auto';
+        });
         var param = api.pageParam;
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
@@ -223,12 +248,14 @@
                 // 获取质量等级
                 fetchMassLevel:function(){
                     var _this = this;
+                    wDialog.showProgress();
                     wApiAjax({
                         url:'dataSource/cusLevel',
                         headers:{
                             token:TOKEN_DATA
                         },
                         success:function(res){
+                            console.log('1111111111111111')
                             if(res.code == 1){
                                 _this.massLevelList = res.data || [];
                             }
@@ -247,6 +274,9 @@
                 fetchTradeData:function(){
                     var _this = this;
                     this.fnFetchData(1,'',function(res){
+                        setTimeout(function(){
+                            wDialog.hideProgress();
+                        },300)
                         _this.tradeList = res.data || [];
                     });
                 },

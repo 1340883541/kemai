@@ -9,7 +9,7 @@
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>客户地址</title>
-    <script src="../../script/lib/rem.js"></script>
+    <!-- <script src="../../script/lib/rem.js"></script> -->
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/common.css" />
@@ -70,11 +70,10 @@
 </head>
 
 <body>
-    <!-- <div id="customer-address" class="add-wrapper" v-cloak> -->
-    <div id="customer-address" class="add-wrapper">
+    <div id="customer-address" class="add-wrapper" v-cloak @touchmove.stop>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
-                <div class="left back" @click.stop="handleBack"></div>
+                <div class="left back" @click.stop="api.closeWin();"></div>
                 <div class="center">客户地址</div>
                 <div class="right" @click.stop="handleSureChoose">确定</div>
             </div>

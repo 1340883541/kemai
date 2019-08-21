@@ -12,11 +12,12 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/index/add_customer.css" />
 </head>
 
 <body>
-    <div id="add-wrapper" class="add-select-wrapper flex-wrap flex-vertical" v-cloak>
+    <div id="add-wrapper" class="add-select-wrapper" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click="api.closeWin();"></div>
@@ -30,20 +31,8 @@
             <div class="emp-search-inp">
                 <input type="text" placeholder="请输入员工名称或电话，选择正确的员工信息" @input.stop="handleSeachEmp" v-model="empName">
                 <i class="search-icon"></i>
-                <i class="detal-icon" @click.stop="empName = '';"></i>
+                <i class="detal-icon" @click.stop="handleDelateSeachName"></i>
             </div>
-        </div>
-        <div class="add-search-box flex-con">
-            <ul>
-                <li
-                    class="bor-1px-b w-elli"
-                    v-for="emp in empList"
-                    :class="{curr:empId === emp.empId}"
-                    :key="emp.empid"
-                    @click.stop="handleChooseEmp(emp.name,emp.phone,emp.rolesname,emp.empid)"
-                    v-text="emp.name+'--'+emp.phone+'--'+emp.rolesname"
-                ></li>
-            </ul>
         </div>
     </div>
 </body>
@@ -60,7 +49,8 @@
         $api.fixStatusBar($('#fh-fixed')[0]);
         $api.fixStatusBar($('#fh-place')[0]);
         var param = api.pageParam;
-        console.log(JSON.stringify(param))
+        // 打开frame
+        fnOpenAddCustomerSearchFrame(param);
         searchEmpV = new Vue({
             el: '#add-wrapper',
             data: {
@@ -71,43 +61,67 @@
                 empId:'',
                 isChooseEmp:false,
                 isLoadSearchData:true,
+                pageNo:1,
+                isHaveMoreData:true
             },
             mounted: function() {
                 this.titleText = param.origin === 'selectChannel' ? '选择渠道员工' : '选择销售员工';
             },
             methods: {
                 handleSeachEmp: function() {
+                    this.pageNo = 1;
                     wFuncDebounceThrottle.wDebounce(this.fnSearchEmp, 300);
                 },
                 fnSearchEmp: function() {
-                    console.log(this.empName)
                     var _this = this;
-                    wApiAjax({
-                        url:'customer/searchEmp',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        data:{
-                            empNameOrPhone:_this.empName,
-                            type:param.origin === 'selectChannel' ? 4 : 0
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            if(res.code == 1){
-                                _this.empList = res.data;
-                            }
-                        }
-                    })
+                    this.empId = '';
+                    api.execScript({
+                        frameName: 'addCustomerSearchempFrame',
+                        script: 'fnFetchSearchData(\''+_this.empName+'\');'
+                    });
+
+                    // isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    // console.log(this.empName)
+                    // var _this = this;
+                    // console.log('innnnnnnnnnnnnnnnnnnnnnnnnnn')
+                    // wApiAjax({
+                    //     url:'customer/searchEmp',
+                    //     headers:{
+                    //         token:TOKEN_DATA
+                    //     },
+                    //     data:{
+                    //         empNameOrPhone:_this.empName,
+                    //         type:param.type,
+                    //         pageNo:_this.pageNo,
+                    //         pageSize:30
+                    //     },
+                    //     success:function(res){
+                    //         console.log('-------------------'+JSON.stringify(res))
+                    //         if(res.code == 1){
+                    //             _this.isHaveMoreData = (res.data.length >= 30 ? true : false);
+                    //             if(isLoadMore){
+                    //                 _this.empList = _this.empList.concat(res.data);
+                    //             }else{
+                    //                 _this.empList = res.data;
+                    //             }
+                    //         }
+                    //     }
+                    // })
                 },
-                // 选择员工
-                handleChooseEmp:function(name,phone,rolesname,id){
-                    this.empName = name+'--'+phone+'--'+rolesname;
-                    this.empId = id;
-                    this.isChooseEmp = true;
+                handleDelateSeachName:function(){
+                    this.empName = '';
+                    this.empId = '';
+                    this.fnSearchEmp();
                 },
+                // // 选择员工
+                // handleChooseEmp:function(name,phone,rolesname,id){
+                //     this.empName = name+'--'+phone+'--'+rolesname;
+                //     this.empId = id;
+                //     this.isChooseEmp = true;
+                // },
                 // 确定选择员工
                 handleSureChooseEmp:function(){
-                    if(!this.isChooseEmp){
+                    if(!this.empId){
                         wDialog.toast({
                             msg:'请先选择一个员工'
                         })
@@ -126,9 +140,27 @@
                     api.closeToWin({
                         name: 'addCustomer'
                     });
-
                 }
             }
+        })
+    }
+    // 获取选择的员工信息
+    function fnGetEmpInfo(res){
+        console.log(JSON.stringify(res))
+        searchEmpV.empId = res.empId;
+        searchEmpV.empName = res.empName;
+    }
+    // 打开frame
+    function fnOpenAddCustomerSearchFrame(param){
+        var y = $('#add-wrapper').outerHeight(),
+            h = $(window).height() - y;
+        wHrefJs.openFrame({
+            url:'./add_customer_searchemp_frame.html',
+            name:'addCustomerSearchempFrame',
+            param:param,
+            y:y,
+            h:h,
+            bgColor:'rgba(0,0,0,0)'
         })
     }
 </script>

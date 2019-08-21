@@ -226,7 +226,7 @@
     /*pointer-events: none;*/
 }
 .add-select-wrapper{
-    height: 100vh;
+    /*height: 100vh;*/
     background-color: #f4f4f4;
 }
 .add-select-box{
@@ -311,9 +311,10 @@
 }
 .add-search-box{
     padding-left: 15px;
-    overflow-x: hidden;
+    background-color: #f4f4f4;
+    /*overflow-x: hidden;
     overflow-y: scroll;
-    -webkit-overflow-scrolling:touch;
+    -webkit-overflow-scrolling:touch;*/
 }
 .add-search-box li{
     width: 100%;

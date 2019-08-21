@@ -54,6 +54,8 @@
                 </div>
             </div>
         </div>
+        <!-- <button onclick="fnPer1()">fnPer1</button>
+        <button onclick="fnPer2()">fnPer2</button> -->
         <div class="system-follow-box">
             <div class="index-cap">系统资源跟进</div>
             <div class="system-follow flex-wrap">
@@ -134,6 +136,7 @@
         <!-- <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
         </div> -->
+
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -146,6 +149,26 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var indexV = null;
+    // function fnPer1(){
+    //     wHrefJs.openWin({
+    //         name:'addCustomerPerfect1',
+    //         path:'./add_customer_perfect_1.html',
+    //         param:{
+    //             cusId:409790,
+    //             demandId:386336
+    //         }
+    //     })
+    // }
+    // function fnPer2(){
+    //     wHrefJs.openWin({
+    //         name:'addCustomerPerfect2',
+    //         path:'./add_customer_perfect_2.html',
+    //         param:{
+    //             cusId:409790,
+    //             demandId:386336
+    //         }
+    //     })
+    // }
     apiready = function() {
         var top = api.safeArea.top;
         $('#head-bg').css('padding-top', top);
@@ -157,20 +180,20 @@
         }, function(ret, err) {
             refrshIndexData();
         });
-        // // 添加打开添加图标
-        // api.openFrame({
-        //     name: 'addCustomerIcon',
-        //     url: './add_customer_icon.html',
-        //     rect: {
-        //         x: $(window).width() - 65,
-        //         y: $(window).height() - 65,
-        //         w: 50,
-        //         h: 50
-        //     },
-        //     bounces: false,
-        //     bgColor: 'rgba(0,0,0,0)',
-        //     fixedOn:'ui_window'
-        // });
+        // 添加打开添加图标
+        api.openFrame({
+            name: 'addCustomerIcon',
+            url: './add_customer_icon.html',
+            rect: {
+                x: $(window).width() - 65,
+                y: $(window).height() - 65,
+                w: 50,
+                h: 50
+            },
+            bounces: false,
+            bgColor: 'rgba(0,0,0,0)',
+            fixedOn:'ui_window'
+        });
 
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({

@@ -265,7 +265,7 @@
                             empNameOrPhone:_this.search_cusName,
                             type:param.type,
                             pageNo: _this.pageNo,
-                            pageSize: 10
+                            pageSize: 20
                         },
                         success: function(res) {
                             console.log(JSON.stringify(res))
@@ -273,7 +273,7 @@
                                 wDialog.hideProgress();
                             },100);
                             if (res.code == 1) {
-                                _this.isHavaMoreData = res.data ? res.data.length >= 10 : false;
+                                _this.isHavaMoreData = res.data ? res.data.length >= 20 : false;
                                 if (!isLoadMore) {
                                     _this.employeeList = res.data ? res.data : [];
                                 } else {

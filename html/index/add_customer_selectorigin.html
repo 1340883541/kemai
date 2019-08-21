@@ -22,7 +22,7 @@
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
-                <div class="center">新增客户</div>
+                <div class="center">选择客户来源</div>
                 <div class="right" @click.stop="handleSureAddCustomer">确定</div>
             </div>
             <div class="fh-place" id="fh-place"></div>
@@ -68,7 +68,7 @@
                 v-show="isShowQuerySearchClass"
                 style="display:none;"
             >
-                <input type="text" class="has-search" :placeholder="nextClassPlaceholder" :readonly="isSelectQueryResult" v-model="queryName" @input.stop="handleQueryInput">
+                <input type="text" class="has-search" :placeholder="nextClassPlaceholder" :readonly="isSelectQueryResult" :disabled="isSelectQueryResult" v-model="queryName" @focus.stop="handleQueryInput" @input.stop="handleQueryInput">
                 <div class="search-btn"  @click.stop="isSelectQueryResult = false;queryName = '';queryValue = '';" v-show="isSelectQueryResult">修改</div>
             </div>
             <div
@@ -321,6 +321,7 @@ apiready = function(){
                 this.requestParam[this.referField] = this.queryName;
                 console.log(JSON.stringify(this.requestParam))
                 console.log(_this.searchUrl)
+                wDialog.showProgress();
                 wApiAjax({
                     url:_this.searchUrl,
                     headers:{
@@ -329,6 +330,7 @@ apiready = function(){
                     data:_this.requestParam,
                     success:function(res){
                         console.log('search result --- > ' + JSON.stringify(res))
+                        wDialog.hideProgress();
                         if(res.code == 1 && res.data && res.data.length > 0){
                             _this.querySearList = res.data || [];
                             _this.isShowQueryResultList = true;

@@ -181,6 +181,10 @@
                     frameName: 'index',
                     script: 'refrshIndexData();'
                 });
+                console.log('------'+JSON.stringify(api.frames()))
+                api.bringFrameToFront ({
+                    from: 'addCustomerIcon'
+                });
             }
             if(i == 2){
                 api.execScript({
@@ -188,6 +192,10 @@
                     frameName: 'person',
                     script: 'refrshPersonData();'
                 });
+                api.sendFrameToBack ({
+                    from: 'addCustomerIcon'
+                });
+
             }
             setFrameGroup(i);
         }
