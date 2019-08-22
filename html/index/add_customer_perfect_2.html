@@ -33,7 +33,12 @@
             left: 0;
             top: 0;
             width: 100%;
-            min-height: 100%;
+            height: 100%;
+        }
+        .add-box{
+            overflow-x:hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -398,9 +403,9 @@
                         demand_wuye: _this.currRealEstate,
                         demand_purpose: _this.currUseHouseVal,
                         demand_housestyle: _this.intHouseClass,
-                        demand_hallsnum: parseInt(_this.currHouseType1Txt),
-                        demand_toiletnum: parseInt(_this.currHouseType2Txt),
-                        demand_parkingnum: parseInt(_this.currHouseType3Txt)
+                        demand_hallsnum: parseInt(_this.currHouseType1Txt)||0,
+                        demand_toiletnum: parseInt(_this.currHouseType2Txt)||0,
+                        demand_parkingnum: parseInt(_this.currHouseType3Txt)||0
                     }))
                     wApiAjax({
                         url: 'customer/editDemand',
@@ -417,9 +422,9 @@
                             demand_wuye: _this.currRealEstate,
                             demand_purpose: _this.currUseHouseVal,
                             demand_housestyle: _this.intHouseClass,
-                            demand_hallsnum: parseInt(_this.currHouseType1Txt),
-                            demand_toiletnum: parseInt(_this.currHouseType2Txt),
-                            demand_parkingnum: parseInt(_this.currHouseType3Txt)
+                            demand_hallsnum: parseInt(_this.currHouseType1Txt)||0,
+                            demand_toiletnum: parseInt(_this.currHouseType2Txt)||0,
+                            demand_parkingnum: parseInt(_this.currHouseType3Txt)||0
                         },
                         success: function(res) {
                             wDialog.hideProgress();
@@ -441,8 +446,8 @@
                 handleBack: function() {
                     if (this.currUseHouseVal || this.currBudgetMoneyVal || this.currRealEstate || this.currCityVal || this.currIntentionHouseVal || this.intHouseClass || this.currHouseType1Txt || this.currHouseType2Txt || this.currHouseType3Txt) {
                         wDialog.confirm({
-                            msg: '是否放弃当前编辑？',
-                            button: ['是', '否'],
+                            msg:'确定放弃当前编辑吗？',
+                            button: ['放弃', '继续编辑'],
                             sureCb: function() {
                                 api.closeWin();
                             }

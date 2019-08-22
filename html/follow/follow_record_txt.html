@@ -362,8 +362,8 @@
                         voiceRecognizer.recognizeStop();
                     } else {
                         wDialog.confirm({
-                            msg: '是否放弃当前编辑？',
-                            button: ['是', '否'],
+                            msg:'确定放弃当前编辑吗？',
+                            button: ['放弃', '继续编辑'],
                             sureCb: function() {
                                 api.closeWin();
                                 voiceRecognizer.recognizeStop();

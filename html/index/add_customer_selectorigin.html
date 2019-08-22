@@ -332,11 +332,14 @@ apiready = function(){
                         console.log('search result --- > ' + JSON.stringify(res))
                         wDialog.hideProgress();
                         if(res.code == 1 && res.data && res.data.length > 0){
-                            _this.querySearList = res.data || [];
+                            _this.querySearList = res.data;
                             _this.isShowQueryResultList = true;
                         }else{
                             _this.querySearList = [];
                             _this.isShowQueryResultList = false;
+                            wDialog.toast({
+                                msg:'暂没有你搜索的内容'
+                            })
                         }
                     }
                 })
@@ -360,7 +363,7 @@ apiready = function(){
                             _this.isCanSearch = false;
                         }else{
                             wDialog.toast({
-                                msg:'暂没有你搜索的内容'
+                                msg:'无此客户，请重新输入'
                             })
                         }
                     }

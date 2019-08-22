@@ -19,20 +19,24 @@
             position: relative;
             height: 100%;
             overflow: auto;
-            -webkit-overflow-scrolling: touch;
         }
         #add-wrapper{
             position: absolute;
             left: 0;
             top:0;
             width:100%;
-            min-height: 100%;
+            height: 100%;
+        }
+        .add-box{
+            overflow-x:hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
 
 <body>
-    <div id="add-wrapper" class="add-wrapper" v-cloak>
+    <div id="add-wrapper" class="add-wrapper flex-wrap flex-vertical" v-cloak>
         <div class="add-header">
             <div class="fh-fixed flex-wrap flex-between" id="fh-fixed">
                 <div class="left back" @click.stop="handleBack"></div>
@@ -41,18 +45,18 @@
             </div>
             <div class="fh-place" id="fh-place"></div>
         </div>
-        <div class="add-box">
+        <div class="add-box flex-con">
             <div class="add-form">
                 <div class="add-lis">
                     <div class="add-cap">客户姓名</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con js_listen_focus" placeholder="请输入客户姓名" maxlength="6" v-model="saveFormData.customerName">
+                        <input type="text" class="flex-con js_listen_focus" placeholder="请输入客户姓名" maxlength="20" v-model="saveFormData.customerName">
                     </div>
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">手机号码</div>
                     <div class="add-inp flex-wrap bor-1px-b">
-                        <input type="text" class="flex-con js_listen_focus" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" maxlength="11" @blur.stop="handleBlurGetPhoneAddr">
+                        <input type="number" class="flex-con js_listen_focus" v-model="saveFormData.customerPhone" placeholder="请输入手机号码" @blur.stop="handleBlurGetPhoneAddr">
                         <span class="phone-addr bor-1px-l" v-show="isShowPhoneAddr" style="display:none;">号码归属: {{saveFormData.customerPhoneAddrTxt}}</span>
                     </div>
                 </div>
@@ -92,15 +96,16 @@
                 <div class="add-lis">
                     <div class="add-cap">客户备注</div>
                     <div class="add-textarea">
-                        <textarea placeholder="描述客户的购买意向、购房需求、沟通内容等" class="js_listen_focus" v-model="saveFormData.customerRemark"></textarea>
+                        <textarea placeholder="描述客户的购买意向、购房需求、沟通内容等" class="js_listen_focus" v-model="customerRemark"></textarea>
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="add-save-place"></div>
         <div class="add-save">
             <div class="save-btn":class="{'no-event':!isCanSaveFormData}" @click.stop="handleSaveAddCustomer($event)">完成</div>
         </div>
-        <div class="add-save-place"></div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -143,15 +148,15 @@
                     customerPhone:'',
                     customerPhoneAddr:'',
                     customerPhoneAddrTxt:'',
-                    customerPhoneAddrId:'',
+                    customerPhoneAddrId:0,
                     customerClassifyId:'',
                     customerOriginTxt:'',
-                    customerRemark:'',
                     customerMarketEmpName:'',
                     customerMarketEmpId:'',
                     customerChannelEmpName:'',
                     customerChannelEmpId:'',
                 },
+                customerRemark:'',
                 isChannelEmp:false, //是否是渠道部
                 isCanSaveFormData:false,
                 // customer switch
@@ -169,6 +174,10 @@
                     showeid:'', // 展会
                     supercustid:'',//老客户介绍id
                 },
+                initMarketEmpName:'',
+                initMarketEmpId:'',
+                initChannelEmpName:'',
+                initChannelEmpId:'',
             },
             mounted:function(){
                 this.userInfo = wPref.getPrefs({
@@ -244,12 +253,16 @@
                                     if(marketInfo && marketInfo.marketEmpId){
                                         _this.saveFormData.customerMarketEmpId = marketInfo.marketEmpId;
                                         _this.saveFormData.customerMarketEmpName = marketInfo.market;
+                                        _this.initMarketEmpId = marketInfo.marketEmpId;
+                                        _this.initMarketEmpName = marketInfo.market;
                                     }
                                     // 渠道员工
                                     var channelInfo = res.data[1];
-                                    if(channelInfo && channelInfo.marketEmpId){
-                                        _this.saveFormData.customerMarketEmpId = channelInfo.channelEmpId;
-                                        _this.saveFormData.customerMarketEmpName = channelInfo.channel;
+                                    if(channelInfo && channelInfo.channelEmpId){
+                                        _this.saveFormData.customerChannelEmpId = channelInfo.channelEmpId;
+                                        _this.saveFormData.customerChannelEmpName = channelInfo.channel;
+                                        _this.initChannelEmpId = channelInfo.channelEmpId;
+                                        _this.initChannelEmpName = channelInfo.channel;
                                     }
                                 }
                             }
@@ -368,12 +381,12 @@
                         });
                         return false;
                     }
-                    if(saveData.customerRemark.trim() == ''){
-                        wDialog.toast({
-                            msg:'请输入备注'
-                        });
-                        return false;
-                    }
+                    // if(saveData.customerRemark.trim() == ''){
+                    //     wDialog.toast({
+                    //         msg:'请输入备注'
+                    //     });
+                    //     return false;
+                    // }
                     this.fnSaveAddCustomer();
                 },
                 handleBack:function(){
@@ -386,8 +399,8 @@
                     }
                     if(!isCanBack){
                         wDialog.confirm({
-                            msg: '是否放弃当前编辑？',
-                            button: ['是', '否'],
+                            msg: '确定放弃当前编辑吗？',
+                            button: ['放弃', '继续编辑'],
                             sureCb: function() {
                                 api.closeWin();
                             }
@@ -407,7 +420,7 @@
                         phone:_this.saveFormData.customerPhone,
                         // 号码归属地
                         attribution:_this.saveFormData.customerPhoneAddr,
-                        attributionid:_this.saveFormData.customerPhoneAddrId,
+                        attributionid:_this.saveFormData.customerPhoneAddrId||0,
 
                         resourcetype:_this.saveFormData.customerClassifyId,
                         // 客户来源筛选信息
@@ -419,7 +432,7 @@
 
                         qudaoId:_this.saveFormData.customerChannelEmpId,
                         empId:_this.saveFormData.customerMarketEmpId,
-                        comment:_this.saveFormData.customerRemark,
+                        comment:_this.customerRemark,
                     }))
                     wApiAjax({
                         url:'customer/saveCus',
@@ -443,15 +456,15 @@
 
                             qudaoId:_this.saveFormData.customerChannelEmpId,
                             empId:_this.saveFormData.customerMarketEmpId,
-                            comment:_this.saveFormData.customerRemark,
+                            comment:_this.customerRemark,
                         },
                         success:function(res){
                             console.log('保存返回的信息====='+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 wDialog.confirm({
-                                    msg:'客户基础信息创建成功是否继续完善信息？',
-                                    button:['是','否'],
+                                    msg:'客户基础信息创建成功,<br />是否继续完善信息？',
+                                    button:['继续完善','跳过此步'],
                                     sureCb:function(){
                                         wHrefJs.openWin({
                                             name:'addCustomerPerfect1',
@@ -492,8 +505,16 @@
     function getCustomerOrigin(cusInfo){
         console.log(JSON.stringify(cusInfo))
         if(cusInfo.currOriginOneVal === 2){
+            // if(!addV.saveFormData.customerChannelEmpId){
+                addV.saveFormData.customerChannelEmpName = addV.initMarketEmpName;
+                addV.saveFormData.customerChannelEmpId = addV.initMarketEmpId;
+            // }
             addV.isChannelEmp = true;
         }else{
+            if(!addV.initChannelEmpId){
+                addV.saveFormData.customerChannelEmpName = '';
+                addV.saveFormData.customerChannelEmpId = '';
+            }
             addV.isChannelEmp = false;
         }
         addV.saveFormData.customerOriginTxt = cusInfo.currOriginOneTxt + ' ' + cusInfo.currOriginTwoTxt + ' '  + cusInfo.currOriginThreeTxt + ' '  + cusInfo.queryName + ' '  + cusInfo.searchName + ' '  + cusInfo.inputName;
