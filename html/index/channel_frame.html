@@ -39,12 +39,9 @@
 </head>
 
 <body>
-    <!-- <div id="wrap" v-cloak> -->
-    <div id="wrap"  @touchstart.stop="handleBlur">
-        <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
-        <div class="filter-lists">
-            <!-- <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)"> -->
-            <div class="filter-lis disabled">
+    <div id="wrap" v-cloak  @touchstart.stop="handleBlur">
+        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
+            <div class="filter-lis disabled" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
                 <div class="filter-lt flex-wrap flex-between">
                     <div class="flex-wrap filter-lcap">
                         <span class="cname w-elli" v-text="khdata.name"></span>
