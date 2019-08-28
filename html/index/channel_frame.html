@@ -40,7 +40,7 @@
 
 <body>
     <!-- <div id="wrap" v-cloak> -->
-    <div id="wrap">
+    <div id="wrap"  @touchstart.stop="handleBlur">
         <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
         <div class="filter-lists">
             <!-- <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)"> -->
@@ -201,6 +201,15 @@
                     this.currType = param.currType;
                     this.startDate = param.startDate;
                     this.endDate = param.endDate;
+                },
+                handleBlur:function(){
+                    if(api.systemType === 'ios' && this.isKeybordshow){
+                        this.isKeybordshow = false;
+                        api.execScript({
+                            name: 'clannelHeader',
+                            script: 'fnBlur();'
+                        });
+                    }
                 },
                 // 获取今日新增列表
                 fetchNewAdd: function(isLoadMore, callback) {

@@ -19,33 +19,6 @@
             height: 100%;
             background-color: #f7f7f7;
         }
-        .nav-box{
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-        }
-        .nav-box .nav{
-            position: relative;
-            color:#fff;
-            opacity: .8;
-        }
-        .nav-box .nav:after{
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 2px;
-            width: 16px;
-            height: 3px;
-            background-color: #fff;
-            margin-left: -8px;
-            display: none;
-        }
-        .nav-box .nav.curr{
-            opacity: 1;
-        }
-        .nav-box .nav.curr:after{
-            display: block;
-        }
     </style>
 </head>
 
@@ -56,9 +29,23 @@
                 <div class="back" onclick="api.closeWin();"></div>
                 <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">新增渠道资源<i></i></span></div>
             </div>
-            <div class="nav-box flex-wrap">
-                <div class="flex-con nav curr">渠道分配</div>
-                <div class="flex-con nav">系统分配</div>
+            <div class="search-box" id="header-search-box">
+                <div class="search-inp">
+                    <form action="#" onsubmit="return false;">
+                        <i class="search" @click="submitSeach"></i>
+                        <i class="close" @click="clearSearchVal"></i>
+                        <input
+                            type="search"
+                            @keyup.enter="submitSeach"
+                            id="search-inp"
+                            @focus.stop="handleSearchFocus"
+                            @blur.stop="handleSearchBlur"
+                            v-model="searchVal"
+                        >
+                    </form>
+                    <div class="search-pop" @click="onFoucsInp"><i></i><span>搜索客户名/CRM号/手机尾号</span></div>
+                </div>
+                <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
             <div class="w-filter-lists flex-wrap">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
@@ -89,6 +76,7 @@
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         // 打开新增客户
         openNewCustomerFrame(param);
 
@@ -128,6 +116,7 @@
         ncusHeaderV = new Vue({
             el:"#wrap",
             data:{
+                searchVal:'',
                 // 来源归类
                 currClassify:0,
                 // 客户来源
@@ -154,6 +143,29 @@
 
             },
             methods:{
+                // 获取焦点
+                handleSearchFocus:function(){
+                    this.isFocus = true;
+                    $('.w-filter-lis').removeClass('curr');
+                    api.closeFrame({
+                        name: 'filterCustomerFrame'
+                    });
+                },
+                // 失去焦点
+                handleSearchBlur:function(){
+                    if(api.systemType !== 'ios' && this.isFocus){
+                        fnBlur();
+                        var softInput = api.require('softInputMgr');
+                        softInput.toggleKeyboard();
+                    }
+                },
+                // 获取焦点
+                onFoucsInp:function(){
+                    $('#header-search-box').addClass('curr');
+                    setTimeout(function(){
+                        $('#search-inp').focus();
+                    },200);
+                },
                 // 点击筛选
                 clickFilterFn:function(e,i){
                     var tag = e.currentTarget,
@@ -227,11 +239,31 @@
                         });
                     }
                 },
+                // 取消搜索
+                cancelSearch:function(){
+                    $('#search-inp').blur();
+                    $('#header-search-box').removeClass('curr');
+                    this.clearSearchVal();
+                },
+                submitSeach:function(){
+                    api.execScript({
+                        name:'channelHeader',
+                        frameName: 'channelFrame',
+                        script: 'getSearchValue(\''+this.searchVal+'\');'
+                    });
+                },
+                clearSearchVal:function(){
+                    this.searchVal = '';
+                    api.execScript({
+                        name:'channelHeader',
+                        frameName: 'channelFrame',
+                        script: 'clearSearchValue();'
+                    });
+                }
             }
 
         });
     }
-    // 打开frame
     function openNewCustomerFrame(param){
         // 跳转到frame
         var wHei = $(window).height(),
@@ -256,6 +288,9 @@
                 type:'none'
             }
         })
+    }
+    function fnBlur(){
+        $('#search-inp')[0].blur();
     }
 </script>
 
