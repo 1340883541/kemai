@@ -485,29 +485,45 @@
                 // 跳转新增
                 skipNewCustomer: function(val) {
                     var self = this;
-                    console.log('userinfo ------>  '+JSON.stringify(this.userInfo))
-                    if (this.userInfo.relativePosi == 'yg') {
+                    console.log(val)
+                    /**
+                     * val  1  公司资源   2 渠道资源  3  销售资源
+                     **/
+                    if(val === 2){
                         wHrefJs.openWin({
-                            name: 'newCustomerHeader',
-                            path: './new_customer_header.html',
-                            param: {
+                            name:'channelHeader',
+                            path:'./channel_header.html',
+                            param:{
                                 val: val,
                                 startDate: funcGetThisToday().startDate,
                                 endDate: funcGetThisToday().endDate,
                             },
-                            bgColor: '#f7f7f7'
+                            bgColor:'#f7f7f7'
                         })
-                    } else {
-                        wHrefJs.openWin({
-                            name: 'managerNewFollow',
-                            path: 'manager_new_follow.html',
-                            param: {
-                                val: val,
-                                startDate: funcGetThisToday().startDate,
-                                endDate: funcGetThisToday().endDate,
-                            },
-                            bgColor: '#f7f7f7'
-                        })
+                    }else{
+                        if (this.userInfo.relativePosi == 'yg') {
+                            wHrefJs.openWin({
+                                name: 'newCustomerHeader',
+                                path: './new_customer_header.html',
+                                param: {
+                                    val: val,
+                                    startDate: funcGetThisToday().startDate,
+                                    endDate: funcGetThisToday().endDate,
+                                },
+                                bgColor: '#f7f7f7'
+                            })
+                        } else {
+                            wHrefJs.openWin({
+                                name: 'managerNewFollow',
+                                path: 'manager_new_follow.html',
+                                param: {
+                                    val: val,
+                                    startDate: funcGetThisToday().startDate,
+                                    endDate: funcGetThisToday().endDate,
+                                },
+                                bgColor: '#f7f7f7'
+                            })
+                        }
                     }
                 },
                 // 跳转到今日统计

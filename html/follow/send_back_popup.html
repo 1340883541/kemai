@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>退回渠道</title>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <style>
+        /*退回弹窗*/
+        .back-popup{
+            position: fixed;
+            left:0;top:0;
+            z-index: 9999;
+            width:100%;
+            height: 100%;
+            background-color: rgba(0,0,0,.3);
+        }
+        .back-popup .back-box{
+            position: absolute;
+            left:50%;
+            width: 71.2%;
+            min-width: 260px;
+            top:50%;
+            background-color: #fff;
+            transform: translate(-50%,-50%);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .back-popup .back-box .back-title{
+            padding-top: 28px;
+            line-height: 1em;
+            font-size: 18px;
+            font-family: "PingFangSC-Regular";
+            margin-bottom: 2.6vw;
+        }
+        .back-popup .back-box .back-title{
+            margin-bottom: 4vw;
+        }
+        .back-popup .back-box .back-textarea{
+            margin-bottom: 4vw;
+            padding: 0 20px;
+        }
+        .back-popup .back-box .back-textarea textarea{
+            position: relative;
+            z-index: 9;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            line-height: 18px;
+        }
+        .back-popup .back-box .back-textarea .textarea-box{
+            position: relative;
+            padding:10px 12px;
+            height: 128px;
+        }
+        .back-popup .back-box .back-textarea .textarea-box:after{
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 8;
+            width: 200%;
+            height: 200%;
+            transform-origin: left top;
+            transform: scale(.5);
+            border:1px solid #e9e9e9;
+            border-radius: 8px;
+        }
+        .back-popup .back-box .back-btn{
+            height: 50px;
+            line-height: 50px;
+        }
+        .back-popup .back-box .back-btn .back-left{
+            position: relative;
+            color:#999;
+            font-size: 16px;
+            font-family: "PingFangSC-Regular";
+        }
+        .back-popup .back-box .back-btn .back-left:after{
+            content: '';
+            position:absolute;
+            right: 0;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #e9e9e9;
+            transform: scaleX(.5);
+        }
+        .back-popup .back-box .back-btn .back-right{
+            color:#1989fa;
+            font-size: 16px;
+            font-family: "PingFangSC-Regular";
+        }
+    </style>
+</head>
+<body>
+    <!-- 退回渠道弹窗 -->
+    <div class="back-popup">
+        <div class="back-box">
+            <div class="back-title">退回渠道</div>
+            <div class="back-textarea">
+                <div class="textarea-box">
+                    <textarea placeholder="请填写退回原因"></textarea>
+                </div>
+            </div>
+            <div class="back-btn flex-wrap bor-1px-t">
+                <div class="back-left flex-con">再想想</div>
+                <div class="back-right flex-con">确定</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script>
+    apiready = function(){
+
+    }
+</script>
+</html>

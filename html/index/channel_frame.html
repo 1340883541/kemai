@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>渠道资源-主页</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <style>
+        html,
+        body,
+        #wrap {
+            min-height: 100%;
+            background-color: #f7f7f7;
+        }
+        #wrap{
+            position: relative;
+        }
+        .filter-foot{
+            height: 32px;
+            line-height: 32px;
+            background-color: #fafafa;
+            padding: 0 10px;
+            color:#fa9450;
+            margin-left: -10px;
+            margin-right:-10px;
+            font-size: 13px;
+	        font-family: "PingFangSC-Regular",
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="wrap" v-cloak> -->
+    <div id="wrap">
+        <!-- <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak> -->
+        <div class="filter-lists">
+            <!-- <div class="filter-lis" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)"> -->
+            <div class="filter-lis disabled">
+                <div class="filter-lt flex-wrap flex-between">
+                    <div class="flex-wrap filter-lcap">
+                        <span class="cname w-elli" v-text="khdata.name"></span>
+                        <span class="rela-state" :class="[khdata.status == '未跟进'?'red-bg':'green-bg']" v-text="khdata.status"></span>
+                    </div>
+                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
+                </div>
+                <div class="filter-lb">
+                    <!-- <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'无'"></span></div> -->
+                    <div class="flex-wrap filter-lb1">
+                        <div class="lis flex-con flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">客户类型: <span>短期</span></div>
+                        <div class="lis flex-con flb-cls2">计划时间: <span>2019-06-20</span></div>
+                    </div>
+                </div>
+                <div class="filter-foot">该客户未认领成功，立即认领>></div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的客户"></empty-con>
+        <!-- 跟进记录弹窗 -->
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var newCustomerFrame = null;
+    apiready = function() {
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: false,
+            loadAnimInterval: 120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            $('#not-more').hide();
+            newCustomerFrame.pageNo = 1;
+            newCustomerFrame.fetchNewAdd(false, api.refreshHeaderLoadDone);
+        });
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterNewCustomer'
+        }, function(ret, err){
+            var obj = ret.value;
+            console.log('new frame---'+JSON.stringify(obj))
+            if(obj){
+                if(typeof obj.classify != 'undefined'){
+                    newCustomerFrame.currClassify = obj.classify;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    newCustomerFrame.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    newCustomerFrame.endDate = obj.endDate;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    newCustomerFrame.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
+                    newCustomerFrame.currType = obj.type;
+                }
+                if(typeof obj.home != 'undefined'){
+                    newCustomerFrame.currHome = obj.home;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    newCustomerFrame.currSort = obj.sort;
+                }
+                $('#not-more').hide();
+                newCustomerFrame.pageNo = 1;
+                newCustomerFrame.fetchNewAdd();
+            }
+        });
+        // 上拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (++newCustomerFrame.pageNo <= newCustomerFrame.totalPage) {
+                newCustomerFrame.fetchNewAdd(true);
+            } else {
+                $('#not-more').show();
+            }
+        });
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err){
+            newCustomerFrame.pageNo = 1;
+            newCustomerFrame.fetchNewAdd();
+        });
+
+        var param = api.pageParam;
+        // ios 监听键盘弹出
+        api.addEventListener({
+            name: 'keyboardshow'
+        }, function(ret, err){
+            newCustomerFrame.isKeybordshow = true;
+        });
+        newCustomerFrame = new Vue({
+            el: '#wrap',
+            data: {
+                // 筛选条件
+                search_cusName: '', // 搜索客户名
+                currClassify:'',
+                currOrigin:'',
+                currType:'',
+                currHome:'',
+                currSort:0,
+                startDate:'',
+                endDate:'',
+
+                khDataList: [], //客户来源列表
+                pageNo: 1,
+                totalPage: 1,
+                userInfo: '',
+                isKeybordshow:false
+            },
+            mounted: function() {
+                this.init();
+                // this.fetchNewAdd();
+            },
+            methods: {
+                init:function(){
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
+                    this.currType = param.currType;
+                    this.startDate = param.startDate;
+                    this.endDate = param.endDate;
+                },
+                // 获取今日新增列表
+                fetchNewAdd: function(isLoadMore, callback) {
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },10);
+                    var url = '';
+                    if(param.empId){
+                        url = 'newResource/newAddResFollListByEmp';
+                    }
+                    else{
+                        url = 'newResource/newAddResFollList';
+                    }
+                    console.log('new customer frame request----'+JSON.stringify({
+                        employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate,
+                        cusSource:_this.currOrigin,
+                        sort:_this.currSort,
+                        // type:_this.currType,
+                        type:1,
+                        search_cusName:_this.search_cusName,
+                        attributionid:_this.currHome,
+                        resourcetype:_this.currClassify,
+                        pageNo: _this.pageNo,
+                        pageSize: 10
+                    }));
+                    wApiAjax({
+                        url: url,
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
+                            startTime:_this.startDate,
+                            endTime:_this.endDate,
+                            cusSource:_this.currOrigin,
+                            sort:_this.currSort,
+                            // type:_this.currType,
+                            type:1,
+                            search_cusName:_this.search_cusName,
+                            attributionid:_this.currHome,
+                            resourcetype:_this.currClassify,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
+                        },
+                        success: function(res) {
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },100);
+                            console.log('new customer frame response----'+JSON.stringify(res))
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
+                                    _this.khDataList = res.data ? res.data : [];
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                } else {
+                                    if (res.data) {
+                                        _this.khDataList = _this.khDataList.concat(res.data);
+                                    }
+                                }
+
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail: function() {
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                },
+                // 跳转到详情
+                skipCustomerDetail: function(id,phone) {
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html',
+                        param: {
+                            cusId: id,
+                            cusPhone:phone,
+                            isWork:2
+                        }
+                    })
+                },
+                // 跳转到跟进记录
+                handleSkipFollow:function(id,phone){
+                    api.openWin({
+                        name: 'followRecord',
+                        url: '../follow/follow_record.html',
+                        pageParam: {
+                            id:id,
+                            phone:phone,
+                            isWork:2
+                        },
+                        slidBackEnabled: false
+                    });
+                }
+            }
+        });
+    }
+</script>
+
+</html>

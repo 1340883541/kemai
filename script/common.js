@@ -3,6 +3,7 @@ function isIphoneX(){
     return /iphone/gi.test(navigator.userAgent) && (screen.height >= 812)
     // return true;
 }
+
 // // vue 懒加载
 // Vue.use(VueLazyload, {
 //     error: '../../wgt/img_loadx@2x.jpg',
@@ -33,6 +34,21 @@ function checkLogin() {
 // 空页面公共组件
 // txt => 内容
 if(Vue){
+    //弹出框禁止滑动
+    Vue.prototype.noScroll = function () {
+      var mo = function (e) { e.preventDefault() }
+      document.body.style.overflow = 'hidden'
+      document.addEventListener('touchmove', mo, false)// 禁止页面滑动
+    }
+
+    //弹出框可以滑动
+    Vue.prototype.canScroll = function () {
+      var mo = function (e) {
+        e.preventDefault()
+      }
+      document.body.style.overflow = ''// 出现滚动条
+      document.removeEventListener('touchmove', mo, false)
+    }
     Vue.component('empty-con', {
         template: '<div class="w-empty" v-if="isShow">'+
             '<div class="w-empty-img">' +

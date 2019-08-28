@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>渠道资源-头部</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
+    <style media="screen">
+        html,body,#wrap{
+            height: 100%;
+            background-color: #f7f7f7;
+        }
+        .nav-box{
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+        }
+        .nav-box .nav{
+            position: relative;
+            color:#fff;
+            opacity: .8;
+        }
+        .nav-box .nav:after{
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 2px;
+            width: 16px;
+            height: 3px;
+            background-color: #fff;
+            margin-left: -8px;
+            display: none;
+        }
+        .nav-box .nav.curr{
+            opacity: 1;
+        }
+        .nav-box .nav.curr:after{
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap" @touchmove.stop.prevent>
+        <div class="w-header bor-1px-b">
+            <div class="w-header-cap">
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">新增渠道资源<i></i></span></div>
+            </div>
+            <div class="nav-box flex-wrap">
+                <div class="flex-con nav curr">渠道分配</div>
+                <div class="flex-con nav">系统分配</div>
+            </div>
+            <div class="w-filter-lists flex-wrap">
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
+                    <span>时间范围</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
+                    <span>客户来源</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
+                    <span>更多</span><i></i>
+                </div>
+                <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,3)">
+                    <span>排序</span><i></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var ncusHeaderV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.w-header')[0]);
+        var param = api.pageParam;
+        // 打开新增客户
+        openNewCustomerFrame(param);
+
+        // 筛选客户状态
+        api.addEventListener({
+            name: 'filterNewCustomer'
+        }, function(ret, err){
+            var obj = ret.value;
+            if(obj){
+                if(typeof obj.classify != 'undefined'){
+                    ncusHeaderV.currClassify = obj.classify;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    ncusHeaderV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    ncusHeaderV.endDate = obj.endDate;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    ncusHeaderV.currOrigin = obj.origin;
+                    ncusHeaderV.currOriginTwo = obj.originTwo;
+                    ncusHeaderV.currOriginType = obj.type;
+                }
+                if(typeof obj.home != 'undefined'){
+                    ncusHeaderV.currHome = obj.home;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    ncusHeaderV.currSort = obj.sort;
+                }
+            }
+            $('.w-filter-lis').removeClass('curr');
+        });
+        // 跳转到frame的高度等
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        ncusHeaderV = new Vue({
+            el:"#wrap",
+            data:{
+                // 来源归类
+                currClassify:0,
+                // 客户来源
+                currOrigin:param.val,
+                currOriginTwo:'',
+                currOriginType:'',
+
+                startDate:'',
+                endDate:'',
+                // 归属地
+                currHome:'',
+                // 排序
+                currSort:0,
+                isFocus:false
+            },
+            created:function(){
+                if(param.empId){
+                    this.currOrigin = param.currOrigin;
+                    this.currOriginTwo = param.currOriginTwo;
+                    this.currOriginType = param.currType;
+                }
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
+
+            },
+            methods:{
+                // 点击筛选
+                clickFilterFn:function(e,i){
+                    var tag = e.currentTarget,
+                        _this = this;
+                    // 1.客户来源 2客户状态  3 更多 4排序
+                    // 跳转到frame
+                    if(!$(tag).hasClass('curr')){
+                        $(tag).addClass('curr').siblings().removeClass('curr');
+                        if(i === 0){
+                            wOpenCustomerTimeFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterNewCustomer',
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
+                                }
+                            });
+                        }
+                        else if(i === 1){
+                            wOpenCustomerOriginFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterNewCustomer',
+                                    currSelected:_this.currOrigin,
+                                    currTwoSelected:_this.currOriginTwo,
+                                    currType:_this.currOriginType,
+                                    isHaveAllOrigin:true,
+                                    isHaveRecourcePool:false
+                                }
+                            });
+                        }
+                        else if(i === 2){
+                            wOpenCustomerMoreFrame({
+                                y:0,
+                                h:wHei,
+                                param:{
+                                    origin:'filterNewCustomer',
+                                    currOrigin:_this.currOrigin,
+                                    currOriginTwo:_this.currOriginTwo,
+                                    currType:_this.currOriginType,
+                                    currClassify:_this.currClassify,
+                                    currHome:_this.currHome,
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
+                                    isHaveClassify:true,
+                                    isHaveRecourcePool:false,
+                                    isHaveStatus:false
+                                }
+                            });
+                        }
+                        else if(i == 3){
+                            wOpenCustomerSortFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterNewCustomer',
+                                    currSelected:_this.currSort,
+                                    sortClass:'class5'
+                                }
+                            })
+                        }
+                        else{
+                            console.log('筛选页面参数错误')
+                        }
+                    }else{
+                        $(tag).removeClass('curr');
+                        api.closeFrame({
+                            name:'filterCustomerFrame'
+                        });
+                    }
+                },
+            }
+
+        });
+    }
+    // 打开frame
+    function openNewCustomerFrame(param){
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        var pObj = {
+            currOrigin:param.val,
+            currType:param.val == 0 ? 2 : 1,
+            currOriginTwo:'',
+            startDate:param.startDate,
+            endDate:param.startDate,
+        };
+        wHrefJs.openFrame({
+            name:'channelFrame',
+            path:'./channel_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'#f7f7f7',
+            param:pObj,
+            animation:{
+                type:'none'
+            }
+        })
+    }
+</script>
+
+</html>

@@ -69,9 +69,9 @@
                 </div>
                 <div class="add-lis">
                     <div class="add-cap">意向物业</div>
-                    <div class="add-switch">
-                        <ul class="clear flex-wrap" id="customer-classify">
-                            <li class="flex-con flex-4h flex-wrap flex-center flex-align-item" v-for="rEstate in realEstateList" :key="rEstate.value" :class="{curr:rEstate.value === currRealEstate}" v-text="rEstate.name" @click.stop="currRealEstate = rEstate.value"></li>
+                    <div class="add-swbtn">
+                        <ul class="clear" id="customer-classify">
+                            <li v-for="rEstate in realEstateList" :key="rEstate.value" :class="{curr:rEstate.value === currRealEstate}" v-text="rEstate.name" @click.stop="currRealEstate = rEstate.value"></li>
                         </ul>
                     </div>
                 </div>

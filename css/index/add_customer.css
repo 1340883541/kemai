@@ -47,7 +47,7 @@
     font-weight: bold;
 }
 .add-box{
-    padding:0 20px;
+    padding:0 5.4vw;
 }
 .add-sex-lis{
     margin-top: 10px;
@@ -129,6 +129,29 @@
     white-space: normal;
     /*box-sizing: border-box;*/
 }
+
+.add-box .add-lis .add-swbtn ul{
+    white-space: nowrap;
+    margin-left: -3.2vw;
+    margin-bottom: -3.2vw;
+}
+.add-box .add-lis .add-swbtn ul li{
+    float: left;
+    height: 36px;
+    width: 19.5vw;
+    text-align: center;
+    background-color: #f1f1f1;
+    border:1px solid #f1f1f1;
+    line-height: 36px;
+    border-radius: 6px;
+    text-align: center;
+    color:#666;
+    font-size: 14px;
+    margin-left:3.2vw;
+    white-space: normal;
+    margin-bottom: 3.2vw;
+    box-sizing: border-box;
+}
 .add-box .add-lis .add-switch ul li.flex-4h{
     min-width: 19.5vw;
 }
@@ -141,6 +164,7 @@
 .add-box .add-lis .add-switch ul li:last-child{
     margin-right: 0;
 }
+.add-box .add-lis .add-swbtn ul li.curr,
 .add-box .add-lis .add-switch ul li.curr{
     color:#0c7ff9;
     border:1px solid rgb(12,127,249);

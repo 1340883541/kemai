@@ -14,6 +14,11 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/mdater.css" />
     <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
+    <style>
+        body{
+            overflow: auto;
+        }
+    </style>
 </head>
 <body>
     <div id="follow-wrapper" class="follow-wrapper" v>
@@ -233,6 +238,17 @@
                 <div class="sure-call-btn bor-1px-t" :class="{curr:isCanCallPhone}" @click.stop="handleSureCallPhone">确定拨打</div>
             </div>
         </div>
+        <!-- 认领成功弹窗 -->
+        <div class="claim-popup" @touchmove.stop.prevent style="display:none;">
+            <div class="claim-box">
+                <div class="claim-title">认领成功</div>
+                <div class="claim-icon"></div>
+                <div class="claim-btn flex-wrap bor-1px-t">
+                    <div class="claim-left flex-con">返回列表</div>
+                    <div class="claim-right flex-con">完善资料</div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -246,6 +262,13 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script type="text/javascript" src="../../script/permission.js"></script>
 <script type="text/javascript">
+    function fnTest(){
+        wHrefJs.openFrame({
+            name:'sendBackPopup',
+            url:'./send_back_popup.html',
+            bgColor:'rgba(0,0,0,0)'
+        })
+    }
     var followRecordV = null;
     if(isIphoneX()){
         $('#call-phone-fixed,.call-phone-box').css('padding-bottom','44px');

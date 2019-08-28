@@ -111,20 +111,36 @@
                     key:'userInfo'
                 });
                 this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                this.isShowAreaSelect = this.userInfo.relativePosi === 'gngly' ? true : false;
-                // 国内管理员
-                if(this.isShowAreaSelect){
-                    this.fetchAreaData();
-                }else{
-                    this.fetchDepartmentData();
-                }
                 this.titleText = param.origin === 'selectChannel' ? '选择渠道员工' : '选择销售员工';
+                this.fetchPositionEmp();
             },
             methods: {
+                // 获取到权限
+                fetchPositionEmp:function(){
+                    var _this = this;
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'customer/searchTarget',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                // flag 全部显示
+                                if(res.flag){
+                                    _this.isShowAreaSelect = true;
+                                    _this.fetchAreaData();
+                                }else{
+                                    _this.isShowAreaSelect = false;
+                                    _this.fetchDepartmentData();
+                                }
+                            }
+                        }
+                    });
+                },
                 // 获取区域数据
                 fetchAreaData:function(){
                     var _this = this;
-                    wDialog.showProgress();
                     wApiAjax({
                         url:'newResource/regionList',
                         headers:{
@@ -150,7 +166,6 @@
                 // 获取部门数据
                 fetchDepartmentData:function(){
                     var _this = this;
-                    wDialog.showProgress();
                     wApiAjax({
                         url:'dataSource/getTeamsByEmp',
                         headers:{
@@ -307,8 +322,8 @@
                                         name:'请选择员工部门'
                                     })
                                 }
-                                console.log(JSON.stringify(_this.employeeList))
-                                console.log(JSON.stringify(_this.departmentList))
+                                // console.log(JSON.stringify(_this.employeeList))
+                                // console.log(JSON.stringify(_this.departmentList))
                             }
                         }
                     });
@@ -328,7 +343,7 @@
                         },
                         success:function(res){
                             wDialog.hideProgress();
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             if(res.code == 1 && res.data){
                                 _this.employeeList = res.data.map(function(v){
                                     v.name = v.nameAndPhone;
@@ -339,7 +354,7 @@
                                     value:'',
                                     name:'请选择对应员工'
                                 })
-                                console.log(JSON.stringify(_this.employeeList))
+                                // console.log(JSON.stringify(_this.employeeList))
                             }
                         }
                     })
