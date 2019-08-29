@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>退回渠道</title>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <style>
+        /*认领成功 弹窗*/
+        .claim-popup,.back-popup{
+            position: fixed;
+            left:0;top:0;
+            z-index: 9999;
+            width:100%;
+            height: 100%;
+            background-color: rgba(0,0,0,.3);
+        }
+        .claim-popup .claim-box{
+            position: absolute;
+            left:50%;
+            width: 71.2%;
+            min-width: 260px;
+            top:50%;
+            background-color: #fff;
+            transform: translate(-50%,-50%);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .claim-popup .claim-box .claim-title{
+            padding-top: 28px;
+            line-height: 1em;
+            font-size: 18px;
+        	font-family: "PingFangSC-Regular";
+            margin-bottom: 2.6vw;
+        }
+        .claim-popup .claim-box .claim-icon{
+            margin:0 auto 10vw;
+            width: 41.6vw;
+            height: 23.2vw;
+            background: url('../../image/claim_icon.png') no-repeat center;
+            background-size: contain;
+        }
+        .claim-popup .claim-box .claim-btn{
+            height: 50px;
+            line-height: 50px;
+        }
+        .claim-popup .claim-box .claim-btn .claim-left{
+            position: relative;
+            color:#999;
+            font-size: 16px;
+        	font-family: "PingFangSC-Regular";
+        }
+        .claim-popup .claim-box .claim-btn .claim-left:after{
+            content: '';
+            position:absolute;
+            right: 0;
+            top: 0;
+            width: 1px;
+            height: 100%;
+            background-color: #e9e9e9;
+            transform: scaleX(.5);
+        }
+        .claim-popup .claim-box .claim-btn .claim-right{
+            color:#1989fa;
+            font-size: 16px;
+        	font-family: "PingFangSC-Regular";
+        }
+    </style>
+</head>
+<body>
+<!-- 认领成功弹窗 -->
+<div class="claim-popup" @touchmove.stop.prevent>
+    <div class="claim-box">
+        <div class="claim-title">认领成功</div>
+        <div class="claim-icon"></div>
+        <div class="claim-btn flex-wrap bor-1px-t">
+            <div class="claim-left flex-con">返回列表</div>
+            <div class="claim-right flex-con">完善资料</div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script>
+    apiready = function(){
+
+    }
+</script>
+</html>
