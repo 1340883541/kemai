@@ -24,15 +24,36 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     apiready = function(){
+        var param = api.pageParam;
         wDialog.confirm({
             msg: '确定认领客户吗?',
             overlayClose:false,
-            button:['退回渠道','确定认领'],
+            button:['确定认领','退回渠道'],
             sureCb: function() {
                 console.log('click  确定认领')
+                api.sendEvent({
+                    name: 'channelResourceClaimSuccess',
+                    extra: {
+                        idName:param.idName
+                    }
+                });
+                wHrefJs.openFrame({
+                    name:'claimSucPopup',
+                    url:'./claim_suc_popup.html',
+                    bgColor:'rgba(0,0,0,0)',
+                    param:param
+                })
+                api.closeFrame();
             },
             cancelCb:function(){
                 console.log('click  退回渠道')
+                wHrefJs.openFrame({
+                    name:'sendBackPopup',
+                    url:'./send_back_popup.html',
+                    bgColor:'rgba(0,0,0,0)',
+                    param:param
+                })
+                api.closeFrame();
             }
         })
     }

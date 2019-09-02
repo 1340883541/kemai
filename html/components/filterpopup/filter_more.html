@@ -107,7 +107,7 @@
                     <!-- 客户来源 -->
                     <div class="filter-m-ylgs filter-m-khly margin-top30">
                         <p class="p1 clear">客户来源</p>
-                        <div class="filter-m-khyl-list" v-if="originAllData.corSour">
+                        <div class="filter-m-khyl-list" v-if="originAllData.corSour" v-show="originAllData.corSour && !isHaveChannelResource" style="display:none;">
                             <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.corSour.corSourParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.corSour.corSourParValue?'check':'uncheck']"></i><span v-text="originAllData.corSour.corSourParName"></span>
                             </p>
@@ -121,7 +121,7 @@
                                 ></li>
                             </ul>
                         </div>
-                        <div class="filter-m-khyl-list" v-if="originAllData.net">
+                        <div class="filter-m-khyl-list" v-if="originAllData.net" v-show="originAllData.net && !isHaveChannelResource" style="display:none;">
                             <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.net.halParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.net.halParValue?'check':'uncheck']"></i><span v-text="originAllData.net.netParName"></span>
                             </p>
@@ -135,7 +135,7 @@
                                 ></li>
                             </ul>
                         </div>
-                        <div class="filter-m-khyl-list" v-if="originAllData.halt">
+                        <div class="filter-m-khyl-list" v-if="originAllData.halt" v-show="originAllData.halt" style="display:none;">
                             <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.halt.halParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.halt.halParValue?'check':'uncheck']"></i><span v-text="originAllData.halt.halParName"></span>
                             </p>
@@ -211,6 +211,8 @@ apiready = function() {
             isHaveRecourcePool:false,
             isHaveClassify:false,
             isHaveStatus:false,
+            // 是否只有资源池客户
+            isHaveChannelResource:false,
 
             isGetStartDate:true,
             // 是否展开
@@ -238,6 +240,7 @@ apiready = function() {
                 this.startDate = param.startDate;
                 this.endDate = param.endDate;
                 this.isHaveRecourcePool = param.isHaveRecourcePool;
+                this.isHaveChannelResource = param.isHaveChannelResource;
                 this.isHaveClassify = param.isHaveClassify;
                 this.isHaveStatus = param.isHaveStatus;
                 this.dateText = param.dateText ? param.dateText : '时间范围';

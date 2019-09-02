@@ -239,15 +239,27 @@
                             msg:'确定放弃当前编辑吗？',
                             button: ['放弃', '继续编辑'],
                             sureCb:function(){
-                                api.closeToWin({
-                                    name: 'main'
-                                });
+                                if(param.origin === 'channelResourceAllot'){
+                                    api.closeToWin({
+                                        name: 'channelHeader'
+                                    });
+                                }else{
+                                    api.closeToWin({
+                                        name: 'main'
+                                    });
+                                }
                             }
                         })
                     }else{
-                        api.closeToWin({
-                            name: 'main'
-                        });
+                        if(param.origin === 'channelResourceAllot'){
+                            api.closeToWin({
+                                name: 'channelHeader'
+                            });
+                        }else{
+                            api.closeToWin({
+                                name: 'main'
+                            });
+                        }
                     }
                 },
                 // 获取质量等级
@@ -365,7 +377,8 @@
                                         name:'addCustomerPerfect2',
                                         url:'./add_customer_perfect_2.html',
                                         param:{
-                                            demandId:param.demandId
+                                            demandId:param.demandId,
+                                            origin:param.origin
                                         }
                                     })
                                 },300);

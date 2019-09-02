@@ -76,7 +76,8 @@
                 </div>
             </div>
             <div class="hname" id="scroll-hname">
-                <div><span v-text="cusInfo.cusName"></span></div>
+                <div class="scroll-txt"><span v-text="cusInfo.cusName"></span></div>
+                <div class="cus-status" v-if="cusInfo.estate" v-text="cusInfo.estate + '客户'"></div>
             </div>
             <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
             <div class="horigin">号码归属：<span v-text="cusInfo.attribution||'未知'"></span></div>
@@ -410,12 +411,12 @@
                                         _this.historyPrincipalList = res.data.historyPrincipal;
                                     }
                                     _this.$nextTick(function() {
-                                        var sinnerWid = $('#scroll-hname > div').width();
+                                        var sinnerWid = $('#scroll-hname > .scroll-txt').width();
                                         var sspWid = $('#scroll-hname span').outerWidth();
                                         var caWid = Math.ceil(sspWid - sinnerWid);
                                         if (caWid > 0) {
-                                            var domSpan = $('#scroll-hname > div').eq(0).html();
-                                            $('#scroll-hname > div').append(domSpan);
+                                            var domSpan = $('#scroll-hname > .scroll-txt').eq(0).html();
+                                            $('#scroll-hname > .scroll-txt').append(domSpan);
                                             var stepTime = Math.ceil(sspWid * 10);
                                             xunhuanScroll();
                                             function xunhuanScroll() {
@@ -423,7 +424,7 @@
                                                     'margin-left': -(sspWid)
                                                 },stepTime, 'linear', function() {
                                                     var domSpan = $('#scroll-hname span').eq(0).clone();
-                                                    $('#scroll-hname > div').append(domSpan);
+                                                    $('#scroll-hname > .scroll-txt').append(domSpan);
                                                     $('#scroll-hname span').eq(0).remove();
                                                     $('#scroll-hname span').css({
                                                         'margin-left': 0
@@ -563,7 +564,8 @@
                             followId: i == 0 ? _this.followRootId : '',
                             isWork: param.isWork,
                             idName:param.idName||'',
-                            type: i === 0 ? 1 : 0
+                            type: i === 0 ? 1 : 0,
+                            origin:param.origin
                         },
                         slidBackEnabled: false
                     });

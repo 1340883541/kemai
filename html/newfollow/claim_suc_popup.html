@@ -8,13 +8,18 @@
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <style>
         /*认领成功 弹窗*/
-        .claim-popup,.back-popup{
+        .claim-popup{
             position: fixed;
             left:0;top:0;
             z-index: 9999;
             width:100%;
             height: 100%;
             background-color: rgba(0,0,0,.3);
+            opacity: 0;
+            transition: opacity .1s;
+        }
+        .claim-popup.curr{
+            opacity: 1;
         }
         .claim-popup .claim-box{
             position: absolute;
@@ -23,9 +28,16 @@
             min-width: 260px;
             top:50%;
             background-color: #fff;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%) scale(1.2,1.2);
+            transform-origin: center;
             border-radius: 8px;
             text-align: center;
+            opacity: 0;
+            transition: all .2s;
+        }
+        .claim-popup.curr .claim-box{
+            opacity: 1;
+            transform: translate(-50%,-50%) scale(1,1);
         }
         .claim-popup .claim-box .claim-title{
             padding-top: 28px;
@@ -70,21 +82,48 @@
 </head>
 <body>
 <!-- 认领成功弹窗 -->
-<div class="claim-popup" @touchmove.stop.prevent>
+<div class="claim-popup" id="claim-popup" @touchmove.stop.prevent>
     <div class="claim-box">
         <div class="claim-title">认领成功</div>
         <div class="claim-icon"></div>
         <div class="claim-btn flex-wrap bor-1px-t">
-            <div class="claim-left flex-con">返回列表</div>
-            <div class="claim-right flex-con">完善资料</div>
+            <div class="claim-left flex-con" onclick="handleBackChannelList()" tapmode id="back">返回列表</div>
+            <div class="claim-right flex-con" onclick="handleSkipSetInfo()" tapmode>完善资料</div>
         </div>
     </div>
 </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/skip.js"></script>
 <script>
     apiready = function(){
-
+        var param = api.pageParam;
+        document.querySelector('#claim-popup').className += ' curr';
+        if(param.origin === 'channelResourceAllot' && param.openRela === 'channelResourceList'){
+            document.querySelector('#back').innerText = '关闭';
+        }
+    }
+    function handleBackChannelList(){
+        var param = api.pageParam;
+        if(param.origin === 'channelResourceAllot'){
+            if(param.openRela === 'channelResourceList'){
+                api.closeFrame();
+            }else{
+                api.closeToWin({
+                    name: 'channelHeader'
+                });
+            }
+        }
+    }
+    function handleSkipSetInfo(){
+        wHrefJs.openWin({
+            name:'addCustomerPerfect1',
+            url:'../index/add_customer_perfect_1.html',
+            param:{
+                origin:'channelResourceAllot'
+            }
+        })
+        api.closeFrame();
     }
 </script>
 </html>

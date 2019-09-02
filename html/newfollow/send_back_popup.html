@@ -15,6 +15,11 @@
             width:100%;
             height: 100%;
             background-color: rgba(0,0,0,.3);
+            opacity: 0;
+            transition: opacity .1s;
+        }
+        .back-popup.curr{
+            opacity: 1;
         }
         .back-popup .back-box{
             position: absolute;
@@ -23,9 +28,16 @@
             min-width: 260px;
             top:50%;
             background-color: #fff;
-            transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%) scale(1.2,1.2);
+            transform-origin: center;
             border-radius: 8px;
             text-align: center;
+            opacity: 0;
+            transition: all .2s;
+        }
+        .back-popup.curr .back-box{
+            opacity: 1;
+            transform: translate(-50%,-50%) scale(1,1);
         }
         .back-popup .back-box .back-title{
             padding-top: 28px;
@@ -97,7 +109,7 @@
 </head>
 <body>
     <!-- 退回渠道弹窗 -->
-    <div class="back-popup">
+    <div class="back-popup" id="back-popup">
         <div class="back-box">
             <div class="back-title">退回渠道</div>
             <div class="back-textarea">
@@ -106,16 +118,46 @@
                 </div>
             </div>
             <div class="back-btn flex-wrap bor-1px-t">
-                <div class="back-left flex-con">再想想</div>
-                <div class="back-right flex-con">确定</div>
+                <div class="back-left flex-con" onclick="handleBackSure()" tapmode>再想想</div>
+                <div class="back-right flex-con" onclick="handleSureSendBack()" tapmode>确定</div>
             </div>
         </div>
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/skip.js"></script>
 <script>
-    apiready = function(){
-
+apiready = function(){
+    document.querySelector('#back-popup').className += ' curr';
+}
+function handleBackSure(){
+var param = api.pageParam;
+    wHrefJs.openFrame({
+        name:'claimSurePopup',
+        url:'./claim_sure_popup.html',
+        bgColor:'rgba(0,0,0,0)',
+        param:param
+    });
+    api.closeFrame();
+}
+function handleSureSendBack(){
+    console.log('退回')
+    var param = api.pageParam;
+    api.sendEvent({
+        name: 'channelResourceSendBackSuccess',
+        extra: {
+            idName:param.idName
+        }
+    });
+    if(param.origin === 'channelResourceAllot'){
+        if(param.openRela === 'channelResourceList'){
+            api.closeFrame();
+        }else{
+            api.closeToWin({
+                name: 'channelHeader'
+            });
+        }
     }
+}
 </script>
 </html>

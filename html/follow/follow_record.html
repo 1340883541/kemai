@@ -268,10 +268,13 @@
         $api.fixStatusBar($('#fh-place')[0]);
         $api.fixStatusBar($('#fh-bg')[0]);
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         api.addEventListener({
             name: 'keyback'
         }, function(ret, err){
-            followRecordV.handleBack();
+            if(!followRecordV.isShowClaimPopup){
+                followRecordV.handleBack();
+            }
         });
         // // 查看微信成功
         // api.addEventListener({
@@ -373,6 +376,7 @@
                 isHaveRemarkPhone:false,
                 // 是否显示微信
                 isPwdWechat:false,
+                isShowClaimPopup:false
             },
             mounted:function(){
                 this.init();
@@ -1084,9 +1088,13 @@
                                         msg:'保存跟进记录成功'
                                     });
                                 }
-                                setTimeout(function(){
-                                    api.closeWin();
-                                },200);
+                                if(param.origin === 'channelResourceAllot'){
+                                    _this.fnChannelFollow();
+                                }else{
+                                    setTimeout(function(){
+                                        api.closeWin();
+                                    },200);
+                                }
                                 var currDate = new Date();
                                 var currYear = currDate.getFullYear(),
                                     currMonth = currDate.getMonth()+1,
@@ -1148,9 +1156,13 @@
                                         msg:'保存跟进记录成功'
                                     });
                                 }
-                                setTimeout(function(){
-                                    api.closeWin();
-                                },200);
+                                if(param.origin === 'channelResourceAllot'){
+                                    _this.fnChannelFollow();
+                                }else{
+                                    setTimeout(function(){
+                                        api.closeWin();
+                                    },200);
+                                }
                                 var currDate = new Date();
                                 var currYear = currDate.getFullYear(),
                                     currMonth = currDate.getMonth()+1,
@@ -1177,6 +1189,15 @@
                         fail:function(){
                             _this.isCanSaveFollowRecord = true;
                         }
+                    })
+                },
+                fnChannelFollow:function(){
+                    this.isShowClaimPopup = true;
+                    wHrefJs.openFrame({
+                        name:'claimSurePopup',
+                        url:'../newfollow/claim_sure_popup.html',
+                        bgColor:'rgba(0,0,0,0)',
+                        param:param
                     })
                 },
                 // 返回,判断数据改变没有给出提示

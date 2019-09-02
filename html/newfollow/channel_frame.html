@@ -35,36 +35,104 @@
             font-size: 13px;
 	        font-family: "PingFangSC-Regular",
         }
+        /*禁止点击*/
+        .filter-lis.disabled{
+            pointer-events: none !important;
+            border:1px solid #fff !important;
+        }
+        .filter-lis.disabled .filter-lt .rela-state{
+            background-color: #ccc !important;
+            color: #fff !important;
+        }
+        .filter-lis.disabled .filter-lt .cphone{
+            opacity: .3 !important;
+        }
+        .filter-lis.disabled .lis.flb-cls2{
+            opacity: .5 !important;
+        }
+        .filter-lists .filter-lis.disabled > i{
+            display: none !important;
+        }
+        /*选中状态*/
+        .filter-lists .filter-lis{
+        }
+        .filter-lists .filter-lis.curr{
+            border: 1px solid #0c7ff9;
+        }
+        .filter-lists .filter-lis > i{
+            position: absolute;
+            right: -1px;
+            bottom: -1px;
+            width: 24px;
+            height: 24px;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            display: none;
+        }
+        .filter-lists .filter-lis.curr > i{
+            background-image: url('../../image/postion_checked_curr.png');
+            display: block;
+        }
     </style>
 </head>
 
 <body>
     <div id="wrap" v-cloak  @touchstart.stop="handleBlur">
-        <div class="filter-lists" v-if="khDataList && khDataList.length > 0" v-cloak>
-            <div class="filter-lis disabled" v-for="khdata in khDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.id,khdata.phone)">
-                <div class="filter-lt flex-wrap flex-between">
-                    <div class="flex-wrap filter-lcap">
-                        <span class="cname w-elli" v-text="khdata.name"></span>
-                        <span class="rela-state" :class="[khdata.status == '未跟进'?'red-bg':'green-bg']" v-text="khdata.status"></span>
+        <div v-show="isShowChannelAllotList" style="display:none;">
+            <div class="filter-lists" v-show="customerList1 && customerList1.length > 0" style="display:none;" v-cloak>
+                <div class="filter-lis" v-for="cus in customerList1" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id)">
+                    <div class="filter-lt flex-wrap flex-between">
+                        <div class="flex-wrap filter-lcap">
+                            <span class="cname w-elli" v-text="cus.name"></span>
+                            <!-- 待跟进   已认领   已退回渠道 -->
+                            <span class="rela-state" v-show="cus.claimstatus == 3" style="display:none;" :class="[cus.claimstatus == 3?'red-bg':'']">待跟进</span>
+                        </div>
+                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id)">去跟进</div>
                     </div>
-                    <div class="cphone" @click.stop="handleSkipFollow(khdata.id,khdata.phone)">去跟进</div>
-                </div>
-                <div class="filter-lb">
-                    <!-- <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'无'"></span></div> -->
-                    <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
-                        <div class="lis flex-con flb-cls2">客户类型: <span>短期</span></div>
-                        <div class="lis flex-con flb-cls2">计划时间: <span>2019-06-20</span></div>
+                    <div class="filter-lb">
+                        <div class="flex-wrap filter-lb1" style="margin-top:8px;">
+                            <div class="lis flex-con flb-cls2">客户编号: <span v-text="cus.id||'无'"></span></div>
+                            <div class="lis flex-con flb-cls2">号码归属: <span v-text="cus.attribution||'未知'"></span></div>
+                            <div class="lis flex-con flb-cls2">客户类型: <span v-text="cus.estate"></span></div>
+                            <div class="lis flex-con flb-cls2">分配时间: <span v-text="cus.allocationtime"></span></div>
+                        </div>
                     </div>
+                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id)">该客户未认领成功，立即认领>></div>
+                    <i></i>
                 </div>
-                <div class="filter-foot">该客户未认领成功，立即认领>></div>
+                <!-- 无更多数据 -->
+                <div class="not-more-filter" id="not-more">没有更多数据</div>
             </div>
-            <!-- 无更多数据 -->
-            <div class="not-more-filter" id="not-more">没有更多数据</div>
+            <!-- 空页面 -->
+            <empty-con :is-show="customerList1.length === 0" txt="暂无你查找的客户"></empty-con>
         </div>
-        <!-- 空页面 -->
-        <empty-con :is-show="khDataList.length === 0" txt="暂无你查找的客户"></empty-con>
-        <!-- 跟进记录弹窗 -->
+        <div v-show="!isShowChannelAllotList" style="display:none;">
+            <div class="filter-lists" v-show="customerList2 && customerList2.length > 0" style="display:none;" v-cloak>
+                <div class="filter-lis" v-for="cus in customerList2" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id)">
+                    <div class="filter-lt flex-wrap flex-between">
+                        <div class="flex-wrap filter-lcap">
+                            <span class="cname w-elli" v-text="cus.name"></span>
+                            <!-- 待跟进   已认领   已退回渠道 -->
+                            <span class="rela-state" :class="[cus.status == '未跟进'?'red-bg':'green-bg']" v-text="cus.status"></span>
+                        </div>
+                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id)">去跟进</div>
+                    </div>
+                    <div class="filter-lb">
+                        <div class="flex-wrap filter-lb1" style="margin-top:8px;">
+                            <div class="lis flex-con flb-cls2">客户编号: <span v-text="cus.id||'无'"></span></div>
+                            <div class="lis flex-con flb-cls2">号码归属: <span v-text="cus.attribution||'未知'"></span></div>
+                            <div class="lis flex-con flb-cls2">客户类型: <span>短期</span></div>
+                            <div class="lis flex-con flb-cls2">分配时间: <span>2019-06-20</span></div>
+                        </div>
+                    </div>
+                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id)">该客户未认领成功，立即认领>></div>
+                </div>
+            </div>
+            <!-- 空页面 -->
+            <empty-con :is-show="customerList2.length === 0" txt="暂无客户"></empty-con>
+        </div>
+        <input type="hidden" v-model="isLoadSuc">
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -75,7 +143,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var newCustomerFrame = null;
+    var clannelFrameV = null;
     apiready = function() {
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
@@ -106,71 +174,108 @@
             //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
-            newCustomerFrame.pageNo = 1;
-            newCustomerFrame.fetchNewAdd(false, api.refreshHeaderLoadDone);
+            if(clannelFrameV.isShowChannelAllotList){
+                clannelFrameV.pageNo = 1;
+                clannelFrameV.fetchChannelData1(false, api.refreshHeaderLoadDone);
+            }else{
+                clannelFrameV.fetchChannelData2(api.refreshHeaderLoadDone);
+            }
         });
+        // 监听回退
+        api.addEventListener({
+            name: 'channelResourceSendBackSuccess'
+        }, function(ret, err){
+            alert(JSON.stringify(ret))
+            if( ret && ret.value ){
+                 var idName = ret.value.idName
+                 $('#'+idName).addClass('disabled');
+                 $('#'+idName + ' .rela-state').text('已退回渠道').show();
+            }
+        });
+        // 监听认领
+        api.addEventListener({
+            name: 'channelResourceClaimSuccess'
+        }, function(ret, err){
+            if( ret && ret.value ){
+                 var idName = ret.value.idName
+                 $('#'+idName).addClass('disabled');
+                 $('#'+idName + ' .rela-state').text('已认领').show();
+            }
+        });
+
         // 筛选客户状态
         api.addEventListener({
-            name: 'filterNewCustomer'
+            name: 'filterChannelResource'
         }, function(ret, err){
             var obj = ret.value;
-            console.log('new frame---'+JSON.stringify(obj))
             if(obj){
-                if(typeof obj.classify != 'undefined'){
-                    newCustomerFrame.currClassify = obj.classify;
+                if(typeof obj.status != 'undefined'){
+                    clannelFrameV.currStatus = obj.status;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    newCustomerFrame.startDate = obj.startDate;
+                    clannelFrameV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    newCustomerFrame.endDate = obj.endDate;
+                    clannelFrameV.endDate = obj.endDate;
                 }
                 if(typeof obj.origin != 'undefined'){
-                    newCustomerFrame.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
-                    newCustomerFrame.currType = obj.type;
+                    clannelFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
+                    clannelFrameV.currType = obj.type;
                 }
                 if(typeof obj.home != 'undefined'){
-                    newCustomerFrame.currHome = obj.home;
+                    clannelFrameV.currHome = obj.home;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    newCustomerFrame.currSort = obj.sort;
+                    clannelFrameV.currSort = obj.sort;
                 }
                 $('#not-more').hide();
-                newCustomerFrame.pageNo = 1;
-                newCustomerFrame.fetchNewAdd();
+                clannelFrameV.pageNo = 1;
+                clannelFrameV.fetchChannelData1();
             }
         });
         // 上拉加载更多
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err) {
-            if (++newCustomerFrame.pageNo <= newCustomerFrame.totalPage) {
-                newCustomerFrame.fetchNewAdd(true);
-            } else {
-                $('#not-more').show();
+            console.log('innnnnnn')
+            if (clannelFrameV.isShowChannelAllotList) {
+                if(++clannelFrameV.pageNo <= clannelFrameV.totalPage){
+                    clannelFrameV.fetchChannelData1(true);
+                }else{
+                    $('#not-more').show();
+                }
             }
         });
-        // 跟进成功
-        api.addEventListener({
-            name: 'followRecordSuccessRefresh'
-        }, function(ret, err){
-            newCustomerFrame.pageNo = 1;
-            newCustomerFrame.fetchNewAdd();
-        });
+        // // 跟进成功
+        // api.addEventListener({
+        //     name: 'followRecordSuccessRefresh'
+        // }, function(ret, err){
+        //     clannelFrameV.pageNo = 1;
+        //     clannelFrameV.fetchChannelData();
+        // });
 
+        // 获取切换分配
+        api.addEventListener({
+            name: 'switchChannelCaptionTxt'
+        }, function(ret, err){
+            if(ret && ret.value){;
+                var name = ret.value.txt;
+                name === '渠道分配' ? clannelFrameV.isShowChannelAllotList = true : clannelFrameV.isShowChannelAllotList = false;
+            }
+        });
         var param = api.pageParam;
         // ios 监听键盘弹出
         api.addEventListener({
             name: 'keyboardshow'
         }, function(ret, err){
-            newCustomerFrame.isKeybordshow = true;
+            clannelFrameV.isKeybordshow = true;
         });
-        newCustomerFrame = new Vue({
+        clannelFrameV = new Vue({
             el: '#wrap',
             data: {
                 // 筛选条件
                 search_cusName: '', // 搜索客户名
-                currClassify:'',
+                currStatus:'',
                 currOrigin:'',
                 currType:'',
                 currHome:'',
@@ -178,15 +283,28 @@
                 startDate:'',
                 endDate:'',
 
-                khDataList: [], //客户来源列表
+                customerList1: [], //客户来源列表  渠道分配
+                customerList2: [], //客户来源列表  系统分配
                 pageNo: 1,
                 totalPage: 1,
-                userInfo: '',
-                isKeybordshow:false
+                userInfo: {},
+                isKeybordshow:false,
+                isShowChannelAllotList:true,
+                isLoadFinish1:false,
+                isLoadFinish2:false
             },
             mounted: function() {
                 this.init();
-                // this.fetchNewAdd();
+                this.fetchChannelData1();
+                this.fetchChannelData2();
+            },
+            computed:{
+                isLoadSuc:function(){
+                    if(this.isLoadFinish1 && this.isLoadFinish2){
+                        wDialog.hideProgress();
+                    }
+                    return '';
+                }
             },
             methods: {
                 init:function(){
@@ -208,107 +326,125 @@
                         });
                     }
                 },
-                // 获取今日新增列表
-                fetchNewAdd: function(isLoadMore, callback) {
+                // 获取渠道分配列表
+                fetchChannelData1: function(isLoadMore, callback) {
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
                     var _this = this;
-                    setTimeout(function(){
-                        wDialog.showProgress();
-                    },10);
-                    var url = '';
-                    if(param.empId){
-                        url = 'newResource/newAddResFollListByEmp';
-                    }
-                    else{
-                        url = 'newResource/newAddResFollList';
-                    }
+                    _this.isLoadFinish1 = false;
+                    wDialog.showProgress();
                     console.log('new customer frame request----'+JSON.stringify({
-                        employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
+                        employeeid: _this.userInfo.employeeid,
+                        cusNameOrCrmOrPhone:_this.search_cusName,
+                        cusSource:_this.currOrigin,
+                        cusStatus:_this.currStatus,
+                        attributionid:_this.currHome,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOrigin,
                         sort:_this.currSort,
-                        // type:_this.currType,
-                        type:1,
-                        search_cusName:_this.search_cusName,
-                        attributionid:_this.currHome,
-                        resourcetype:_this.currClassify,
-                        pageNo: _this.pageNo,
-                        pageSize: 10
+                        pageNo:_this.pageNo,
+                        pageSize:10
                     }));
                     wApiAjax({
-                        url: url,
-                        headers: {
-                            token: TOKEN_DATA
+                        url:'newResource/chalResList/chalAllot',
+                        headers:{
+                            token:TOKEN_DATA
                         },
-                        data: {
-                            employeeid:param.empId ? param.empId : _this.userInfo.employeeid,
+                        data:{
+                            employeeid: _this.userInfo.employeeid,
+                            cusNameOrCrmOrPhone:_this.search_cusName,
+                            cusSource:9,
+                            cusStatus:_this.currStatus,
+                            attributionid:_this.currHome,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOrigin,
                             sort:_this.currSort,
-                            // type:_this.currType,
-                            type:1,
-                            search_cusName:_this.search_cusName,
-                            attributionid:_this.currHome,
-                            resourcetype:_this.currClassify,
-                            pageNo: _this.pageNo,
-                            pageSize: 10
+                            pageNo:_this.pageNo,
+                            pageSize:10
                         },
-                        success: function(res) {
-                            setTimeout(function(){
-                                wDialog.hideProgress();
-                            },100);
-                            console.log('new customer frame response----'+JSON.stringify(res))
-                            if (res.code == 1) {
-                                if (!isLoadMore) {
-                                    _this.khDataList = res.data ? res.data : [];
-                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
-                                } else {
-                                    if (res.data) {
-                                        _this.khDataList = _this.khDataList.concat(res.data);
-                                    }
+                        success:function(res){
+                            console.log(JSON.stringify(res))
+                            _this.isLoadFinish1 = true;
+                            if(res.code == 1){
+                                _this.totalPage = Math.ceil(res.count / 10);
+                                if(!isLoadMore){
+                                    _this.customerList1 = res.data || [];
+                                }else{
+                                    _this.customerList1 = _this.customerList1.concat(res.data||[]);
                                 }
-
-                            } else {
-                                wDialog.toast({
-                                    msg: res.msg
-                                })
                             }
                             callback && typeof callback === 'function' && callback();
                         },
-                        fail: function() {
+                        fail:function(){
+                            _this.isLoadFinish1 = true;
                             callback && typeof callback === 'function' && callback();
                         }
                     })
                 },
+                // 获取系统分配列表
+                fetchChannelData2: function(callback) {
+                    var _this = this;
+                    _this.isLoadFinish2 = true;
+                },
+                // 弹出确认认领弹窗
+                handleOpenSureClaimPopup:function(id,phone,idName){
+                    wHrefJs.openFrame({
+                        name:'claimSurePopup',
+                        url:'../newfollow/claim_sure_popup.html',
+                        bgColor:'rgba(0,0,0,0)',
+                        param:{
+                            id:id,
+                            phone:phone,
+                            isWork:2,
+                            idName:idName,
+                            origin:'channelResourceAllot',
+                            openRela:'channelResourceList'
+                        }
+                    })
+                },
                 // 跳转到详情
-                skipCustomerDetail: function(id,phone) {
+                skipCustomerDetail: function(id,phone,idName) {
+                    $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
                         param: {
                             cusId: id,
                             cusPhone:phone,
-                            isWork:2
+                            isWork:2,
+                            idName:idName,
+                            origin:'channelResourceAllot'
                         }
                     })
                 },
                 // 跳转到跟进记录
-                handleSkipFollow:function(id,phone){
+                handleSkipFollow:function(id,phone,idName){
+                    $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     api.openWin({
                         name: 'followRecord',
                         url: '../follow/follow_record.html',
                         pageParam: {
                             id:id,
                             phone:phone,
-                            isWork:2
+                            isWork:2,
+                            idName:idName,
+                            origin:'channelResourceAllot'
                         },
                         slidBackEnabled: false
                     });
                 }
             }
         });
+    }
+
+    // 获取搜索的内容
+    function getSearchValue(val){
+        clannelFrameV.search_cusName = val;
+        // clannelFrameV.pageNo = 1;
+        // clannelFrameV.fetchChannelData();
+    }
+    // 清空搜索的内容
+    function clearSearchValue(){
+        clannelFrameV.search_cusName = '';
     }
 </script>
 

@@ -86,6 +86,13 @@
                     <li :class="{'curr':currSelected==7}" @click.stop="handlePitchSort(7)">创建时间从远到近</li>
                 </ul>
             </div>
+            <!-- 新增渠道资源排序 -->
+            <div class="w-filter-pop1" v-show="sortClass === 'class9'" style="display:none;">
+                <ul>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">分配时间从远到近</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">分配时间从近到远</li>
+                </ul>
+            </div>
         </div>
     </div>
 </body>

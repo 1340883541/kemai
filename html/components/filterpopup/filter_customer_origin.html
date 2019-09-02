@@ -22,9 +22,9 @@
                 <div class="left fl">
                     <ul>
                         <li v-if="isHaveAllOrigin" :class="{'curr':currSelected===''}" @click.stop="handleChooseOneOrigin('',[],0)">全部</li>
-                        <li v-if="originAllData.corSour" :class="{'curr':currSelected===originAllData.corSour.corSourParValue}" v-text="originAllData.corSour.corSourParName" @click.stop="handleChooseOneOrigin(originAllData.corSour.corSourParValue,originAllData.corSour.corSourList,1)"></li>
+                        <li v-if="!isHaveChannelResource && originAllData.corSour" :class="{'curr':currSelected===originAllData.corSour.corSourParValue}" v-text="originAllData.corSour.corSourParName" @click.stop="handleChooseOneOrigin(originAllData.corSour.corSourParValue,originAllData.corSour.corSourList,1)"></li>
                         <li v-if="originAllData.halt" :class="{'curr':currSelected===originAllData.halt.halParValue}" v-text="originAllData.halt.halParName" @click.stop="handleChooseOneOrigin(originAllData.halt.halParValue,originAllData.halt.haltList,1)"></li>
-                        <li v-if="originAllData.net" :class="{'curr':currSelected===originAllData.net.halParValue}" v-text="originAllData.net.netParName" @click.stop="handleChooseOneOrigin(originAllData.net.halParValue,originAllData.net.networkList,1)"></li>
+                        <li v-if="!isHaveChannelResource && originAllData.net" :class="{'curr':currSelected===originAllData.net.halParValue}" v-text="originAllData.net.netParName" @click.stop="handleChooseOneOrigin(originAllData.net.halParValue,originAllData.net.networkList,1)"></li>
                         <li v-if="isHaveRecourcePool&&originAllData.respool" :class="{'curr':currSelected===originAllData.respool.respoolParValue}" v-text="originAllData.respool.respoolParName" @click.stop="handleChooseOneOrigin(originAllData.respool.respoolParValue,originAllData.respool.respoolList,2)"></li>
                     </ul>
                 </div>
@@ -67,7 +67,8 @@
                 currType:'',
                 originTwoData:[],
                 isHaveAllOrigin:false,
-                isHaveRecourcePool:false
+                isHaveRecourcePool:false,
+                isHaveChannelResource:false
             },
             mounted:function(){
                 this.customerOriginList = param.originData ? JSON.parse(param.originData) : {};
@@ -76,6 +77,7 @@
                 this.currType = param.currType;
                 this.isHaveAllOrigin = param.isHaveAllOrigin;
                 this.isHaveRecourcePool = param.isHaveRecourcePool;
+                this.isHaveChannelResource = param.isHaveChannelResource;
                 this.fetchOriginAllData();
             },
             methods:{

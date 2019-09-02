@@ -29,11 +29,11 @@
 <body>
     <div id="wrap" @touchmove.stop.prevent>
         <div class="w-header bor-1px-b">
-            <div class="w-header-cap">
+            <div class="w-header-cap" id="header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
-                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap"><b>渠道分配</b><i></i></span></div>
+                <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap" @click.stop="handleChangeChannel"><b v-text="captionText"></b><i></i></span></div>
             </div>
-            <div class="search-box" id="header-search-box">
+            <div class="search-box" id="header-search">
                 <div class="search-inp">
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
@@ -51,12 +51,12 @@
                 </div>
                 <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
-            <div class="w-filter-lists flex-wrap">
+            <div class="w-filter-lists flex-wrap" id="filter-nav">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
-                    <span>时间范围</span><i></i>
+                    <span>客户来源</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
-                    <span>客户来源</span><i></i>
+                    <span>客户状态</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
                     <span>更多</span><i></i>
@@ -76,7 +76,7 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var ncusHeaderV = null;
+    var clannelHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         var param = api.pageParam;
@@ -86,47 +86,56 @@
 
         // 筛选客户状态
         api.addEventListener({
-            name: 'filterNewCustomer'
+            name: 'filterChannelResource'
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
-                if(typeof obj.classify != 'undefined'){
-                    ncusHeaderV.currClassify = obj.classify;
+                if(typeof obj.status != 'undefined'){
+                    clannelHeaderV.currStatus = obj.status;
                 }
                 if(typeof obj.startDate != 'undefined'){
-                    ncusHeaderV.startDate = obj.startDate;
+                    clannelHeaderV.startDate = obj.startDate;
                 }
                 if(typeof obj.endDate != 'undefined'){
-                    ncusHeaderV.endDate = obj.endDate;
+                    clannelHeaderV.endDate = obj.endDate;
                 }
                 if(typeof obj.origin != 'undefined'){
-                    ncusHeaderV.currOrigin = obj.origin;
-                    ncusHeaderV.currOriginTwo = obj.originTwo;
-                    ncusHeaderV.currOriginType = obj.type;
+                    clannelHeaderV.currOrigin = obj.origin;
+                    clannelHeaderV.currOriginTwo = obj.originTwo;
+                    clannelHeaderV.currOriginType = obj.type;
                 }
                 if(typeof obj.home != 'undefined'){
-                    ncusHeaderV.currHome = obj.home;
+                    clannelHeaderV.currHome = obj.home;
                 }
                 if(typeof obj.sort != 'undefined'){
-                    ncusHeaderV.currSort = obj.sort;
+                    clannelHeaderV.currSort = obj.sort;
                 }
             }
             $('.w-filter-lis').removeClass('curr');
         });
+        // 获取切换分配
+        api.addEventListener({
+            name: 'switchChannelCaptionTxt'
+        }, function(ret, err){
+            if(ret && ret.value){
+                clannelHeaderV.captionText = ret.value.txt;
+            }
+        });
+
         // 跳转到frame的高度等
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
-        ncusHeaderV = new Vue({
+        clannelHeaderV = new Vue({
             el:"#wrap",
             data:{
                 searchVal:'',
-                // 来源归类
-                currClassify:0,
                 // 客户来源
                 currOrigin:param.val,
                 currOriginTwo:'',
                 currOriginType:'',
+                // 客户状态
+                currStatus:'',
 
                 startDate:'',
                 endDate:'',
@@ -134,7 +143,29 @@
                 currHome:'',
                 // 排序
                 currSort:0,
-                isFocus:false
+                isFocus:false,
+                captionText:'渠道分配'
+            },
+            watch:{
+                captionText:function(nv){
+                    var y2,h2;
+                    if(nv === '渠道分配'){
+                        $('#header-search,#filter-nav').show();
+                        y2 = api.safeArea.top + $('#header-cap').height() + $('#header-search').height() + $('#filter-nav').height();
+                    }else{
+                        $('#header-search,#filter-nav').hide();
+                        y2 = api.safeArea.top + $('#header-cap').height();
+                    }
+                    // 跳转到frame的高度等
+                    h2 = wHei - y2;
+                    api.setFrameAttr({
+                        name: 'channelFrame',
+                        rect: {
+                            y: y2,
+                            h: h2
+                        }
+                    });
+                }
             },
             created:function(){
                 if(param.empId){
@@ -147,6 +178,32 @@
 
             },
             methods:{
+                // 切换分配
+                handleChangeChannel:function(){
+                    // 跳转到frame的高度等
+                    var y1 = api.safeArea.top + $('#header-cap').height() + ($('#header-search:visible').height()||0),
+                        h1 = wHei - y1;
+                    var frames = api.frames();
+                    var isHaveFilter = frames.some(function(v){
+                        return v.name === 'filterChannelPopup'
+                    })
+                    if(isHaveFilter){
+                        api.closeFrame({
+                            name: 'filterChannelPopup'
+                        });
+                    }else{
+                        wHrefJs.openFrame({
+                            name:'filterChannelPopup',
+                            url:'./filter_channel_popup.html',
+                            y:y1,
+                            h:h1,
+                            bgColor:'rgba(0,0,0,0)',
+                            param:{
+                                origin:this.captionText
+                            }
+                        })
+                    }
+                },
                 // 获取焦点
                 handleSearchFocus:function(){
                     this.isFocus = true;
@@ -165,7 +222,7 @@
                 },
                 // 获取焦点
                 onFoucsInp:function(){
-                    $('#header-search-box').addClass('curr');
+                    $('#header-search').addClass('curr');
                     setTimeout(function(){
                         $('#search-inp').focus();
                     },200);
@@ -179,46 +236,47 @@
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
                         if(i === 0){
-                            wOpenCustomerTimeFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterNewCustomer',
-                                    startDate:_this.startDate,
-                                    endDate:_this.endDate,
-                                }
-                            });
-                        }
-                        else if(i === 1){
                             wOpenCustomerOriginFrame({
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterNewCustomer',
+                                    origin:'filterChannelResource',
                                     currSelected:_this.currOrigin,
                                     currTwoSelected:_this.currOriginTwo,
                                     currType:_this.currOriginType,
-                                    isHaveAllOrigin:true,
-                                    isHaveRecourcePool:false
+                                    isHaveAllOrigin:false,
+                                    isHaveRecourcePool:false,
+                                    isHaveChannelResource:true,
                                 }
                             });
+                        }
+                        else if(i === 1){
+                            wOpenCustomerStatusFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterChannelResource',
+                                    currSelected:_this.currStatus
+                                }
+                            })
                         }
                         else if(i === 2){
                             wOpenCustomerMoreFrame({
                                 y:0,
                                 h:wHei,
                                 param:{
-                                    origin:'filterNewCustomer',
+                                    origin:'filterChannelResource',
                                     currOrigin:_this.currOrigin,
                                     currOriginTwo:_this.currOriginTwo,
                                     currType:_this.currOriginType,
-                                    currClassify:_this.currClassify,
+                                    currStatus:_this.currStatus,
                                     currHome:_this.currHome,
                                     startDate:_this.startDate,
                                     endDate:_this.endDate,
-                                    isHaveClassify:true,
+                                    isHaveClassify:false,
                                     isHaveRecourcePool:false,
-                                    isHaveStatus:false
+                                    isHaveChannelResource:true,
+                                    isHaveStatus:true
                                 }
                             });
                         }
@@ -227,9 +285,9 @@
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterNewCustomer',
+                                    origin:'filterChannelResource',
                                     currSelected:_this.currSort,
-                                    sortClass:'class5'
+                                    sortClass:'class9'
                                 }
                             })
                         }
@@ -246,7 +304,7 @@
                 // 取消搜索
                 cancelSearch:function(){
                     $('#search-inp').blur();
-                    $('#header-search-box').removeClass('curr');
+                    $('#header-search').removeClass('curr');
                     this.clearSearchVal();
                 },
                 submitSeach:function(){

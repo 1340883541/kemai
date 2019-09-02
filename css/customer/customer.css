@@ -113,15 +113,31 @@
     overflow: hidden;
 }
 
-.cd-header .hname > div{
+.cd-header .hname .scroll-txt{
     position: relative;
     white-space: nowrap;
     height: 24px;
 }
 
-.cd-header .hname >div> span{
+.cd-header .hname.scroll-txt > span{
     padding:0 8px;
     width: auto;
+}
+.cus-status{
+    position: absolute;
+    right: 0;
+    bottom: 0px;
+    width: 76px;
+    height: 30px;
+    line-height: 31px;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(90deg, #fad065 0%, #ffaa3b 100%);
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    font-size: 14px;
+    color:#fff;
+	font-family: "PingFangSC-Medium"
 }
 .cd-header .horigin {
     font-size: 15px;

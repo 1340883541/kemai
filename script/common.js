@@ -139,7 +139,7 @@ function wOpenCustomerClassifyFrame(par){
         param:par.param
     })
 }
-// 打开客户来源筛选框
+// 打开客户状态筛选框
 function wOpenCustomerStatusFrame(par){
     par = par || {};
     wHrefJs.openFrame({

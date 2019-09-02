@@ -433,9 +433,15 @@
                                 wDialog.alert({
                                     msg: '完善购物需求成功',
                                     cb: function() {
-                                        api.closeToWin({
-                                            name: 'main'
-                                        });
+                                        if(param.origin === 'channelResourceAllot'){
+                                            api.closeToWin({
+                                                name: 'channelHeader'
+                                            });
+                                        }else{
+                                            api.closeToWin({
+                                                name: 'main'
+                                            });
+                                        }
                                     }
                                 })
                             }
