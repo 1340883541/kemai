@@ -1193,6 +1193,7 @@
                 },
                 fnChannelFollow:function(){
                     this.isShowClaimPopup = true;
+                    param.content = this.followContent;
                     wHrefJs.openFrame({
                         name:'claimSurePopup',
                         url:'../newfollow/claim_sure_popup.html',

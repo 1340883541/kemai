@@ -9,11 +9,9 @@
     <style>
         /*退回弹窗*/
         .back-popup{
-            position: fixed;
-            left:0;top:0;
-            z-index: 9999;
+            position: relative;
             width:100%;
-            height: 100%;
+            height: 100vh;
             background-color: rgba(0,0,0,.3);
             opacity: 0;
             transition: opacity .1s;
@@ -110,11 +108,11 @@
 <body>
     <!-- 退回渠道弹窗 -->
     <div class="back-popup" id="back-popup">
-        <div class="back-box">
+        <div class="back-box" id="back-box">
             <div class="back-title">退回渠道</div>
             <div class="back-textarea">
                 <div class="textarea-box">
-                    <textarea placeholder="请填写退回原因" id="back-reason"></textarea>
+                    <textarea placeholder="请填写退回原因" id="back-reason" onfocus="handleFocus()" onblur="handleBlur()"></textarea>
                 </div>
             </div>
             <div class="back-btn flex-wrap bor-1px-t">
@@ -130,13 +128,31 @@
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
+var isIos = false;
 apiready = function(){
+    isIos = api.systemType === 'ios';
     document.querySelector('#back-popup').className += ' curr';
     var param = api.pageParam;
     console.log(JSON.stringify(param))
+    var content = param.content||'';
+    $('#back-reason').val(content);
+}
+function handleFocus(){
+    if(isIos){
+        $('#back-box').css({
+            top:'70%'
+        })
+    }
+}
+function handleBlur(){
+    if(isIos){
+        $('#back-box').css({
+            top:'50%'
+        })
+    }
 }
 function handleBackSure(){
-var param = api.pageParam;
+    var param = api.pageParam;
     wHrefJs.openFrame({
         name:'claimSurePopup',
         url:'./claim_sure_popup.html',
