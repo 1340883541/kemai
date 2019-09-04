@@ -12,6 +12,7 @@
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
     <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
     <link rel="stylesheet" type="text/css" href="../../css/follow/follow_record.css" />
     <style>
@@ -38,7 +39,7 @@
         </div>
         <!-- 快捷用语内容 -->
         <div class="quick_lag_content">
-            <ul class="quick_lag_ul">
+            <ul class="quick_lag_ul" v-if="lists && lists.length > 0">
                 <li class="quick_lag_li border-1px" v-for="(type,i) in lists" :key="i">
                     <div class="li_radio" @click="selectedProduct(i)"><i class="uncheck" :class="{check:type.isSelect}"></i></div>
                     <div class="li_text clear">
@@ -46,24 +47,11 @@
                         <div class="li_t_info w-elli-4">{{type.content}}</div>
                     </div>
                 </li>
-                <!-- <li class="quick_lag_li border-1px">
-                    <div class="li_radio" @click="selectedProduct(item)"><i class="uncheck"></i></div>
-                    <div class="li_text clear">
-                        <div class="li_t_mun">2.</div>
-                        <div class="li_t_info w-elli-4">
-                            最后一班也就是临门一脚,很多新人看到几天后</div>
-                    </div>
-                </li> -->
-                <!-- <li class="quick_lag_li border-1px">
-                    <div class="li_radio" @click="selectedProduct(item)"><i class="uncheck check"></i></div>
-                    <div class="li_text clear">
-                        <div class="li_t_mun">3.</div>
-                        <div class="li_t_info w-elli-4">
-                            最后一班也就是临门一脚.</div>
-                    </div>
-                </li> -->
             </ul>
+            <!-- 空页面 -->
+            <empty-con :is-show="lists.length === 0" txt="暂无快捷用语"></empty-con>
         </div>
+
         <!-- 快捷用语footer -->
         <div class="quick_lag_footer border-1px">
             <div class="quick_lag_f_left" @click.stop="handleCleanFollowChoose">
@@ -188,6 +176,12 @@
                     // 确定保存
                     handleSaveCustomerName: function() {
                         var _this = this;
+                        if(this.content_name.trim() == ''){
+                            wDialog.toast({
+                                msg:'请输入快捷用语'
+                            })
+                            return;
+                        }
                         wApiAjax({
                             method: "post",
                             url: 'customer/addFastFollow',

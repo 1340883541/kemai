@@ -105,9 +105,9 @@
                         </ul>
                     </div>
                     <!-- 客户来源 -->
-                    <div class="filter-m-ylgs filter-m-khly margin-top30">
+                    <div class="filter-m-ylgs filter-m-khly margin-top30" v-if="!isOnlyChannelResource">
                         <p class="p1 clear">客户来源</p>
-                        <div class="filter-m-khyl-list" v-if="originAllData.corSour" v-show="originAllData.corSour && !isHaveChannelResource" style="display:none;">
+                        <div class="filter-m-khyl-list" v-if="originAllData.corSour" v-show="originAllData.corSour" style="display:none;">
                             <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.corSour.corSourParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.corSour.corSourParValue?'check':'uncheck']"></i><span v-text="originAllData.corSour.corSourParName"></span>
                             </p>
@@ -121,7 +121,7 @@
                                 ></li>
                             </ul>
                         </div>
-                        <div class="filter-m-khyl-list" v-if="originAllData.net" v-show="originAllData.net && !isHaveChannelResource" style="display:none;">
+                        <div class="filter-m-khyl-list" v-if="originAllData.net" v-show="originAllData.net" style="display:none;">
                             <p class="p2 margin-top20 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.net.halParValue,1)">
                                 <i class="khly-rodio" :class="[currOrigin === originAllData.net.halParValue?'check':'uncheck']"></i><span v-text="originAllData.net.netParName"></span>
                             </p>
@@ -149,20 +149,25 @@
                                 ></li>
                             </ul>
                         </div>
-                        <!-- <div class="filter-m-khyl-list" v-if="isHaveRecourcePool && originAllData.respool">
-                            <p class="p2 margin-top30 border-1px" @click.stop="handleChooseCustomerOrigin('one',originAllData.respool.respoolParValue,2)">
-                                <i class="khly-rodio" :class="[currOrigin === originAllData.respool.respoolParValue?'check':'uncheck']"></i><span v-text="originAllData.respool.respoolParName"></span>
+                    </div>
+                    <!-- 仅渠道资源 -->
+                    <div class="filter-m-ylgs filter-m-khly margin-top30" v-if="isOnlyChannelResource">
+                        <p class="p1 clear">客户来源</p>
+                        <div class="filter-m-khyl-list">
+                            <p class="p2 margin-top20 border-1px">
+                                <i class="khly-rodio check"></i><span>渠道资源</span>
                             </p>
                             <ul class="filter-m-khly-info clear">
+                                <li :class="{'f-curr':currChannelOrigin==''}" @click.stop="handlePitchChannelResource('')">全部</li>
                                 <li
-                                    v-if="originAllData.respool.respoolList"
-                                    v-for="respool in originAllData.respool.respoolList"
-                                    :class="{'f-curr':currOriginTwo === respool.value && currType == 2}"
-                                    v-text="respool.name"
-                                    @click.stop="handleChooseCustomerOrigin('two',respool.value,2,originAllData.respool.respoolParValue)"
+                                    v-for="classify in channelResourceData"
+                                    :key="classify.value"
+                                    v-text="classify.name"
+                                    :class="{'f-curr':currChannelOrigin==classify.value}"
+                                    @click.stop="handlePitchChannelResource(classify.value)"
                                 ></li>
                             </ul>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
                 <!-- 筛选确定/取消 -->
@@ -212,7 +217,9 @@ apiready = function() {
             isHaveClassify:false,
             isHaveStatus:false,
             // 是否只有资源池客户
-            isHaveChannelResource:false,
+            isOnlyChannelResource:false,
+            currChannelOrigin:'',
+            channelResourceData:[],
 
             isGetStartDate:true,
             // 是否展开
@@ -227,6 +234,7 @@ apiready = function() {
             this.fetchCustomerStatus();
             this.fetchHomeData();
             this.fetchOriginData();
+            this.fetchChannelResourceData();
         },
         methods:{
             init:function(){
@@ -236,11 +244,12 @@ apiready = function() {
                 this.currOrigin = param.currOrigin;
                 this.currOriginTwo = param.currOriginTwo;
                 this.currType = param.currType;
+                this.currChannelOrigin = param.currChannelOrigin;
                 this.currHome = param.currHome;
                 this.startDate = param.startDate;
                 this.endDate = param.endDate;
                 this.isHaveRecourcePool = param.isHaveRecourcePool;
-                this.isHaveChannelResource = param.isHaveChannelResource;
+                this.isOnlyChannelResource = param.isOnlyChannelResource;
                 this.isHaveClassify = param.isHaveClassify;
                 this.isHaveStatus = param.isHaveStatus;
                 this.dateText = param.dateText ? param.dateText : '时间范围';
@@ -369,6 +378,39 @@ apiready = function() {
                     })
                 }
             },
+            // 获取渠道资源
+            fetchChannelResourceData:function(){
+                var _this = this;
+                var channelResourceData = window.localStorage.getItem('channelResourceData');
+                if(channelResourceData && channelResourceData !== 'undefined'){
+                    this.channelResourceData = JSON.parse(channelResourceData);
+                }
+                else{
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'dataSource/channelCusSourse ',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.channelResourceData = res.data || [];
+                                window.localStorage.setItem('channelResourceData',JSON.stringify(res.data));
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
+                }
+            },
+            // 筛选渠道资源 客户状态
+            handlePitchChannelResource:function(val){
+                var _this = this;
+                this.currChannelOrigin = val;
+            },
             // 选择时间
             handleChooseShortcatDate:function(e,i){
                 var tag = e.currentTarget;
@@ -462,6 +504,7 @@ apiready = function() {
                         origin:_this.currOrigin,
                         originTwo:_this.currOriginTwo,
                         type:currType,
+                        currChannelOrigin:_this.currChannelOrigin, // 渠道资源
                         home:_this.currHome,
                         startDate:_this.startDate,
                         endDate:_this.endDate,

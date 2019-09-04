@@ -357,6 +357,13 @@
                         });
                         return false;
                     }
+                    var phoneExp = /^1[345789]\d{9}$/;
+                    if(!phoneExp.test(saveData.customerPhone.trim())){
+                        wDialog.toast({
+                            msg:'请输入正确的手机号码'
+                        })
+                        return false;
+                    }
                     if(saveData.customerClassifyId == ''){
                         wDialog.toast({
                             msg:'请选择来源归类'

@@ -114,7 +114,7 @@
             <div class="back-title">退回渠道</div>
             <div class="back-textarea">
                 <div class="textarea-box">
-                    <textarea placeholder="请填写退回原因"></textarea>
+                    <textarea placeholder="请填写退回原因" id="back-reason"></textarea>
                 </div>
             </div>
             <div class="back-btn flex-wrap bor-1px-t">
@@ -125,10 +125,15 @@
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
-<script type="text/javascript" src="../../script/skip.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
 <script>
 apiready = function(){
     document.querySelector('#back-popup').className += ' curr';
+    var param = api.pageParam;
+    console.log(JSON.stringify(param))
 }
 function handleBackSure(){
 var param = api.pageParam;
@@ -142,22 +147,65 @@ var param = api.pageParam;
 }
 function handleSureSendBack(){
     console.log('退回')
-    var param = api.pageParam;
-    api.sendEvent({
-        name: 'channelResourceSendBackSuccess',
-        extra: {
-            idName:param.idName
-        }
-    });
-    if(param.origin === 'channelResourceAllot'){
-        if(param.openRela === 'channelResourceList'){
-            api.closeFrame();
-        }else{
-            api.closeToWin({
-                name: 'channelHeader'
-            });
-        }
+    var reasonVal = $('#back-reason').val().trim();
+    if(reasonVal == ''){
+        wDialog.toast({
+            msg:'请输入退回原因！'
+        })
+        $('#back-reason').val('');
+        return false;
     }
+    var param = api.pageParam;
+    var userInfo = wPref.getPrefs({
+            key: 'userInfo'
+        });
+    userInfo = userInfo ? JSON.parse(userInfo) : {};
+    wDialog.showProgress({
+        msg:'正在退回中'
+    });
+    wApiAjax({
+        url:'customer/whetherClaimCus',
+        headers:{
+            token:TOKEN_DATA
+        },
+        data:{
+            employeeid:userInfo.employeeid,
+            customerid:param.id,
+            type:2,
+            returnreason:reasonVal,
+            way:param.way
+        },
+        success:function(res){
+            console.log('send_back_popup--------------'+JSON.stringify(res))
+            wDialog.hideProgress();
+            if(res.code == 1){
+                wDialog.toast({
+                    msg:'退回成功'
+                })
+                api.sendEvent({
+                    name: 'channelResourceSendBackSuccess',
+                    extra: {
+                        idName:param.idName
+                    }
+                });
+                if(param.origin === 'channelResourceAllot'){
+                    if(param.openRela === 'channelResourceList'){
+                        console.log('innn22222');
+                        api.closeFrame();
+                    }else{
+                        console.log('innn33333');
+                        api.closeToWin({
+                            name: 'channelHeader'
+                        });
+                    }
+                }
+            }else{
+                wDialog.toast({
+                    msg:res.msg
+                })
+            }
+        }
+    })
 }
 </script>
 </html>

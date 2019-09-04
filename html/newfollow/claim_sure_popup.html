@@ -20,33 +20,62 @@
 <script type="text/javascript" src="../../script/lib/api.js"></script>
 <script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
 <script type="text/javascript" src="../../script/lib/dialog.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/lib/vue.min.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     apiready = function(){
         var param = api.pageParam;
+        var isOpenRelaList = param.openRela === 'channelResourceList';
+        console.log(JSON.stringify(param))
+        var userInfo = wPref.getPrefs({
+                key: 'userInfo'
+            });
+        userInfo = userInfo ? JSON.parse(userInfo) : {};
+        var isNotClickSure = true;
         wDialog.confirm({
             msg: '确定认领客户吗?',
-            overlayClose:false,
+            overlayClose:isOpenRelaList,
             button:['确定认领','退回渠道'],
             sureCb: function() {
+                isNotClickSure = false;
                 console.log('click  确定认领')
-                api.sendEvent({
-                    name: 'channelResourceClaimSuccess',
-                    extra: {
-                        idName:param.idName
+                wApiAjax({
+                    url:'customer/whetherClaimCus',
+                    headers:{
+                        token:TOKEN_DATA
+                    },
+                    data:{
+                        employeeid:userInfo.employeeid,
+                        customerid:param.id,
+                        type:1,
+                        way:param.way
+                    },
+                    success:function(res){
+                        if(res.code == 1){
+                            api.sendEvent({
+                                name: 'channelResourceClaimSuccess',
+                                extra: {
+                                    idName:param.idName
+                                }
+                            });
+                            wHrefJs.openFrame({
+                                name:'claimSucPopup',
+                                url:'./claim_suc_popup.html',
+                                bgColor:'rgba(0,0,0,0)',
+                                param:param
+                            })
+                            api.closeFrame();
+                        }else{
+                            wDialog.toast({
+                                msg:res.msg
+                            })
+                        }
                     }
-                });
-                wHrefJs.openFrame({
-                    name:'claimSucPopup',
-                    url:'./claim_suc_popup.html',
-                    bgColor:'rgba(0,0,0,0)',
-                    param:param
                 })
-                api.closeFrame();
             },
             cancelCb:function(){
-                console.log('click  退回渠道')
+                // console.log('click  退回渠道')
                 wHrefJs.openFrame({
                     name:'sendBackPopup',
                     url:'./send_back_popup.html',
@@ -54,6 +83,11 @@
                     param:param
                 })
                 api.closeFrame();
+            },
+            onBeforeClosed:function(){
+                if(isOpenRelaList && isNotClickSure){
+                    api.closeFrame();
+                }
             }
         })
     }

@@ -31,9 +31,9 @@
         <div class="w-header bor-1px-b">
             <div class="w-header-cap" id="header-cap">
                 <div class="back" onclick="api.closeWin();"></div>
-                <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap" @click.stop="handleChangeChannel"><b v-text="captionText"></b><i></i></span></div>
+                <div class="w-hcap-txt flex-wrap flex-center"><span class="flex-wrap" @click.stop="handleChangeChannel"><b v-text="captionText"></b><i v-if="isExistChannelList && isExistSystemList"></i></span></div>
             </div>
-            <div class="search-box" id="header-search">
+            <div class="search-box" id="header-search" v-if="isExistChannelList">
                 <div class="search-inp">
                     <form action="#" onsubmit="return false;">
                         <i class="search" @click="submitSeach"></i>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="cancel-box" @click="cancelSearch">取消</div>
             </div>
-            <div class="w-filter-lists flex-wrap" id="filter-nav">
+            <div class="w-filter-lists flex-wrap" id="filter-nav" v-if="isExistChannelList">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,0)">
                     <span>客户来源</span><i></i>
                 </div>
@@ -75,14 +75,12 @@
 <script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/permission.js"></script>
 <script>
     var clannelHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
         var param = api.pageParam;
-        console.log(JSON.stringify(param))
-        // 打开新增客户
-        openNewCustomerFrame(param);
 
         // 筛选客户状态
         api.addEventListener({
@@ -90,6 +88,7 @@
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
+                console.log(JSON.stringify(obj))
                 if(typeof obj.status != 'undefined'){
                     clannelHeaderV.currStatus = obj.status;
                 }
@@ -99,10 +98,8 @@
                 if(typeof obj.endDate != 'undefined'){
                     clannelHeaderV.endDate = obj.endDate;
                 }
-                if(typeof obj.origin != 'undefined'){
-                    clannelHeaderV.currOrigin = obj.origin;
-                    clannelHeaderV.currOriginTwo = obj.originTwo;
-                    clannelHeaderV.currOriginType = obj.type;
+                if(typeof obj.currChannelOrigin != 'undefined'){
+                    clannelHeaderV.currChannelOrigin = obj.currChannelOrigin;
                 }
                 if(typeof obj.home != 'undefined'){
                     clannelHeaderV.currHome = obj.home;
@@ -130,10 +127,8 @@
             el:"#wrap",
             data:{
                 searchVal:'',
-                // 客户来源
-                currOrigin:param.val,
-                currOriginTwo:'',
-                currOriginType:'',
+                // 客户来源   渠道
+                currChannelOrigin:param.currChannelOrigin,
                 // 客户状态
                 currStatus:'',
 
@@ -144,7 +139,9 @@
                 // 排序
                 currSort:0,
                 isFocus:false,
-                captionText:'渠道分配'
+                captionText:'渠道分配',
+                isExistChannelList:true,
+                isExistSystemList:false
             },
             watch:{
                 captionText:function(nv){
@@ -167,7 +164,7 @@
                     });
                 }
             },
-            created:function(){
+            mounted:function(){
                 if(param.empId){
                     this.currOrigin = param.currOrigin;
                     this.currOriginTwo = param.currOriginTwo;
@@ -176,21 +173,52 @@
                 this.startDate = param.startDate;
                 this.endDate = param.endDate;
 
+
+                // 权限配置
+                this.isExistChannelList = permissionSetting.NEWCHANNELRESOURCE.fnChannelList();
+                this.isExistSystemList = permissionSetting.NEWCHANNELRESOURCE.fnSystemList();
+                if(this.isExistChannelList && this.isExistSystemList){
+                    this.captionText = '渠道分配';
+                }else{
+                    if(this.isExistChannelList){
+                        this.captionText = '渠道分配';
+                    }else{
+                        this.captionText = '系统分配';
+                    }
+                }
+                param.isExistChannelList = this.isExistChannelList;
+                param.isExistSystemList = this.isExistSystemList;
+                // 打开新增客户
+                openNewCustomerFrame(param);
             },
             methods:{
                 // 切换分配
                 handleChangeChannel:function(){
+                    if(!this.isExistChannelList || !this.isExistSystemList){
+                        return;
+                    }
                     // 跳转到frame的高度等
                     var y1 = api.safeArea.top + $('#header-cap').height() + ($('#header-search:visible').height()||0),
                         h1 = wHei - y1;
                     var frames = api.frames();
+                    console.log(JSON.stringify(frames))
                     var isHaveFilter = frames.some(function(v){
+                        return v.name === 'filterCustomerFrame'
+                    })
+                    var isHaveChannelFilter = frames.some(function(v){
                         return v.name === 'filterChannelPopup'
                     })
                     if(isHaveFilter){
                         api.closeFrame({
+                            name: 'filterCustomerFrame'
+                        });
+                        $('.w-filter-lis').removeClass('curr');
+                    }
+                    if(isHaveChannelFilter){
+                        api.closeFrame({
                             name: 'filterChannelPopup'
                         });
+
                     }else{
                         wHrefJs.openFrame({
                             name:'filterChannelPopup',
@@ -236,17 +264,12 @@
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
                         if(i === 0){
-                            wOpenCustomerOriginFrame({
+                            wOpenChannelCustomerOriginFrame({
                                 y:y,
                                 h:h,
                                 param:{
                                     origin:'filterChannelResource',
-                                    currSelected:_this.currOrigin,
-                                    currTwoSelected:_this.currOriginTwo,
-                                    currType:_this.currOriginType,
-                                    isHaveAllOrigin:false,
-                                    isHaveRecourcePool:false,
-                                    isHaveChannelResource:true,
+                                    currChannelOrigin:_this.currChannelOrigin
                                 }
                             });
                         }
@@ -266,16 +289,14 @@
                                 h:wHei,
                                 param:{
                                     origin:'filterChannelResource',
-                                    currOrigin:_this.currOrigin,
-                                    currOriginTwo:_this.currOriginTwo,
-                                    currType:_this.currOriginType,
+                                    currChannelOrigin:_this.currChannelOrigin,
                                     currStatus:_this.currStatus,
                                     currHome:_this.currHome,
                                     startDate:_this.startDate,
                                     endDate:_this.endDate,
                                     isHaveClassify:false,
                                     isHaveRecourcePool:false,
-                                    isHaveChannelResource:true,
+                                    isOnlyChannelResource:true,
                                     isHaveStatus:true
                                 }
                             });
@@ -331,13 +352,6 @@
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
-        var pObj = {
-            currOrigin:param.val,
-            currType:param.val == 0 ? 2 : 1,
-            currOriginTwo:'',
-            startDate:param.startDate,
-            endDate:param.startDate,
-        };
         wHrefJs.openFrame({
             name:'channelFrame',
             path:'./channel_frame.html',
@@ -345,7 +359,7 @@
             h:h,
             bounces:true,
             bgColor:'#f7f7f7',
-            param:pObj,
+            param:param,
             animation:{
                 type:'none'
             }

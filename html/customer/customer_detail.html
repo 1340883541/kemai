@@ -229,6 +229,7 @@
         $api.fixStatusBar($('#back-box')[0]);
 
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         // 下拉加载更多
         api.addEventListener({
             name: 'scrolltobottom',
@@ -372,7 +373,7 @@
                             pageSize: 10
                         },
                         success: function(res) {
-                            console.log('customer detail---' + JSON.stringify(res))
+                            // console.log('customer detail---' + JSON.stringify(res))
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },200);
@@ -565,7 +566,8 @@
                             isWork: param.isWork,
                             idName:param.idName||'',
                             type: i === 0 ? 1 : 0,
-                            origin:param.origin
+                            origin:param.origin,
+                            way:param.way
                         },
                         slidBackEnabled: false
                     });

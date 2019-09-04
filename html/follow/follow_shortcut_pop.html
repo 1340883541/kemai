@@ -67,6 +67,12 @@ apiready = function(){
             },
             handleSaveCustomerShortcut:function(){
                 var _this = this;
+                if(this.clientName.trim() == ''){
+                    wDialog.toast({
+                        msg:'请输入快捷用语'
+                    })
+                    return;
+                }
                 api.execScript({
                     name: 'followRecordMore',
                     script: "funcSaveCustomerShortcut(\'"+_this.clientName+"\');"

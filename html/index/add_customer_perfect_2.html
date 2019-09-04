@@ -431,7 +431,8 @@
                             console.log(JSON.stringify(res))
                             if (res.code == 1) {
                                 wDialog.alert({
-                                    msg: '完善购物需求成功',
+                                    msg: '购房需求已完善！',
+                                    button:['好的'],
                                     cb: function() {
                                         if(param.origin === 'channelResourceAllot'){
                                             api.closeToWin({

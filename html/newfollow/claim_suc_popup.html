@@ -98,6 +98,7 @@
 <script>
     apiready = function(){
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         document.querySelector('#claim-popup').className += ' curr';
         if(param.origin === 'channelResourceAllot' && param.openRela === 'channelResourceList'){
             document.querySelector('#back').innerText = '关闭';
@@ -116,11 +117,13 @@
         }
     }
     function handleSkipSetInfo(){
+        var param = api.pageParam;
         wHrefJs.openWin({
             name:'addCustomerPerfect1',
             url:'../index/add_customer_perfect_1.html',
             param:{
-                origin:'channelResourceAllot'
+                origin:'channelResourceAllot',
+                cusId:param.id
             }
         })
         api.closeFrame();

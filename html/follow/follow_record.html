@@ -443,8 +443,8 @@
                                 _this.isTruePhone = wValidate.checkPhone(_this.cusPhone).status;
                                 _this.isTrueOhterPhone1 = wValidate.checkPhone(_this.cusOtherPhone1).status;
                                 _this.isTrueOhterPhone2 = wValidate.checkPhone(_this.cusOtherPhone2).status;
-                                console.log(_this.isTrueOhterPhone1)
-                                console.log(_this.isTrueOhterPhone2)
+                                // console.log(_this.isTrueOhterPhone1)
+                                // console.log(_this.isTrueOhterPhone2)
                                 if(_this.isPwdWechat){
                                     _this.showCusPhone = _this.cusPhone;
                                     _this.showCusOtherPhone1 = _this.cusOtherPhone1;
@@ -502,7 +502,7 @@
                         },
                         success:function(res){
                             wDialog.hideProgress();
-                            console.log('follow record response ---> '+JSON.stringify(res))
+                            // console.log('follow record response ---> '+JSON.stringify(res))
                             if(res.code==0){
                                 if(_this.isEditFollow){
                                     _this.followWayList.forEach(function(v){
@@ -870,8 +870,8 @@
                                 // 有正常的通话没有添加跟进记录
                                 if(res.data.existCallLogState == 0){
                                     wDialog.confirm({
-                                        msg:'当前客户上次通话后未添加跟进记录，是否补录？',
-                                        button:['是','否'],
+                                        msg:'此客户上次未添加跟进记录，确定补录吗？',
+                                        button:['确定补录','跳过此步'],
                                         sureCb:function(){
                                             _this.isSavePrevNormalTalkingRecord = true;
                                             _this.isShowTalkingResult = false;

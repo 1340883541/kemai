@@ -200,8 +200,8 @@ apiready = function(){
                 if(this.currOriginOneVal){
                     var _this = this;
                     wDialog.confirm({
-                        msg:'当前选择了客户来源，是否要继续返回?',
-                        button:['是','否'],
+                        msg:'返回后客户来源将被清空，确定返回吗？',
+                        button:['返回','继续选择'],
                         sureCb:function(){
                             api.closeWin();
                         }

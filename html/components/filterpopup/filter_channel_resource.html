@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>渠道资源 筛选</title>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop1" @click.stop.prevent>
+                <ul>
+                    <li :class="{'curr':currChannelOrigin==''}" @click.stop="handlePitchChannelResource('')">全部</li>
+                    <li
+                        v-for="classify in channelResourceData"
+                        :key="classify.value"
+                        v-text="classify.name"
+                        :class="{'curr':currChannelOrigin==classify.value}"
+                        @click.stop="handlePitchChannelResource(classify.value)"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    var param = api.pageParam;
+    console.log(JSON.stringify(param))
+    new Vue({
+        el:'#wrapper',
+        data:{
+            channelResourceData:[],
+            currChannelOrigin:''
+        },
+        mounted:function(){
+            this.currChannelOrigin = param.currChannelOrigin;
+            this.fetchChannelResourceData();
+        },
+        methods:{
+            fetchChannelResourceData:function(){
+                var _this = this;
+                var channelResourceData = window.localStorage.getItem('channelResourceData');
+                if(channelResourceData && channelResourceData !== 'undefined'){
+                    this.channelResourceData = JSON.parse(channelResourceData);
+                }
+                else{
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'dataSource/channelCusSourse ',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.channelResourceData = res.data || [];
+                                window.localStorage.setItem('channelResourceData',JSON.stringify(res.data));
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
+                }
+            },
+            // 筛选客户状态
+            handlePitchChannelResource:function(val){
+                var _this = this;
+                this.currChannelOrigin = val;
+                api.sendEvent({
+                    name: param.origin,
+                    extra: {
+                        currChannelOrigin:val
+                    }
+                });
+                api.closeFrame();
+            },
+            handleCloseFilterPopup:function(){
+                var _this = this;
+                api.sendEvent({
+                    name: param.origin
+                });
+                api.closeFrame();
+            }
+        }
+    })
+}
+</script>
+</html>

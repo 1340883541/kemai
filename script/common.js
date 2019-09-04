@@ -128,6 +128,17 @@ function wOpenCustomerOriginFrame(par){
         param:par.param
     })
 }
+// 打开渠道客户来源筛选框
+function wOpenChannelCustomerOriginFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_channel_resource.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
 // 打开客户来源归类筛选框
 function wOpenCustomerClassifyFrame(par){
     par = par || {};
@@ -909,7 +920,7 @@ var wDialog = {
     		$(document).dialog({
     			type:'confirm',
     			content:par.msg || par.title || '',
-                overlayClose:false,
+                overlayClose:par.overlayClose || false,
     			buttonTextConfirm:par.button ? par.button[0] ? par.button[0] : '确定' : '确定',
     			buttonTextCancel:par.button ? par.button[1] ? par.button[1] : '取消' : '取消',
     			onClickConfirmBtn:function(){
@@ -917,6 +928,9 @@ var wDialog = {
                 },
     			onClickCancelBtn:function(){
                     par.cancelCb && typeof par.cancelCb === 'function' && par.cancelCb();
+                },
+                onBeforeClosed:function(){
+                    par.onBeforeClosed && typeof par.onBeforeClosed === 'function' && par.onBeforeClosed();
                 }
     		})
         }else{

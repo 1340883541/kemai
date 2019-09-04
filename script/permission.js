@@ -3,7 +3,7 @@
  */
 var permissionList = myLocalStorage.getItem('permissionList');
 var getSessionPermission = permissionList ? JSON.parse(permissionList) : '';
-console.log(permissionList)
+// console.log(permissionList)
 var permissionSetting = {
     init:function(){
         if(getSessionPermission){
@@ -16,6 +16,7 @@ var permissionSetting = {
             console.log('获取权限配置列表失败')
         }
     },
+    // 分配
     ALLOT:{
         code:'001000',
         perList:[],
@@ -39,6 +40,34 @@ var permissionSetting = {
                     });
                     return some;
                 }
+            }else{
+                return false;
+            }
+        }
+    },
+    // 今日新增渠道资源  系统资源和渠道资源列表权限
+    NEWCHANNELRESOURCE:{
+        code:'002000',
+        perList:[],
+        fnChannelList:function(){
+            permissionSetting.init.call(this);
+            // console.log(JSON.stringify(this.perList))
+            if(this.perList.length !== 0){
+                var isCunTime = this.perList.some(function(v){
+                    return (v.coding == '002001')
+                });
+                return isCunTime;
+            }else{
+                return false;
+            }
+        },
+        fnSystemList:function(){
+            permissionSetting.init.call(this);
+            if(this.perList.length !== 0){
+                var isCunTime = this.perList.some(function(v){
+                    return (v.coding == '002002')
+                });
+                return isCunTime;
             }else{
                 return false;
             }
@@ -147,11 +176,11 @@ var permissionSetting = {
                     }
                     return (v.coding == '008001' || v.coding == '008002' || v.coding == '008003' || v.coding == '008004')
                 });
-                console.log(code)
-                console.log(markType)
+                // console.log(code)
+                // console.log(markType)
                 // 有这个权限
                 if(some){
-                    console.log('innnnnnnnnnnn')
+                    // console.log('innnnnnnnnnnn')
                     // 微信号查看 - 销售负责人为自己/不为自己  - 明文/密文
                     if(code == '008001'){
                         if(markType == 0){

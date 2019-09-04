@@ -81,12 +81,12 @@
     <div id="wrap" v-cloak  @touchstart.stop="handleBlur">
         <div v-show="isShowChannelAllotList" style="display:none;">
             <div class="filter-lists" v-show="customerList1 && customerList1.length > 0" style="display:none;" v-cloak>
-                <div class="filter-lis" v-for="cus in customerList1" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id)">
+                <div class="filter-lis" v-for="cus in customerList1" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,0)">
                     <div class="filter-lt flex-wrap flex-between">
                         <div class="flex-wrap filter-lcap">
                             <span class="cname w-elli" v-text="cus.name"></span>
                             <!-- 待跟进   已认领   已退回渠道 -->
-                            <span class="rela-state" v-show="cus.claimstatus == 3" style="display:none;" :class="[cus.claimstatus == 3?'red-bg':'']">待跟进</span>
+                            <span class="rela-state" v-show="cus.status == 3" style="display:none;" :class="[cus.status == 3?'red-bg':'']">待跟进</span>
                         </div>
                         <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id)">去跟进</div>
                     </div>
@@ -98,7 +98,7 @@
                             <div class="lis flex-con flb-cls2">分配时间: <span v-text="cus.allocationtime"></span></div>
                         </div>
                     </div>
-                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id)">该客户未认领成功，立即认领>></div>
+                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id,0)" v-show="cus.status == 2" style="display:none;">该客户未认领成功，立即认领>></div>
                     <i></i>
                 </div>
                 <!-- 无更多数据 -->
@@ -109,24 +109,25 @@
         </div>
         <div v-show="!isShowChannelAllotList" style="display:none;">
             <div class="filter-lists" v-show="customerList2 && customerList2.length > 0" style="display:none;" v-cloak>
-                <div class="filter-lis" v-for="cus in customerList2" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id)">
+                <div class="filter-lis" v-for="cus in customerList2" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,1)">
                     <div class="filter-lt flex-wrap flex-between">
                         <div class="flex-wrap filter-lcap">
                             <span class="cname w-elli" v-text="cus.name"></span>
                             <!-- 待跟进   已认领   已退回渠道 -->
-                            <span class="rela-state" :class="[cus.status == '未跟进'?'red-bg':'green-bg']" v-text="cus.status"></span>
+                            <span class="rela-state" v-show="cus.status == 3" style="display:none;" :class="[cus.status == 3?'red-bg':'']">待跟进</span>
                         </div>
-                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id)">去跟进</div>
+                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id,1)">去跟进</div>
                     </div>
                     <div class="filter-lb">
                         <div class="flex-wrap filter-lb1" style="margin-top:8px;">
                             <div class="lis flex-con flb-cls2">客户编号: <span v-text="cus.id||'无'"></span></div>
                             <div class="lis flex-con flb-cls2">号码归属: <span v-text="cus.attribution||'未知'"></span></div>
-                            <div class="lis flex-con flb-cls2">客户类型: <span>短期</span></div>
-                            <div class="lis flex-con flb-cls2">分配时间: <span>2019-06-20</span></div>
+                            <div class="lis flex-con flb-cls2">客户类型: <span v-text="cus.estate"></span></div>
+                            <div class="lis flex-con flb-cls2">分配时间: <span v-text="cus.allocationtime"></span></div>
                         </div>
                     </div>
-                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id)">该客户未认领成功，立即认领>></div>
+                    <div class="filter-foot" @click.stop="handleOpenSureClaimPopup(cus.id,cus.phone,'cus-lis-'+cus.id,1)" v-show="cus.status == 2" style="display:none;">该客户未认领成功，立即认领>></div>
+                    <i></i>
                 </div>
             </div>
             <!-- 空页面 -->
@@ -185,11 +186,20 @@
         api.addEventListener({
             name: 'channelResourceSendBackSuccess'
         }, function(ret, err){
-            alert(JSON.stringify(ret))
             if( ret && ret.value ){
                  var idName = ret.value.idName
                  $('#'+idName).addClass('disabled');
                  $('#'+idName + ' .rela-state').text('已退回渠道').show();
+                 $('#'+idName + ' .filter-foot').hide();
+                 if(!clannelFrameV.isShowChannelAllotList){
+                     clannelFrameV.customerList2 = clannelFrameV.customerList2.map(function(v){
+                         if(idName.indexOf(v.id)>-1){
+                            v.isBackOrClaim = 1;
+                         }
+                         return v;
+                     });
+                     clannelFrameV.fnCalcAllFinish();
+                 }
             }
         });
         // 监听认领
@@ -200,6 +210,16 @@
                  var idName = ret.value.idName
                  $('#'+idName).addClass('disabled');
                  $('#'+idName + ' .rela-state').text('已认领').show();
+                 $('#'+idName + ' .filter-foot').hide();
+                 if(!clannelFrameV.isShowChannelAllotList){
+                     clannelFrameV.customerList2 = clannelFrameV.customerList2.map(function(v){
+                         if(idName.indexOf(v.id)>-1){
+                            v.isBackOrClaim = 1;
+                         }
+                         return v;
+                     });
+                     clannelFrameV.fnCalcAllFinish();
+                 }
             }
         });
 
@@ -209,6 +229,7 @@
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
+                console.log(JSON.stringify(obj))
                 if(typeof obj.status != 'undefined'){
                     clannelFrameV.currStatus = obj.status;
                 }
@@ -218,9 +239,8 @@
                 if(typeof obj.endDate != 'undefined'){
                     clannelFrameV.endDate = obj.endDate;
                 }
-                if(typeof obj.origin != 'undefined'){
-                    clannelFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
-                    clannelFrameV.currType = obj.type;
+                if(typeof obj.currChannelOrigin != 'undefined'){
+                    clannelFrameV.currChannelOrigin = obj.currChannelOrigin;
                 }
                 if(typeof obj.home != 'undefined'){
                     clannelFrameV.currHome = obj.home;
@@ -237,7 +257,6 @@
         api.addEventListener({
             name: 'scrolltobottom'
         }, function(ret, err) {
-            console.log('innnnnnn')
             if (clannelFrameV.isShowChannelAllotList) {
                 if(++clannelFrameV.pageNo <= clannelFrameV.totalPage){
                     clannelFrameV.fetchChannelData1(true);
@@ -253,14 +272,20 @@
         //     clannelFrameV.pageNo = 1;
         //     clannelFrameV.fetchChannelData();
         // });
-
+        var count = 1;
         // 获取切换分配
         api.addEventListener({
             name: 'switchChannelCaptionTxt'
         }, function(ret, err){
-            if(ret && ret.value){;
+            if(ret && ret.value){
                 var name = ret.value.txt;
                 name === '渠道分配' ? clannelFrameV.isShowChannelAllotList = true : clannelFrameV.isShowChannelAllotList = false;
+                if(name === '系统分配'){
+                    if(count === 1){
+                        clannelFrameV.fetchChannelData2();
+                    }
+                    count++;
+                }
             }
         });
         var param = api.pageParam;
@@ -270,14 +295,15 @@
         }, function(ret, err){
             clannelFrameV.isKeybordshow = true;
         });
+        console.log(JSON.stringify(param))
         clannelFrameV = new Vue({
             el: '#wrap',
             data: {
                 // 筛选条件
                 search_cusName: '', // 搜索客户名
+                currChannelOrigin:'',
+
                 currStatus:'',
-                currOrigin:'',
-                currType:'',
                 currHome:'',
                 currSort:0,
                 startDate:'',
@@ -295,8 +321,29 @@
             },
             mounted: function() {
                 this.init();
-                this.fetchChannelData1();
-                this.fetchChannelData2();
+                if(param.isExistChannelList && param.isExistSystemList){
+                    this.isShowChannelAllotList = true;
+                }else{
+                    if(param.isExistChannelList){
+                        this.isShowChannelAllotList = true;
+                        this.isLoadFinish2 = true;
+                    }
+                    if(param.isExistSystemList || (!param.isExistSystemList && !param.isExistChannelList)){
+                        this.isShowChannelAllotList = false;
+                        this.isLoadFinish1 = true;
+                    }
+                }
+                if(param.isExistChannelList && param.isExistSystemList){
+                    this.isLoadFinish2 = true;
+                    this.fetchChannelData1();
+                }else{
+                    if(param.isExistChannelList){
+                        this.fetchChannelData1();
+                    }
+                    if(param.isExistSystemList || (!param.isExistSystemList && !param.isExistChannelList)){
+                        this.fetchChannelData2();
+                    }
+                }
             },
             computed:{
                 isLoadSuc:function(){
@@ -312,8 +359,7 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
-                    this.currType = param.currType;
+                    this.currChannelOrigin = param.currChannelOrigin;
                     this.startDate = param.startDate;
                     this.endDate = param.endDate;
                 },
@@ -335,7 +381,7 @@
                     console.log('new customer frame request----'+JSON.stringify({
                         employeeid: _this.userInfo.employeeid,
                         cusNameOrCrmOrPhone:_this.search_cusName,
-                        cusSource:_this.currOrigin,
+                        cusSource:_this.currChannelOrigin,
                         cusStatus:_this.currStatus,
                         attributionid:_this.currHome,
                         startTime:_this.startDate,
@@ -352,7 +398,7 @@
                         data:{
                             employeeid: _this.userInfo.employeeid,
                             cusNameOrCrmOrPhone:_this.search_cusName,
-                            cusSource:9,
+                            cusSource:_this.currChannelOrigin,
                             cusStatus:_this.currStatus,
                             attributionid:_this.currHome,
                             startTime:_this.startDate,
@@ -367,6 +413,7 @@
                             if(res.code == 1){
                                 _this.totalPage = Math.ceil(res.count / 10);
                                 if(!isLoadMore){
+                                    $('.filter-lis').removeClass('disabled');
                                     _this.customerList1 = res.data || [];
                                 }else{
                                     _this.customerList1 = _this.customerList1.concat(res.data||[]);
@@ -383,10 +430,40 @@
                 // 获取系统分配列表
                 fetchChannelData2: function(callback) {
                     var _this = this;
-                    _this.isLoadFinish2 = true;
+                    _this.isLoadFinish2 = false;
+                    wDialog.showProgress();
+                    console.log('-------------------------------')
+                    wApiAjax({
+                        url:'newResource/chalResList/sysAllot',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        success:function(res){
+                            // console.log(JSON.stringify(res))
+                            _this.isLoadFinish2 = true;
+                            if(res.code == 1){
+                                _this.customerList2 = res.data || [];
+                            }
+                            callback && typeof callback === 'function' && callback();
+                        },
+                        fail:function(){
+                            _this.isLoadFinish2 = true;
+                            callback && typeof callback === 'function' && callback();
+                        }
+                    })
+                },
+                fnCalcAllFinish:function(){
+                    console.log(JSON.stringify(this.customerList2))
+                    var isAllBackOrClaim = this.customerList2.every(function(v){
+                        return v.isBackOrClaim;
+                    });
+                    if(isAllBackOrClaim){
+                        console.log('innnnnnnnnnnnnnnnnnnn')
+                        this.fetchChannelData2();
+                    }
                 },
                 // 弹出确认认领弹窗
-                handleOpenSureClaimPopup:function(id,phone,idName){
+                handleOpenSureClaimPopup:function(id,phone,idName,way){
                     wHrefJs.openFrame({
                         name:'claimSurePopup',
                         url:'../newfollow/claim_sure_popup.html',
@@ -397,12 +474,13 @@
                             isWork:2,
                             idName:idName,
                             origin:'channelResourceAllot',
-                            openRela:'channelResourceList'
+                            openRela:'channelResourceList',
+                            way:way
                         }
                     })
                 },
                 // 跳转到详情
-                skipCustomerDetail: function(id,phone,idName) {
+                skipCustomerDetail: function(id,phone,idName,way) {
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     wHrefJs.openWin({
                         name: 'customerDetail',
@@ -412,12 +490,13 @@
                             cusPhone:phone,
                             isWork:2,
                             idName:idName,
-                            origin:'channelResourceAllot'
+                            origin:'channelResourceAllot',
+                            way:way
                         }
                     })
                 },
                 // 跳转到跟进记录
-                handleSkipFollow:function(id,phone,idName){
+                handleSkipFollow:function(id,phone,idName,way){
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     api.openWin({
                         name: 'followRecord',
@@ -427,7 +506,8 @@
                             phone:phone,
                             isWork:2,
                             idName:idName,
-                            origin:'channelResourceAllot'
+                            origin:'channelResourceAllot',
+                            way:way
                         },
                         slidBackEnabled: false
                     });
