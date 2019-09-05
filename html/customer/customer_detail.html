@@ -317,7 +317,6 @@
             },
             watch: {
                 isShowDetailBox: function(nv) {
-
                     var capOffsetTop = $('#js_cd_cap').offset().top - 40;
                     var navOffsetTop = $("#js_cd_nav").offset().top;
                     fnCalcScroll(capOffsetTop,navOffsetTop);
@@ -564,9 +563,10 @@
                             phone: _this.cusPhone,
                             followId: i == 0 ? _this.followRootId : '',
                             isWork: param.isWork,
-                            idName:param.idName||'',
                             type: i === 0 ? 1 : 0,
+                            idName:param.idName||'',
                             origin:param.origin,
+                            status:param.status,
                             way:param.way
                         },
                         slidBackEnabled: false

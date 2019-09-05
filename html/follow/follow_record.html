@@ -1192,14 +1192,24 @@
                     })
                 },
                 fnChannelFollow:function(){
-                    this.isShowClaimPopup = true;
-                    param.content = this.followContent;
-                    wHrefJs.openFrame({
-                        name:'claimSurePopup',
-                        url:'../newfollow/claim_sure_popup.html',
-                        bgColor:'rgba(0,0,0,0)',
-                        param:param
-                    })
+                    console.log(JSON.stringify(param))
+                    if(param.status == 3){
+                        api.sendEvent({
+                            name: 'channelResourceFollowSuc',
+                            extra: {
+                                idName:param.idName
+                            }
+                        });
+                    }else{
+                        this.isShowClaimPopup = true;
+                        param.content = this.followContent;
+                        wHrefJs.openFrame({
+                            name:'claimSurePopup',
+                            url:'../newfollow/claim_sure_popup.html',
+                            bgColor:'rgba(0,0,0,0)',
+                            param:param
+                        })
+                    }
                 },
                 // 返回,判断数据改变没有给出提示
                 handleBack:function(){

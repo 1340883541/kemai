@@ -37,7 +37,8 @@
 <body>
     <div id="wrap" v-cloak>
         <div class="filter-lists" v-if="customerDataList && customerDataList.length > 0">
-            <div class="filter-lis" v-for="khdata in customerDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.cusId,khdata.cusPhone)">
+            <!-- <div class="filter-lis" v-for="khdata in customerDataList" :key="khdata.id" @click.stop="skipCustomerDetail(khdata.cusId,khdata.cusPhone)"> -->
+            <div class="filter-lis" v-for="khdata in customerDataList" :key="khdata.id">
                 <div class="filter-lt flex-wrap flex-between">
                     <div class="flex-wrap filter-lcap flex-con"><span class="cname w-elli" v-text="khdata.cusName"></span><span class="rela-state" :class="[khdata.status == 1?'green-bg':'red-bg']" v-text="khdata.statStr"></span></div>
                     <div class="call-time" v-if="khdata.callTimeStr" v-text="khdata.callTimeStr"></div>
@@ -262,15 +263,15 @@
                 // 跳转客户详情
                 skipCustomerDetail: function(id,phone) {
                     console.log('skip detail  ' + id + '----' + phone);
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: '../customer/customer_detail.html',
-                        param: {
-                            cusId: id,
-                            cusPhone:phone,
-                            isWork:1
-                        }
-                    })
+                    // wHrefJs.openWin({
+                    //     name: 'customerDetail',
+                    //     path: '../customer/customer_detail.html',
+                    //     param: {
+                    //         cusId: id,
+                    //         cusPhone:phone,
+                    //         isWork:1
+                    //     }
+                    // })
                 }
             }
         })

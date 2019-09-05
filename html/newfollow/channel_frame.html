@@ -81,14 +81,14 @@
     <div id="wrap" v-cloak  @touchstart.stop="handleBlur">
         <div v-show="isShowChannelAllotList" style="display:none;">
             <div class="filter-lists" v-show="customerList1 && customerList1.length > 0" style="display:none;" v-cloak>
-                <div class="filter-lis" v-for="cus in customerList1" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,0)">
+                <div class="filter-lis" v-for="cus in customerList1" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,cus.status,0)">
                     <div class="filter-lt flex-wrap flex-between">
                         <div class="flex-wrap filter-lcap">
                             <span class="cname w-elli" v-text="cus.name"></span>
                             <!-- 待跟进   已认领   已退回渠道 -->
                             <span class="rela-state" v-show="cus.status == 3" style="display:none;" :class="[cus.status == 3?'red-bg':'']">待跟进</span>
                         </div>
-                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id)">去跟进</div>
+                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id,cus.status,0)">去跟进</div>
                     </div>
                     <div class="filter-lb">
                         <div class="flex-wrap filter-lb1" style="margin-top:8px;">
@@ -109,14 +109,14 @@
         </div>
         <div v-show="!isShowChannelAllotList" style="display:none;">
             <div class="filter-lists" v-show="customerList2 && customerList2.length > 0" style="display:none;" v-cloak>
-                <div class="filter-lis" v-for="cus in customerList2" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,1)">
+                <div class="filter-lis" v-for="cus in customerList2" :key="cus.id" :id="'cus-lis-'+cus.id" @click.stop="skipCustomerDetail(cus.id,cus.phone,'cus-lis-'+cus.id,cus.status,1)">
                     <div class="filter-lt flex-wrap flex-between">
                         <div class="flex-wrap filter-lcap">
                             <span class="cname w-elli" v-text="cus.name"></span>
                             <!-- 待跟进   已认领   已退回渠道 -->
                             <span class="rela-state" v-show="cus.status == 3" style="display:none;" :class="[cus.status == 3?'red-bg':'']">待跟进</span>
                         </div>
-                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id,1)">去跟进</div>
+                        <div class="cphone" @click.stop="handleSkipFollow(cus.id,cus.phone,'cus-lis-'+cus.id,cus.status,1)">去跟进</div>
                     </div>
                     <div class="filter-lb">
                         <div class="flex-wrap filter-lb1" style="margin-top:8px;">
@@ -210,6 +210,26 @@
                  var idName = ret.value.idName
                  $('#'+idName).addClass('disabled');
                  $('#'+idName + ' .rela-state').text('已认领').show();
+                 $('#'+idName + ' .filter-foot').hide();
+                 if(!clannelFrameV.isShowChannelAllotList){
+                     clannelFrameV.customerList2 = clannelFrameV.customerList2.map(function(v){
+                         if(idName.indexOf(v.id)>-1){
+                            v.isBackOrClaim = 1;
+                         }
+                         return v;
+                     });
+                     clannelFrameV.fnCalcAllFinish();
+                 }
+            }
+        });
+        // 监听待跟进的跟进成功
+        api.addEventListener({
+            name: 'channelResourceFollowSuc'
+        }, function(ret, err){
+            if( ret && ret.value ){
+                 var idName = ret.value.idName
+                 $('#'+idName).addClass('disabled');
+                 $('#'+idName + ' .rela-state').text('已跟进').show();
                  $('#'+idName + ' .filter-foot').hide();
                  if(!clannelFrameV.isShowChannelAllotList){
                      clannelFrameV.customerList2 = clannelFrameV.customerList2.map(function(v){
@@ -439,10 +459,14 @@
                             token:TOKEN_DATA
                         },
                         success:function(res){
-                            // console.log(JSON.stringify(res))
+                            console.log(JSON.stringify(res))
                             _this.isLoadFinish2 = true;
                             if(res.code == 1){
                                 _this.customerList2 = res.data || [];
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
                             }
                             callback && typeof callback === 'function' && callback();
                         },
@@ -480,7 +504,7 @@
                     })
                 },
                 // 跳转到详情
-                skipCustomerDetail: function(id,phone,idName,way) {
+                skipCustomerDetail: function(id,phone,idName,status,way) {
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     wHrefJs.openWin({
                         name: 'customerDetail',
@@ -491,12 +515,13 @@
                             isWork:2,
                             idName:idName,
                             origin:'channelResourceAllot',
+                            status:status,
                             way:way
                         }
                     })
                 },
                 // 跳转到跟进记录
-                handleSkipFollow:function(id,phone,idName,way){
+                handleSkipFollow:function(id,phone,idName,status,way){
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
                     api.openWin({
                         name: 'followRecord',
@@ -507,6 +532,7 @@
                             isWork:2,
                             idName:idName,
                             origin:'channelResourceAllot',
+                            status:status,
                             way:way
                         },
                         slidBackEnabled: false
