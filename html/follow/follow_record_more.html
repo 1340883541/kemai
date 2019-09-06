@@ -200,9 +200,15 @@
                                     _this.content_name = "";
                                     _this.getUserInfo();
                                 } else {
-                                    wDialog.toast({
-                                        msg: res.msg
-                                    })
+                                    setTimeout(function(){
+                                        $('.follow-popup').hide();
+                                        _this.content_name = "";
+                                        wDialog.toast({
+                                            msg: res.msg,
+                                            location:'middle',
+                                            global:'false'
+                                        })
+                                    },300)
                                 }
                             }
                         })

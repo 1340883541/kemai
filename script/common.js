@@ -884,6 +884,7 @@ var wDialog = {
         par.location = par.location || 'bottom';
         // global 设置为 true 安卓手机上面弹出的位置将会固定在底部区域
         par.global = par.global == 'false' ? false : true;
+        console.log(par.location)
         api.toast({
             msg: par.msg,
             duration: par.duration,
