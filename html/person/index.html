@@ -101,6 +101,15 @@
                     </div> -->
                     <div class="person_center account_security">
                         <div class="account_left">
+                            <div><img src="../../image/icon-gr-add.png"></div>
+                        </div>
+                        <div class="account_rig bor-1px-b" @click="handleSkipAddCustomer">
+                            <span>新增客户</span>
+                            <div><img src="../../image/icon-gr-jiantou.png"></div>
+                        </div>
+                    </div>
+                    <div class="person_center account_security">
+                        <div class="account_left">
                             <div><img src="../../image/icon-gy-bj.png"></div>
                         </div>
                         <div class="account_rig bor-1px-b" @click="aboutLocal">
@@ -189,6 +198,12 @@
                     wHrefJs.openWin({
                         name: 'aboutLocal',
                         path: './about_local.html',
+                    })
+                },
+                handleSkipAddCustomer:function(){
+                    wHrefJs.openWin({
+                        name: 'addCustomer',
+                        url: '../index/add_customer.html'
                     })
                 },
                 setting_tel: function() {

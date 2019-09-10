@@ -981,18 +981,19 @@ body, html {
 }
 
 .quick_lag_ul .quick_lag_li .li_text .li_t_mun {
-    width: 12px;
+    width: 16px;
     height: 100%;
     display: block;
     float: left;
-    text-align: center;
+    text-align: left;
     padding-top: 17px;
     padding-bottom: 17px;
 }
 
 .quick_lag_ul .quick_lag_li .li_text .li_t_info {
     float: left;
-    width: calc(100% - 12px);
+    /*width: calc(100% - 16px);*/
+    width: 100%;
     line-height: 24px;
     padding-top: 14px;
     padding-left: 4px;

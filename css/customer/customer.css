@@ -485,6 +485,17 @@
     line-height:24px;;
     overflow: hidden;
 }
+.cd-contain .cd-flow .cd-flow-tit > .cap{
+    font-size: 15px;
+    color:#333;
+}
+.cd-contain .cd-flow .cd-flow-tit > .time{
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 13px;
+    color:#999;
+}
 .cd-contain .cd-flow .cd-flow-tit > .copy-edit{
     position: absolute;
     top:0;
@@ -670,7 +681,10 @@
 .cd-contain .cd-employee-lis .cd-flow-timebox .gj{
     padding: 0;
 }
-.cd-contain .cd-employee-lis .cd-flow-timebox .gj > span.emp-acount{
+.cd-contain .cd-employee-lis .cd-flow-timebox .gj b{
+    font-weight: normal;
+}
+.cd-contain .cd-employee-lis .cd-flow-timebox .gj b.emp-acount{
     color:#0c7ff9;
 }
 .cd-contain .cd-flow .cd-flow-timebox .gj > i{

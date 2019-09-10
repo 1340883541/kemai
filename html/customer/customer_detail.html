@@ -194,11 +194,14 @@
                                 :class="[history.type == 4 ? 'cd-emp-icon0' : 'cd-emp-icon1']"
                             ></div>
                             <div class="cd-flow-tit">
-                                <span v-text="history.createtime"></span>
+                                <span class="cap">{{history.type == 4 ? '渠道负责人变更' : '销售负责人变更'}}</span>
+                                <span class="time" v-text="history.createtime"></span>
                             </div>
                             <div class="cd-flow-timebox">
                                 <i class="top-icon"></i>
-                                <div class="gj-time gj"><span>负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div>
+                                <!-- <div class="gj-time gj"><span>负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div> -->
+                                <div class="gj-time gj flex-wrap"><span>操作人：</span><span class="flex-con" v-text="history.operatortypename + '-' + history.operatorName"></span></div>
+                                <div class="gj-time gj flex-wrap"><span>变更为：</span><span class="flex-con"><b v-text="history.typename"></b>-<b class="emp-acount" v-text="history.name"></b></span></div>
                             </div>
                         </div>
                         <!-- 空页面 -->

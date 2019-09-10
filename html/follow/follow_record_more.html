@@ -43,8 +43,8 @@
                 <li class="quick_lag_li border-1px" v-for="(type,i) in lists" :key="i">
                     <div class="li_radio" @click="selectedProduct(i)"><i class="uncheck" :class="{check:type.isSelect}"></i></div>
                     <div class="li_text clear">
-                        <div class="li_t_mun">{{i+1}}.</div>
-                        <div class="li_t_info w-elli-4">{{type.content}}</div>
+                        <!-- <div class="li_t_mun"></div> -->
+                        <div class="li_t_info w-elli-4">{{i+1}}. {{type.content}}</div>
                     </div>
                 </li>
             </ul>

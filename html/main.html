@@ -157,30 +157,30 @@
         //     $('#follow-p').hide();
         // });
         openFrameGroup(0);
-        openAddCustomerIcon();
+        // openAddCustomerIcon();
     };
-    function openAddCustomerIcon(){
-        // 添加打开添加图标
-        var y;
-        if(isIphoneX()){
-             y = $(window).height() - 147;
-        }else{
-            y = $(window).height() -115;
-        }
-        api.openFrame({
-            name: 'addCustomerIcon',
-            url: './index/add_customer_icon.html',
-            rect: {
-                x: $(window).width() - 65,
-                y: y,
-                w: 50,
-                h: 50
-            },
-            bounces: false,
-            bgColor: 'rgba(0,0,0,0)',
-            fixedOn:'ui_window'
-        });
-    }
+    // function openAddCustomerIcon(){
+    //     // 添加打开添加图标
+    //     var y;
+    //     if(isIphoneX()){
+    //          y = $(window).height() - 147;
+    //     }else{
+    //         y = $(window).height() -115;
+    //     }
+    //     api.openFrame({
+    //         name: 'addCustomerIcon',
+    //         url: './index/add_customer_icon.html',
+    //         rect: {
+    //             x: $(window).width() - 65,
+    //             y: y,
+    //             w: 50,
+    //             h: 50
+    //         },
+    //         bounces: false,
+    //         bgColor: 'rgba(0,0,0,0)',
+    //         fixedOn:'ui_window'
+    //     });
+    // }
     // 底部按钮切换
     function setFootBar(_this, i) {
         if (!$(_this).hasClass('curr')) {
@@ -204,13 +204,13 @@
                     frameName: 'index',
                     script: 'refrshIndexData();'
                 });
-                if(api.systemType !== 'ios'){
-                    api.bringFrameToFront ({
-                        from: 'addCustomerIcon'
-                    });
-                }else{
-                    openAddCustomerIcon();
-                }
+                // if(api.systemType !== 'ios'){
+                //     api.bringFrameToFront ({
+                //         from: 'addCustomerIcon'
+                //     });
+                // }else{
+                //     openAddCustomerIcon();
+                // }
             }
             if(i == 2){
                 api.execScript({
@@ -218,16 +218,16 @@
                     frameName: 'person',
                     script: 'refrshPersonData();'
                 });
-                if(api.systemType !== 'ios'){
-                    api.sendFrameToBack ({
-                        from: 'addCustomerIcon',
-                    });
-                }else{
-                    api.closeFrame({
-                        name: 'addCustomerIcon'
-                    });
-                }
-                console.log('------'+JSON.stringify(api.frames()))
+                // if(api.systemType !== 'ios'){
+                //     api.sendFrameToBack ({
+                //         from: 'addCustomerIcon',
+                //     });
+                // }else{
+                //     api.closeFrame({
+                //         name: 'addCustomerIcon'
+                //     });
+                // }
+                // console.log('------'+JSON.stringify(api.frames()))
 
             }
             setFrameGroup(i);
