@@ -190,9 +190,9 @@
             watch:{
                 saveFormData:{
                     handler:function(nv){
-                        // console.log(JSON.stringify(nv))
+                        console.log(JSON.stringify(nv))
                         for(var k in nv){
-                            if((nv[k]+'').trim() == ''){
+                            if(k != 'customerPhoneAddr' && k != 'customerPhoneAddrTxt' && (nv[k]+'').trim() == ''){
                                 if(this.isChannelEmp){
                                     this.isCanSaveFormData = false;
                                     return;

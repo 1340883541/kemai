@@ -855,6 +855,7 @@
                         employeeid:_this.userInfo.employeeid,
                         customerid:_this.cusId
                     }))
+                    $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
                     wApiAjax({
                         url:'ema/existCallLog',
                         headers:{
@@ -866,6 +867,9 @@
                         },
                         success:function(res){
                             console.log('拨打电话前执行的操作========'+JSON.stringify(res))
+                            setTimeout(function(){
+                                $('#call-phone-normal-btn,#call-phone-btn').removeClass('w-event-none gray-bg');
+                            },100)
                             if(res.code == 1){
                                 // 有正常的通话没有添加跟进记录
                                 if(res.data.existCallLogState == 0){
@@ -889,6 +893,11 @@
                                     cb && typeof cb === 'function' && cb();
                                 }
                             }
+                        },
+                        fail:function(){
+                            setTimeout(function(){
+                                $('#call-phone-normal-btn,#call-phone-btn').removeClass('w-event-none gray-bg');
+                            },100)
                         }
                     })
                 },
@@ -914,7 +923,6 @@
                 fnCallNormalPhone:function(){
                     var _this = this;
                     $('#call-phone-normal-btn,#call-phone-btn').addClass('w-event-none gray-bg');
-
                     _this.isShowTalkingResult = true;
                     _this.followWayState = '电话';
                     _this.followWayStateCode = 1;
