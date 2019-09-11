@@ -131,7 +131,7 @@
                 </div>
             </div>
             <!-- 空页面 -->
-            <empty-con :is-show="customerList2.length === 0" txt="暂无客户"></empty-con>
+            <empty-con :is-show="customerList2.length === 0" txt="渠道暂未公开客户"></empty-con>
         </div>
         <input type="hidden" v-model="isLoadSuc">
     </div>
@@ -449,32 +449,33 @@
                 },
                 // 获取系统分配列表
                 fetchChannelData2: function(callback) {
-                    var _this = this;
-                    _this.isLoadFinish2 = false;
-                    wDialog.showProgress();
-                    console.log('-------------------------------')
-                    wApiAjax({
-                        url:'newResource/chalResList/sysAllot',
-                        headers:{
-                            token:TOKEN_DATA
-                        },
-                        success:function(res){
-                            console.log(JSON.stringify(res))
-                            _this.isLoadFinish2 = true;
-                            if(res.code == 1){
-                                _this.customerList2 = res.data || [];
-                            }else{
-                                wDialog.toast({
-                                    msg:res.msg
-                                })
-                            }
-                            callback && typeof callback === 'function' && callback();
-                        },
-                        fail:function(){
-                            _this.isLoadFinish2 = true;
-                            callback && typeof callback === 'function' && callback();
-                        }
-                    })
+                    this.isLoadFinish2 = true;
+                    // var _this = this;
+                    // _this.isLoadFinish2 = false;
+                    // wDialog.showProgress();
+                    // console.log('-------------------------------')
+                    // wApiAjax({
+                    //     url:'newResource/chalResList/sysAllot',
+                    //     headers:{
+                    //         token:TOKEN_DATA
+                    //     },
+                    //     success:function(res){
+                    //         console.log(JSON.stringify(res))
+                    //         _this.isLoadFinish2 = true;
+                    //         if(res.code == 1){
+                    //             _this.customerList2 = res.data || [];
+                    //         }else{
+                    //             wDialog.toast({
+                    //                 msg:res.msg
+                    //             })
+                    //         }
+                    //         callback && typeof callback === 'function' && callback();
+                    //     },
+                    //     fail:function(){
+                    //         _this.isLoadFinish2 = true;
+                    //         callback && typeof callback === 'function' && callback();
+                    //     }
+                    // })
                 },
                 fnCalcAllFinish:function(){
                     console.log(JSON.stringify(this.customerList2))
