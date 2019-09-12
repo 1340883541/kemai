@@ -18,12 +18,15 @@
 <body>
     <div id="wrapper">
         <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <!-- 回收列表 -->
             <div class="w-filter-pop1" v-show="sortClass === 'class1'" style="display:none;">
                 <ul>
-                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
-                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
-                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">计划跟进时间从近到远</li>
-                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">计划跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">客户创建时间从近到远</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">客户创建时间从远到近</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==4}" @click.stop="handlePitchSort(4)">计划跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==5}" @click.stop="handlePitchSort(5)">计划跟进时间从远到近</li>
                 </ul>
             </div>
             <div class="w-filter-pop1" v-show="sortClass === 'class2'" style="display:none;">
@@ -76,14 +79,16 @@
             <!-- 客户列表  -->
             <div class="w-filter-pop1" v-show="sortClass === 'class8'" style="display:none;">
                 <ul>
-                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
-                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
-                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">计划跟进时间从近到远</li>
-                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">计划跟进时间从远到近</li>
-                    <li :class="{'curr':currSelected==4}" @click.stop="handlePitchSort(4)">负责人变更时间从近到远</li>
-                    <li :class="{'curr':currSelected==5}" @click.stop="handlePitchSort(5)">负责人变更时间从远到近</li>
-                    <li :class="{'curr':currSelected==6}" @click.stop="handlePitchSort(6)">创建时间从近到远</li>
-                    <li :class="{'curr':currSelected==7}" @click.stop="handlePitchSort(7)">创建时间从远到近</li>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">客户更新从近到远</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">客户更新从远到近</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==4}" @click.stop="handlePitchSort(4)">计划跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==5}" @click.stop="handlePitchSort(5)">计划跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==6}" @click.stop="handlePitchSort(6)">负责人变更时间从近到远</li>
+                    <li :class="{'curr':currSelected==7}" @click.stop="handlePitchSort(7)">负责人变更时间从远到近</li>
+                    <li :class="{'curr':currSelected==8}" @click.stop="handlePitchSort(8)">创建时间从近到远</li>
+                    <li :class="{'curr':currSelected==9}" @click.stop="handlePitchSort(9)">创建时间从远到近</li>
                 </ul>
             </div>
             <!-- 新增渠道资源排序 -->
@@ -91,6 +96,15 @@
                 <ul>
                     <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">分配时间从远到近</li>
                     <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">分配时间从近到远</li>
+                </ul>
+            </div>
+            <!-- 国内管理员  系统列表排序 -->
+            <div class="w-filter-pop1" v-show="sortClass === 'class10'" style="display:none;">
+                <ul>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">计划跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">计划跟进时间从远到近</li>
                 </ul>
             </div>
         </div>
