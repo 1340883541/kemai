@@ -179,7 +179,8 @@
                 clannelFrameV.pageNo = 1;
                 clannelFrameV.fetchChannelData1(false, api.refreshHeaderLoadDone);
             }else{
-                clannelFrameV.fetchChannelData2(api.refreshHeaderLoadDone);
+                api.refreshHeaderLoadDone();
+                // clannelFrameV.fetchChannelData2(api.refreshHeaderLoadDone);
             }
         });
         // 监听回退
