@@ -1,17 +1,17 @@
 var __CONFIG__ = {
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.222:8765/', // 本地
-    // baseUrl:'https://192.168.110.208:9000/', // 本地 小麦
+    // baseUrl:'https://192.168.110.212:9000/', // 本地 小麦
     // baseUrl:'https://192.168.0.112:9000/', // 本地  埃文
     // baseUrl:'https://192.168.0.222:9100/', // 本地
-    // baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
-    baseUrl: 'https://call.jindinghaiju.com/', // 正式
+    baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
+    // baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA',
     // WebSocket
     // wsUrl:'wss://192.168.0.222:9000/websocket/', //本地
     // wsUrl:'wss://192.168.0.222:9100/websocket/', //本地 正式库
-    // wsUrl: 'wss://calltest.jindinghaiju.com:9000/websocket/',  // 测试
-    wsUrl: 'wss://call.jindinghaiju.com:9100/websocket/', // 正式
+    wsUrl: 'wss://calltest.jindinghaiju.com:9000/websocket/',  // 测试
+    // wsUrl: 'wss://call.jindinghaiju.com:9100/websocket/', // 正式
 }
 // Object.assign pollify
 if (typeof Object.assign != 'function') {
