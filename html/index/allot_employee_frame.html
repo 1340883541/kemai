@@ -38,8 +38,11 @@
                     <div class="cphone" @click.stop="handleSkipChangeAllot(employee.cusid,employee.phone)" v-show="employee.isShowAllotBtn" style="display:none;">去分配</div>
                 </div>
                 <div class="filter-lb">
-                    <div class="lis flb-cls1">号码归属: <span v-text="employee.attribution||'未知'"></span></div>
-                    <div class="lis flb-cls1" style="margin-top:-5px;">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status" :class="[employee.followtime?'green-col':'orange-col']" v-text="showFollowTxt(employee.followtime)"></span></div>
+                    <div class="flex-wrap filter-lb1" style="margin-bottom:4px;padding-top:4px;">
+                        <div class="lis flb-cls2" style="color:#333;">客户编号: <span v-text="employee.cusid||'暂无'" style="color:#333;"></span></div>
+                        <div class="lis flb-cls2" style="color:#333;">号码归属: <span v-text="employee.attribution||'未知'" style="color:#333;"></span></div>
+                    </div>
+                    <div class="lis flb-cls2">负责人: <span v-text="employee.empname||'未知'"></span><span class="follow-status" :class="[employee.followtime?'green-col':'orange-col']" v-text="showFollowTxt(employee.followtime)"></span></div>
                     <div class="lis flb-cls2">分配时间: <span v-text="employee.createtime||'暂未分配'"></span></div>
                     <div class="lis flb-cls2" v-if="employee.followtime">跟进时间: <span v-text="employee.followtime"></span></div>
                 </div>
@@ -222,7 +225,7 @@
                             setTimeout(function(){
                                 wDialog.hideProgress();
                             },100);
-                            // console.log(JSON.stringify(res))
+                            console.log(JSON.stringify(res))
                             if (res.code == 1) {
                                 var resList = [];
                                 if(res&&res.data&&res.data.length > 0){
