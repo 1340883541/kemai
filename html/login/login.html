@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
     <link rel="stylesheet" type="text/css" href="../../css/login/login.css" />
+    <script src="./login_config.js" charset="utf-8"></script>
 </head>
 <style media="screen">
     .loading {
@@ -34,6 +35,19 @@
         100% {
             transform: rotate(360deg);
         }
+    }
+    .register-box{
+        position: absolute;
+        left: 50%;
+        bottom: 20px;
+        transform: translateX(-50%);
+        height: 38px;
+        line-height: 38px;
+        text-align: center;
+        padding:0 20px;
+        font-size: 15px;
+        color:#fff;
+        opacity: .6;
     }
 </style>
 
@@ -94,6 +108,9 @@
                         <span v-html="sign"></span>
                     </div>
                 </div>
+                <div class="register-box" style="display:none;" v-show="isIos" @click="handleSkipRegister">
+                    还没账号，立即注册
+                </div>
             </div>
         </div>
     </div>
@@ -137,7 +154,11 @@
                 isLookPwdIcon:false,
                 login_hide: false,
                 isAccountFocus:false,
-                isPwdFocus:false
+                isPwdFocus:false,
+                isIos:false
+            },
+            created:function(){
+                this.isIos = api.systemType === 'ios' ? true : false;
             },
             watch:{
                 phone:function(n){
@@ -160,6 +181,12 @@
                 }
             },
             methods: {
+                handleSkipRegister:function(){
+                    wHrefJs.openWin({
+                        name:'register',
+                        url:'./register.html'
+                    })
+                },
                 handleCleanPwd: function() {
                     var _this = this;
                     _this.pwd = "";
@@ -209,14 +236,15 @@
                             self.sign = "登录"
                             self.login_hide = false
                         } else {
-                            // console.log('login phone ----> ' + self.phone);
+                            console.log('login version ----> ' + CURRRELEASEVERSION);
                             wApiAjax({
                                 method: "post",
                                 url: 'loginapp/verifyLogin',
                                 withCredentials: true,
                                 data: {
                                     account: self.phone,
-                                    pwd: hex_md5(self.pwd)
+                                    pwd: hex_md5(self.pwd),
+                                    versionNum:CURRRELEASEVERSION
                                 },
                                 success: function(res) {
                                     console.log('-------------login-----------------' + JSON.stringify(res))

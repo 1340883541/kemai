@@ -107,9 +107,11 @@
                 if(typeof obj.endDate != 'undefined'){
                     allotEmployeeFrameV.endDate = obj.endDate;
                 }
-                if(typeof obj.origin != 'undefined'){
-                    allotEmployeeFrameV.currOrigin = obj.originTwo ? obj.originTwo : obj.origin;
-                    allotEmployeeFrameV.currType = obj.type;
+                if(typeof obj.currSalesOrigin != 'undefined'){
+                    allotEmployeeFrameV.currOrigin = obj.currSalesOrigin;
+                }
+                if(typeof obj.currCorporateOrigin != 'undefined'){
+                    allotEmployeeFrameV.currOrigin = obj.currCorporateOrigin;
                 }
                 $('#not-more').hide();
                 allotEmployeeFrameV.pageNo = 1;
@@ -169,8 +171,6 @@
                         key: 'userInfo'
                     });
                     this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                    this.currOrigin = param.currOriginTwo ? param.currOriginTwo : param.currOrigin;
-                    this.currType = param.currType;
                     this.currOrigin = param.currOrigin;
                     // this.startDate = param.startDate;
                     // this.endDate = param.endDate;
@@ -198,7 +198,6 @@
                         endTime:_this.endDate,
                         region:_this.areaId,
                         cusSource:_this.currOrigin,
-                        type:_this.currType,
                         search_empName:_this.search_cusName,
                         pageNo: _this.pageNo,
                         pageSize: 10
@@ -214,7 +213,6 @@
                             endTime:_this.endDate,
                             region:_this.areaId,
                             cusSource:_this.currOrigin,
-                            // type:_this.currType,
                             type:1,
                             search_empName:_this.search_cusName,
                             pageNo: _this.pageNo,

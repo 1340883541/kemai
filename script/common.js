@@ -133,7 +133,29 @@ function wOpenChannelCustomerOriginFrame(par){
     par = par || {};
     wHrefJs.openFrame({
         name:'filterCustomerFrame',
-        path:'../components/filterpopup/filter_channel_resource.html',
+        path:'../components/filterpopup/filter_resource_channel.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 打开公司资源客户来源筛选框
+function wOpenCorporateCustomerOriginFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_resource_corporate.html',
+        y:par.y,
+        h:par.h,
+        param:par.param
+    })
+}
+// 打开销售资源客户来源筛选框
+function wOpenSalesCustomerOriginFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterCustomerFrame',
+        path:'../components/filterpopup/filter_resource_sales.html',
         y:par.y,
         h:par.h,
         param:par.param
@@ -884,7 +906,7 @@ var wDialog = {
         par.location = par.location || 'bottom';
         // global 设置为 true 安卓手机上面弹出的位置将会固定在底部区域
         par.global = par.global == 'false' ? false : true;
-        console.log(par.location)
+        // console.log(par.location)
         api.toast({
             msg: par.msg,
             duration: par.duration,

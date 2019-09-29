@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-消息中心</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/message_center.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap" class="felx-wrap flex-vertical message-wrapper" v-cloak>
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back" onclick="api.closeWin();"></div>
+                    <div class="u-center">消息中心</div>
+                    <div class="u-right"></div>
+                </div>
+            </div>
+        </div>
+        <div class="msg-contain">
+            <div class="msg-lists">
+                <!-- <div class="msg-lis msg-lis1 flex-wrap">
+                    <div class="msg-icon">
+                        <span class="msg-nr-num" style="display:none;"></span>
+                    </div>
+                    <div class="flex-con msg-info">
+                        <div class="msg-cap flex-wrap">
+                            <span class="cap">小M助理</span>
+                            <span class="date">2019/09/17</span>
+                        </div>
+                        <div class="msg-desc w-elli">BillyHan，你的BillyHan，你的工作日报已生成，请查看</div>
+                    </div>
+                </div> -->
+                <div class="msg-lis msg-lis2 flex-wrap" @click.stop="handleSkipMsgList(0)">
+                    <div class="msg-icon">
+                        <span class="msg-nr-num" style="display:none;" v-show="customerRefer.total > 0">{{customerRefer.total|numberFilter}}</span>
+                    </div>
+                    <div class="flex-con msg-info">
+                        <div class="msg-cap flex-wrap">
+                            <span class="cap">客户咨询</span>
+                            <span class="date" v-text="customerRefer.time"></span>
+                        </div>
+                        <div class="msg-desc w-elli" v-text="customerRefer.content"></div>
+                    </div>
+                </div>
+                <div class="msg-lis msg-lis3 flex-wrap" @click.stop="handleSkipMsgList(1)">
+                    <div class="msg-icon">
+                        <span class="msg-nr-num" style="display:none;" v-show="resourceAllot.total > 0">{{resourceAllot.total|numberFilter}}</span>
+                    </div>
+                    <div class="flex-con msg-info">
+                        <div class="msg-cap flex-wrap">
+                            <span class="cap">资源分配</span>
+                            <span class="date" v-text="resourceAllot.time"></span>
+                        </div>
+                        <div class="msg-desc w-elli" v-text="resourceAllot.content"></div>
+                    </div>
+                </div>
+                <div class="msg-lis msg-lis4 flex-wrap" @click.stop="handleSkipMsgList(2)">
+                    <div class="msg-icon">
+                        <span class="msg-nr-num" style="display:none;" v-show="todayRecycle.total > 0">{{todayRecycle.total|numberFilter}}</span>
+                    </div>
+                    <div class="flex-con msg-info">
+                        <div class="msg-cap flex-wrap">
+                            <span class="cap">今日回收提醒</span>
+                            <span class="date" v-text="todayRecycle.time"></span>
+                        </div>
+                        <div class="msg-desc w-elli" v-text="todayRecycle.content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var msgV = null;
+    apiready = function() {
+
+        // 推送
+        // var ajpush = api.require('ajpush');
+        // if(ajpush){
+        //     // 点击通知
+        //     var systemType = api.systemType;
+        //     if('ios' === systemType){
+        //         ajpush.setBadge({
+        //             badge:0
+        //         });
+        //     }
+        // }
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+        // api.addEventListener({
+        //     name: 'ajpushMessageList'
+        // }, function(ret, err){
+        //     if( ret ){
+        //         //  alert( JSON.stringify( ret ) );
+        //          msgV.msgId = ret.value.msgId || '';
+        //          msgV.msgList = [];
+        //          msgV.pageNo = 1;
+        //          msgV.fetchMsgData();
+        //     }
+        // });
+        //
+        msgV = new Vue({
+            el:'#wrap',
+            data:{
+                customerRefer:{},
+                resourceAllot:{},
+                todayRecycle:{}
+            },
+            mounted:function(){
+                this.msgId = api.pageParam.msgId || '';
+                this.fetchMsgData();
+            },
+            filters:{
+                numberFilter:function(v){
+                    if(v > 99){
+                        return '99+'
+                    }
+                    else{
+                        return v;
+                    }
+                }
+            },
+            methods:{
+                // 跳转页面
+                handleSkipMsgList:function(i){
+                    // i == 0 客户咨询
+                    // i == 1 资源分配
+                    // i == 2 今日回收提醒
+                    if(i === 0){
+                        wHrefJs.openWin({
+                            name:'messageList',
+                            url:'./message_list.html',
+                            param:{
+                                originTitle:'客户咨询',
+                                fetchUrl:'perCenter/pushMsgCusCon'
+                            }
+                        })
+                    }
+                    else if(i === 1){
+                        wHrefJs.openWin({
+                            name:'messageList',
+                            url:'./message_list.html',
+                            param:{
+                                originTitle:'资源分配',
+                                fetchUrl:'perCenter/pushMsg' // 默认
+                            }
+                        })
+                    }
+                    else if(i === 2){
+                        wHrefJs.openWin({
+                            name:'customerTodayRecycleHeader',
+                            url:'../customer/customer_today_recycle_header.html'
+                        })
+                    }
+                    else{
+                        console.warn('跳转页面入参错误');
+                    }
+                },
+                fetchMsgData:function(){
+                    wDialog.showProgress();
+                    var _this = this;
+                    TOKEN_DATA =  myLocalStorage.getItem('token');
+                    wApiAjax({
+                        url:"perCenter/noticeCenterList",
+                        headers:{
+                            "token": TOKEN_DATA,
+                        },
+                        success:function(res) {
+                            console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                res.data.forEach(function(v){
+                                    if(v.type == 1){
+                                        _this.resourceAllot = v;
+                                    }
+                                    if(v.type == 2){
+                                        _this.customerRefer = v;
+                                    }
+                                    if(v.type == 3){
+                                        _this.todayRecycle = v;
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+</html>

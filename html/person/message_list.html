@@ -23,7 +23,7 @@
             <div class="uni-fixed-header">
                 <div class="u-header-box">
                     <div class="u-back" onclick="api.closeWin();"></div>
-                    <div class="u-center">消息中心</div>
+                    <div class="u-center">{{headerTitle}}</div>
                     <div class="u-right"></div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                  msgV.getMsgData();
             }
         });
-
+        var param = api.pageParam;
         msgV = new Vue({
             el:'#wrap',
             data:{
@@ -117,10 +117,15 @@
                 msgList:[],
                 msgShowStateList:[],
                 msgId:'',
-                currClickELe:null
+                currClickELe:null,
+
+                headerTitle:'',
+                fetchUrl:''
             },
             mounted:function(){
-                this.msgId = api.pageParam.msgId || '';
+                this.msgId = param.msgId || '';
+                this.fetchUrl = param.fetchUrl || 'perCenter/pushMsg';
+                this.headerTitle = param.originTitle || '消息中心';
                 this.getMsgData();
             },
             methods:{
@@ -128,8 +133,9 @@
                     var _this = this;
                     this.getUserInfo();
                     wDialog.showProgress();
+                    console.log('url-------------------'+this.fetchUrl)
                     wApiAjax({
-                        url:'perCenter/pushMsg',
+                        url:_this.fetchUrl,
                         headers:{
                             "token": TOKEN_DATA,
                         },
@@ -140,7 +146,7 @@
                             msgId:_this.msgId
                         },
                         success:function(res){
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.msgList = _this.msgList.concat(res.data);

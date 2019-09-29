@@ -36,7 +36,7 @@
         <div class="mger-header-box">
             <div class="mger-header-fix">
                 <div class="mger-header">
-                    <div class="mger-back" onclick="api.closeWin();"></div>
+                    <div class="mger-back" onclick="api.closeWin();">首页</div>
                     <div class="mger-contain flex-wrap flex-vertical flex-center flex-align-item">
                         <div class="cap">新增资源跟进</div>
                         <div class="desc" v-text="currNowLocationTxt"></div>
@@ -44,9 +44,10 @@
                     <div class="mger-right" v-text="allotTxt" @click.stop="handleAllotEmployee"></div>
                 </div>
                 <div class="mger-nav flex-wrap" id="mger-nav">
-                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
-                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
-                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
+                    <div class="flex-con area-nav" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
+                    <div class="flex-con team-nav" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
+                    <div class="flex-con group-nav" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
+                    <div class="nav-line"><i></i></div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center flex-align-item filter-lis" @click.stop="handleChooseFilter($event,1)">
@@ -225,6 +226,7 @@
         // });
 
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         api.addEventListener({
             name: 'filterManagerNewFollow'
         }, function(ret, err){
@@ -233,8 +235,14 @@
             if(obj){
                 if(typeof obj.origin != 'undefined'){
                     managerNewFollowV.currOrigin = obj.origin;
-                    managerNewFollowV.currOriginTwo = obj.originTwo;
-                    managerNewFollowV.currType = obj.type;
+                }
+                if(typeof obj.currSalesOrigin != 'undefined'){
+                    managerNewFollowV.currSalesOrigin = obj.currSalesOrigin;
+                    managerNewFollowV.currOrigin = obj.currSalesOrigin || param.val;
+                }
+                if(typeof obj.currCorporateOrigin != 'undefined'){
+                    managerNewFollowV.currCorporateOrigin = obj.currCorporateOrigin;
+                    managerNewFollowV.currOrigin = obj.currCorporateOrigin || param.val;
                 }
                 if(typeof obj.sort != 'undefined'){
                     managerNewFollowV.currSort = obj.sort;
@@ -266,7 +274,6 @@
                 endDate:'',
 
                 currOrigin:param.val,
-                currOriginTwo:'',
                 currType:'',
 
                 currSort:0,
@@ -305,12 +312,45 @@
                 isInitDataLoadFinish:true,
                 isTeamDataLoadFinish:true,
                 isGroupDataLoadFinish:true,
-                isCrewDataLoadFinish:true
+                isCrewDataLoadFinish:true,
+                navLen:1,
+                isInitSuc:false,
+
+
+                currCorporateOrigin:'',
+                currSalesOrigin:''
             },
             mounted: function() {
                 this.currType = param.val == 0 ? 2 : 1;
                 this.init();
                 this.fetchPosiData();
+            },
+            watch:{
+                isCurrArea:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .area-nav').index();
+                        $('#mger-nav .nav-line').css({
+                            'left':(index/this.navLen)*100 + '%'
+                        })
+                    }
+                },
+                isCurrTeam:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .team-nav').index();
+                        var left =  (index/this.navLen)*100 + '%';
+                        $('#mger-nav .nav-line').css({
+                            'left':left
+                        })
+                    }
+                },
+                isCurrGroup:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .group-nav').index();
+                        $('#mger-nav .nav-line').css({
+                            'left':(index/this.navLen)*100 + '%'
+                        })
+                    }
+                }
             },
             methods: {
                 init:function(){
@@ -340,6 +380,13 @@
                     else{
                         console.log('没有这个权限')
                     }
+                    var _this = this;
+                    this.$nextTick(function(){
+                        _this.navLen = $('#mger-nav').find('.flex-con').length;
+                        var navWid = $('#mger-nav').find('.flex-con').eq(0).outerWidth();
+                        $('#mger-nav .nav-line').width(navWid);
+                        _this.isInitSuc = true;
+                    });
                 },
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;
@@ -352,9 +399,9 @@
                         employeeid: _this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        cusSource:_this.currOrigin,
                         sort:_this.currSort,
-                        type:_this.currType,
+                        type:1,
                         search_cusName:'',
                         attributionid:'',
                         resourcetype:'',
@@ -370,9 +417,8 @@
                             employeeid: _this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusSource:_this.currOrigin,
                             sort:_this.currSort,
-                            // type:_this.currType,
                             type:1,
                             search_cusName:'',
                             attributionid:'',
@@ -381,7 +427,7 @@
                             pageSize: 1000
                         },
                         success: function(res) {
-                            console.log('initlist '+JSON.stringify(res))
+                            // console.log('initlist '+JSON.stringify(res))
                             _this.isInitDataLoadFinish = true;
                             _this.funcHideProgress();
                             if (res.code == 1) {
@@ -498,9 +544,8 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusSource:_this.currOrigin,
                             sort:_this.currSort,
-                            // type:_this.currType,
                             type:1,
                             region:_this.areaId
                         },
@@ -559,7 +604,7 @@
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        cusSource:_this.currOrigin,
                         sort:_this.currSort,
                         type:_this.currType,
                         region:_this.areaId,
@@ -574,7 +619,7 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusSource:_this.currOrigin,
                             sort:_this.currSort,
                             // type:_this.currType,
                             type:1,
@@ -635,7 +680,7 @@
                         employeeid:_this.userInfo.employeeid,
                         startTime:_this.startDate,
                         endTime:_this.endDate,
-                        cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                        cusSource:_this.currOrigin,
                         sort:_this.currSort,
                         type:_this.currType,
                         region:_this.areaId,
@@ -651,7 +696,7 @@
                             employeeid:_this.userInfo.employeeid,
                             startTime:_this.startDate,
                             endTime:_this.endDate,
-                            cusSource:_this.currOriginTwo ? _this.currOriginTwo : _this.currOrigin,
+                            cusSource:_this.currOrigin,
                             sort:_this.currSort,
                             // type:_this.currType,
                             type:1,
@@ -712,8 +757,7 @@
                             startDate:_this.startDate,
                             endDate:_this.endDate,
                             currType:_this.currType,
-                            currOrigin:_this.currOrigin,
-                            currOriginTwo:_this.currOriginTwo
+                            currOrigin:_this.currOrigin
                         },
                         bgColor: '#f7f7f7'
                     })
@@ -826,18 +870,29 @@
                             });
                         }
                         else if(i === 2){
-                            wOpenCustomerOriginFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterManagerNewFollow',
-                                    currSelected:_this.currOrigin,
-                                    currTwoSelected:_this.currOriginTwo,
-                                    currType:_this.currType,
-                                    isHaveAllOrigin:true,
-                                    isHaveRecourcePool:false
-                                }
-                            });
+                            if(param.val === 1){
+                                wOpenCorporateCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterManagerNewFollow',
+                                        currCorporateOrigin:_this.currCorporateOrigin
+                                    }
+                                });
+                            }
+                            else if(param.val === 3){
+                                wOpenSalesCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterManagerNewFollow',
+                                        currSalesOrigin:_this.currSalesOrigin
+                                    }
+                                });
+                            }
+                            else{
+                                console.warn('客户来源传入的值错误，val========='+param.val);
+                            }
                         }
                         else if(i == 3){
                             wOpenCustomerSortFrame({
@@ -868,9 +923,9 @@
                             name:'allotEmployeeHeader',
                             url:'./allot_employee_header.html',
                             param:{
-                                currOrigin:_this.currOrigin,
-                                currOriginTwo:_this.currOriginTwo,
-                                currType:_this.currType,
+                                val:param.val,
+                                // currOrigin:_this.currOrigin,
+                                // currType:_this.currType,
                                 // startDate:_this.startDate,
                                 // endDate:_this.endDate,
                                 region:_this.areaId

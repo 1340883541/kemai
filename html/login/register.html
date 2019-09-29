@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-注册</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/vant.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/assount.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap">
+        <div id="header">
+            <div class="header">
+                <div class="back" onclick="api.closeWin();" tapmode></div>
+                <div class="title">注册账号</div>
+            </div>
+        </div>
+        <div id="main" class="flex-con">
+            <div class="form-div form_div form-inp-box">
+                <div class="row flex-wrap flex-align one">
+                    <span class="label">账号</span>
+                    <div class="input-box flex-con"><input type="text" maxlength="20" placeholder="请输入账号" v-model="account"></div>
+                </div>
+                <div class="row flex-wrap flex-align one">
+                    <span class="label">密码</span>
+                    <div class="input-box flex-con"><input type="password" maxlength="20" placeholder="请输入密码" v-model="pwd"></div>
+                </div>
+                <div class="row flex-wrap flex-align" style="display:none;" v-show="isShowInviteCode">
+                    <span class="label">邀请码</span>
+                    <div class="input-box flex-con input_pasd"><input type="password" maxlength="20" placeholder="请输入邀请码" v-model="inviteCode"></div>
+                </div>
+            </div>
+            <div class="form_div mar-top-0">
+                <div class="submit-btn space-between" @click="handleRegister">
+                    <div class="text-align">注册</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/speed-toast.js"></script>
+<script type="text/javascript" src="../../script/lib/vant.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var indexV = null;
+    apiready = function() {
+        $api.fixStatusBar($('#header')[0]);
+        new Vue({
+            el: '#wrap',
+            data: {
+                account: '',
+                pwd: '',
+                inviteCode:'',
+                isShowInviteCode:false,
+            },
+            mounted:function() {
+                this.fetchRegisterOpen();
+            },
+            methods: {
+                fetchRegisterOpen:function(){
+                    var _this = this;
+                    wApiAjax({
+                        url:'admin/register/tag',
+                        method:'GET',
+                        success:function(res){
+                            if(res.data == 'true'){
+                                _this.isShowInviteCode = false;
+                            }
+                            else{
+                                _this.isShowInviteCode = true;
+                            }
+                            console.log(JSON.stringify(res))
+                        }
+                    })
+                },
+                handleRegister:function(){
+                    var _this = this;
+                    if(!this.account.trim().trim()){
+                        wDialog.toast({
+                            msg:'请输入账号'
+                        })
+                        return;
+                    }
+                    if(!this.pwd.trim().trim()){
+                        wDialog.toast({
+                            msg:'请输入密码'
+                        })
+                        return;
+                    }
+                    if(!this.inviteCode.trim().trim()){
+                        wDialog.toast({
+                            msg:'请输入邀请码'
+                        })
+                        return;
+                    }
+                    wDialog.showProgress({
+                        msg:'正在注册中..'
+                    })
+                    wApiAjax({
+                        url:'admin/register',
+                        data:{
+                            account:_this.account,
+                            pwd:hex_md5(_this.pwd)
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                api.closeWin();
+                            }
+                            else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+</html>

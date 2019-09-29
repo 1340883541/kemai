@@ -40,9 +40,10 @@
                     </div>
                 </div>
                 <div class="mger-nav flex-wrap" id="mger-nav">
-                    <div class="flex-con" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
-                    <div class="flex-con" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
-                    <div class="flex-con" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
+                    <div class="flex-con area-nav" :class="{'curr':isCurrArea}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly'" @click.stop="handleSwitchPosition(0)">大区</div>
+                    <div class="flex-con team-nav" :class="{'curr':isCurrTeam}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly'" @click.stop="handleSwitchPosition(1)">团队</div>
+                    <div class="flex-con group-nav" :class="{'curr':isCurrGroup}" v-if="jobTitle == 'gngly' || jobTitle == 'qygly' || jobTitle == 'tdgly' || jobTitle == 'zz'" @click.stop="handleSwitchPosition(2)">小组</div>
+                    <div class="nav-line"><i></i></div>
                 </div>
                 <div class="mger-filter flex-wrap">
                     <div class="flex-con mger-f flex-wrap flex-center filter-lis flex-align-item" @click.stop="handleChooseFilter($event,1)">
@@ -279,6 +280,33 @@
                 isGroupDataLoadFinish:true,
                 isCrewDataLoadFinish:true
             },
+            watch:{
+                isCurrArea:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .area-nav').index();
+                        $('#mger-nav .nav-line').css({
+                            'left':(index/this.navLen)*100 + '%'
+                        })
+                    }
+                },
+                isCurrTeam:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .team-nav').index();
+                        var left =  (index/this.navLen)*100 + '%';
+                        $('#mger-nav .nav-line').css({
+                            'left':left
+                        })
+                    }
+                },
+                isCurrGroup:function(nv){
+                    if(nv && this.isInitSuc){
+                        var index = $('#mger-nav .group-nav').index();
+                        $('#mger-nav .nav-line').css({
+                            'left':(index/this.navLen)*100 + '%'
+                        })
+                    }
+                }
+            },
             mounted: function() {
                 this.init();
                 this.fetchPosiData();
@@ -312,6 +340,13 @@
                     else{
                         console.log('没有这个权限')
                     }
+                    var _this = this;
+                    this.$nextTick(function(){
+                        _this.navLen = $('#mger-nav').find('.flex-con').length;
+                        var navWid = $('#mger-nav').find('.flex-con').eq(0).outerWidth();
+                        $('#mger-nav .nav-line').width(navWid);
+                        _this.isInitSuc = true;
+                    });
                 },
                 fetchPosiData:function(isFilter){
                     isFilter = isFilter || false;

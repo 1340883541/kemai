@@ -1,0 +1,68 @@
+.message-wrapper{
+    height: 100vh;
+    background-color: rgb(247, 247, 247);
+}
+.msg-contain{
+    padding: 10px 15px 0;
+}
+.msg-lists .msg-lis{
+    background-color: #fff;
+    border-radius: 9px;
+    padding:13px 15px;
+    margin-bottom: 10px;
+}
+.msg-lists .msg-lis .msg-icon{
+    position: relative;
+    width: 11.73333vw;
+    height: 11.73333vw;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.msg-lists .msg-lis1 .msg-icon{
+    background-image: url('../../image/msg_icon1.png');
+}
+.msg-lists .msg-lis2 .msg-icon{
+    background-image: url('../../image/msg_icon2.png');
+}
+.msg-lists .msg-lis3 .msg-icon{
+    background-image: url('../../image/msg_icon3.png');
+}
+.msg-lists .msg-lis4 .msg-icon{
+    background-image: url('../../image/msg_icon4.png');
+}
+.msg-lists .msg-lis .msg-icon .msg-nr-num{
+    position: absolute;
+    left: 50%;top:-4px;
+    border:1.5px solid #fff;
+    border-radius: 8px;
+    background-color: #ff3e00;
+    font-size: 11px;
+    box-sizing: content-box;
+    height: 14px;
+    line-height: 14px;
+    padding: 0 5px;
+    color:#fff;
+}
+.msg-lists .msg-lis .msg-info{
+    width: calc(100% - 12vw);
+    padding-left: 15px;
+}
+.msg-lists .msg-lis .msg-cap{
+    justify-content: space-between;
+    line-height: 24px;
+}
+.msg-lists .msg-lis .msg-cap .cap{
+    font-size: 16px;
+    color:#333;
+    font-family: "PingFangSC-Medium";
+}
+.msg-lists .msg-lis .msg-cap .date{
+    color:#ccc;
+    font-size: 12px;
+}
+.msg-lists .msg-lis .msg-desc{
+    line-height: 19px;
+    color:#999;
+    font-size: 13px;
+}

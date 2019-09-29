@@ -76,6 +76,7 @@
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
         var param = api.pageParam;
+        console.log(JSON.stringify(param))
         wHrefJs.openFrame({
             name:'allotEmployeeFrame',
             path:'./allot_employee_frame.html',
@@ -84,10 +85,10 @@
             bounces:true,
             bgColor:'rgba(0,0,0,0)',
             param:{
-                currOrigin:param.currOrigin,
-                currOriginTwo:param.currOriginTwo,
+                currOrigin:param.val,
                 currType:param.currType,
-                region:param.region
+                region:param.region,
+                val:param.val
             },
             animation:{
                 type:'none'
@@ -99,10 +100,11 @@
         }, function(ret, err){
             var obj = ret.value;
             if(obj){
-                if(typeof obj.origin != 'undefined'){
-                    allotEmpHeaderV.currOriginSelected = obj.origin;
-                    allotEmpHeaderV.currOriginTwoSelected = obj.originTwo;
-                    allotEmpHeaderV.currOriginType = obj.type;
+                if(typeof obj.currSalesOrigin != 'undefined'){
+                    allotEmpHeaderV.currOrigin = obj.currSalesOrigin;
+                }
+                if(typeof obj.currCorporateOrigin != 'undefined'){
+                    allotEmpHeaderV.currOrigin = obj.currCorporateOrigin;
                 }
                 if(typeof obj.startDate != 'undefined'){
                     allotEmpHeaderV.startDate = obj.startDate;
@@ -123,21 +125,17 @@
             data:{
                 searchVal:'',
 
-                currOriginSelected:'',
-                currOriginTwoSelected:'',
-                currOriginType:'',
+                currOrigin:'',
                 // 开始结束时间
                 startDate:'',
                 endDate:'',
                 isFocus:false
             },
             mounted:function(){
-                this.currOriginSelected=param.currOrigin;
-                this.currOriginTwoSelected=param.currOriginTwo;
-                this.currOriginType=param.currType;
+                this.currOrigin=param.val;
                 // 开始结束时间
-                this.startDate=param.startDate;
-                this.endDate=param.endDate;
+                // this.startDate=param.startDate;
+                // this.endDate=param.endDate;
             },
             methods:{
                 // 获取焦点
@@ -193,18 +191,29 @@
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
                         if(i === 0){
-                            wOpenCustomerOriginFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterAllotEmployee',
-                                    currSelected:_this.currOriginSelected,
-                                    currTwoSelected:_this.currOriginTwoSelected,
-                                    currType:_this.currOriginType,
-                                    isHaveAllOrigin:true,
-                                    isHaveRecourcePool:false
-                                }
-                            });
+                            if(param.val === 1){
+                                wOpenCorporateCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterAllotEmployee',
+                                        currCorporateOrigin:_this.currOrigin
+                                    }
+                                });
+                            }
+                            else if(param.val === 3){
+                                wOpenSalesCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterAllotEmployee',
+                                        currSalesOrigin:_this.currOrigin
+                                    }
+                                });
+                            }
+                            else{
+                                console.warn('客户来源传入的值错误，val========='+param.val);
+                            }
                         }
                         else if(i === 1){
                             wOpenCustomerTimeFrame({

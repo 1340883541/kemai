@@ -31,10 +31,14 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 40px;
+    width: 70px;
     height: 40px;
-    background: url('../../image/icon-dh-fanhui-w.png') no-repeat right center;
-    background-size: .4rem;
+    background: url('../../image/icon-dh-fanhui-w.png') no-repeat 16px center;
+    background-size: 20px;
+    color: #fff;
+    font-size: 15px;
+    line-height: 40px;
+    padding-left: 20px;
 }
 
 .mger-header-box .mger-header .mger-right {
@@ -66,6 +70,7 @@
 }
 
 .mger-header-box .mger-nav {
+    position: relative;
     width: 100%;
     height: 40px;
     text-align: center;
@@ -74,10 +79,36 @@
     font-size: 17px;
 }
 
-.mger-header-box .mger-nav>div {
+.mger-header-box .mger-nav .nav-line{
+    position: absolute;
+    left: 0;
+    bottom: 2px;
+    /*width: 33.3333333%;*/
+    height: 3px;
+    background-color: transparent;
+    -webkit-transition: right 0.3s cubic-bezier(0.35, 0, 0.25, 1) 0.09s, left 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+    transition: right 0.3s cubic-bezier(0.35, 0, 0.25, 1) 0.09s, left 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+/*.mger-header-box .mger-nav .area-nav.curr~.nav-line{
+    left: 0;
+}
+.mger-header-box .mger-nav .team-nav.curr~.nav-line{
+    left: 33.3333333%;
+}
+.mger-header-box .mger-nav .group-nav.curr~.nav-line{
+    left: 66.66666666%;
+}*/
+.mger-header-box .mger-nav .nav-line > i{
+    display: block;
+    width: 13.333333vw;
+    height: 3px;
+    border-radius: 1.5px;
+    margin:0 auto;
+    background-color: #fff;
+}
+/*.mger-header-box .mger-nav>div {
     position: relative;
 }
-
 .mger-header-box .mger-nav>div:after {
     content: '';
     position: absolute;
@@ -93,7 +124,7 @@
 
 .mger-header-box .mger-nav>div.curr:after {
     display: block;
-}
+}*/
 
 .mger-header-box .mger-filter {
     position: relative;

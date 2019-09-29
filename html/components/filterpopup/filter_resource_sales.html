@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>销售资源 筛选</title>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filterpopup.css" />
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-popup" @click.stop="handleCloseFilterPopup">
+            <div class="w-filter-pop1" @click.stop.prevent>
+                <ul>
+                    <li :class="{'curr':currSalesOrigin==''||currSalesOrigin==3}" @click.stop="handlePitchSalesResource(3)">全部</li>
+                    <li
+                        v-for="classify in salesResourceData"
+                        :key="classify.value"
+                        v-text="classify.name"
+                        :class="{'curr':currSalesOrigin==classify.value}"
+                        @click.stop="handlePitchSalesResource(classify.value)"
+                    ></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script type="text/javascript">
+apiready = function(){
+    var param = api.pageParam;
+    console.log(JSON.stringify(param))
+    new Vue({
+        el:'#wrapper',
+        data:{
+            salesResourceData:[],
+            currSalesOrigin:''
+        },
+        mounted:function(){
+            this.currSalesOrigin = param.currSalesOrigin;
+            this.fetchSalesResourceData();
+        },
+        methods:{
+            fetchSalesResourceData:function(){
+                var _this = this;
+                var salesResourceData = window.localStorage.getItem('salesResourceData');
+                if(salesResourceData && salesResourceData !== 'undefined'){
+                    this.salesResourceData = JSON.parse(salesResourceData);
+                }
+                else{
+                    wDialog.showProgress();
+                    wApiAjax({
+                        url:'dataSource/cusSourceSecondLevel',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            type:3
+                        },
+                        success:function(res){
+                            wDialog.hideProgress();
+                            if(res.code == 1){
+                                _this.salesResourceData = res.data || [];
+                                window.localStorage.setItem('salesResourceData',JSON.stringify(res.data));
+                            }else{
+                                wDialog.toast({
+                                    msg:res.message
+                                })
+                            }
+                        }
+                    })
+                }
+            },
+            // 筛选客户状态
+            handlePitchSalesResource:function(val){
+                var _this = this;
+                this.currSalesOrigin = val;
+                api.sendEvent({
+                    name: param.origin,
+                    extra: {
+                        currSalesOrigin:val
+                    }
+                });
+                api.closeFrame();
+            },
+            handleCloseFilterPopup:function(){
+                var _this = this;
+                api.sendEvent({
+                    name: param.origin
+                });
+                api.closeFrame();
+            }
+        }
+    })
+}
+</script>
+</html>

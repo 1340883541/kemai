@@ -95,10 +95,11 @@
                 if(typeof obj.endDate != 'undefined'){
                     ncusHeaderV.endDate = obj.endDate;
                 }
-                if(typeof obj.origin != 'undefined'){
-                    ncusHeaderV.currOrigin = obj.origin;
-                    ncusHeaderV.currOriginTwo = obj.originTwo;
-                    ncusHeaderV.currOriginType = obj.type;
+                if(typeof obj.currSalesOrigin != 'undefined'){
+                    ncusHeaderV.currOrigin = obj.currSalesOrigin;
+                }
+                if(typeof obj.currCorporateOrigin != 'undefined'){
+                    ncusHeaderV.currOrigin = obj.currCorporateOrigin;
                 }
                 if(typeof obj.home != 'undefined'){
                     ncusHeaderV.currHome = obj.home;
@@ -121,8 +122,6 @@
                 currClassify:0,
                 // 客户来源
                 currOrigin:param.val,
-                currOriginTwo:'',
-                currOriginType:'',
 
                 startDate:'',
                 endDate:'',
@@ -130,13 +129,11 @@
                 currHome:'',
                 // 排序
                 currSort:0,
-                isFocus:false
+                isFocus:false,
             },
             created:function(){
                 if(param.empId){
                     this.currOrigin = param.currOrigin;
-                    this.currOriginTwo = param.currOriginTwo;
-                    this.currOriginType = param.currType;
                 }
                 this.startDate = param.startDate;
                 this.endDate = param.endDate;
@@ -186,37 +183,70 @@
                             });
                         }
                         else if(i === 1){
-                            wOpenCustomerOriginFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterNewCustomer',
-                                    currSelected:_this.currOrigin,
-                                    currTwoSelected:_this.currOriginTwo,
-                                    currType:_this.currOriginType,
-                                    isHaveAllOrigin:true,
-                                    isHaveRecourcePool:false
-                                }
-                            });
+                            if(param.val === 1){
+                                wOpenCorporateCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterNewCustomer',
+                                        currCorporateOrigin:_this.currOrigin
+                                    }
+                                });
+                            }
+                            else if(param.val === 3){
+                                wOpenSalesCustomerOriginFrame({
+                                    y:y,
+                                    h:h,
+                                    param:{
+                                        origin:'filterNewCustomer',
+                                        currSalesOrigin:_this.currOrigin
+                                    }
+                                });
+                            }
+                            else{
+                                console.warn('客户来源传入的值错误，val========='+param.val);
+                            }
                         }
                         else if(i === 2){
-                            wOpenCustomerMoreFrame({
-                                y:0,
-                                h:wHei,
-                                param:{
-                                    origin:'filterNewCustomer',
-                                    currOrigin:_this.currOrigin,
-                                    currOriginTwo:_this.currOriginTwo,
-                                    currType:_this.currOriginType,
-                                    currClassify:_this.currClassify,
-                                    currHome:_this.currHome,
-                                    startDate:_this.startDate,
-                                    endDate:_this.endDate,
-                                    isHaveClassify:true,
-                                    isHaveRecourcePool:false,
-                                    isHaveStatus:false
-                                }
-                            });
+                            if(param.val === 1){
+                                wOpenCustomerMoreFrame({
+                                    y:0,
+                                    h:wHei,
+                                    param:{
+                                        origin:'filterNewCustomer',
+                                        currCorporateOrigin:_this.currOrigin,
+                                        currClassify:_this.currClassify,
+                                        currHome:_this.currHome,
+                                        startDate:_this.startDate,
+                                        endDate:_this.endDate,
+                                        isHaveClassify:true,
+                                        isHaveRecourcePool:false,
+                                        isOnlyCorporateResource:true,
+                                        isHaveStatus:false
+                                    }
+                                });
+                            }
+                            else if(param.val === 3){
+                                wOpenCustomerMoreFrame({
+                                    y:0,
+                                    h:wHei,
+                                    param:{
+                                        origin:'filterNewCustomer',
+                                        currSalesOrigin:_this.currOrigin,
+                                        currClassify:_this.currClassify,
+                                        currHome:_this.currHome,
+                                        startDate:_this.startDate,
+                                        endDate:_this.endDate,
+                                        isHaveClassify:true,
+                                        isHaveRecourcePool:false,
+                                        isOnlySalesResource:true,
+                                        isHaveStatus:false
+                                    }
+                                });
+                            }
+                            else{
+                                console.warn('客户来源传入的值错误，val========='+param.val);
+                            }
                         }
                         else if(i == 3){
                             wOpenCustomerSortFrame({
@@ -274,7 +304,6 @@
             pObj = {
                 empId:param.empId,
                 currOrigin:param.currOrigin,
-                currOriginTwo:param.currOriginTwo,
                 currType:param.currType,
                 startDate:param.startDate,
                 endDate:param.endDate,
@@ -283,7 +312,6 @@
             pObj = {
                 currOrigin:param.val,
                 currType:param.val == 0 ? 2 : 1,
-                currOriginTwo:'',
                 startDate:param.startDate,
                 endDate:param.startDate,
             }

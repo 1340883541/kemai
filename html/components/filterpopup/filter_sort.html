@@ -107,6 +107,15 @@
                     <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">计划跟进时间从远到近</li>
                 </ul>
             </div>
+            <!-- 今日回收提醒 -->
+            <div class="w-filter-pop1" v-show="sortClass === 'class11'" style="display:none;">
+                <ul>
+                    <li :class="{'curr':currSelected==0}" @click.stop="handlePitchSort(0)">计划跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==1}" @click.stop="handlePitchSort(1)">计划跟进时间从远到近</li>
+                    <li :class="{'curr':currSelected==2}" @click.stop="handlePitchSort(2)">跟进时间从近到远</li>
+                    <li :class="{'curr':currSelected==3}" @click.stop="handlePitchSort(3)">跟进时间从远到近</li>
+                </ul>
+            </div>
         </div>
     </div>
 </body>

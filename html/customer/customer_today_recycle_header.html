@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>客户-头部</title>
+    <title>回收提醒-头部</title>
     <script src="../../script/lib/rem.js"></script>
     <script src="../../script/lib/fastclick.js"></script>
     <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
@@ -16,7 +16,7 @@
     <link rel="stylesheet" type="text/css" href="../../css/index/index.css" />
     <style media="screen">
         html,body,#wrap{
-            min-height: 100%;
+            height: 100%;
             background-color: #f7f7f7;
         }
     </style>
@@ -27,7 +27,8 @@
         <div id="follow-p"></div>
         <div class="w-header bor-1px-b">
             <div class="w-header-cap">
-                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">客户列表<i></i></span></div>
+                <div class="back" onclick="api.closeWin();"></div>
+                <div class="w-hcap-txt flex-wrap flex-center" ><span class="flex-wrap">回收提醒<i></i></span></div>
             </div>
             <div class="search-box" id="header-search-box">
                 <div class="search-inp">
@@ -49,12 +50,13 @@
             </div>
             <div class="w-filter-lists flex-wrap">
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,1)">
-                    <span>客户来源</span><i></i>
+                    <span>跟进时间</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,2)">
-                    <span>客户状态</span><i></i>
+                    <span>客户来源</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,3)">
+                    <!-- +客户状态+归属地 -->
                     <span>更多</span><i></i>
                 </div>
                 <div class="flex-con flex-wrap flex-align-item flex-center w-filter-lis" @click="clickFilterFn($event,4)">
@@ -72,110 +74,81 @@
 <script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
-    var ncusHeaderV = null;
+    var ncustomerTodayRecycleHeaderV = null;
     apiready = function() {
         $api.fixStatusBar($('.w-header')[0]);
 
+        // 跳转到frame
+        var wHei = $(window).height(),
+            y = api.safeArea.top + $('.w-header').height(),
+            h = wHei - y;
+        wHrefJs.openFrame({
+            name:'customerTodayRecycleFrame',
+            path:'./customer_today_recycle_frame.html',
+            y:y,
+            h:h,
+            bounces:true,
+            bgColor:'rgba(0,0,0,0)',
+            animation:{
+                type:'none'
+            }
+        });
         // 筛选客户状态
         api.addEventListener({
-            name: 'filterCustomerList'
+            name: 'filterTodayCustomerRecycle'
         }, function(ret, err){
             var obj = ret.value;
-            console.log('customer list header---'+JSON.stringify(obj))
-            if(typeof obj.status != 'undefined'){
-                ncusHeaderV.currStatus = obj.status;
-            }
-            if(typeof obj.origin != 'undefined'){
-                ncusHeaderV.currOrigin = obj.origin;
-                ncusHeaderV.currOriginTwo = obj.originTwo;
-                ncusHeaderV.currType = obj.type;
-            }
-            if(typeof obj.home != 'undefined'){
-                ncusHeaderV.currHome = obj.home;
-            }
-            if(typeof obj.sort != 'undefined'){
-                ncusHeaderV.currSort = obj.sort;
-            }
-            if(typeof obj.startTimeFoll != 'undefined'){
-                ncusHeaderV.startTimeFoll = obj.startTimeFoll;
-            }
-            if(typeof obj.endTimeFoll != 'undefined'){
-                ncusHeaderV.endTimeFoll = obj.endTimeFoll;
-            }
-            if(typeof obj.startTimeNextFoll != 'undefined'){
-                ncusHeaderV.startTimeNextFoll = obj.startTimeNextFoll;
-            }
-            if(typeof obj.endTimeNextFoll != 'undefined'){
-                ncusHeaderV.endTimeNextFoll = obj.endTimeNextFoll;
-            }
-            if(typeof obj.startTimeChange != 'undefined'){
-                ncusHeaderV.startTimeChange = obj.startTimeChange;
-            }
-            if(typeof obj.endTimeChange != 'undefined'){
-                ncusHeaderV.endTimeChange = obj.endTimeChange;
-            }
-            if(typeof obj.startTimeCreate != 'undefined'){
-                ncusHeaderV.startTimeCreate = obj.startTimeCreate;
-            }
-            if(typeof obj.endTimeCreate != 'undefined'){
-                ncusHeaderV.endTimeCreate = obj.endTimeCreate;
-            }
-            $('.w-filter-lis').removeClass('curr');
-        });
-        api.addEventListener({
-            name: 'switchBottomButton'
-        }, function(ret, err){
-            $('.w-filter-lis').removeClass('curr');
-            api.closeFrame({
-                name:'filterCustomerFrame'
-            });
-        });
-        api.addEventListener({
-            name: 'loginSuc'
-        }, function(ret, err){
-            for(var key in ncusHeaderV.$data){
-                if(key === 'currSort'){
-                    ncusHeaderV.$data[key] = 0;
-                }else{
-                    ncusHeaderV.$data[key] = '';
+            if(obj){
+                if(typeof obj.status != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.currStatus = obj.status;
+                }
+                if(typeof obj.origin != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.currOrigin = obj.origin;
+                    ncustomerTodayRecycleHeaderV.currOriginTwo = obj.originTwo;
+                    ncustomerTodayRecycleHeaderV.currType = obj.type;
+                }
+                if(typeof obj.sort != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.currSort = obj.sort;
+                }
+                if(typeof obj.home != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.currHome = obj.home;
+                }
+                if(typeof obj.startDate != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.startDate = obj.startDate;
+                }
+                if(typeof obj.endDate != 'undefined'){
+                    ncustomerTodayRecycleHeaderV.endDate = obj.endDate;
                 }
             }
+            $('.w-filter-lis').removeClass('curr');
         });
+
         // 跳转到frame的高度等
         var wHei = $(window).height(),
             y = api.safeArea.top + $('.w-header').height(),
             h = wHei - y;
-        ncusHeaderV = new Vue({
+        ncustomerTodayRecycleHeaderV = new Vue({
             el:"#wrap",
             data:{
                 searchVal:'',
-
                 currOrigin:'',
                 currOriginTwo:'',
                 currType:'',
                 currStatus:'',
-                currHome:'',
-
-                startTimeFoll:'',
-                endTimeFoll:'',
-                startTimeNextFoll:'',
-                endTimeNextFoll:'',
-                startTimeChange:'',
-                endTimeChange:'',
-                startTimeCreate:'',
-                endTimeCreate:'',
                 // 排序方式
                 currSort:0,
-                jobTitle:'',
+                // 开始结束时间
+                startDate:'',
+                endDate:'',
+                // 当前归属地，所有归属地缓存
+                currHome:'',
                 isFocus:false
             },
+            created:function(){
+                // this.startDate = funcGetThisToday().startDate;
+                // this.endDate = funcGetThisToday().endDate;
+            },
             mounted:function(){
-                // console.log('customer header------------------'+JSON.stringify(this.$data))
-                this.userInfo = wPref.getPrefs({
-                    key:'userInfo'
-                });
-                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
-                this.jobTitle = this.userInfo.relativePosi;
             },
             methods:{
                 // 获取焦点
@@ -190,8 +163,9 @@
                     this.isFocus = true;
                     $('.w-filter-lis').removeClass('curr');
                     api.closeFrame({
-                        name: 'filterCustomerFrame'
+                        name: 'filterTodayCustomerFrame'
                     });
+
                 },
                 // 失去焦点
                 handleSearchBlur:function(){
@@ -211,15 +185,16 @@
                 clearSearchVal:function(){
                     this.searchVal = '';
                     api.execScript({
-                        name:'main',
-                        frameName: 'customerFrame',
+                        name:'customerTodayRecycleHeader',
+                        frameName: 'customerTodayRecycleFrame',
                         script: 'clearSearchValue();'
                     });
                 },
                 // 搜索
                 submitSeach:function(){
                     api.execScript({
-                        frameName: 'customerFrame',
+                        name:'customerTodayRecycleHeader',
+                        frameName: 'customerTodayRecycleFrame',
                         script: 'getSearchValue(\''+this.searchVal+'\');'
                     });
                 },
@@ -228,54 +203,51 @@
                     var tag = e.currentTarget,
                         _this = this;
                     // 1.客户来源 2客户状态  3 更多 4排序
+                    // 跳转到frame
                     if(!$(tag).hasClass('curr')){
                         $(tag).addClass('curr').siblings().removeClass('curr');
                         if(i === 1){
+                            wOpenCustomerTimeFrame({
+                                y:y,
+                                h:h,
+                                param:{
+                                    origin:'filterTodayCustomerRecycle',
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate
+                                }
+                            });
+                        }
+                        else if(i === 2){
                             wOpenCustomerOriginFrame({
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterCustomerList',
+                                    origin:'filterTodayCustomerRecycle',
                                     currSelected:_this.currOrigin,
                                     currTwoSelected:_this.currOriginTwo,
                                     currType:_this.currType,
                                     isHaveAllOrigin:true,
                                     isHaveRecourcePool:false
                                 }
-                            })
-                        }
-                        else if(i === 2){
-                            wOpenCustomerStatusFrame({
-                                y:y,
-                                h:h,
-                                param:{
-                                    origin:'filterCustomerList',
-                                    currSelected:_this.currStatus
-                                }
-                            })
+                            });
                         }
                         else if(i == 3){
-                            wOpenCustomerMore1Frame({
-                                y:y,
-                                h:h,
+                            wOpenCustomerMoreFrame({
+                                y:0,
+                                h:wHei,
                                 param:{
-                                    origin:'filterCustomerList',
+                                    origin:'filterTodayCustomerRecycle',
                                     currOrigin:_this.currOrigin,
                                     currOriginTwo:_this.currOriginTwo,
                                     currType:_this.currType,
                                     currStatus:_this.currStatus,
                                     currHome:_this.currHome,
-
-                                    startTimeFoll:_this.startTimeFoll,
-                                    endTimeFoll:_this.endTimeFoll,
-                                    startTimeNextFoll:_this.startTimeNextFoll,
-                                    endTimeNextFoll:_this.endTimeNextFoll,
-                                    startTimeChange:_this.startTimeChange,
-                                    endTimeChange:_this.endTimeChange,
-                                    startTimeCreate:_this.startTimeCreate,
-                                    endTimeCreate:_this.endTimeCreate,
-                                    isFullScreen:true,
-                                    isShowNextFollowDateChoose:true
+                                    startDate:_this.startDate,
+                                    endDate:_this.endDate,
+                                    dateText:'跟进时间',
+                                    isHaveRecourcePool:false,
+                                    isHaveStatus:true,
+                                    isHaveClassify:false,
                                 }
                             });
                         }
@@ -284,9 +256,9 @@
                                 y:y,
                                 h:h,
                                 param:{
-                                    origin:'filterCustomerList',
+                                    origin:'filterTodayCustomerRecycle',
                                     currSelected:_this.currSort,
-                                    sortClass:'class8'
+                                    sortClass:'class1'
                                 }
                             })
                         }
@@ -296,45 +268,17 @@
                     }else{
                         $(tag).removeClass('curr');
                         api.closeFrame({
-                            name:'filterCustomerFrame'
+                            name:'filterTodayCustomerFrame'
                         });
                     }
                 }
             }
         });
-        // 打开frame
-        api.addEventListener({
-            name: 'openCustomerFrame'
-        }, function(ret, err){
-            // 跳转到frame
-            var wHei = $(window).height(),
-                y = api.safeArea.top + $('.w-header').height(),
-                h = wHei - y;
-            wHrefJs.openFrame({
-                name:'customerFrame',
-                path:'./customer_frame.html',
-                y:y,
-                h:h,
-                bounces:true,
-                bgColor:'rgba(0,0,0,0)',
-                param:ncusHeaderV.$data,
-                animation:{
-                    type:'none'
-                }
-            })
-        });
-        // 关闭frame
-        api.addEventListener({
-            name: 'closeCustomerFrame'
-        }, function(ret, err){
-            api.closeFrame({
-                name: 'customerFrame'
-            });
-        });
     }
     function fnBlur(){
         $('#search-inp')[0].blur();
     }
+
 </script>
 
 </html>
