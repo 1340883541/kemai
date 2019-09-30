@@ -1,4 +1,5 @@
 var __CONFIG__ = {
+    currAtom:'test',
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.222:8765/', // 本地
     // baseUrl:'https://192.168.110.212:9000/', // 本地 小麦
@@ -37,26 +38,30 @@ if (typeof Object.assign != 'function') {
 var isLoginPastDue = false,
     isCanLetApp = false;
 function wApiAjax(par) {
-    var BASEURL = api.getGlobalData({
-        key: 'BASEURL'
-    });
-    if(BASEURL){
-        __CONFIG__.baseUrl = BASEURL;
+    if(__CONFIG__.currAtom === 'dev'){
         fnAjax(par);
     }else{
-        api.ajax({
-            url: 'http://112.74.31.201:8888/urlpath/callurl.txt',
-            method: 'get'
-        },function(ret, err){
-            var urlAddr = err.body;
-            __CONFIG__.baseUrl = urlAddr.split(',')[0].replace(/[\n|\s]/g,'').split('=')[1] || 'https://call.jindinghaiju.com/';
-            api.setGlobalData({
-                key:"BASEURL",
-                value:__CONFIG__.baseUrl
-            });
-            fnAjax(par);
-            // var wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'');
+        var BASEURL = api.getGlobalData({
+            key: 'BASEURL'
         });
+        if(BASEURL){
+            __CONFIG__.baseUrl = BASEURL;
+            fnAjax(par);
+        }else{
+            api.ajax({
+                url: 'http://112.74.31.201:8888/urlpath/callurl.txt',
+                method: 'get'
+            },function(ret, err){
+                var urlAddr = err.body;
+                __CONFIG__.baseUrl = urlAddr.split(',')[0].replace(/[\n|\s]/g,'').split('=')[1] || 'https://call.jindinghaiju.com/';
+                api.setGlobalData({
+                    key:"BASEURL",
+                    value:__CONFIG__.baseUrl
+                });
+                fnAjax(par);
+                // var wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'');
+            });
+        }
     }
 
 }
@@ -90,7 +95,7 @@ function fnAjax(par){
     }
     // console.log(JSON.stringify(newHeaders))
     // console.log(JSON.stringify(Object.assign({},par.data,{url:par.url})))
-    // console.log('url-------------------'+JSON.stringify(par.url))
+    // console.log('url-------------------'+__CONFIG__.baseUrl)
     api.ajax({
         url: __CONFIG__.baseUrl + par.url,
         method: par.method || 'post',
