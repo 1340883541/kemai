@@ -101,11 +101,11 @@
                         return
                     } else if (!accountExp.test(_this.account)) {
                         wDialog.toast({
-                            msg: "请正确输入账号"
+                            msg: "请输入账号3-20位数字和字母"
                         })
                         return
                     }
-                    var pwdExp = /^[A-Za-z0-9]{6,16}$/;
+                    var pwdExp = new RegExp("^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$");
                     if (_this.pwd == "" || _this.pwd == null || _this.pwd == undefined) {
                         wDialog.toast({
                             msg: "请输入密码"
@@ -113,7 +113,7 @@
                         return
                     } else if (!pwdExp.test(_this.pwd)) {
                         wDialog.toast({
-                            msg: "请正确输入密码"
+                            msg: "请输入密码8-20位数字和字母"
                         })
                         return
                     }
@@ -138,7 +138,9 @@
                                 wDialog.toast({
                                     msg:'注册成功'
                                 });
-                                api.closeWin();
+                                setTimeout(function(){
+                                    api.closeWin();
+                                },600);
                             }
                             else{
                                 wDialog.toast({
