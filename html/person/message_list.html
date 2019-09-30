@@ -38,18 +38,14 @@
                         <span class="already" v-if="msg.readstate == 1">已读</span>
                         <span class="not-ready" v-else></span>
                     </div>
-                    <div class="msg-contain"  @click="setMsgAlready($event,msg.id,msg.readstate,index,msgShowStateList[index])">
+                    <div class="msg-contain" @click="setMsgAlready($event,msg.id,msg.readstate,index,msgShowStateList[index])">
                         <div class="msg-lis-desc" v-text="msg.content"></div>
                         <div class="msg-btn" v-if="msgShowStateList[index] === 1">展开</div>
                     </div>
                 </div>
                 <div class="msg-list-bottom flex-wrap flex-between">
                     <span class="time" v-text="msg.createdate"></span>
-                    <span
-                        class="skip"
-                        v-if="msg.serverType"
-                        @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)"
-                    >{{msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow' ? '客户详情' : '查看客户'}}</span>
+                    <span class="skip" v-if="msg.serverType" @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)">{{msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow' ? '客户详情' : '查看客户'}}</span>
                 </div>
             </div>
             <!-- 无更多数据 -->
@@ -74,12 +70,12 @@
 
         // 推送
         var ajpush = api.require('ajpush');
-        if(ajpush){
+        if (ajpush) {
             // 点击通知
             var systemType = api.systemType;
-            if('ios' === systemType){
+            if ('ios' === systemType) {
                 ajpush.setBadge({
-                    badge:0
+                    badge: 0
                 });
             }
         }
@@ -87,201 +83,204 @@
         $api.fixStatusBar($('.uni-fixed-header')[0]);
         api.addEventListener({
             name: 'scrolltobottom'
-        }, function(ret, err){
-            if( msgV.pageNo < msgV.totalPage ){
+        }, function(ret, err) {
+            if (msgV.pageNo < msgV.totalPage) {
                 ++msgV.pageNo;
                 msgV.getMsgData();
-            }else{
+            } else {
                 $('#not-more').show();
             }
         });
         api.addEventListener({
             name: 'ajpushMessageList'
-        }, function(ret, err){
-            if( ret ){
-                //  alert( JSON.stringify( ret ) );
-                 msgV.msgId = ret.value.msgId || '';
-                 msgV.msgList = [];
-                 msgV.pageNo = 1;
-                 msgV.getMsgData();
+        }, function(ret, err) {
+            // alert( JSON.stringify( ret ) );
+            if (ret) {
+                msgV.msgId = ret.value.msgId || '';
+                msgV.serverType = ret.value.serverType || '';
+                msgV.headerTitle = ret.value.originTitle || '消息中心';
+                msgV.fetchUrl = ret.value.fetchUrl || 'perCenter/pushMsg';
+                msgV.msgList = [];
+                msgV.pageNo = 1;
+                msgV.getMsgData();
             }
         });
         var param = api.pageParam;
         msgV = new Vue({
-            el:'#wrap',
-            data:{
-                userInfo:{},
-                pageNo:1,
-                pageSize:20,
-                totalPage:1,
-                msgList:[],
-                msgShowStateList:[],
-                msgId:'',
-                currClickELe:null,
+            el: '#wrap',
+            data: {
+                userInfo: {},
+                pageNo: 1,
+                pageSize: 20,
+                totalPage: 1,
+                msgList: [],
+                msgShowStateList: [],
+                msgId: '',
+                currClickELe: null,
 
-                headerTitle:'',
-                fetchUrl:''
+                headerTitle: '',
+                serverType:'',
+                fetchUrl: ''
             },
-            mounted:function(){
+            mounted: function() {
                 this.msgId = param.msgId || '';
+                this.serverType = param.serverType;
                 this.fetchUrl = param.fetchUrl || 'perCenter/pushMsg';
                 this.headerTitle = param.originTitle || '消息中心';
                 this.getMsgData();
             },
-            methods:{
-                getMsgData:function(){
+            methods: {
+                getMsgData: function() {
                     var _this = this;
                     this.getUserInfo();
                     wDialog.showProgress();
-                    console.log('url-------------------'+this.fetchUrl)
+                    console.log('url-------------------' + this.fetchUrl)
                     wApiAjax({
-                        url:_this.fetchUrl,
-                        headers:{
+                        url: _this.fetchUrl,
+                        headers: {
                             "token": TOKEN_DATA,
                         },
-                        data:{
-                            employeeid:_this.userInfo.employeeid,
-                            pageNo:_this.pageNo,
-                            pageSize:_this.pageSize,
-                            msgId:_this.msgId,
-                            msgServerType:param.serverType
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            pageNo: _this.pageNo,
+                            pageSize: _this.pageSize,
+                            msgId: _this.msgId,
+                            msgServerType: _this.serverType
                         },
-                        success:function(res){
+                        success: function(res) {
                             // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
-                            if(res.code == 1){
+                            if (res.code == 1) {
                                 _this.msgList = _this.msgList.concat(res.data);
                                 _this.totalPage = Math.ceil(res.count / res.pageSize);
-                                var prevCount = (_this.pageNo - 1)*_this.pageSize
-                                _this.$nextTick(function(){
-                                    $('.msg-lis-desc').each(function(i,ele,arr){
-                                        if(i>=prevCount){
+                                var prevCount = (_this.pageNo - 1) * _this.pageSize
+                                _this.$nextTick(function() {
+                                    $('.msg-lis-desc').each(function(i, ele, arr) {
+                                        if (i >= prevCount) {
                                             var hei = $(ele).height();
-                                            if(hei > 40){
+                                            if (hei > 40) {
                                                 $(ele).addClass('w-elli-2');
                                                 _this.msgShowStateList.push(1);
-                                            }
-                                            else{
+                                            } else {
                                                 _this.msgShowStateList.push(0);
                                             }
                                         }
                                     });
                                     _this.firstMsgAlready();
                                 })
-                            }
-                            else{
+                            } else {
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg: res.msg
                                 })
                             }
                         }
                     })
                 },
                 // 第一条消息已读
-                firstMsgAlready:function(){
-                    if(this.msgId){
+                firstMsgAlready: function() {
+                    if (this.msgId) {
                         var _this = this;
                         $('.msg-show-icon').eq(0).show();
                         $('.msg-contain').eq(0).find('.msg-lis-desc').removeClass('w-elli-2');
-                        setTimeout(function(){
+                        setTimeout(function() {
                             $('.msg-contain').eq(0).find('.msg-btn').text('收起');
                             var firstMsg = _this.msgList[0];
-                            if(firstMsg.readstate == 0){
-                                _this.msgAlreadyAjax(firstMsg.id,0);
+                            if (firstMsg.readstate == 0) {
+                                _this.msgAlreadyAjax(firstMsg.id, 0);
                             }
-                        },10)
+                        }, 10)
                         this.currClickELe = $('.msg-contain')[0];
                     }
                 },
-                getUserInfo:function(){
+                getUserInfo: function() {
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     })
                     this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {};
                 },
                 // 设置为已读
-                setMsgAlready:function(e,id,state,idx,canState){
+                setMsgAlready: function(e, id, state, idx, canState) {
                     var tag = e.currentTarget;
-                    if(this.currClickELe !== tag){
+                    if (this.currClickELe !== tag) {
                         $('.msg-show-icon').hide();
                         $('.msg-btn').text('展开');
                         $('.msg-lis-desc').addClass('w-elli-2');
                         $(tag).parent().siblings('.msg-show-icon').show();
                         this.currClickELe = tag;
                     }
-                    if(canState == 1){
-                        if($(tag).find('.msg-btn').text() === '展开'){
+                    if (canState == 1) {
+                        if ($(tag).find('.msg-btn').text() === '展开') {
                             $(tag).find('.msg-lis-desc').removeClass('w-elli-2');
                             $(tag).find('.msg-btn').text('收起');
-                        }else{
+                        } else {
                             $(tag).find('.msg-lis-desc').addClass('w-elli-2');
                             $(tag).find('.msg-btn').text('展开');
                         }
                     }
-                    if(state == 0){
-                        this.msgAlreadyAjax(id,idx);
+                    if (state == 0) {
+                        this.msgAlreadyAjax(id, idx);
                     }
                 },
                 // 跳转到查看客户
-                skipCustomerDetail:function(isList,cusId,cusPhone,id,idx){
+                skipCustomerDetail: function(isList, cusId, cusPhone, id, idx) {
                     var _this = this;
-                    if(this.msgList[idx].readstate != 1){
-                        this.msgAlreadyAjax(id,idx,function(){
-                            if(isList == 'SendNewCusMsg'){
+                    if (this.msgList[idx].readstate != 1) {
+                        this.msgAlreadyAjax(id, idx, function() {
+                            if (isList == 'SendNewCusMsg') {
                                 _this.skipCusList();
-                            }else if(isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow'){
-                                _this.skipDetail(cusId,cusPhone);
+                            } else if (isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow') {
+                                _this.skipDetail(cusId, cusPhone);
                             }
                         })
-                    }else{
-                        if(isList == 'SendNewCusMsg'){
+                    } else {
+                        if (isList == 'SendNewCusMsg') {
                             _this.skipCusList();
-                        }else if(isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow'){
-                            _this.skipDetail(cusId,cusPhone);
+                        } else if (isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow') {
+                            _this.skipDetail(cusId, cusPhone);
                         }
                     }
                 },
                 // 跳转到详情
-                skipDetail:function(cusId,cusPhone){
+                skipDetail: function(cusId, cusPhone) {
                     wHrefJs.openWin({
                         name: 'customerDetail',
                         path: '../customer/customer_detail.html',
                         param: {
                             cusId: cusId,
-                            cusPhone:cusPhone,
-                            isWork:1
+                            cusPhone: cusPhone,
+                            isWork: 1
                         }
                     })
                 },
                 // 跳转到客户列表
-                skipCusList:function(){
+                skipCusList: function() {
                     api.sendEvent({
                         name: 'ajpushSkipCustomerList'
                     });
                     api.closeToWin({
-                        name:'main'
+                        name: 'main'
                     });
                 },
                 // 已读的请求
-                msgAlreadyAjax:function(id,idx,cb){
+                msgAlreadyAjax: function(id, idx, cb) {
                     var _this = this;
                     wApiAjax({
-                        url:'perCenter/modPushMsgReadState',
-                        headers:{
+                        url: 'perCenter/modPushMsgReadState',
+                        headers: {
                             "token": TOKEN_DATA,
                         },
-                        data:{
-                            pushMsgId:id
+                        data: {
+                            pushMsgId: id
                         },
-                        method:'get',
-                        success:function(res){
+                        method: 'get',
+                        success: function(res) {
                             console.log(JSON.stringify(res))
-                            if(res.code == 1){
-                                Vue.set(_this.msgList[idx],'readstate',1);
+                            if (res.code == 1) {
+                                Vue.set(_this.msgList[idx], 'readstate', 1);
                                 cb && typeof cb === 'function' && cb();
-                            }else{
+                            } else {
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg: res.msg
                                 });
                             }
                         }

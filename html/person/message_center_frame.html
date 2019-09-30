@@ -94,34 +94,6 @@
 <script>
     var msgV = null;
     apiready = function() {
-
-        // 推送
-        // var ajpush = api.require('ajpush');
-        // if(ajpush){
-        //     // 点击通知
-        //     var systemType = api.systemType;
-        //     if('ios' === systemType){
-        //         ajpush.setBadge({
-        //             badge:0
-        //         });
-        //     }
-        // }
-        // $api.fixStatusBar($('.uni-header')[0]);
-        // $api.fixStatusBar($('.uni-fixed-header')[0]);
-        // api.addEventListener({
-        //     name: 'ajpushMessageList'
-        // }, function(ret, err){
-        //     if( ret ){
-        //         //  alert( JSON.stringify( ret ) );
-        //          msgV.msgId = ret.value.msgId || '';
-        //          msgV.msgList = [];
-        //          msgV.pageNo = 1;
-        //          msgV.fetchMsgData();
-        //     }
-        // });
-        //
-
-
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',

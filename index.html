@@ -321,7 +321,8 @@
                             type = extra.msgType,
                             msgId = extra.msgId,
                             serverType = extra.msgServerType,
-                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配';
+                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配',
+                            fetchUrl = extra.msgServerType == 'SendMsgByPhone' ? 'perCenter/pushMsgCusCon' : 'perCenter/pushMsg';
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -331,7 +332,8 @@
                                     cusPhone:phone,
                                     msgId:msgId,
                                     serverType:serverType,
-                                    originTitle:originTitle
+                                    originTitle:originTitle,
+                                    fetchUrl:fetchUrl
                                 }
                             });
 
@@ -344,7 +346,8 @@
                                         cusPhone:phone,
                                         msgId:msgId,
                                         serverType:serverType,
-                                        originTitle:originTitle
+                                        originTitle:originTitle,
+                                        fetchUrl:fetchUrl
                                     }
                                 })
                             },60)
@@ -370,7 +373,8 @@
                             type = extra.msgType,
                             msgId = extra.msgId,
                             serverType = extra.msgServerType,
-                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配';
+                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配',
+                            fetchUrl = extra.msgServerType == 'SendMsgByPhone' ? 'perCenter/pushMsgCusCon' : 'perCenter/pushMsg';
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -380,7 +384,8 @@
                                     cusPhone:phone,
                                     msgId:msgId,
                                     serverType:serverType,
-                                    originTitle:originTitle
+                                    originTitle:originTitle,
+                                    fetchUrl:fetchUrl
                                 }
                             });
                             wHrefJs.openWin({
@@ -391,7 +396,8 @@
                                     cusPhone:phone,
                                     msgId:msgId,
                                     serverType:serverType,
-                                    originTitle:originTitle
+                                    originTitle:originTitle,
+                                    fetchUrl:fetchUrl
                                 }
                             })
                         }
