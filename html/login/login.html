@@ -219,7 +219,7 @@
                         })
                         return
                     }
-                    var pwdExp = /^[\w]{6,16}$/;
+                    var pwdExp = /^[A-Za-z0-9]{6,16}$/;
                     if (self.pwd == "" || self.pwd == null || self.pwd == undefined) {
                         wDialog.toast({
                             msg: "请输入密码"

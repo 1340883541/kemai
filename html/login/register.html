@@ -93,17 +93,29 @@
                 },
                 handleRegister:function(){
                     var _this = this;
-                    if(!this.account.trim().trim()){
+                    var accountExp = /^([A-Za-z0-9]{3,20})$/;
+                    if (_this.account == "" || _this.account == null || _this.account == undefined) {
                         wDialog.toast({
-                            msg:'请输入账号'
+                            msg: "请输入账号"
                         })
-                        return;
+                        return
+                    } else if (!accountExp.test(_this.account)) {
+                        wDialog.toast({
+                            msg: "请正确输入账号"
+                        })
+                        return
                     }
-                    if(!this.pwd.trim().trim()){
+                    var pwdExp = /^[A-Za-z0-9]{6,16}$/;
+                    if (_this.pwd == "" || _this.pwd == null || _this.pwd == undefined) {
                         wDialog.toast({
-                            msg:'请输入密码'
+                            msg: "请输入密码"
                         })
-                        return;
+                        return
+                    } else if (!pwdExp.test(_this.pwd)) {
+                        wDialog.toast({
+                            msg: "请正确输入密码"
+                        })
+                        return
                     }
                     if(this.isShowInviteCode && !this.inviteCode.trim().trim()){
                         wDialog.toast({

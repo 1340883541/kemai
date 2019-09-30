@@ -320,7 +320,8 @@
                             phone = extra.phone,
                             type = extra.msgType,
                             msgId = extra.msgId,
-                            serverType = extra.msgServerType;
+                            serverType = extra.msgServerType,
+                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配';
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -329,7 +330,8 @@
                                     cusId: id,
                                     cusPhone:phone,
                                     msgId:msgId,
-                                    serverType:serverType
+                                    serverType:serverType,
+                                    originTitle:originTitle
                                 }
                             });
 
@@ -341,7 +343,8 @@
                                         cusId: id,
                                         cusPhone:phone,
                                         msgId:msgId,
-                                        serverType:serverType
+                                        serverType:serverType,
+                                        originTitle:originTitle
                                     }
                                 })
                             },60)
@@ -366,7 +369,8 @@
                             phone = extra.phone,
                             type = extra.msgType,
                             msgId = extra.msgId,
-                            serverType = extra.msgServerType;
+                            serverType = extra.msgServerType,
+                            originTitle = extra.msgServerType == 'SendMsgByPhone' ? '客户咨询' : '资源分配';
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -375,7 +379,8 @@
                                     cusId: id,
                                     cusPhone:phone,
                                     msgId:msgId,
-                                    serverType:serverType
+                                    serverType:serverType,
+                                    originTitle:originTitle
                                 }
                             });
                             wHrefJs.openWin({
@@ -385,7 +390,8 @@
                                     cusId: id,
                                     cusPhone:phone,
                                     msgId:msgId,
-                                    serverType:serverType
+                                    serverType:serverType,
+                                    originTitle:originTitle
                                 }
                             })
                         }
