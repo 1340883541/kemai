@@ -135,11 +135,14 @@
                         success:function(res){
                             wDialog.hideProgress();
                             if(res.code == 1){
+                                wDialog.toast({
+                                    msg:'注册成功'
+                                });
                                 api.closeWin();
                             }
                             else{
                                 wDialog.toast({
-                                    msg:res.msg
+                                    msg:'注册失败'
                                 })
                             }
                         }
