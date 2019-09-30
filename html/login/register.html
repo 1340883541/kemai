@@ -105,7 +105,7 @@
                         })
                         return;
                     }
-                    if(!this.inviteCode.trim().trim()){
+                    if(this.isShowInviteCode && !this.inviteCode.trim().trim()){
                         wDialog.toast({
                             msg:'请输入邀请码'
                         })

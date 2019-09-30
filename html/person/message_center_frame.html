@@ -19,7 +19,7 @@
 <body>
     <!-- 头部 -->
     <div id="wrap" class="felx-wrap flex-vertical message-wrapper" v-cloak>
-        <div class="uni-header">
+        <!-- <div class="uni-header">
             <div class="uni-fixed-header">
                 <div class="u-header-box">
                     <div class="u-back" onclick="api.closeWin();"></div>
@@ -27,7 +27,7 @@
                     <div class="u-right"></div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <div class="msg-contain">
             <div class="msg-lists">
                 <!-- <div class="msg-lis msg-lis1 flex-wrap">
@@ -106,8 +106,8 @@
         //         });
         //     }
         // }
-        $api.fixStatusBar($('.uni-header')[0]);
-        $api.fixStatusBar($('.uni-fixed-header')[0]);
+        // $api.fixStatusBar($('.uni-header')[0]);
+        // $api.fixStatusBar($('.uni-fixed-header')[0]);
         // api.addEventListener({
         //     name: 'ajpushMessageList'
         // }, function(ret, err){
@@ -120,6 +120,38 @@
         //     }
         // });
         //
+
+
+        // 下拉刷新
+        api.setCustomRefreshHeaderInfo({
+            bgColor: '#f7f7f7',
+            isScale: false,
+            loadAnimInterval: 120,
+            image: {
+                pull: [
+                    'widget://image/load-xl-s1.png',
+                    'widget://image/load-xl-s2.png',
+                ],
+                load: [
+                    'widget://image/load-xl-1.png',
+                    'widget://image/load-xl-2.png',
+                    'widget://image/load-xl-3.png',
+                    'widget://image/load-xl-4.png',
+                    'widget://image/load-xl-5.png',
+                    'widget://image/load-xl-6.png',
+                    'widget://image/load-xl-7.png',
+                    'widget://image/load-xl-8.png',
+                    'widget://image/load-xl-9.png',
+                    'widget://image/load-xl-10.png',
+                    'widget://image/load-xl-11.png',
+                    'widget://image/load-xl-12.png'
+                ]
+            }
+        }, function() {
+            //下拉刷新被触发，自动进入加载状态，使用 api.refreshHeaderLoadDone() 手动结束加载中状态
+            //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
+            msgV.fetchMsgData(api.refreshHeaderLoadDone);
+        });
         msgV = new Vue({
             el:'#wrap',
             data:{
@@ -177,7 +209,7 @@
                         console.warn('跳转页面入参错误');
                     }
                 },
-                fetchMsgData:function(){
+                fetchMsgData:function(cb){
                     wDialog.showProgress();
                     var _this = this;
                     TOKEN_DATA =  myLocalStorage.getItem('token');
@@ -187,7 +219,7 @@
                             "token": TOKEN_DATA,
                         },
                         success:function(res) {
-                            console.log(JSON.stringify(res))
+                            // console.log(JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 res.data.forEach(function(v){
@@ -202,6 +234,7 @@
                                     }
                                 })
                             }
+                            cb && typeof cb === 'function' && cb();
                         }
                     })
                 }

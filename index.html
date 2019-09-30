@@ -183,10 +183,30 @@
         function fnCreateWsConcat(empid){
             // console.log('innnnnnnnnnnnnnnn create websocket')
             if ('WebSocket' in window){
-                ws = new WebSocket(__CONFIG__.wsUrl + empid);
-                fnEventWsMessage();
+                var wsUrl = api.getGlobalData({
+                    key:'WSURL'
+                })
+                if(wsUrl){
+                    ws = new WebSocket(wsUrl + empid);
+                    fnEventWsMessage();
+                }else{
+                    api.ajax({
+                        url: 'http://112.74.31.201:8888/urlpath/callurl.txt',
+                        method: 'get'
+                    },function(ret, err){
+                        var urlAddr = err.body;
+                        wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'').split('=')[1] || 'wss://call.jindinghaiju.com:9100/websocket/';
+                        console.log(wsUrl)
+                        api.setGlobalData({
+                            key:"WSURL",
+                            value:wsUrl
+                        });
+                        ws = new WebSocket(wsUrl + empid);
+                        fnEventWsMessage();
+                    });
+                }
             } else{
-                console.log("当前浏览器不支持WebSocket");
+                console.warn("当前手机不支持WebSocket");
             }
         }
         // 监听socket发送的内容
@@ -299,7 +319,8 @@
                         var id = extra.cusId,
                             phone = extra.phone,
                             type = extra.msgType,
-                            msgId = extra.msgId;
+                            msgId = extra.msgId,
+                            serverType = extra.msgServerType;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -307,7 +328,8 @@
                                 extra: {
                                     cusId: id,
                                     cusPhone:phone,
-                                    msgId:msgId
+                                    msgId:msgId,
+                                    serverType:serverType
                                 }
                             });
 
@@ -318,7 +340,8 @@
                                     param: {
                                         cusId: id,
                                         cusPhone:phone,
-                                        msgId:msgId
+                                        msgId:msgId,
+                                        serverType:serverType
                                     }
                                 })
                             },60)
@@ -342,7 +365,8 @@
                         var id = extra.cusId,
                             phone = extra.phone,
                             type = extra.msgType,
-                            msgId = extra.msgId;
+                            msgId = extra.msgId,
+                            serverType = extra.msgServerType;
                         // 跳转到详情
                         if(type == 'msgAppNoticeList'){
                             api.sendEvent({
@@ -350,7 +374,8 @@
                                 extra: {
                                     cusId: id,
                                     cusPhone:phone,
-                                    msgId:msgId
+                                    msgId:msgId,
+                                    serverType:serverType
                                 }
                             });
                             wHrefJs.openWin({
@@ -359,7 +384,8 @@
                                 param: {
                                     cusId: id,
                                     cusPhone:phone,
-                                    msgId:msgId
+                                    msgId:msgId,
+                                    serverType:serverType
                                 }
                             })
                         }

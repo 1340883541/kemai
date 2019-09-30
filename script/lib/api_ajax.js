@@ -37,6 +37,30 @@ if (typeof Object.assign != 'function') {
 var isLoginPastDue = false,
     isCanLetApp = false;
 function wApiAjax(par) {
+    var BASEURL = api.getGlobalData({
+        key: 'BASEURL'
+    });
+    if(BASEURL){
+        __CONFIG__.baseUrl = BASEURL;
+        fnAjax(par);
+    }else{
+        api.ajax({
+            url: 'http://112.74.31.201:8888/urlpath/callurl.txt',
+            method: 'get'
+        },function(ret, err){
+            var urlAddr = err.body;
+            __CONFIG__.baseUrl = urlAddr.split(',')[0].replace(/[\n|\s]/g,'').split('=')[1] || 'https://call.jindinghaiju.com/';
+            api.setGlobalData({
+                key:"BASEURL",
+                value:__CONFIG__.baseUrl
+            });
+            fnAjax(par);
+            // var wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'');
+        });
+    }
+
+}
+function fnAjax(par){
     par.data = par.data || '';
     // par.data = createSign(par);
     if (Object.prototype.toString.call(par.files).toLowerCase() === '[object array]') {

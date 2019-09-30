@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-消息中心</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/message_center.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap" class="felx-wrap flex-vertical message-wrapper">
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back" onclick="api.closeWin();"></div>
+                    <div class="u-center">消息中心</div>
+                    <div class="u-right"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var msgV = null;
+    apiready = function() {
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+
+        var y = $('.uni-header').outerHeight();
+        var h = $(window).height() - y;
+        wHrefJs.openFrame({
+            name:'messageCenterFrame',
+            url:'./message_center_frame.html',
+            param:{
+                msgId:api.pageParam.msgId
+            },
+            y:y,
+            h:h,
+            bounces:true
+        })
+    }
+</script>
+
+</html>

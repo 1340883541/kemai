@@ -99,7 +99,7 @@
                             <div><img src="../../image/icon-gr-jiantou.png"></div>
                         </div>
                     </div> -->
-                    <div class="person_center account_security">
+                    <div class="person_center account_security" v-show="isShowCusAddBox" style="display:none;">
                         <div class="account_left">
                             <div><img src="../../image/icon-gr-add.png"></div>
                         </div>
@@ -164,6 +164,7 @@
                 tel: "",
                 userInfo: '',
                 answernum: '', // 接听号
+                isShowCusAddBox:false
             },
             mounted: function() {
                 this.getUserInfo();
@@ -221,14 +222,15 @@
                 // 跳转到消息中心
                 skipMessageList:function(){
                     wHrefJs.openWin({
-                        name: 'messageCenter',
-                        path: './message_center.html',
+                        name: 'messageCenterHeader',
+                        path: './message_center_header.html',
                     });
                 },
                 getUserInfo: function() {
                     var _this = this;
                     this.init();
                     var TOKEN_DATA = myLocalStorage.getItem('token');
+                    this.isShowCusAddBox = myLocalStorage.getItem('WHEREADDCUS') == 1 ? true : false;
                     wApiAjax({
                         method: "get",
                         url: 'perCenter/info',
