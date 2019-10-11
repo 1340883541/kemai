@@ -132,25 +132,27 @@
         if(userInfo.employeeid){
             fnCreateWsConcat(userInfo.employeeid);
         }
-        // 动态权限
-        var resultList = api.hasPermission({
-            list:['microphone','photos','notification','phone','storage']
-        });
-        // console.log(JSON.stringify(resultList));
-        var notOpenPowerList = resultList.filter(function(v){
-            if(!v.granted) return v;
-        });
-        if(notOpenPowerList && notOpenPowerList.length > 0){
-            var reqPowerList = notOpenPowerList.map(function(v){
-                return v.name
-            })
-            // console.log(JSON.stringify(reqPowerList))
-            api.requestPermission({
-                list:reqPowerList,
-                code:1
-            }, function(ret, err){
-                // console.log(JSON.stringify(ret));
+        if(api.systemType !== 'ios'){
+            // 动态权限
+            var resultList = api.hasPermission({
+                list:['microphone','photos','notification','phone','storage']
             });
+            // console.log(JSON.stringify(resultList));
+            var notOpenPowerList = resultList.filter(function(v){
+                if(!v.granted) return v;
+            });
+            if(notOpenPowerList && notOpenPowerList.length > 0){
+                var reqPowerList = notOpenPowerList.map(function(v){
+                    return v.name
+                })
+                // console.log(JSON.stringify(reqPowerList))
+                api.requestPermission({
+                    list:reqPowerList,
+                    code:1
+                }, function(ret, err){
+                    // console.log(JSON.stringify(ret));
+                });
+            }
         }
         // 监听登录成功
         api.addEventListener({
@@ -262,35 +264,6 @@
         function fnCloseWsConcat(){
             if(ws) ws.close();
         }
-
-    	// var  ws=null;
-        // //判断当前浏览器是否支持WebSocket
-        // if ('WebSocket' in window){
-        //     console.log('in')
-        //     ws=new WebSocket('wss://192.168.0.222:9000/websocket');
-        // } else{
-        //     console.log("当前浏览器不支持WebSocket");
-        // }
-        // //连接发生错误的回调方法
-        // ws.onerror=function (e) {
-        //     console.log("WebSocket连接发生错误！");
-        // }
-        //
-        // ws.onopen=function () {
-        //     console.log("WebSocket连接成功！")
-        // }
-        //
-        // ws.onmessage=function (event) {
-        //     console.log(event.data);
-        // }
-        //
-        // ws.onclose=function () {
-        //     console.log("WebSocket连接关闭");
-        // }
-        // setTimeout(function(){
-        //     console.log('WebSocket发送消息')
-		//     ws.send('token="3333-32233"');
-        // },4000)
         // 讯飞语音识别
         var voiceRecognizer = api.require('voiceRecognizer');
         voiceRecognizer.createUtility({
