@@ -48,6 +48,7 @@
         font-size: 15px;
         color:#fff;
         opacity: .6;
+        width:100%;
     }
 </style>
 
@@ -158,7 +159,7 @@
                 isIos:false
             },
             created:function(){
-                this.isIos = api.systemType === 'ios' ? true : true;
+                this.isIos = api.systemType === 'ios' ? true : false;
             },
             watch:{
                 phone:function(n){
