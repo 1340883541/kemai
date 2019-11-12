@@ -142,7 +142,8 @@
         api.addEventListener({
             name: 'ajpushSkipCustomerList'
         }, function(ret, err){
-            setFootBar($('#footer li').eq(1)[0],1);
+            // setFootBar($('#footer li').eq(1)[0],1);
+            setFootBar($('#footer li').eq(0)[0],0);
         });
         // // 监听弹窗显示
         // api.addEventListener({
