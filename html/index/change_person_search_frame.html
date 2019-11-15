@@ -310,7 +310,8 @@
                     })
                     console.log('allot employeed req------' + JSON.stringify({
                         employeeid: _this.empId,
-                        customerid: _this.cusId
+                        customerid: param.cusId,
+                        type:param.type === undefined ? 0 : param.type
                     }))
                     wApiAjax({
                         method: "post",

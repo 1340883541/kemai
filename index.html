@@ -159,12 +159,16 @@
             name: 'loginSuc'
         }, function(ret, err){
             if(ret.value.origin === 'index'){
-                // 打开main
+                // // 打开main
+                // wHrefJs.openWin({
+                //     name: 'main',
+                //     path: './html/main.html',
+                //     reload:true
+                // });
                 wHrefJs.openWin({
-                    name: 'main',
-                    path: './html/main.html',
-                    reload:true
-                });
+                    name:'person',
+                    path:'./html/person/index.html'
+                })
             }
             // 获取用户信息
             var userInfo = wPref.getPrefs({
