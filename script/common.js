@@ -346,7 +346,13 @@ function funcGetThisMonth(){
 	var date = new Date(),
 		year = date.getFullYear(),
 		month = date.getMonth()+1;
-	var nextMonthDay = new Date(funcFormateDate(year,month+1,1));
+    var month1 = 0,
+        year1 = 0;
+    if(month == 12){
+        year1 += 1;
+        month1 = 1;
+    }
+	var nextMonthDay = new Date(funcFormateDate(year1 ? year1 : year,month1 ? month1 : month+1,1));
 	var lastDay = new Date(nextMonthDay - 86400000).getDate();
 	return {
 		startDate:funcFormateDate(year,month,1),
