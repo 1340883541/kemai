@@ -365,8 +365,13 @@ function funcGetThisTwoMonth(){
 		year = date.getFullYear(),
 		month = date.getMonth()+1,
         day = date.getDate();
+    var month1 = month - 2, year1 = year;
+    if(month - 2 <= 0){
+        month1 = 10 + month;
+        year1 = year - 1;
+    }
 	return {
-		startDate:funcFormateDate(year,month-2,day),
+		startDate:funcFormateDate(year1,month1,day),
 		endDate:funcFormateDate(year,month,day)
 	}
 }
