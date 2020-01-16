@@ -279,33 +279,114 @@
                                         },function(res){
                                             // 设置别名
                                             if(res.statusCode == 0){
+                                                wApiAjax({
+                                                    url:'workbench/regIfSuc',
+                                                    headers:{
+                                                        token:TOKEN_DATA
+                                                    },
+                                                    data:{
+                                                        accout:_this.userInfo.account,
+                                                        empId:_this.userInfo.employeeid,
+                                                        msg:'注销别名成功'
+                                                    },
+                                                    success:function(res){
+                                                        wPref.removePrefs({
+                                                            key: 'userInfo'
+                                                        })
+                                                        myLocalStorage.clearItem('token');
+                                                        wDialog.toast({
+                                                            msg: '退出成功'
+                                                        })
+                                                        myLocalStorage.clearAll();
+                                                        setTimeout(function() {
+                                                            wHrefJs.openWin({
+                                                                name: 'login',
+                                                                path: '../login/login.html',
+                                                                param: {
+                                                                    origin: 'person'
+                                                                }
+                                                            });
+                                                        }, 300);
+                                                    },
+                                                    fail:function(){
+                                                        wPref.removePrefs({
+                                                            key: 'userInfo'
+                                                        })
+                                                        myLocalStorage.clearItem('token');
+                                                        wDialog.toast({
+                                                            msg: '退出成功'
+                                                        })
+                                                        myLocalStorage.clearAll();
+                                                        setTimeout(function() {
+                                                            wHrefJs.openWin({
+                                                                name: 'login',
+                                                                path: '../login/login.html',
+                                                                param: {
+                                                                    origin: 'person'
+                                                                }
+                                                            });
+                                                        }, 300);
+                                                    }
+                                                })
+                                            }else{
+                                                wApiAjax({
+                                                    url:'workbench/regIfSuc',
+                                                    headers:{
+                                                        token:TOKEN_DATA
+                                                    },
+                                                    data:{
+                                                        accout:_this.userInfo.account,
+                                                        empId:_this.userInfo.employeeid,
+                                                        msg:'注销别名失败'
+                                                    },
+                                                    success:function(res){
+                                                        wPref.removePrefs({
+                                                            key: 'userInfo'
+                                                        })
+                                                        myLocalStorage.clearItem('token');
+                                                        wDialog.toast({
+                                                            msg: '退出成功'
+                                                        })
+                                                        myLocalStorage.clearAll();
+                                                        setTimeout(function() {
+                                                            wHrefJs.openWin({
+                                                                name: 'login',
+                                                                path: '../login/login.html',
+                                                                param: {
+                                                                    origin: 'person'
+                                                                }
+                                                            });
+                                                        }, 300);
+                                                    },
+                                                    fail:function(){
+                                                        wPref.removePrefs({
+                                                            key: 'userInfo'
+                                                        })
+                                                        myLocalStorage.clearItem('token');
+                                                        wDialog.toast({
+                                                            msg: '退出成功'
+                                                        })
+                                                        myLocalStorage.clearAll();
+                                                        setTimeout(function() {
+                                                            wHrefJs.openWin({
+                                                                name: 'login',
+                                                                path: '../login/login.html',
+                                                                param: {
+                                                                    origin: 'person'
+                                                                }
+                                                            });
+                                                        }, 300);
+                                                    }
+                                                })
 
                                             }
                                         })
                                         wPref.removePrefs({
                                             key: 'isLogin'
                                         })
-                                        wPref.removePrefs({
-                                            key: 'userInfo'
-                                        })
-                                        myLocalStorage.clearItem('token');
-                                        myLocalStorage.clearAll();
-                                        wDialog.toast({
-                                            msg: '退出成功'
-                                        })
                                         api.sendEvent({
                                             name: 'loginOutSuc'
                                         });
-
-                                        setTimeout(function() {
-                                            wHrefJs.openWin({
-                                                name: 'login',
-                                                path: '../login/login.html',
-                                                param: {
-                                                    origin: 'person'
-                                                }
-                                            });
-                                        }, 300);
                                     }
                                 }
                             })

@@ -288,10 +288,61 @@
                                             }
                                             ajpush.bindAliasAndTags({
                                                 alias: res.configEnv + '_' + res.data.platAccount[0].employeeid,
-                                            }, function(res) {
-                                                // console.log(JSON.stringify(res))
+                                            }, function(res1) {
                                                 // 设置别名
-                                                if (res.statusCode == 0) {}
+                                                if (res1.statusCode == 0) {
+                                                    wApiAjax({
+                                                        url:'workbench/regIfSuc',
+                                                        headers:{
+                                                            token:res.token
+                                                        },
+                                                        data:{
+                                                            accout:res.data.platAccount[0].account,
+                                                            empId:res.data.platAccount[0].employeeid,
+                                                            msg:'绑定别名成功'
+                                                        },
+                                                        success:function(res2){
+                                                            if (param.origin !== 'index'){
+                                                                setTimeout(function() {
+                                                                    api.closeWin();
+                                                                }, 200);
+                                                            }
+                                                        },
+                                                        fail:function(){
+                                                            if (param.origin !== 'index'){
+                                                                setTimeout(function() {
+                                                                    api.closeWin();
+                                                                }, 200);
+                                                            }
+                                                        }
+                                                    })
+                                                }else{
+                                                    wApiAjax({
+                                                        url:'workbench/regIfSuc',
+                                                        headers:{
+                                                            token:res.token
+                                                        },
+                                                        data:{
+                                                            accout:res.data.platAccount[0].account,
+                                                            empId:res.data.platAccount[0].employeeid,
+                                                            msg:'绑定别名失败'
+                                                        },
+                                                        success:function(res){
+                                                            if (param.origin !== 'index'){
+                                                                setTimeout(function() {
+                                                                    api.closeWin();
+                                                                }, 200);
+                                                            }
+                                                        },
+                                                        fail:function(){
+                                                            if (param.origin !== 'index'){
+                                                                setTimeout(function() {
+                                                                    api.closeWin();
+                                                                }, 200);
+                                                            }
+                                                        }
+                                                    })
+                                                }
                                             })
                                             var userInfo = Object.assign({}, {
                                                 relativePosi: res.rolescode
@@ -316,17 +367,6 @@
                                                     origin: param.origin
                                                 }
                                             });
-                                            if (param.origin === 'index') {
-                                                // setTimeout(function() {
-                                                //     api.closeToWin({
-                                                //         name: 'root'
-                                                //     });
-                                                // }, 600);
-                                            } else {
-                                                setTimeout(function() {
-                                                    api.closeWin();
-                                                }, 200);
-                                            }
                                         }
                                         setTimeout(function() {
                                             self.sign = "登录"
