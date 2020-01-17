@@ -1,5 +1,5 @@
 var __CONFIG__ = {
-    currAtom:'dev',
+    currAtom:'pro',
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.222:8765/', // 本地
     // baseUrl:'https://192.168.110.219:9000/', // 本地 小麦
