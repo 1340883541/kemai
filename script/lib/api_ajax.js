@@ -1,10 +1,10 @@
 var __CONFIG__ = {
-    currAtom:'dev',
+    currAtom:'pro',
     // baseUrl:'https://192.168.0.157:9000/', // 本地
     // baseUrl:'https://192.168.0.222:8765/', // 本地
-    // baseUrl:'https://192.168.110.222:9000/', // 本地 小麦
+    // baseUrl:'https://192.168.110.219:9000/', // 本地 小麦
     // baseUrl:'https://192.168.110.244:9000/', // 本地  埃文
-    // baseUrl:'https://192.168.0.209:9100/', // 本地
+    // baseUrl:'https://192.168.0.222:9100/', // 本地
     baseUrl: 'https://calltest.jindinghaiju.com:9000/',  // 测试
     // baseUrl: 'https://call.jindinghaiju.com/', // 正式
     fixstr: 'dhi5ht798eh87dy9JLIdasfdHKHYUyjA',
@@ -45,11 +45,7 @@ function wApiAjax(par) {
             key: 'BASEURL'
         });
         if(BASEURL){
-            var WSURL = api.getGlobalData({
-                key:'WSURL'
-            })
             __CONFIG__.baseUrl = BASEURL;
-            __CONFIG__.wsUrl = WSURL;
             fnAjax(par);
         }else{
             api.ajax({
@@ -58,15 +54,10 @@ function wApiAjax(par) {
             },function(ret, err){
                 var urlAddr = err.body;
                 __CONFIG__.baseUrl = urlAddr.split(',')[0].replace(/[\n|\s]/g,'').split('=')[1] || 'https://call.jindinghaiju.com/';
-                __CONFIG__.wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'').split('=')[1] || 'wss://call.jindinghaiju.com:9100/websocket/';
                 api.setGlobalData({
                     key:"BASEURL",
                     value:__CONFIG__.baseUrl
                 });
-                api.setGlobalData({
-                    key:'WSURL',
-                    value:__CONFIG__.wsUrl
-                })
                 fnAjax(par);
                 // var wsUrl = urlAddr.split(',')[1].replace(/[\n|\s]/g,'');
             });
