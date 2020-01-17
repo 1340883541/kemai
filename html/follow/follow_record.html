@@ -18,6 +18,24 @@
         body{
             overflow: auto;
         }
+        .follow-warn{
+            margin-left:-15px;
+            margin-right:-15px;
+            line-height:20px;
+            padding:8px 15px;
+            font-size:14px;
+            color:#fa9450;
+            background-color: rgba(255,243,224,.8);
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .follow-warn > i{
+            padding-left: 16px;
+            background: url('../../image/icon-wifi.png') no-repeat center;
+            background-size: contain;
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -31,8 +49,9 @@
             <div class="fh-place" id="fh-place"></div>
             <div class="follow-head-bg" id="fh-bg"></div>
             <div class="follow-box follow-box1">
-                <div class="follow-b1-t bor-1px-b">
-                    <div class="name"><span class="w-elli" v-text="clientName"></span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
+                <div class="follow-b1-t bor-1px-b" style="padding-top:0;">
+                    <div class="follow-warn"><i></i>为避免客户丢失，建议尽快完成保存操作</div>
+                    <div class="name"><span class="w-elli" v-text="clientName">哈哈哈</span><i class="edit-icon" @click.stop="handleEditCustomerName"></i></div>
                     <!-- <div class="wechat" v-if="isNotLookWechat">微信号：<span>******</span><span class="w-btn" @click.stop="handleLookWechat">查看微信</span></div>
                     <div class="wechat" v-else>微信号：<span v-text="wechatCard"></span><span class="w-btn" @click.stop="handleClipOpenWechat">复制并打开微信</span></div> -->
                     <div class="wechat clear" v-if="wechatCard">
@@ -1237,19 +1256,57 @@
                                 break;
                             }
                         }
+                        console.log(_this.cusId)
                         if(!isCanDirectBack){
                             wDialog.confirm({
                                 msg:'当前记录未保存，确定退出吗?',
                                 button:['退出','继续填写'],
                                 sureCb:function(){
-                                    api.closeWin();
+                                    // 返回请求接口
+                                    wApiAjax({
+                                        url:'customer/closeLock',
+                                        headers:{
+                                            token:TOKEN_DATA
+                                        },
+                                        data:{
+                                            customerid:_this.cusId
+                                        },
+                                        success:function(res){
+                                            console.log(JSON.stringify(res))
+                                            if(res.code == 1){
+                                                api.closeWin();
+                                            }else{
+                                                wDialog.toast({
+                                                    msg:res.msg
+                                                })
+                                            }
+                                        }
+                                    })
                                 },
                                 cancelCb:function(){
                                     _this.isCanBack = true;
                                 }
                             })
                         }else{
-                            api.closeWin();
+                            // 返回请求接口
+                            wApiAjax({
+                                url:'customer/closeLock',
+                                headers:{
+                                    token:TOKEN_DATA
+                                },
+                                data:{
+                                    customerid:_this.cusId
+                                },
+                                success:function(res){
+                                    if(res.code == 1){
+                                        api.closeWin();
+                                    }else{
+                                        wDialog.toast({
+                                            msg:res.msg
+                                        })
+                                    }
+                                }
+                            })
                         }
                     }
                 },

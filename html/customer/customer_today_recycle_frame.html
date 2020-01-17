@@ -259,28 +259,58 @@
                 },
                 // 跳转客户详情
                 skipCustomerDetail: function(id,phone) {
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: './customer_detail.html',
-                        param: {
-                            cusId: id,
-                            cusPhone:phone,
-                            isWork:1
-                        }
+                    // 请求当前客户是不是属于自己
+                    this.fnCheckCustomerSelf(id,function(){
+                        wHrefJs.openWin({
+                            name: 'customerDetail',
+                            path: './customer_detail.html',
+                            param: {
+                                cusId: id,
+                                cusPhone:phone,
+                                isWork:1
+                            }
+                        })
                     })
                 },
                 // 跳转到跟进页面
                 handleSkipFollow:function(id,phone){
-                    api.openWin({
-                        name: 'followRecord',
-                        url: '../follow/follow_record.html',
-                        pageParam: {
-                            id:id,
-                            phone:phone,
-                            isWork:1
-                        },
-                        slidBackEnabled: false
+                    // 请求当前客户是不是属于自己
+                    this.fnCheckCustomerSelf(id,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id:id,
+                                phone:phone,
+                                isWork:1
+                            },
+                            slidBackEnabled: false
+                        });
                     });
+                },
+                // 请求当前客户是不是属于自己
+                fnCheckCustomerSelf:function(cusId,cb){
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/verCusIf',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:cusId
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                cb && typeof cb === 'function' && cb();
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                            }
+                        }
+                    })
                 }
             }
         })

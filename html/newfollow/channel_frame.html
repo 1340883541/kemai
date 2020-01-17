@@ -507,38 +507,68 @@
                 },
                 // 跳转到详情
                 skipCustomerDetail: function(id,phone,idName,status,way) {
+                    // 请求当前客户是不是属于自己
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
-                    wHrefJs.openWin({
-                        name: 'customerDetail',
-                        path: '../customer/customer_detail.html',
-                        param: {
-                            cusId: id,
-                            cusPhone:phone,
-                            isWork:2,
-                            idName:idName,
-                            origin:'channelResourceAllot',
-                            status:status,
-                            way:way
-                        }
-                    })
+                    this.fnCheckCustomerSelf(id,function(){
+                        wHrefJs.openWin({
+                            name: 'customerDetail',
+                            path: '../customer/customer_detail.html',
+                            param: {
+                                cusId: id,
+                                cusPhone:phone,
+                                isWork:2,
+                                idName:idName,
+                                origin:'channelResourceAllot',
+                                status:status,
+                                way:way
+                            }
+                        })
+                    });
                 },
                 // 跳转到跟进记录
                 handleSkipFollow:function(id,phone,idName,status,way){
+                    // 请求当前客户是不是属于自己
                     $('#'+idName).addClass('curr').siblings().removeClass('curr');
-                    api.openWin({
-                        name: 'followRecord',
-                        url: '../follow/follow_record.html',
-                        pageParam: {
-                            id:id,
-                            phone:phone,
-                            isWork:2,
-                            idName:idName,
-                            origin:'channelResourceAllot',
-                            status:status,
-                            way:way
+                    this.fnCheckCustomerSelf(id,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id:id,
+                                phone:phone,
+                                isWork:2,
+                                idName:idName,
+                                origin:'channelResourceAllot',
+                                status:status,
+                                way:way
+                            },
+                            slidBackEnabled: false
+                        });
+                    })
+                },
+                // 请求当前客户是不是属于自己
+                fnCheckCustomerSelf:function(cusId,cb){
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/verCusIf',
+                        headers:{
+                            token:TOKEN_DATA
                         },
-                        slidBackEnabled: false
-                    });
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:cusId
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                cb && typeof cb === 'function' && cb();
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                            }
+                        }
+                    })
                 }
             }
         });

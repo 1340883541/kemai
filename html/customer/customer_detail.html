@@ -557,38 +557,44 @@
                 },
                 // 跳转到跟进页面
                 handleSkipFollow: function(i) {
+                    // 请求当前客户是不是属于自己
                     var _this = this;
-                    api.openWin({
-                        name: 'followRecord',
-                        url: '../follow/follow_record.html',
-                        pageParam: {
-                            id: _this.cusId,
-                            phone: _this.cusPhone,
-                            followId: i == 0 ? _this.followRootId : '',
-                            isWork: param.isWork,
-                            type: i === 0 ? 1 : 0,
-                            idName:param.idName||'',
-                            origin:param.origin,
-                            status:param.status,
-                            way:param.way
-                        },
-                        slidBackEnabled: false
+                    this.fnCheckCustomerSelf(_this.cusId,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id: _this.cusId,
+                                phone: _this.cusPhone,
+                                followId: i == 0 ? _this.followRootId : '',
+                                isWork: param.isWork,
+                                type: i === 0 ? 1 : 0,
+                                idName:param.idName||'',
+                                origin:param.origin,
+                                status:param.status,
+                                way:param.way
+                            },
+                            slidBackEnabled: false
+                        });
                     });
                 },
                 // 编辑跟进记录
                 handleEditFollowRecord: function(id) {
                     var _this = this;
-                    api.openWin({
-                        name: 'followRecord',
-                        url: '../follow/follow_record.html',
-                        pageParam: {
-                            id: _this.cusId,
-                            phone: _this.cusPhone,
-                            followId: id,
-                            isEditFollow: true,
-                            isWork: param.isWork
-                        },
-                        slidBackEnabled: false
+                    // 请求当前客户是不是属于自己
+                    this.fnCheckCustomerSelf(_this.cusId,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id: _this.cusId,
+                                phone: _this.cusPhone,
+                                followId: id,
+                                isEditFollow: true,
+                                isWork: param.isWork
+                            },
+                            slidBackEnabled: false
+                        });
                     });
                 },
                 // 切换 跟进信息 和 意向资料
@@ -734,6 +740,30 @@
                             })
                         }
                     }
+                },
+                // 请求当前客户是不是属于自己
+                fnCheckCustomerSelf:function(cusId,cb){
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/verCusIf',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:cusId
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                cb && typeof cb === 'function' && cb();
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                            }
+                        }
+                    })
                 }
             }
         })
