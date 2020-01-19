@@ -330,8 +330,9 @@ function funcGetThisToday(){
 function funcGetThisWeek(){
     var oneDayLong = 24*60*60*1000;
     var now = new Date();
-    var mondayTime = now.getTime() - (now.getDay()-1)*oneDayLong;
-    var sundayTime = now.getTime() + (7-now.getDay())*oneDayLong;
+    var getWeekDay = now.getDay() === 0 ? 7 : now.getDay();
+    var mondayTime = now.getTime() - (getWeekDay-1)*oneDayLong;
+    var sundayTime = now.getTime() + (7-getWeekDay)*oneDayLong;
 
     var startDate = new Date(mondayTime)
     var endDate = new Date(sundayTime);

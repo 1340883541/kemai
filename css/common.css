@@ -466,6 +466,23 @@
     background-color: rgba(0,191,109,.05);
     border-radius: 2px;
 }
+.filter-lists .filter-lis .filter-lb .lis.flb-cls2 .follow-status{
+    margin-left: 4px;
+    padding: 0 4px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 13px;
+}
+.filter-lists .filter-lis .filter-lb .lis.flb-cls2 .follow-status.orange-col{
+    color:#ff9402;
+    background-color: rgba(255,148,2,.05);
+    border-radius: 2px;
+}
+.filter-lists .filter-lis .filter-lb .lis.flb-cls2 .follow-status.green-col{
+    color:#00bf6d;;
+    background-color: rgba(0,191,109,.05);
+    border-radius: 2px;
+}
 .filter-lists .filter-lis .filter-lb .lis.flb-cls2{
     color:#999;
     line-height: 1em;
