@@ -217,7 +217,9 @@
         <!-- 拨打电话确定 -->
         <div class="callphone-sure-popup" v-show="isShowSureCallPhonePopup" @click.stop="isShowSureCallPhonePopup = false" style="display:none;">
             <div class="callphone-sure-box" @click.stop.prevent>
-                <div class="callphone-sure-content">确定用<span v-text="currCallPhoneWayTxt"></span>拨打吗？</div>
+                <div class="callphone-sure-content" style="margin-bottom:10px;">确定用<span v-text="currCallPhoneWayTxt"></span>拨打吗？</div>
+                <div style="font-size:12px;text-align:center;margin-bottom:12px;">办公拨号自2020年1月20日起规定<br>客户将看到以0631开头的号码</div>
+                <div style="color:#fa9450;font-size:12px;text-align:center;margin-bottom:20px;">办公拨号将于2020年2月20日停用</div>
                 <div class="callphone-sure-btn clear">
                     <div class="fl left" @click.stop="isShowSureCallPhonePopup = false;">
                         取消
