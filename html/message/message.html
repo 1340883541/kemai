@@ -109,7 +109,7 @@
                     <div class="mainSwitch">
                         <div class="notice">缴费提醒</div>
                         <div class="weui-div" @click="changeChenk('pay_state')">
-                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.pay_state==1}" :value="messageInfo.pay_state==1"></span>
+                                <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.pay_state==1}" :value="messageInfo.pay_state==1"></span>
                             <div v-if='!messageInfo.pay_state==1' class="weui-div-2"></div>
                             <div v-if='messageInfo.pay_state==1' class="weui-div-1"></div>
                         </div>
@@ -180,7 +180,7 @@
                 },
             },
             watch: {
-                value() {
+                value:function() {
                     this.me_checked = this.value;
                 }
             },
@@ -239,7 +239,7 @@
                     })
 
                 },
-                toggle() {
+                toggl:function() {
                     // 是否可点击
                     var _this = this;
                     _this.me_checked = true;
@@ -319,7 +319,7 @@
                         })
                     }
                 },
-                toggleShow(num) {
+                toggleShow:function(num) {
                     var _this = this;
                     if (_this.messageInfo[num] == 1) {
                         _this.$set(_this.messageInfo, num, 0)
