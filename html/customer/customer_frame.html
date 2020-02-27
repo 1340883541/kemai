@@ -52,11 +52,61 @@
             background-image: url('../../image/postion_checked_dis.png');
             display: block;
         }
+        .footer_roof{
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            /*width: calc(100% - 16px);*/
+            /*margin-left: 8px;*/
+            /*width:100%;*/
+            height: 30px;
+            line-height: 30px;
+           background:rgba(255,255,255,0.96);
+           border-radius:4px;
+           padding:0 0.18rem;
+           box-shadow: 0px 0px 16px 0px rgba(0,0,0,0.1);
+        }
+        .dis_flex_end{
+            display: flex;
+            align-items:center;
+            justify-content: space-between;
+        }
+        .dis_flex{
+            display: flex;
+            align-items:center;
+        }
+        .footer_roof .allNUm span{
+            margin-left: 0.1rem;
+            font-size:0.24rem;
+            font-weight:400;
+            color:rgba(153,153,153,1);
+            padding-top:0.06rem;
+        }
+        .footer_roof .allNUm img{
+            width:0.24rem;
+            height:0.24rem;
+            padding-top:0.03rem;
+        }
+        .roof-top img{
+            width: 0.4rem;
+        }
+        .fade-enter{
+			opacity: 0;
+		}
+		.fade-enter-active{
+			transition: opacity 0.5s;
+		}
+        .fade-leave-to{
+			opacity: 0;
+		}
+		.fade-leave-active{
+			transition: opacity 0.5s;
+		}
     </style>
 </head>
-
+ <!-- v-cloak -->
 <body>
-    <div id="wrap" v-cloak @touchstart.stop="handleBlur">
+    <div id="wrap" @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis" v-for="(khdata,index) in khDataList" :key="index" :id="'cus-lis-'+index" @click.stop="skipCustomerDetail(khdata.id,khdata.phone,'cus-lis-'+index)">
                 <div class="filter-lt flex-wrap flex-between">
@@ -66,7 +116,7 @@
                 <div class="filter-lb">
                     <div class="lis flb-cls1">客户编号: <span v-text="khdata.id||'暂无'"></span></div>
                     <div class="flex-wrap filter-lb1">
-                        <div class="lis flex-con flb-cls2">号码归属: <span v-text="khdata.attribution||'未知'"></span></div>
+                        <div class="lis flex-con flb-cls2">号码归属地: <span v-text="khdata.attribution||'未知'"></span></div>
                         <div class="lis flex-con flb-cls2">客户状态: <span v-text="khdata.status||'无'" class="cus-status"></span></div>
                         <div class="lis flex-con flb-cls2">跟进时间: <span v-text="khdata.followtime||'暂未跟进'" class="cus-follow-date"></span></div>
                         <div class="lis flex-con flb-cls2">计划时间: <span v-text="khdata.nextfollow||'暂无计划'" class="cus-next-follow-date"></span></div>
@@ -76,6 +126,13 @@
             </div>
             <!-- 无更多数据 -->
             <div class="not-more-filter" id="not-more">没有更多数据</div>
+            <!-- 置顶 -->
+            <transition name="fade" >
+                <div class="footer_roof dis_flex_end" v-show="isRoof">
+                    <div class="dis_flex allNUm"><img src="../../image/icon_1.png" alt=""><span>当前加载{{currentCount}}条，总数据{{allCount}}条</span></div>
+                    <div class="roof-top" @click="topRoof"><img src="../../image/icon-zd.png" alt=""></div>
+                </div>
+            </transition>
         </div>
         <!-- 空页面 -->
         <empty-con :is-show="khDataList.length === 0" txt="暂无客户信息"></empty-con>
@@ -121,7 +178,9 @@
             //下拉刷新被触发，使用 api.refreshHeaderLoadDone() 结束加载中状态
             $('#not-more').hide();
             nCustomerFrame.pageNo = 1;
+            nCustomerFrame.currentCount = 10;
             nCustomerFrame.fetchListData(false,api.refreshHeaderLoadDone);
+
         });
         // 上拉加载更多
         api.addEventListener({
@@ -130,9 +189,20 @@
                 threshold:0
             }
         }, function(ret, err){
-            if(nCustomerFrame.isHavaMoreData){
-                ++nCustomerFrame.pageNo
-                nCustomerFrame.fetchListData(true);
+            if(nCustomerFrame.pageNo < nCustomerFrame.totalPage){
+                if(nCustomerFrame.isHavaMoreData){
+                    ++nCustomerFrame.pageNo
+                    console.log(nCustomerFrame.pageNo)
+                    if(nCustomerFrame.pageNo > 1 && nCustomerFrame.pageNo  < nCustomerFrame.totalPage){
+                        nCustomerFrame.currentCount = 10 * nCustomerFrame.pageNo
+                    }else if(nCustomerFrame.pageNo == nCustomerFrame.totalPage){
+                        nCustomerFrame.currentCount = nCustomerFrame.allCount;
+                    }else{
+                        nCustomerFrame.currentCount = 10
+                    }
+                    nCustomerFrame.fetchListData(true);
+                }
+
             }else{
                 $('#not-more').show();
             }
@@ -246,12 +316,25 @@
                 userInfo:'',
                 jobTitle:'',
                 isHavaMoreData:true,
-                isKeybordshow:false
+                isKeybordshow:false,
+                isRoof:false,//总数据是否显示
+                timesCount:'',
+
+                allCount:0,//总条数
+                currentCount:10,//当前加载条数
             },
             mounted: function() {
-                this.init();
-                this.fetchListData();
-            },
+                var _this = this;
+                _this.init();
+                _this.fetchListData();
+                $(window).on('scroll',function(){
+                    clearTimeout(_this.timesCount)
+                      _this.isRoof = true;
+                    _this.timesCount = setTimeout(function(){
+                      _this.isRoof = false;
+                  },2000);
+                })
+         },
             methods: {
                 init:function(){
                     this.userInfo = wPref.getPrefs({
@@ -272,7 +355,6 @@
                     this.endTimeChange = param.endTimeChange;
                     this.startTimeCreate = param.startTimeCreate;
                     this.endTimeCreate = param.endTimeCreate;
-
                     this.jobTitle = this.userInfo.relativePosi;
                 },
                 handleBlur:function(){
@@ -287,6 +369,7 @@
                 // 获取页面数据
                 fetchListData:function(isLoadMore,callback){
                     isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    console.log(isLoadMore)
                     var _this = this;
                     console.log('customer frame request----------'+JSON.stringify({
                         employeeid:_this.userInfo.employeeid,
@@ -331,14 +414,17 @@
                             pageSize:10,
                         },
                         success:function(res){
-                            // console.log('customer frame response--------'+JSON.stringify(res.data))
+                            console.log('customer frame response--------'+JSON.stringify(res))
                             wDialog.hideProgress();
                             if(res.code == 1){
                                 _this.isHavaMoreData = res.data ? res.data.length >= 10 : false;
+                                console.log(_this.isHavaMoreData)
                                 if(!isLoadMore){
                                     _this.khDataList = res.data ? res.data : [];
                                     $('.filter-lis').removeClass('disabled curr')
-                                    // _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                    _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                    console.log(_this.totalPage)
+                                    _this.allCount = res.count
                                 }
                                 else{
                                     if(res.data){
@@ -416,7 +502,15 @@
                             }
                         }
                     })
-                }
+                },
+
+              //置顶
+              topRoof:function(){
+                  var _this  = this;
+                 _this.pageNo = 1;
+                 _this.currentCount = 10;
+                 _this.fetchListData(false,api.refreshHeaderLoadDone);
+              },
             }
         })
     }
@@ -428,12 +522,14 @@
         nCustomerFrame.order_followtime = d.status1;
         nCustomerFrame.order_nextfollow = d.status2;
         nCustomerFrame.pageNo = 1;
+        nCustomerFrame.currentCount = 10;
         nCustomerFrame.fetchListData();
     }
     // 获取搜索的内容
     function getSearchValue(val){
         nCustomerFrame.search_cusName = val;
         nCustomerFrame.pageNo = 1;
+        nCustomerFrame.currentCount = 10;
         nCustomerFrame.fetchListData();
     }
     // 清空搜索的内容

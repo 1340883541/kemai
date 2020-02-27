@@ -93,7 +93,13 @@
 <script type="text/javascript" src="../../script/common.js"></script>
 <script>
     var msgV = null;
+
     apiready = function() {
+        // api.addEventListener({
+        //     name: 'loginSuc'
+        // }, function(ret, err) {
+        //     refrshIndexData();
+        // });
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',

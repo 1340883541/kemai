@@ -87,13 +87,22 @@
                         <img class="checked" src="../image/icon-2-p.png" mode="scaleToFill" alt="">
                     </div>
                     <div class="f-txt">
-                        客户
+                        CRM
                     </div>
                 </li>
                 <li class="flex-con" onclick="setFootBar(this,2)">
                     <div class="f-img w-fill-img">
                         <img class="default" src="../image/icon-3-d.png" mode="scaleToFill" alt="">
                         <img class="checked" src="../image/icon-3-p.png" mode="scaleToFill" alt="">
+                    </div>
+                    <div class="f-txt">
+                        消息
+                    </div>
+                </li>
+                <li class="flex-con" onclick="setFootBar(this,3)">
+                    <div class="f-img w-fill-img">
+                        <img class="default" src="../image/icon-4-d.png" mode="scaleToFill" alt="">
+                        <img class="checked" src="../image/icon-4-p.png" mode="scaleToFill" alt="">
                     </div>
                     <div class="f-txt">
                         我的
@@ -191,7 +200,7 @@
                 fixedOn:'ui_window'
             });
             var index = $('#footer li.curr').index();
-            if(index == 2){
+            if(index == 3){
                 if(api.systemType !== 'ios'){
                     api.sendFrameToBack ({
                         from: 'addCustomerIcon',
@@ -242,6 +251,30 @@
             if(i == 2){
                 api.execScript({
                     name: 'main',
+                    frameName: 'message',
+                    script: 'refrshIndexData();'
+                });
+                // if(api.systemType !== 'ios'){
+                //     api.sendFrameToBack ({
+                //         from: 'addCustomerIcon',
+                //     });
+                // }else{
+                //     api.closeFrame({
+                //         name: 'addCustomerIcon'
+                //     });
+                // }
+                // if(api.systemType !== 'ios'){
+                //     api.bringFrameToFront ({
+                //         from: 'addCustomerIcon'
+                //     });
+                // }else{
+                //     openAddCustomerIcon();
+                // }
+
+            }
+            if(i == 3){
+                api.execScript({
+                    name: 'main',
                     frameName: 'person',
                     script: 'refrshPersonData();'
                 });
@@ -268,7 +301,13 @@
         name: 'customer',
         url: './customer/customer_header.html',
         bgColor: '#fff'
-    }, {
+    },  {
+        // name: 'message',
+        // url: './message/message_center_header.html',
+        name: 'person',
+        url: './person/index.html',
+        bgColor: '#fff'
+    },{
         name: 'person',
         url: './person/index.html',
         bgColor: '#fff'
@@ -287,7 +326,7 @@
                 h: h
             },
             index: i,
-            preload: 2,
+            preload: 3,
             frames: frameList
         }, function(ret, err) {});
     }

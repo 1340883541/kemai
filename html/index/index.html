@@ -20,13 +20,19 @@
         }
     </style>
 </head>
-
 <body>
     <div id="wrapper">
         <!-- header -->
         <div class="index-header">
             <div class="index-title" id="index-title">
-                <div class="index-tilte-txt">工作台</div>
+                <div class="flex-dis">
+                    <div class="index-tilte-txt flex-dis-state">
+                        <div class="home-index">首页</div>
+                        <div class="pattern-in"><img src="../../image/gzt_state.png" alt=""><span>{{mode}}</span></div>
+                    </div>
+                    <div class="switch_in"><img src="../../image/icon-qiehuanOne.png" alt=""><div class="swite_text" @click="switchingMode">{{swite_text}}</div></div>
+                </div>
+
                 <!-- 断网 -->
                 <div class="offline-box clear" id="offline-box" @click="skipOfflinePage">
                     <div class="fl left">
@@ -35,16 +41,17 @@
                     <div class="fr right"></div>
                 </div>
             </div>
-            <div class="head-bg head-bluebg" id="head-bg"></div>
+            <div class="head-bg head-bluebg" id="head-bg" v-show="!bgColol"></div>
+            <div class="head-bg head-greenbgimages" id="head-bg-green" v-show="bgColol"></div>
             <div class="head-box head-bluebox">
                 <div class="head-bt clear">
                     <div class="fl left"></div>
                 </div>
                 <div class="new-follow-box">
-                    <div class="index-cap">新增资源跟进</div>
+                    <div class="index-cap">今日新分配客户待跟进</div>
                     <div class="head-bb flex-wrap">
                         <div class="flex-con head-bb-lis" v-if="newResourceFollowList && newResourceFollowList.length > 0" v-for="(newResource,i) in newResourceFollowList" @click.stop="skipNewCustomer(newResource.value)" :key="'new'+i">
-                            <div class="head-bb-t" v-text="newResource.num||0"></div>
+                            <div class="head-bb-t" v-text="newResource.total||0"></div>
                             <div class="head-bb-b" v-text="newResource.name"></div>
                         </div>
                         <div class="index-loading flex-wrap flex-center flex-align-item" v-show="!isLoadFinishNew" style="display:none;">
@@ -54,14 +61,21 @@
                 </div>
             </div>
         </div>
-        <!-- <button onclick="fnPer1()">fnPer1</button>
-        <button onclick="fnPer2()">fnPer2</button> -->
         <div class="system-follow-box">
-            <div class="index-cap">系统资源跟进</div>
+            <div class="index-cap position_r" @touchstart.stop="tipsIs">
+                <div class="flex-wrap tips_plan">计划待跟进的客户
+                     <img src="../../image/icon-wenhao.png" alt="">
+                </div>
+             <div class="tips_times" v-show="isTips">
+                 <i></i>
+                 仅对客户的下次跟进时间，未超过2个月的客户进行提醒。
+             </div>
+
+            </div>
             <div class="system-follow flex-wrap">
                 <div class="flex-con system-lis" v-for="(system,idx) in systemResourceFollowList" :key="system.value" @click="handleSkipSystemList(system.value)">
                     <div class="sys-lbox">
-                        <div class="system-t" v-cloak>{{system.num|messageFilter}}</div>
+                        <div class="system-t" v-cloak>{{system.total|messageFilter}}</div>
                         <div class="system-b" v-text="system.name"></div>
                     </div>
                 </div>
@@ -84,40 +98,73 @@
         </div>
         <!-- 消息提醒 -->
         <div class="message-box">
-            <div class="index-cap">消息提醒</div>
-            <div class="message-lis flex-wrap flex-center">
+            <div class="index-cap">今日回收提醒</div>
+            <div class="head-bb flex-wrap">
+                <div class="flex-con head-bb-lis" v-if="recyclingList && recyclingList.length > 0" v-for="(newResource,i) in recyclingList" @click.stop="skipStat(newResource.type)" :key="'new'+i">
+                    <div class="head-bb-t" v-text="newResource.total||0"></div>
+                    <div class="head-bb-b" v-text="newResource.name"></div>
+                </div>
+                <!-- <div class="flex-con stat-ls bor-r" @click="skipStat('')" v-for="(recycling,i) in  recyclingList" :key="i" @click="skipMessage()">
+                    <div class="stat-ls-t" :class="[recycling.name=='非渠道客户'? 'stat-ls-t2': '', recycling.name=='渠道客户'? 'stat-ls-t3': '']"  v-text="recycling.name"></div>
+                    <div class="stat-ls-b" v-text="recycling.total || 0"></div>
+                </div> -->
+                <div class="index-loading flex-wrap flex-center flex-align-item" v-show="!isLoadFinishRecycling" style="display:none;">
+                    <img src="../../image/index_loading.gif" alt="">
+                </div>
+            </div>
+            <!-- <div class="message-lis flex-wrap flex-center">
                 <div class="flex-con message-ls" @click="skipMessage(2,'recovery')">
-                    <div class="msg-icon msg-icon1">
-                        <span class="msg-count" v-if="recovery" v-cloak>{{recovery|messageFilter}}</span>
+                    <div class="flex-dis-state">
+                        <div class="msg-icon msg-icon1"></div> -->
+                            <!-- <span class="msg-count" v-if="recovery" v-cloak>{{recovery|messageFilter}}</span> -->
+
+                        <!-- <div class="msg-txt">非渠道客户</div>
                     </div>
-                    <div class="msg-txt">回收提醒</div>
+                    <div class="msg-count">6666</div>
                 </div>
                 <div class="flex-con message-ls" @click="skipMessage(5,'sign')">
-                    <div class="msg-icon msg-icon2">
-                        <span class="msg-count" v-if="sign" v-cloak>{{sign|messageFilter}}</span>
-                    </div>
-                    <div class="msg-txt">签约提醒</div>
-                </div>
-                <div class="flex-con message-ls" @click="skipMessage(6,'pay')">
+                    <div class="flex-dis-state">
+                      <div class="msg-icon msg-icon2"></div> -->
+                        <!-- <span class="msg-count" v-if="sign" v-cloak>{{sign|messageFilter}}</span> -->
+                      <!-- <div class="msg-txt">渠道客户</div> -->
+                   <!-- </div> -->
+                   <!-- <div class="msg-count">6666</div> -->
+                <!-- <div class="flex-con message-ls" @click="skipMessage(6,'pay')">
                     <div class="msg-icon msg-icon3">
                         <span class="msg-count" v-if="pay" v-cloak>{{pay|messageFilter}}</span>
                     </div>
                     <div class="msg-txt">缴费提醒</div>
-                </div>
-            </div>
+                </div> -->
+              <!-- </div>
+           </div> -->
         </div>
         <!-- 今日统计 -->
         <div class="stat-box">
-            <div class="index-cap">今日通话</div>
+            <div class="index-cap">今日跟进数据</div>
             <div class="stat-lis flex-wrap">
-                <div class="flex-con stat-ls bor-r" @click="skipStat('')">
+                <div class="flex-con stat-ls bor-r" @click="skipStat('')" v-for="(followDate,idx) in FollowDateList" :key="idx">
+                    <div class="stat-ls-t " :class="[followDate.name=='跟进总数/(次)'? 'stat-ls-t1': '', followDate.name=='跟进客户数/(位)'? 'stat-ls-t4': '']" v-text="followDate.name"></div>
+                    <div class="stat-ls-b" v-text="followDate.total || 0"></div>
+                </div>
+                <div class="index-loading flex-wrap flex-center flex-align-item" v-show="!isLoadFinishFollow" style="display:none;">
+                    <img src="../../image/index_loading.gif" alt="">
+                </div>
+                <!-- <div class="flex-con stat-ls" @click="skipStat('')">
+                    <div class="stat-ls-t stat-ls-t4">跟进客户数(位)</div>
+                    <div class="stat-ls-b" v-text="vaildcall">4546</div>
+                </div>
+                <div class="flex-con stat-ls" @click="skipStat('')">
+                    <div class="stat-ls-t stat-ls-t4">跟进客户数(位)</div>
+                    <div class="stat-ls-b" v-text="vaildcall">4546</div>
+                </div> -->
+                <!-- <div class="flex-con stat-ls bor-r" @click="skipStat('')">
                     <div class="stat-ls-t stat-ls-t1">拨号(次)</div>
                     <div class="stat-ls-b" v-text="allCallTimes"></div>
                 </div>
-                <!-- <div class="flex-con stat-ls" @click="skipStat('查看微信')">
+                <div class="flex-con stat-ls" @click="skipStat('查看微信')">
                     <div class="stat-ls-t stat-ls-t4">查看微信(个)</div>
                     <div class="stat-ls-b" v-text="lookwechatcount"></div>
-                </div> -->
+                </div>
                 <div class="flex-con stat-ls" @click="skipStat(1)">
                     <div class="stat-ls-t stat-ls-t2">接听(次)</div>
                     <div class="stat-ls-b" v-text="vaildcall"></div>
@@ -129,14 +176,13 @@
                 <div class="flex-con stat-ls" @click="skipStat(3)">
                     <div class="stat-ls-t stat-ls-t4">号码异常(个)</div>
                     <div class="stat-ls-b">{{abnormalNum1}}/{{abnormalNum2}}</div>
-                </div>
+                </div> -->
             </div>
         </div>
         <!-- 跳转到新增客户页面 -->
         <!-- <div class="skip-add" @click.stop="handleSkipAddCustomer">
             <i></i>
         </div> -->
-
     </div>
 </body>
 <script type="text/javascript" src="../../script/lib/api.js"></script>
@@ -173,6 +219,7 @@
         var top = api.safeArea.top;
         $('#head-bg').css('padding-top', top);
         $('.index-header .head-box').css('padding-top', top);
+        $('#head-bg-green').css('padding-top', top);
         $('#index-title').css('padding-top', top);
         $('#offline-box').css('top', top + 48);
         api.addEventListener({
@@ -180,7 +227,6 @@
         }, function(ret, err) {
             refrshIndexData();
         });
-
         // 下拉刷新
         api.setCustomRefreshHeaderInfo({
             bgColor: '#f7f7f7',
@@ -249,6 +295,26 @@
                 isLoadFinishMessage: false,
                 startDate:'',
                 endDate:'',
+
+
+
+                // 个人---团队模式
+                swite_text:'切换团队模式',
+                mode:'个人模式',
+                bgColol:true,
+                pattern:1, //模式(个人1-团队2)
+
+                // 回收提醒
+                recyclingList:[],//回收提醒列表
+                isLoadFinishRecycling:false,
+
+                //今日跟进数据
+                FollowDateList:[],//今日跟进数据
+                isLoadFinishFollow:false,
+
+                isTips:false,
+
+
             },
             mounted: function() {
                 this.netWorkStatus();
@@ -260,6 +326,8 @@
                 this.getMessageData();
                 this.fetchNewData();
                 this.fetchSystemFollowData();
+                this.recyclingTips();//回收提醒
+                this.todayFollowData();//今日跟进数据
                 this.$nextTick(function() {
                     $(window).on('scroll', function() {
                         var sTop = $(window).scrollTop()
@@ -271,6 +339,7 @@
                     })
                 })
             },
+
             filters: {
                 messageFilter: function(n) {
                     return n > 999999 ? '999999+' : n;
@@ -280,6 +349,7 @@
                 // 获取消息提醒的数据
                 getMessageData: function(cb) {
                     var _this = this;
+
                     this.userInfo = wPref.getPrefs({
                         key: 'userInfo'
                     });
@@ -309,7 +379,7 @@
                         }
                     })
                 },
-                // 获取今日新增数据
+                // 今日新分配客户待跟进
                 fetchNewData: function(cb) {
                     var _this = this;
                     this.userInfo = wPref.getPrefs({
@@ -320,13 +390,20 @@
                     // wDialog.showProgress({
                     //     modal: false
                     // });
+                    console.log('fetchNewData frame request----------'+JSON.stringify({
+                        pattern:_this.pattern,
+                        startTime: funcGetThisToday().startDate,
+                        endTime: funcGetThisToday().endDate,
+                    }))
                     wApiAjax({
-                        url: 'workbench/newAddResourceFoll',
+                        // url: 'workbench/newAddResourceFoll',
+                        url:'homepage/todaynewcusfol',
                         headers: {
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid,
+                            // employeeid: _this.userInfo.employeeid,
+                            pattern:_this.pattern,
                             startTime: funcGetThisToday().startDate,
                             endTime: funcGetThisToday().endDate,
                         },
@@ -382,6 +459,70 @@
                         }
                     })
                 },
+                //回收提醒
+                recyclingTips:function(){
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    wApiAjax({
+                        url: 'homepage/todayrecovery',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            pattern: _this.pattern,
+                            // startTime:_this.startDate,
+                            // endTime:_this.endDate
+                        },
+                        success: function(res) {
+                            console.log('recyclingTips respose---->'+JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.recyclingList = res.data;
+                            }
+                            _this.isLoadFinishRecycling = true;
+                            _this.funcHideProgress();
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+                // 今日跟进数据
+                todayFollowData: function() {
+                    var _this = this;
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    });
+                    this.userInfo = (this.userInfo != '' ? JSON.parse(this.userInfo) : {});
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    // wDialog.showProgress({
+                    //     modal: false
+                    // });
+                    wApiAjax({
+                        url: 'homepage/todayfollow',
+                        headers: {
+                            token: TOKEN_DATA
+                        },
+                        data: {
+                            pattern: _this.pattern,
+                        },
+                        success: function(res) {
+                            console.log('system respose---->'+JSON.stringify(res))
+                            if (res.code == 1) {
+                                _this.FollowDateList = res.data;
+                            }
+                            _this.isLoadFinishFollow = true;
+                            _this.funcHideProgress();
+                        },
+                        fail: function() {
+
+                        }
+                    })
+                },
+
                 // 获取系统跟进
                 fetchSystemFollowData: function() {
                     var _this = this;
@@ -393,15 +534,23 @@
                     // wDialog.showProgress({
                     //     modal: false
                     // });
+                    console.log('fetchSystemFollowData frame request----------'+JSON.stringify({
+                        pattern: _this.pattern,
+                        startTime:_this.startDate,
+                        endTime:_this.endDate
+                    }))
                     wApiAjax({
-                        url: 'systemResource/sysResourceSta',
+                        // url: 'systemResource/sysResourceSta',
+                        url:'homepage/planfollcus',
                         headers: {
                             token: TOKEN_DATA
                         },
                         data: {
-                            employeeid: _this.userInfo.employeeid,
+                            // employeeid: _this.userInfo.employeeid,
+                            pattern: _this.pattern,
                             startTime:_this.startDate,
                             endTime:_this.endDate
+
                         },
                         success: function(res) {
                             console.log('system respose---->'+JSON.stringify(res))
@@ -551,6 +700,11 @@
                         })
                     }
                 },
+                // 跟进客户提示--触摸
+                tipsIs:function(){
+                    var _this = this;
+                    _this.isTips = true;
+                },
                 // // 跳转到新增客户
                 // handleSkipAddCustomer: function() {
                 //     wHrefJs.openWin({
@@ -559,13 +713,31 @@
                 //     })
                 // },
                 funcHideProgress: function() {
-                    console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat)
-                    if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat) {
+                    console.log(' ---new: ' + this.isLoadFinishNew + ' ---system: ' + this.isLoadFinishSystem + ' ---message: ' + this.isLoadFinishMessage + ' ---sate: ' + this.isLoadFinishStat +'--------Recycling:' + this.isLoadFinishRecycling)
+                    if (this.isLoadFinishNew && this.isLoadFinishSystem && this.isLoadFinishMessage && this.isLoadFinishStat && this.isLoadFinishRecycling && this.isLoadFinishFollow) {
                         // wDialog.hideProgress();
                         api.refreshHeaderLoadDone();
                     }
+                },
+                // 个人---团队模式
+                switchingMode:function(){
+                    var _this = this;
+                    if(_this.swite_text =='切换团队模式'){
+                        _this.pattern = 2; //个人模式
+                        _this.swite_text = '切换个人模式';
+                        _this.mode='团队模式';
+                         refrshIndexData();
+                        _this.bgColol = false;
+
+                    }else if(_this.swite_text =='切换个人模式'){
+                        _this.pattern = 1; //团队模式
+                        _this.swite_text = '切换团队模式';
+                        _this.mode='个人模式';
+                         refrshIndexData();
+                        _this.bgColol = true;
                 }
-            }
+             }
+           }
         })
     }
         // 刷新数据
@@ -574,11 +746,23 @@
         indexV.isLoadFinishSystem = false;
         indexV.isLoadFinishMessage = false;
         indexV.isLoadFinishStat = false;
+        indexV.isLoadFinishRecycling = false;
+        indexV.isLoadFinishFollow = false;
+        indexV.isTips = false;
         indexV.fetchNewData()
         indexV.fetchStatData();
         indexV.getMessageData();
         indexV.fetchSystemFollowData();
+        indexV.recyclingTips();
+        indexV.todayFollowData();
     }
+    // $(".position_r").on("mouseover", function() {
+    //     $(".tips_times").show();
+    //
+    // })
+    // $(".position_r").on("mouseout", function() {
+    //     $(".tips_times").hide();
+    // })
 </script>
 
 </html>
