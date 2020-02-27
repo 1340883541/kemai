@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客户-详情</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/lib/dialog.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/customer/customer.css" />
+    <style media="screen">
+        body,
+        html {
+            height: 100%;
+        }
+
+        #wrapper {
+            min-height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .loading {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+            margin-right: 6px;
+            /*固定loading*/
+            width: 0.28rem;
+            height: 0.28rem;
+            border: 2px solid;
+            border-color: #fff #fff transparent;
+            border-radius: 50%;
+            box-sizing: border-box;
+            /*动画时间1s，线性变化，无限循环*/
+            animation: loading 1s linear infinite;
+        }
+
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div id="wrapper" v-cloak> -->
+    <div id="wrapper">
+        <div class="cd-header" id="cd-header">
+            <div class="back-box flex-wrap flex-between" id="back-box">
+                <div class="back" onclick="wBackThisFunc()"></div>
+                <div class="header-txt">
+                    <span :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)"><i></i>跟进信息</span>
+                    <span :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)"><i></i>意向资料</span>
+                    <span :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)"><i></i>历史负责人</span>
+                </div>
+                <div class="right"></div>
+                <div class="offline-box clear" id="follow-alert" style="display:none;" @click.stop="handleSkipFollow(0)">
+                    <div class="fl off-left">
+                        <i></i>客户上次通话后未添加跟进记录，是否补录？
+                    </div>
+                    <div class="fr off-right"></div>
+                </div>
+            </div>
+            <div class="hname" id="scroll-hname">
+                <div class="scroll-txt"><span v-text="cusInfo.cusName"></span></div>
+                <div class="cus-status" v-if="cusInfo.estate" v-text="cusInfo.estate + '客户'"></div>
+            </div>
+            <div class="horigin">客户来源：<span v-text="cusInfo.source"></span></div>
+            <div class="horigin">号码归属：<span v-text="cusInfo.attribution||'未知'"></span></div>
+        </div>
+        <div id="section-content">
+            <div class="cd-caption" id="js_cd_cap">
+                <!-- <div class="cd-ct w-inline-block" v-if="!isShowWechat">
+                    <span>微信号：</span><span v-text="cusInfo.wechat"></span><span class="look" @click="handleLookWechat">查看微信</span>
+                </div>
+                <div class="cd-ct w-inline-block" v-if="isShowWechat">
+                    <span>微信号：</span><span v-text="wechatCard"></span><span class="look" @click.stop="handleClipOpenWechat">复制并打开微信</span>
+                </div> -->
+
+                <div class="cd-ct clear" v-if="wechatCard">
+                    <div class="fl left w-elli"><span>微信号：</span><span v-text="wechatCard"></span></div>
+                    <div class="fr right"><span class="look" @click.stop="handleClipWechat" style="padding-right:8px;">复制</span><span class="line">|</span><span class="look" @click.stop="handleClipOpenWechat" style="padding-left:8px;">打开微信</span></div>
+                </div>
+                <div class="cd-cb" style="min-height:20px;">
+                    <div class="cd-name" v-if="cusInfo.markName">
+                        <span>销售负责人：</span><span v-text="cusInfo.markName"></span><i v-if="isShowAllotMarketIcon" @click.stop="handleSkipChangeAllot(0,'变更销售负责人')"></i>
+                    </div>
+                    <div class="cd-name" v-if="cusInfo.chanName">
+                        <span>渠道负责人：</span><span v-text="cusInfo.chanName"></span><i v-if="isShowAllotChannelIcon" @click.stop="handleSkipChangeAllot(4,'变更渠道负责人')"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="cd-contain">
+                <div class="cd-nav" id="js_cd_nav">
+                    <div class="cd-nav-ab flex-wrap">
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 0}" @click="switchTab(0)">跟进信息(<span v-text="cusCount"></span>) <i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 1}" @click="switchTab(1)">意向资料<i></i></div>
+                        <div class="flex-con cd-n" :class="{'curr':isShowDetailBox === 2}" @click="switchTab(2)">历史负责人<i></i></div>
+                    </div>
+                    <div class="cd-nav-place"></div>
+                </div>
+                <!-- 跟进信息 -->
+                <div class="cd-box cd-box0" v-show="isShowDetailBox === 0" style="display:none;">
+                    <div class="cd-flow" v-for="(flow,index) in cusInfoList" :key="index">
+                        <div class="cd-flow-sicon" :class="[judgeIcon(flow.contactway_vaule)]"></div>
+                        <div class="cd-flow-tit">
+                            <span v-text="returnFollowResultTitle(flow.contactway_vaule)"></span>
+                            <div class="copy-edit flex-wrap">
+                                <span @click.stop="handleClipTxt(flow.result)">复制</span>
+                                <b>|</b>
+                                <span @click.stop="handleEditFollowRecord(flow.id)">编辑</span>
+                            </div>
+                        </div>
+                        <div class="cd-flow-t" v-if="flow.result" v-text="flow.result" v-longpress="handleLongpressClipTxt" :data-followtxt="flow.result"></div>
+                        <div class="cd-flow-audio" v-if="flow.callStatus" :class="{'disabled':flow.callStatus&&!flow.callStatusUrl}" @click="handlePlayAudio($event)">
+                            <div class="audio audio-box" v-if="flow.callStatus && flow.callStatusUrl">
+                                <audio :src="baseUrl+flow.callStatusUrl"></audio>
+                            </div>
+                            <div class="audio-txt clear"><i class="icon pause-icon fl"></i><span class="fr">点击收听</span></div>
+                        </div>
+                        <div class="cd-flow-p fl" v-if="flow.followperson"><span>跟进员工：</span><span class="name" v-text="flow.followperson"></span></div>
+                        <div style="clear:both;"></div>
+                        <div class="cd-flow-timebox" v-if="flow.followtime || flow.nextfollow || flow.meetaddress">
+                            <i class="top-icon"></i>
+                            <div class="gj-time gj" v-if="flow.followtime"><i></i>跟进时间: <span v-text="flow.followtime||'暂未跟进'"></span></div>
+                            <div class="gj-plan gj" v-if="flow.nextfollow"><i></i>计划跟进时间: <span v-text="flow.nextfollow||'暂无计划'"></span></div>
+                            <div class="gj-addr gj" v-if="flow.meetaddress"><i></i>跟进地址: <span v-text="flow.meetaddress"></span></div>
+                        </div>
+                    </div>
+                    <!-- 空页面 -->
+                    <empty-con :is-show="cusInfoList.length === 0" txt="暂无信息"></empty-con>
+                </div>
+                <!-- 意向资料 -->
+                <div class="cd-box cd-box1" v-show="isShowDetailBox === 1" style="display:none;">
+                    <div class="cd-info" v-if="cusPersonInfo">
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.city">
+                            <div class="fl left">意向城市</div>
+                            <div class="fl right" v-text="cusPersonInfo.city"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.premises">
+                            <div class="fl left">意向楼盘</div>
+                            <div class="fl right" v-text="cusPersonInfo.premises"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.housestyle">
+                            <div class="fl left">意向房型</div>
+                            <div class="fl right" v-text="cusPersonInfo.housestyle"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.purpose">
+                            <div class="fl left">购房用途</div>
+                            <div class="fl right" v-text="cusPersonInfo.purpose"></div>
+                        </div>
+                        <div class="cd-info-lis clear" v-if="cusPersonInfo.comment">
+                            <div class="fl left">客户备注</div>
+                            <div class="fl right" v-text="cusPersonInfo.comment"></div>
+                        </div>
+                    </div>
+                    <!-- 空页面 -->
+                    <empty-con :is-show="!cusPersonInfo || !cusPersonInfo.city && !cusPersonInfo.premises && !cusPersonInfo.housestyle && !cusPersonInfo.purpose && !cusPersonInfo.comment" txt="暂无信息"></empty-con>
+                </div>
+                <!-- 历史负责人 -->
+                <div class="cd-box cd-box2" v-show="isShowDetailBox === 2" style="display:none;">
+                    <div class="cd-filter-box">
+                        <span @click.stop="isShowHistoryPri = !isShowHistoryPri">{{currHistoryPrincipalTxt!=='0'?'已选"'+currHistoryPrincipalTxt+'"':'变更负责人筛选'}}</span><i @click.stop="isShowHistoryPri = !isShowHistoryPri"></i>
+                    </div>
+                    <div class="emp-filter-popup" id="emp-filter-popup" @touchmove.stop.prevent v-show="isShowHistoryPri" @click.stop="isShowHistoryPri=false" style="display:none;">
+                        <ul>
+                            <li :class="{curr:currHistoryPrincipalVal===''}" @click.stop="handleChanageHistoryPriFilter('','全部')">全部</li>
+                            <li :class="{curr:currHistoryPrincipalVal===0}" @click.stop="handleChanageHistoryPriFilter(0,'销售负责人变更')">销售负责人变更</li>
+                            <li :class="{curr:currHistoryPrincipalVal===4}" @click.stop="handleChanageHistoryPriFilter(4,'渠道负责人变更')">渠道负责人变更</li>
+                        </ul>
+                    </div>
+                    <div class="cd-employee-lists">
+                        <div
+                            v-for="(history,index) in historyPrincipalList"
+                            :key="index"
+                            class="cd-flow cd-employee-lis"
+                        >
+                            <div
+                                class="cd-emp-icon"
+                                :class="[history.type == 4 ? 'cd-emp-icon0' : 'cd-emp-icon1']"
+                            ></div>
+                            <div class="cd-flow-tit">
+                                <span class="cap">{{history.type == 4 ? '渠道负责人变更' : '销售负责人变更'}}</span>
+                                <span class="time" v-text="history.createtime"></span>
+                            </div>
+                            <div class="cd-flow-timebox">
+                                <i class="top-icon"></i>
+                                <!-- <div class="gj-time gj"><span>负责人变更, {{history.typename}}: </span><span class="emp-acount" v-text="history.name"></span></div> -->
+                                <div class="gj-time gj flex-wrap"><span>操作人：</span><span class="flex-con" v-text="history.operatortypename + '-' + history.operatorName"></span></div>
+                                <div class="gj-time gj flex-wrap"><span>变更为：</span><span class="flex-con"><b v-text="history.typename"></b>-<b class="emp-acount" v-text="history.name"></b></span></div>
+                            </div>
+                        </div>
+                        <!-- 空页面 -->
+                        <empty-con :is-show="historyPrincipalList.length === 0" txt="暂无信息"></empty-con>
+                    </div>
+                </div>
+            </div>
+            <div class="cd-btm-btn">
+                <div class="cd-btn flex-wrap">
+                    <div class="flex-con skip-follow-btn follow-btn" @click.stop.prevent="handleSkipFollow(1)">去跟进</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/permission.js"></script>
+<script>
+    var cusDetailV = null;
+    apiready = function() {
+        $api.fixStatusBar($('#cd-header')[0]);
+        $api.fixStatusBar($('#back-box')[0]);
+
+        var param = api.pageParam;
+        console.log(JSON.stringify(param))
+        // 下拉加载更多
+        api.addEventListener({
+            name: 'scrolltobottom',
+            extra: {
+                threshold: 8
+            }
+        }, function(ret, err) {
+            if (cusDetailV.isShowDetailBox === 0) {
+                if (++cusDetailV.pageNo <= cusDetailV.totalPage) {
+                    cusDetailV.fetchData(true);
+                }
+            }
+        });
+        // 监听分配成功重新加载
+        api.addEventListener({
+            name: 'allotEmployeeSuccess'
+        }, function(ret, err){
+            cusDetailV.pageNo = 1;
+            cusDetailV.fetchData();
+        });
+
+        // 跟进成功
+        api.addEventListener({
+            name: 'followRecordSuccessRefresh'
+        }, function(ret, err) {
+            cusDetailV.pageNo = 1;
+            cusDetailV.fetchData();
+        });
+        // // 查看微信成功
+        // api.addEventListener({
+        //     name: 'lookWechatSuccess'
+        // }, function(ret, err) {
+        //     if (ret) {
+        //         cusDetailV.isShowWechat = true;
+        //         cusDetailV.wechatCard = ret.value.wechat;
+        //     }
+        // });
+        cusDetailV = new Vue({
+            el: '#wrapper',
+            data: {
+                cusId: 0,
+                cusPhone: '',
+                pageNo: 1,
+                totalPage: 1,
+                isShowDetailBox: 0,
+                cusPersonInfo: {}, // 意向资料
+                cusInfoList: [], // 跟进信息列表
+                cusInfo: {}, // 跟进信息
+                wechatCard: '', // 微信号
+                realWechatCard:'',
+                cusCount: 0,
+                // isShowWechat: false,
+                minePhone: '',
+
+
+                // 当前播放的dom
+                baseUrl: __CONFIG__.baseUrl,
+                currHandlePlayTag: null,
+                isHandlePlay: false,
+
+                // 存在补录的跟进id
+                followRootId: '',
+                // 历史负责人
+                historyPrincipalList:[],
+                isShowHistoryPri:false,
+                currHistoryPrincipalTxt:'0',
+                currHistoryPrincipalVal:'',
+
+                // 是否显示分配编辑的图标
+                isShowAllotMarketIcon:false,
+                isShowAllotChannelIcon:permissionSetting.CUSDETAIL.fnChannelAllot(),
+            },
+            created: function() {
+                this.cusId = param.cusId;
+                this.cusPhone = param.cusPhone;
+                this.userInfo = wPref.getPrefs({
+                    key: 'userInfo'
+                });
+                this.userInfo = this.userInfo ? JSON.parse(this.userInfo) : {};
+            },
+            mounted: function() {
+                this.getUserInfo();
+                this.fetchData();
+                this.$nextTick(fnListenScroll)
+            },
+            watch: {
+                isShowDetailBox: function(nv) {
+                    var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+                    var navOffsetTop = $("#js_cd_nav").offset().top;
+                    fnCalcScroll(capOffsetTop,navOffsetTop);
+                },
+                value: function(nv) {
+                    if (nv.length >= 6) {
+                        this.isActive = true;
+                    }
+                }
+            },
+            methods: {
+                getUserInfo: function() {
+                    var _this = this
+                    wApiAjax({
+                        method: "get",
+                        url: 'perCenter/info',
+                        withCredentials: true,
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                        },
+                        success: function(res) {
+                            if (res.code == 200) {
+                                _this.minePhone = res.info.phone.substring(0, 3) + '****' + res.info.phone.substring(7);
+                                if (_this.userInfo.phone != res.info.phone) {
+                                    _this.userInfo.phone = res.info.phone;
+                                    wPref.setPrefs({
+                                        key: 'userInfo',
+                                        value: _this.userInfo
+                                    })
+                                }
+                            }
+                        }
+                    })
+                },
+                fetchData: function(isLoadMore) {
+                    isLoadMore = typeof isLoadMore === 'undefined' || isLoadMore == false ? false : true;
+                    var _this = this;
+                    setTimeout(function(){
+                        wDialog.showProgress();
+                    },80)
+                    wApiAjax({
+                        url: 'customer/getcusinfo',
+                        headers: {
+                            "token": TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            customerid: _this.cusId,
+                            pageNo: _this.pageNo,
+                            pageSize: 10
+                        },
+                        success: function(res) {
+                            // console.log('customer detail---' + JSON.stringify(res))
+                            setTimeout(function(){
+                                wDialog.hideProgress();
+                            },200);
+                            if (res.code == 1) {
+                                if (!isLoadMore) {
+
+                                    _this.cusInfo = res.data.cusInfo;
+                                    // 判断是否存在有未跟进的
+                                    _this.followRootId = res.data.cusInfo.followId || '';
+                                    res.data.cusInfo && res.data.cusInfo.existCallLogState == 0 ? $('#follow-alert').show() : $('#follow-alert').hide();
+                                    // if (res.data.cusInfo && res.data.cusInfo.wechat.indexOf('****') > -1) {
+                                    //     _this.isShowWechat = false;
+                                    // } else {
+                                    //     _this.isShowWechat = true;
+                                    //     _this.wechatCard = res.data.cusInfo.wechat.trim();
+                                    // }
+                                    var wechat = res.data.cusInfo.wechat.trim();
+                                    _this.realWechatCard = wechat;
+                                    var mapType = res.data.mapType || {};
+                                    _this.isShowAllotMarketIcon = permissionSetting.CUSDETAIL.fnMarketAllot(mapType.modMarkType);
+                                    var isWechat = permissionSetting.CUSDETAIL.fnWechat(mapType.markType);
+                                    if(isWechat){
+                                        _this.wechatCard = wechat;
+                                    }else{
+                                        if(wechat.length <= 5){
+                                            _this.wechatCard = '********';
+                                        }else{
+                                            _this.wechatCard = '****'+wechat.slice(wechat.length-4);
+                                        }
+                                    }
+                                    _this.cusPersonInfo = res.data.cusPurInfo[0];
+                                    _this.cusInfoList = res.data.cusFllowInfo;
+                                    _this.totalPage = Math.ceil(res.followcount / res.pageSize);
+                                    _this.cusCount = res.followcount;
+                                    if(res.data.historyPrincipal &&  res.data.historyPrincipal[0]){
+                                        _this.historyPrincipalList = res.data.historyPrincipal;
+                                    }
+                                    _this.$nextTick(function() {
+                                        var sinnerWid = $('#scroll-hname > .scroll-txt').width();
+                                        var sspWid = $('#scroll-hname span').outerWidth();
+                                        var caWid = Math.ceil(sspWid - sinnerWid);
+                                        if (caWid > 0) {
+                                            var domSpan = $('#scroll-hname > .scroll-txt').eq(0).html();
+                                            $('#scroll-hname > .scroll-txt').append(domSpan);
+                                            var stepTime = Math.ceil(sspWid * 10);
+                                            xunhuanScroll();
+                                            function xunhuanScroll() {
+                                                $('#scroll-hname span').eq(0).animate({
+                                                    'margin-left': -(sspWid)
+                                                },stepTime, 'linear', function() {
+                                                    var domSpan = $('#scroll-hname span').eq(0).clone();
+                                                    $('#scroll-hname > .scroll-txt').append(domSpan);
+                                                    $('#scroll-hname span').eq(0).remove();
+                                                    $('#scroll-hname span').css({
+                                                        'margin-left': 0
+                                                    });
+                                                    xunhuanScroll();
+                                                });
+                                            }
+                                        }
+                                        //计算弹窗的高度
+                                        var hei = $(window).height() - $('#cd-header').outerHeight() - 130;
+                                        $('#emp-filter-popup').css({
+                                            'min-height':hei
+                                        });
+                                    })
+                                } else {
+                                    if (res.data && res.data.cusFllowInfo) {
+                                        _this.cusInfoList = _this.cusInfoList.concat(res.data.cusFllowInfo);
+                                    }
+                                }
+
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                handleChanageHistoryPriFilter:function(val,name){
+                    if(this.currHistoryPrincipalVal === val){
+                        this.isShowHistoryPri = false;
+                    }else{
+                        this.isShowHistoryPri = false;
+                        wDialog.showProgress();
+                        var _this = this;
+                        this.currHistoryPrincipalVal = val;
+                        this.currHistoryPrincipalTxt = name;
+                        console.log(JSON.stringify({
+                            customerid:_this.cusId,
+                            type:val
+                        }))
+                        wApiAjax({
+                            url:'customer/getHistoryChargeByType',
+                            headers:{
+                                token:TOKEN_DATA
+                            },
+                            data:{
+                                customerid:_this.cusId,
+                                type:val
+                            },
+                            success:function(res){
+                                console.log(JSON.stringify(res))
+                                wDialog.hideProgress();
+                                if(res.code == 1){
+                                    _this.historyPrincipalList = res.data;
+                                }
+                            }
+                        })
+                    }
+                },
+                // 跟进内容题目
+                returnFollowResultTitle: function(i) {
+                    // 电话
+                    if (i === 1) {
+                        return '通过电话联系客户';
+                    }
+                    // 短信
+                    else if (i === 2) {
+                        return '通过短信联系客户';
+                    }
+                    // 邮箱
+                    else if (i === 3) {
+                        return '通过邮箱联系客户';
+                    }
+                    // 微信、qq
+                    else if (i === 4) {
+                        return '通过微信和QQ联系客户';
+                    }
+                    // 面访
+                    else if (i === 9) {
+                        return '通过面访联系客户';
+                    } else {
+                        return '通过微信和QQ联系客户';
+                    }
+                },
+                // 复制跟进内容
+                handleLongpressClipTxt: function(el) {
+                    var followTxt = el.getAttribute('data-followtxt');
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: followTxt
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            wDialog.toast({
+                                msg: '复制成功'
+                            });
+                        }
+                    });
+                },
+                // 变更负责人
+                handleSkipChangeAllot:function(i,name){
+                    // i 0 销售负责人 1 渠道负责人
+                    wHrefJs.openWin({
+                        name:'changePerson',
+                        url:'../index/change_person.html',
+                        param:{
+                            origin:'customerDetail',
+                            cusId:param.cusId,
+                            type:i,
+                            originName:name
+                        }
+                    })
+                },
+                // 复制微信
+                handleClipTxt: function(txt) {
+                    var clipBoard = api.require('clipBoard');
+                    clipBoard.set({
+                        value: txt
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            wDialog.toast({
+                                msg: '复制成功'
+                            });
+                        }
+                    });
+                },
+                // 跳转到跟进页面
+                handleSkipFollow: function(i) {
+                    // 请求当前客户是不是属于自己
+                    var _this = this;
+                    this.fnCheckCustomerSelf(_this.cusId,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id: _this.cusId,
+                                phone: _this.cusPhone,
+                                followId: i == 0 ? _this.followRootId : '',
+                                isWork: param.isWork,
+                                type: i === 0 ? 1 : 0,
+                                idName:param.idName||'',
+                                origin:param.origin,
+                                status:param.status,
+                                way:param.way
+                            },
+                            slidBackEnabled: false
+                        });
+                    });
+                },
+                // 编辑跟进记录
+                handleEditFollowRecord: function(id) {
+                    var _this = this;
+                    // 请求当前客户是不是属于自己
+                    this.fnCheckCustomerSelf(_this.cusId,function(){
+                        api.openWin({
+                            name: 'followRecord',
+                            url: '../follow/follow_record.html',
+                            pageParam: {
+                                id: _this.cusId,
+                                phone: _this.cusPhone,
+                                followId: id,
+                                isEditFollow: true,
+                                isWork: param.isWork
+                            },
+                            slidBackEnabled: false
+                        });
+                    });
+                },
+                // 切换 跟进信息 和 意向资料
+                switchTab: function(idx) {
+                    this.isShowDetailBox = idx;
+                },
+                // 判断是通过什么方式联系的，显示不同的icon
+                judgeIcon: function(i) {
+                    var iconClass = 'cd-flow-sicon';
+                    // 电话
+                    if (i === 1) {
+                        return iconClass + '3';
+                    }
+                    // 短信
+                    else if (i === 2) {
+                        return iconClass + '6';
+                    }
+                    // 邮箱
+                    else if (i === 3) {
+                        return iconClass + '4';
+                    }
+                    // 微信、qq
+                    else if (i === 4) {
+                        return iconClass + '2';
+                    }
+                    // 面访
+                    else if (i === 9) {
+                        return iconClass + '1';
+                    } else {
+                        return iconClass + '4';
+                    }
+                },
+                // // 查看微信
+                // handleLookWechat: function() {
+                //     var _this = this;
+                //     wHrefJs.openFrame({
+                //         name: 'getWechat',
+                //         path: '../components/getwechat/get_wechat.html',
+                //         bgColor: 'rgba(0,0,0,.2)',
+                //         animation: {
+                //             type: 'none',
+                //             subType: 'from_bottom'
+                //         },
+                //         param: {
+                //             cusId: _this.cusId
+                //         }
+                //     })
+                // },
+                // 复制微信
+                handleClipWechat:function(){
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: _this.realWechatCard
+                    }, function(ret, err) {
+                        if (ret.status) {
+                            wDialog.toast({
+                                msg: '已复制'
+                            });
+                        }
+                    });
+                },
+                // 复制并打开微信
+                handleClipOpenWechat: function() {
+                    var clipBoard = api.require('clipBoard'),
+                        _this = this;
+                    clipBoard.set({
+                        value: _this.realWechatCard
+                    }, function(ret, err) {
+                        var systemType = api.systemType;
+                        // android
+                        if (systemType === 'android') {
+                            api.openApp({
+                                androidPkg: 'com.tencent.mm',
+                                mimeType: 'text/html',
+                                uri: ''
+                            }, function(ret, err) {
+                                if (ret) {
+                                } else {
+                                    alert('您还未安装微信');
+                                }
+                            });
+                        }
+                        // ios
+                        else if (systemType === 'ios') {
+                            api.openApp({
+                                iosUrl: 'weixin://'
+                            }, function(ret, err) {
+                                if (ret) {
+                                } else {
+                                    alert('您还未安装微信');
+                                }
+                            });
+
+                        } else {
+                            console.log('不是android或ios机型')
+                            return;
+                        }
+                    });
+                },
+                // 播放
+                handlePlayAudio: function(e) {
+                    var tag = e.currentTarget;
+                    var _this = this;
+                    if (!$(tag).hasClass('disabled')) {
+                        var audioEle = $(tag).find('.audio-box audio')[0];
+                        var audioTxtEle = $(tag).find('.audio-txt')[0];
+                        if (audioEle) {
+                            if (_this.currHandlePlayTag === audioEle) {
+                                if (_this.isHandlePlay = !_this.isHandlePlay) {;
+                                    $(audioTxtEle).removeClass('playing');
+                                    audioEle.removeEventListener('ended', function() {})
+                                    audioEle.pause()
+                                } else {
+                                    $(audioTxtEle).addClass('playing');
+                                    audioEle.play();
+                                    audioEle.addEventListener('ended', function() {
+                                        // console.log('innnn-----------end1')
+                                        $(audioTxtEle).removeClass('playing');
+                                    })
+                                }
+                            } else {
+                                $('.audio-box audio').each(function(i, d) {
+                                    if (audioEle === d) {
+                                        $(audioTxtEle).addClass('playing');
+                                        _this.isHandlePlay = false;
+                                        audioEle.load();
+                                        audioEle.play();
+                                        audioEle.addEventListener('ended', function() {
+                                            $(audioTxtEle).removeClass('playing');
+                                        })
+                                        _this.currHandlePlayTag = audioEle;
+                                    } else {
+                                        $(d).parent().siblings('.audio-txt').removeClass('playing');
+                                        d.removeEventListener('ended', function() {})
+                                        d.pause();
+                                    }
+                                });
+                            }
+                        } else {
+                            wDialog.toast({
+                                msg: '暂没有播放文件'
+                            })
+                        }
+                    }
+                },
+                // 请求当前客户是不是属于自己
+                fnCheckCustomerSelf:function(cusId,cb){
+                    TOKEN_DATA = myLocalStorage.getItem('token');
+                    var _this = this;
+                    wApiAjax({
+                        url:'customer/verCusIf',
+                        headers:{
+                            token:TOKEN_DATA
+                        },
+                        data:{
+                            employeeid:_this.userInfo.employeeid,
+                            customerid:cusId
+                        },
+                        success:function(res){
+                            if(res.code == 1){
+                                cb && typeof cb === 'function' && cb();
+                            }else{
+                                wDialog.toast({
+                                    msg:res.msg
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+    // 监听屏幕滚动
+    function fnListenScroll(){
+        // 屏幕滚动
+        var isEventScroll = true;
+        // var capOffsetTop = $('#js_cd_cap').offset().top - 40;
+        var capOffsetTop = 10;
+        var navOffsetTop = $("#js_cd_nav").offset().top;
+        $(window).on('scroll', function() {
+            if (isEventScroll) {
+                // console.log('scrollTop ----> '+$(this).scrollTop())
+                isEventScroll = false;
+                fnCalcScroll(capOffsetTop,navOffsetTop);
+                isEventScroll = true;
+            }
+        })
+    }
+    // 计算滚动
+    function fnCalcScroll(capOffsetTop,navOffsetTop){
+        var wTop = $(this).scrollTop();
+        // console.log(wTop)
+        if (wTop >= capOffsetTop) {
+            if (wTop >= navOffsetTop) {
+                $('#back-box').addClass('curr show-nav');
+                // console.log('innnn1  头部导航')
+            } else {
+                $('#back-box').removeClass('show-nav').addClass('curr');
+                // console.log('innnn2 改变颜色')
+            }
+        } else {
+            $('#back-box').removeClass('curr show-nav');
+            // console.log('innnn3  顶部')
+        }
+    }
+</script>
+
+</html>

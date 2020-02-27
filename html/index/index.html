@@ -142,7 +142,7 @@
         <div class="stat-box">
             <div class="index-cap">今日跟进数据</div>
             <div class="stat-lis flex-wrap">
-                <div class="flex-con stat-ls bor-r" @click="skipStat('')" v-for="(followDate,idx) in FollowDateList" :key="idx">
+                <div class="flex-con stat-ls bor-r" @click="skipStatCus('')" v-for="(followDate,idx) in FollowDateList" :key="idx">
                     <div class="stat-ls-t " :class="[followDate.name=='跟进总数/(次)'? 'stat-ls-t1': '', followDate.name=='跟进客户数/(位)'? 'stat-ls-t4': '']" v-text="followDate.name"></div>
                     <div class="stat-ls-b" v-text="followDate.total || 0"></div>
                 </div>
@@ -520,6 +520,13 @@
                         fail: function() {
 
                         }
+                    })
+                },
+                // 跟进跳转
+                skipStatCus:function(){
+                    wHrefJs.openWin({
+                        name: 'customerFollowUp',
+                        path: './customer_follow_up.html'
                     })
                 },
 
