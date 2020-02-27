@@ -526,7 +526,14 @@
                 skipStatCus:function(){
                     wHrefJs.openWin({
                         name: 'customerFollowUp',
-                        path: './customer_follow_up.html'
+                        path: './customer_follow_up.html',
+                        param: {
+                            // startDate:_this.startDate,
+                            // endDate:_this.endDate,
+                            pattern: this.pattern,
+                            startTime: funcGetThisToday().startDate,
+                            endTime: funcGetThisToday().endDate,
+                        },
                     })
                 },
 
