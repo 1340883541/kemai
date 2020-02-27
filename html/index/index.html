@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-    <div id="wrapper">
+    <div id="wrapper" @touchstart.stop="isTips = false">
         <!-- header -->
         <div class="index-header">
             <div class="index-title" id="index-title">
@@ -62,9 +62,9 @@
             </div>
         </div>
         <div class="system-follow-box">
-            <div class="index-cap position_r" @touchstart.stop="tipsIs">
+            <div class="index-cap position_r">
                 <div class="flex-wrap tips_plan">计划待跟进的客户
-                     <img src="../../image/icon-wenhao.png" alt="">
+                     <img src="../../image/icon-wenhao.png" alt="" @touchstart.stop="tipsIs">
                 </div>
              <div class="tips_times" v-show="isTips">
                  <i></i>

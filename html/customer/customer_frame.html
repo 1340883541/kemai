@@ -56,9 +56,6 @@
             position: fixed;
             bottom: 0;
             width: 100%;
-            /*width: calc(100% - 16px);*/
-            /*margin-left: 8px;*/
-            /*width:100%;*/
             height: 30px;
             line-height: 30px;
            background:rgba(255,255,255,0.96);
@@ -104,9 +101,8 @@
 		}
     </style>
 </head>
- <!-- v-cloak -->
 <body>
-    <div id="wrap" @touchstart.stop="handleBlur">
+    <div id="wrap" v-cloak @touchstart.stop="handleBlur">
         <div class="filter-lists" v-if="khDataList && khDataList.length > 0">
             <div class="filter-lis" v-for="(khdata,index) in khDataList" :key="index" :id="'cus-lis-'+index" @click.stop="skipCustomerDetail(khdata.id,khdata.phone,'cus-lis-'+index)">
                 <div class="filter-lt flex-wrap flex-between">
