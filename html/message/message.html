@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-消息通知</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/message.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap">
+        <div id="header">
+            <div class="header">
+                <div class="back" onclick="messageBackFn()"><img src="../../image/icon-dh-fanhui.png"></div>
+                <div class="title">消息设置</div>
+            </div>
+        </div>
+        <div v-show="defult_show">
+            <div class="flex-con msg-box">
+                <div class="main_switch">
+                    <div class="notice">通知</div>
+                    <div class="weui-div" @click.stop="toggle">
+                        <span class="weui-switch" :class="{'weui-switch-on' : me_checked}" :value="value"></span>
+                        <div v-if='!value' class="weui-div-2"></div>
+                        <div v-if='value' class="weui-div-1"></div>
+                    </div>
+                </div>
+                <div class="be_careful">注意：开启后可以单独设置接受消息类型</div>
+            </div>
+        </div>
+
+        <!-- 列表 -->
+        <div v-show="defult_hide">
+            <div class="flex-con msg-box">
+                <div class="mainSwitch">
+                    <div class="notice">全部通知</div>
+                    <!-- <div class="weui-div" @click="toggleShow">
+                        <span class="weui-switch" :class="{'weui-switch-on' : is_checked}" :value=valueKey></span>
+                        <div v-if='!valueKey' class="weui-div-2"></div>
+                        <div v-if='valueKey' class="weui-div-1"></div>
+                    </div> -->
+                    <div class="weui-div" @click="toggleShow('notice_state')">
+                        <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.notice_state==1}" :value=messageInfo.notice_state==1></span>
+                        <div v-if='!messageInfo.notice_state==1' class="weui-div-2"></div>
+                        <div v-if='messageInfo.notice_state==1' class="weui-div-1"></div>
+                    </div>
+
+                </div>
+                <div v-show="show_info">
+                    <div class="main_switch main_top">
+                        <div class="notice">负责人变更</div>
+                        <div class="weui-div" @click="changeChenk('change_principal_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.change_principal_state==1}" :value="messageInfo.change_principal_state==1"></span>
+                            <div v-if='!messageInfo.change_principal_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.change_principal_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="mainSwitch">
+                        <div class="notice">跟进提醒</div>
+                        <div class="weui-div" @click="changeChenk('follow_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' :messageInfo.follow_state==1}" :value="messageInfo.follow_state==1"></span>
+                            <div v-if='!messageInfo.follow_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.follow_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">回收提醒</div>
+                        <div class="weui-div" @click="changeChenk('recovery_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.recovery_state==1}" :value="messageInfo.recovery_state==1"></span>
+                            <div v-if='!messageInfo.recovery_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.recovery_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="mainSwitch">
+                        <div class="notice">资源回收</div>
+                        <div class="weui-div" @click="changeChenk('resource_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.resource_state==1}" :value="messageInfo.resource_state==1"></span>
+                            <div v-if='messageInfo.resource_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.resource_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">认购提醒</div>
+                        <div class="weui-div" @click="changeChenk('subscription_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.subscription_state==1}" :value="messageInfo.subscriptionBook_state==1"></span>
+                            <div v-if='messageInfo.subscriptionBook_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.subscriptionBook_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="main_switch">
+                        <div class="notice">签约提醒</div>
+                        <div class="weui-div" @click="changeChenk('sign_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.sign_state==1}" :value="messageInfo.sign_state==1"></span>
+                            <div v-if='!messageInfo.sign_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.sign_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+                    <div class="mainSwitch">
+                        <div class="notice">缴费提醒</div>
+                        <div class="weui-div" @click="changeChenk('pay_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.pay_state==1}" :value="messageInfo.pay_state==1"></span>
+                            <div v-if='!messageInfo.pay_state==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.pay_state==1' class="weui-div-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="main_switch">
+                        <div class="notice">认购书提醒</div>
+                        <div class="weui-div" @click="changeChenk('subscriptionBook_state')">
+                            <span class="weui-switch" :class="{'weui-switch-on' : messageInfo.subscriptionBook_state ==1}" :value="messageInfo.subscriptionBook_state ==1"></span>
+                            <div v-if='!messageInfo.subscriptionBook_state ==1' class="weui-div-2"></div>
+                            <div v-if='messageInfo.subscriptionBook_state ==1' class="weui-div-1"></div>
+                            <!-- <div class="weui-div" @click.stop="changeChenk(8)">
+                                <span class="weui-switch" :class="{'weui-switch-on' : arr[7]}" :value="arr[7]"></span>
+                                <div v-if='!arr[7]' class="weui-div-2"></div>
+                                <div v-if='arr[7]' class="weui-div-1"></div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var messageV = null;
+    apiready = function() {
+        $api.fixStatusBar($('#header')[0]);
+        api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+            messageBackFn();
+        });
+        messageV = new Vue({
+            el: '#wrap',
+            data: {
+                me_checked: this.value,
+                defult_show: true,
+                defult_hide: false,
+                arr: [false],
+                show_info: true,
+                userInfo: '',
+                messageInfo: {
+                    change_principal_state: 0, //负责人变更状态
+                    follow_state: 0, //跟进提醒，
+                    notice_state: 0, //总开关
+                    pay_state: 0, //缴费提醒
+                    recovery_state: 0, //回收提醒，
+                    resource_state: 0, //资源回收，
+                    sign_state: 0, //签约提醒，
+                    subscriptionBook_state: 0, //认购书提醒，
+                    subscription_state: 0, //认购提醒，
+                },
+                initMessageInfo:{},
+                isChangeToggle:false,
+            },
+            props: {
+                value: {
+                    type: Boolean,
+                    default: true
+                },
+            },
+            watch: {
+                value() {
+                    this.me_checked = this.value;
+                }
+            },
+            mounted() {
+                this.getUserInfo();
+            },
+            methods: {
+                getUserInfo: function() {
+                    var _this = this
+                    _this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    })
+                    _this.userInfo = _this.userInfo != '' ? JSON.parse(_this.userInfo) : {}; //判断是否为空
+                    wApiAjax({
+                        method: "get",
+                        url: 'perCenter/getSwitchState',
+                        withCredentials: true,
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.switch == 0) {_this.initMessageInfo = '{}';}
+                            if (res.switch == 1) {
+                                _this.me_checked = true;
+                                // wApiAjax({
+                                //     method: "get",
+                                //     url: 'perCenter/getAllNoticeState',
+                                //     withCredentials: true,
+                                //     headers: {
+                                //         "token": TOKEN_DATA
+                                //     },
+                                //     data: {
+                                //         employeeid: _this.userInfo.employeeid,
+                                //     },
+                                //     success: function(res) {
+                                //         console.log(JSON.stringify(res))
+                                        if (res.code == 200) {
+                                            _this.messageInfo = res.info;
+                                            _this.initMessageInfo = JSON.stringify(res.info);
+                                            _this.defult_hide = true;
+                                            _this.defult_show = false;
+                                        }
+                                        if (res.code == 201) {
+                                            this.me_checked = false;
+                                            _this.defult_hide = false;
+                                            _this.defult_show = false;
+                                        }
+                                //     }
+                                // })
+                            }
+                        }
+                    })
+
+                },
+                toggle() {
+                    // 是否可点击
+                    var _this = this;
+                    _this.me_checked = true;
+                    this.isChangeToggle = !this.isChangeToggle;
+                    wApiAjax({
+                        method: "get",
+                        url: 'perCenter/getAllNoticeState',
+                        withCredentials: true,
+                        headers: {
+                            "token":TOKEN_DATA
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                        },
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.code == 200) {
+                                _this.messageInfo = res.info;
+                                _this.initMessageInfo = JSON.stringify(res.info);
+                                _this.defult_hide = true;
+                                _this.defult_show = false;
+                                _this.show_info = true;
+                            }
+                            if (res.code == 201) {
+                                this.me_checked = false;
+                                _this.defult_hide = false;
+                                _this.defult_show = false;
+                            }
+                        }
+                    })
+                },
+                changeChenk: function(num) {
+                    var _this = this;
+                    _this.chenked();
+                    if (_this.messageInfo[num] == 1) {
+                        _this.$set(_this.messageInfo, num, 0)
+                        wApiAjax({
+                            method: "POST",
+                            url: 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token": TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid,
+                                state: 0,
+                                noticeType: _this.messageInfo
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+
+                                }
+                            }
+                        })
+                    } else {
+                        _this.$set(_this.messageInfo, num, 1)
+                        wApiAjax({
+                            method: "POST",
+                            url: 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token":TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid,
+                                state: 1,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+
+                                }
+
+                            }
+                        })
+                    }
+                },
+                toggleShow(num) {
+                    var _this = this;
+                    if (_this.messageInfo[num] == 1) {
+                        _this.$set(_this.messageInfo, num, 0)
+                        wApiAjax({
+                            method: "POST",
+                            url: 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token":TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid,
+                                state: 0,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+                                    _this.show_info = false
+                                    _this.defult_hide = false;
+                                    _this.defult_show = true;
+                                    _this.me_checked = false;
+                                }
+                            }
+                        })
+                    } else {
+                        _this.$set(_this.messageInfo, num, 1)
+                        _this.show_info = true
+                        wApiAjax({
+                            method: "POST",
+                            url: 'perCenter/setNoticeState',
+                            withCredentials: true,
+                            headers: {
+                                "token":TOKEN_DATA
+                            },
+                            data: {
+                                employeeid: _this.userInfo.employeeid,
+                                state: 1,
+                                noticeType: JSON.stringify(_this.messageInfo)
+                            },
+                            success: function(res) {
+                                console.log(JSON.stringify(res))
+                                if (res.code == 200) {
+                                    _this.defult_hide = true;
+                                    _this.show_info = true
+                                }
+                            }
+                        })
+                    }
+                },
+                // 判断是否全选
+                chenked: function() {
+                    // var isAllcheck = true; //是否全选 shi
+                    // var isAllclose = true; //是否全部关闭  shi
+                    // for (var key in this.messageInfo) {
+                    //     if (this.messageInfo[key] == 0) { // 如果对象有1 说明为全选
+                    //         isAllcheck = false
+                    //     }
+                    //     if (this.messageInfo[key] == 1) { //  如果对象有0 说明为全部关闭
+                    //         isAllclose = false
+                    //     }
+                    // }
+                    // if (isAllcheck && !isAllclose) { // 全选
+                    //     //this.show_info = true
+                    // }
+                    // if (isAllclose && !isAllcheck) { // 全部关闭
+                    //     this.show_info = false
+                    // }
+                    // if (!isAllcheck && !isAllclose) { // 未全选 也未全部关闭
+                    //
+                    // }
+                },
+                //var isAllcheck = this.arr.indexOf(false, 0); //是否全选
+                // var isAllclose = this.arr.indexOf(true, 0); //是否全部关闭
+                // if (isAllcheck < 0) {
+                //     this.is_checked = true;
+                // } else {
+                //     //  this.is_checked = true;
+                //     //  this.show_info=true;
+                // }
+                // if (isAllclose < 0) {
+                //     this.is_checked = false;
+                //     this.show_info = false;
+                //     //   this.defult_hide = false;
+                //     //   this.defult_show=true;
+                //     //   this.me_checked = false;
+                // }
+
+                back: function() {
+                    api.closeWin({
+                        name: 'message'
+                    });
+                }
+            },
+
+        })
+    }
+    function messageBackFn(){
+        var isChange = false;
+        // console.log(JSON.stringify(messageV.messageInfo))
+        // console.log(JSON.stringify(messageV.initMessageInfo))
+        // console.log(JSON.stringify(messageV.isChangeToggle))
+        for(var key in messageV.messageInfo){
+            if(messageV.messageInfo[key] == JSON.parse(messageV.initMessageInfo)[key]){
+                // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+            }else{
+                // console.log(messageV.messageInfo[key] + '======================' + JSON.parse(messageV.initMessageInfo)[key])
+                isChange = true;
+                break;
+            }
+        }
+        // console.log(isChange)
+        if(messageV.isChangeToggle||isChange){
+            api.sendEvent({
+                name:'refreshMessage'
+            })
+        }
+        wHrefJs.backWin();
+    }
+</script>
+
+</html>

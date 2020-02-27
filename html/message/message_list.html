@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>个人中心-消息中心</title>
+    <script src="../../script/lib/rem.js"></script>
+    <script src="../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/person/message_list.css" />
+</head>
+
+<body>
+    <!-- 头部 -->
+    <div id="wrap" class="felx-wrap flex-vertical message-wrapper" v-cloak>
+        <div class="uni-header">
+            <div class="uni-fixed-header">
+                <div class="u-header-box">
+                    <div class="u-back" onclick="api.closeWin();"></div>
+                    <div class="u-center">{{headerTitle}}</div>
+                    <div class="u-right"></div>
+                </div>
+            </div>
+        </div>
+        <div id="main" class="flex-con message-contain" v-if="msgList && msgList.length > 0">
+            <div class="msg-list" v-for="(msg,index) in msgList" :key="index">
+                <div class="msg-show-icon" style="display:none;"></div>
+                <div class="msg-lis-top bor-1px-b">
+                    <div class="msg-lis-cap flex-wrap flex-between">
+                        <span v-if="msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow'">CRM编号 <span v-text="msg.customerid"></span></span>
+                        <span v-if="msg.serverType == 'SendNewCusMsg'">新增资源</span>
+                        <span class="already" v-if="msg.readstate == 1">已读</span>
+                        <span class="not-ready" v-else></span>
+                    </div>
+                    <div class="msg-contain" @click="setMsgAlready($event,msg.id,msg.readstate,index,msgShowStateList[index])">
+                        <div class="msg-lis-desc" v-text="msg.content"></div>
+                        <div class="msg-btn" v-if="msgShowStateList[index] === 1">展开</div>
+                    </div>
+                </div>
+                <div class="msg-list-bottom flex-wrap flex-between">
+                    <span class="time" v-text="msg.createdate"></span>
+                    <span class="skip" v-if="msg.serverType" @click="skipCustomerDetail(msg.serverType,msg.customerid,msg.cusphone,msg.id,index)">{{msg.serverType == 'SendMsgByPhone' || msg.serverType == 'ResourcesToFollow' ? '客户详情' : '查看客户'}}</span>
+                </div>
+            </div>
+            <!-- 无更多数据 -->
+            <div class="not-more-filter" id="not-more">没有更多数据</div>
+        </div>
+        <!-- 空页面 -->
+        <empty-con :is-show="msgList.length === 0" txt="暂无消息信息"></empty-con>
+    </div>
+</body>
+<script type="text/javascript" src="../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../script/lib/fastclick.js"></script>
+<script type="text/javascript" src="../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../script/lib/swiper.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../script/lib/vue_lazyload.min.js"></script>
+<script type="text/javascript" src="../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script>
+    var msgV = null;
+    apiready = function() {
+
+        // 推送
+        var ajpush = api.require('ajpush');
+        if (ajpush) {
+            // 点击通知
+            var systemType = api.systemType;
+            if ('ios' === systemType) {
+                ajpush.setBadge({
+                    badge: 0
+                });
+            }
+        }
+        $api.fixStatusBar($('.uni-header')[0]);
+        $api.fixStatusBar($('.uni-fixed-header')[0]);
+        api.addEventListener({
+            name: 'scrolltobottom'
+        }, function(ret, err) {
+            if (msgV.pageNo < msgV.totalPage) {
+                ++msgV.pageNo;
+                msgV.getMsgData();
+            } else {
+                $('#not-more').show();
+            }
+        });
+        api.addEventListener({
+            name: 'ajpushMessageList'
+        }, function(ret, err) {
+            // alert( JSON.stringify( ret ) );
+            if (ret) {
+                msgV.msgId = ret.value.msgId || '';
+                msgV.serverType = ret.value.serverType || '';
+                msgV.headerTitle = ret.value.originTitle || '消息中心';
+                msgV.fetchUrl = ret.value.fetchUrl || 'perCenter/pushMsg';
+                msgV.msgList = [];
+                msgV.pageNo = 1;
+                msgV.getMsgData();
+            }
+        });
+        var param = api.pageParam;
+        msgV = new Vue({
+            el: '#wrap',
+            data: {
+                userInfo: {},
+                pageNo: 1,
+                pageSize: 20,
+                totalPage: 1,
+                msgList: [],
+                msgShowStateList: [],
+                msgId: '',
+                currClickELe: null,
+
+                headerTitle: '',
+                serverType:'',
+                fetchUrl: ''
+            },
+            mounted: function() {
+                this.msgId = param.msgId || '';
+                this.serverType = param.serverType;
+                this.fetchUrl = param.fetchUrl || 'perCenter/pushMsg';
+                this.headerTitle = param.originTitle || '消息中心';
+                this.getMsgData();
+            },
+            methods: {
+                getMsgData: function() {
+                    var _this = this;
+                    this.getUserInfo();
+                    wDialog.showProgress();
+                    console.log('url-------------------' + this.fetchUrl)
+                    wApiAjax({
+                        url: _this.fetchUrl,
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            employeeid: _this.userInfo.employeeid,
+                            pageNo: _this.pageNo,
+                            pageSize: _this.pageSize,
+                            msgId: _this.msgId,
+                            msgServerType: _this.serverType
+                        },
+                        success: function(res) {
+                            // console.log(JSON.stringify(res))
+                            wDialog.hideProgress();
+                            if (res.code == 1) {
+                                _this.msgList = _this.msgList.concat(res.data);
+                                _this.totalPage = Math.ceil(res.count / res.pageSize);
+                                var prevCount = (_this.pageNo - 1) * _this.pageSize
+                                _this.$nextTick(function() {
+                                    $('.msg-lis-desc').each(function(i, ele, arr) {
+                                        if (i >= prevCount) {
+                                            var hei = $(ele).height();
+                                            if (hei > 40) {
+                                                $(ele).addClass('w-elli-2');
+                                                _this.msgShowStateList.push(1);
+                                            } else {
+                                                _this.msgShowStateList.push(0);
+                                            }
+                                        }
+                                    });
+                                    _this.firstMsgAlready();
+                                })
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                })
+                            }
+                        }
+                    })
+                },
+                // 第一条消息已读
+                firstMsgAlready: function() {
+                    if (this.msgId) {
+                        var _this = this;
+                        $('.msg-show-icon').eq(0).show();
+                        $('.msg-contain').eq(0).find('.msg-lis-desc').removeClass('w-elli-2');
+                        setTimeout(function() {
+                            $('.msg-contain').eq(0).find('.msg-btn').text('收起');
+                            var firstMsg = _this.msgList[0];
+                            if (firstMsg.readstate == 0) {
+                                _this.msgAlreadyAjax(firstMsg.id, 0);
+                            }
+                        }, 10)
+                        this.currClickELe = $('.msg-contain')[0];
+                    }
+                },
+                getUserInfo: function() {
+                    this.userInfo = wPref.getPrefs({
+                        key: 'userInfo'
+                    })
+                    this.userInfo = this.userInfo != '' ? JSON.parse(this.userInfo) : {};
+                },
+                // 设置为已读
+                setMsgAlready: function(e, id, state, idx, canState) {
+                    var tag = e.currentTarget;
+                    if (this.currClickELe !== tag) {
+                        $('.msg-show-icon').hide();
+                        $('.msg-btn').text('展开');
+                        $('.msg-lis-desc').addClass('w-elli-2');
+                        $(tag).parent().siblings('.msg-show-icon').show();
+                        this.currClickELe = tag;
+                    }
+                    if (canState == 1) {
+                        if ($(tag).find('.msg-btn').text() === '展开') {
+                            $(tag).find('.msg-lis-desc').removeClass('w-elli-2');
+                            $(tag).find('.msg-btn').text('收起');
+                        } else {
+                            $(tag).find('.msg-lis-desc').addClass('w-elli-2');
+                            $(tag).find('.msg-btn').text('展开');
+                        }
+                    }
+                    if (state == 0) {
+                        this.msgAlreadyAjax(id, idx);
+                    }
+                },
+                // 跳转到查看客户
+                skipCustomerDetail: function(isList, cusId, cusPhone, id, idx) {
+                    var _this = this;
+                    if (this.msgList[idx].readstate != 1) {
+                        this.msgAlreadyAjax(id, idx, function() {
+                            if (isList == 'SendNewCusMsg') {
+                                _this.skipCusList();
+                            } else if (isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow') {
+                                _this.skipDetail(cusId, cusPhone);
+                            }
+                        })
+                    } else {
+                        if (isList == 'SendNewCusMsg') {
+                            _this.skipCusList();
+                        } else if (isList == 'SendMsgByPhone' || isList == 'ResourcesToFollow') {
+                            _this.skipDetail(cusId, cusPhone);
+                        }
+                    }
+                },
+                // 跳转到详情
+                skipDetail: function(cusId, cusPhone) {
+                    wHrefJs.openWin({
+                        name: 'customerDetail',
+                        path: '../customer/customer_detail.html',
+                        param: {
+                            cusId: cusId,
+                            cusPhone: cusPhone,
+                            isWork: 1
+                        }
+                    })
+                },
+                // 跳转到客户列表
+                skipCusList: function() {
+                    api.sendEvent({
+                        name: 'ajpushSkipCustomerList'
+                    });
+                    api.closeToWin({
+                        name: 'main'
+                    });
+                },
+                // 已读的请求
+                msgAlreadyAjax: function(id, idx, cb) {
+                    var _this = this;
+                    wApiAjax({
+                        url: 'perCenter/modPushMsgReadState',
+                        headers: {
+                            "token": TOKEN_DATA,
+                        },
+                        data: {
+                            pushMsgId: id
+                        },
+                        method: 'get',
+                        success: function(res) {
+                            console.log(JSON.stringify(res))
+                            if (res.code == 1) {
+                                Vue.set(_this.msgList[idx], 'readstate', 1);
+                                cb && typeof cb === 'function' && cb();
+                            } else {
+                                wDialog.toast({
+                                    msg: res.msg
+                                });
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+</script>
+
+</html>
