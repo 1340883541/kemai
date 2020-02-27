@@ -210,7 +210,7 @@
                 </div>
                 <!-- 筛选确定/取消 -->
                 <!-- 全屏添加class width100 -->
-                <div class="filter-m-footer border-1px" style="position:relative">
+                <div class="filter-m-footer border-1px" style="position:relative;margin-left:-15px;">
                     <button class="cancel-btn" @click.stop="handleCleanData">清空</button>
                     <button class="confirm-btn" @click.stop="handleSureData">确定</button>
                 </div>
@@ -309,7 +309,7 @@ apiready = function() {
                     // 初始化日历
                     $('.choose-date').mdater({
                         minDate : new Date('1999-01-01'),
-                        sureCb(date){
+                        sureCb:function(date){
                             if(_this.isGetStartDate){
                                 _this.startDate = date;
                             }else{

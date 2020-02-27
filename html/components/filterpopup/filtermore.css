@@ -308,3 +308,83 @@
     font-size: 17px;
     float: right;
 }
+.filter-cap{
+    position: relative;
+    margin-top: 30px;
+}
+.filter-cap i.del-icon{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    background: url('../../../image/icon-qingkong2.png') no-repeat center;
+    background-size: 16px;
+}
+.filter-nav-box{
+    padding-top: 15px;
+    padding-bottom: 5px;
+    margin-left: -2.67vw;
+    display: flex;
+    flex-wrap: wrap;
+}
+.filter-nav-box .filter-nav{
+    position: relative;
+    max-width: calc(100% - 2.68vw);
+    height: 24px;
+    line-height: 22px;
+    padding-left: 8px;
+    padding-right: 16px;
+    border-radius: 4px;
+    background-color: #F6F6F6;
+    font-size: 12px;
+    margin-left: 2.67vw;
+    margin-bottom: 2.67vw;
+    border:1px solid #F6F6F6;
+}
+.filter-nav-box .filter-nav > span{
+    display: block;
+}
+.filter-nav-box .filter-nav.curr{
+    background-color:rgba(12,127,249,0.08);
+    color:#0C7FF9;
+    border-color:#0C7FF9;
+}
+.filter-nav-box .filter-nav i{
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    background: url('../../../image/icon-sx-right.png') no-repeat center;
+    background-size: 8px;
+}
+.filter-nav-box .filter-nav.curr > i{
+    background-image: url('../../../image/icon-sx-right-blue.png');
+}
+
+.filter-res-box{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-top: 15px;
+}
+.filter-res-box .filter-res{
+    min-width:30.97%;
+    max-width: 30.97%;
+    height: 36px;
+    text-align: center;
+    background-color: #F6F6F6;
+    margin-bottom: 2.67vw;
+    color:#666666;
+    border-radius: 4px;
+    font-size: 13px;
+    padding:0 6px;
+    border:1px solid #F6F6F6;
+}
+.filter-res-box .filter-res.curr{
+    background-color:rgba(12,127,249,0.08);
+    color:#0C7FF9;
+    border-color:#0C7FF9;
+}

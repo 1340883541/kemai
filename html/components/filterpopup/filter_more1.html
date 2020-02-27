@@ -236,7 +236,7 @@ apiready = function() {
                     // 初始化日历
                     $('.choose-date').mdater({
                         minDate : new Date('1999-01-01'),
-                        sureCb(date){
+                        sureCb:function(date){
                             console.log('date------------'+date)
                             console.log('isCurrChooseDate------------'+_this.isCurrChooseDate)
                             if(_this.isCurrChooseDate === 0){

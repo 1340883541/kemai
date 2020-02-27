@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>筛选跟进数据</title>
+    <script src="../../../script/lib/fastclick.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/api.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/lib/mdater.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="./filtermore.css" />
+    <style>
+        .filter-m-body{
+            margin:0;
+            padding-top:15px;
+            padding-bottom: 10px;
+            overflow-y:auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling:touch;
+        }
+        #fh-fixed .filter-m-close{margin-left: 0;}
+    </style>
+</head>
+
+<body>
+    <div id="wrapper">
+        <div class="w-filter-more clear" @click.stop="handleCloseFilterPopup">
+            <!-- 全屏添加class width100 -->
+            <div class="w-filter-content w-filter-animte flex-wrap flex-vertical" @click.stop.prevent>
+                <!-- 关闭 -->
+                <div class="follow-header follow-r-m-header">
+                    <!-- 全屏添加class width100 -->
+                    <div class="fh-fixed flex-wrap flex-between" id="fh-fixed" style="position:relative;">
+                        <div class="left back" @click.stop="handleCloseFilterPopup"><img class="filter-m-close" src="../../../image/icon-dh-guanbi.png" /></div>
+                    </div>
+                    <!-- <div class="fh-place" id="fh-place"></div> -->
+                </div>
+                <!-- 筛选内容 -->
+                <div class="filter-m-body flex-con">
+                    <!-- 时间范围 -->
+                    <div class="filter-m-ylgs">
+                        <p class="p1" v-text="dateText"></p>
+                        <ul class="filter-m-ylgs-info clear">
+                            <li :class="{'f-curr':currToday}" @click.stop="handleChooseShortcatDate($event,0)">今日</li>
+                            <li :class="{'f-curr':currWeek}" @click.stop="handleChooseShortcatDate($event,1)">本周</li>
+                            <li :class="{'f-curr':currMonth}" @click.stop="handleChooseShortcatDate($event,2)">本月</li>
+                            <li :class="{'f-curr':currYear}" @click.stop="handleChooseShortcatDate($event,3)">本年</li>
+                        </ul>
+                        <div class="filter-m-date clear">
+                            <input class="choose-date" v-model="startDate" @click.stop="isGetStartDate = true" type="text" placeholder="开始时间" readonly="true">
+                            <span>—</span>
+                            <input class="choose-date" v-model="endDate" @click.stop="isGetStartDate = false" type="text" placeholder="结束时间" readonly="true">
+                        </div>
+                    </div>
+                    <div class="filter-m-ylgs">
+                        <p class="p1 filter-cap">
+                            <span>部门/销售人员</span>
+                            <i class="del-icon" style="display:none;" v-show="currChooseLists.length > 0"></i>
+                        </p>
+                        <div class="filter-nav-box bor-1px-b" style="display:none;" v-show="currChooseLists.length > 0">
+                            <div v-for="(choose,index) in currChooseLists" class="filter-nav" @click.stop="handleChooseFilter(index)">
+                                <span class="w-elli" v-text="choose.name"></span>
+                                <i></i>
+                            </div>
+                        </div>
+                        <div class="filter-res-box filter-res-box0">
+                            <div class="filter-res w-tr curr">
+                                <span class="w-td">销售1部</span>
+                            </div>
+                            <div class="filter-res w-tr">
+                                <span class="w-td">销售1部</span>
+                            </div>
+                            <div class="filter-res w-tr">
+                                <span class="w-td">网络时代运营部</span>
+                            </div>
+                            <div class="filter-res w-tr">
+                                <span class="w-td">销售1部</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 筛选确定/取消 -->
+                <!-- 全屏添加class width100 -->
+                <div class="filter-m-footer border-1px" style="position:relative;margin-left:-15px;">
+                    <button class="cancel-btn" @click.stop="handleCleanData">清空</button>
+                    <button class="confirm-btn" @click.stop="handleSureData">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../../script/lib/api.js"></script>
+<script type="text/javascript" src="../../../script/lib/jquery_3.1.1.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/md5.js"></script>
+<script type="text/javascript" src="../../../script/lib/vue.min.js"></script>
+<script type="text/javascript" src="../../../script/lib/mdater.js"></script>
+<script type="text/javascript" src="../../../script/lib/api_ajax.js"></script>
+<script type="text/javascript" src="../../../script/common.js"></script>
+<script>
+apiready = function() {
+    var param = api.pageParam;
+    $api.fixStatusBar($('#fh-fixed')[0]);
+    $api.fixStatusBar($('#fh-place')[0]);
+    var testAreaLists = [{
+        id:1,
+        name:'成都'
+    },{
+        id:2,
+        name:'重启'
+    },{
+        id:3,
+        name:'福州'
+    }];
+    var testTeamLists = [{
+        id:11,
+        name:'成都一部'
+    },{
+        id:12,
+        name:'成都二部'
+    },{
+        id:12,
+        name:'成都三部'
+    }];
+    var testGroupLists = [{
+        id:111,
+        name:'成都一部一组'
+    },{
+        id:112,
+        name:'成都二部一组'
+    },{
+        id:113,
+        name:'成都三部一组'
+    }];
+    var testEmpLists = [{
+        id:1111,
+        name:'成都一部一组小李'
+    },{
+        id:1112,
+        name:'成都二部一组小王'
+    },{
+        id:1113,
+        name:'成都三部一组小刘'
+    }];
+    new Vue({
+        el:"#wrapper",
+        data:{
+            startDate:'',
+            endDate:'',
+
+            dateText:'跟进时间',
+            isGetStartDate:true,
+            // 展示的数组
+            showLists:[],
+
+            areaLists:[],
+            teamLists:[],
+            groupLists:[],
+            empLists:[],
+            currChooseLists:[],
+            // 记录上一次的数据
+            recordLastData:{
+                areaLists:[],
+                teamLists:[],
+                teamLastId:'',
+                groupLists:[],
+                groupLastId:'',
+                empLists:[],
+                empLastId:'',
+                currTier:0,
+                currChooseLists:[]
+            }
+        },
+        mounted:function(){
+            this.init();
+            this.fetchFollowData();
+        },
+        methods:{
+            init:function(){
+                var _this = this;
+                this.startDate = param.startDate;
+                this.endDate = param.endDate;
+                this.dateText = param.dateText ? param.dateText : '跟进时间';
+                console.log(JSON.stringify(param))
+                this.$nextTick(function(){
+                    // 初始化日历
+                    $('.choose-date').mdater({
+                        minDate : new Date('1999-01-01'),
+                        sureCb:function(date){
+                            if(_this.isGetStartDate){
+                                _this.startDate = date;
+                            }else{
+                                _this.endDate = date;
+                            }
+                        }
+                    });
+                })
+            },
+            fetchFollowData:function(){
+                var recordLastData = myLocalStorage.getItem('recordLastData');
+                recordLastData = recordLastData ? JSON.parse(recordLastData) : this.recordLastData;
+                this.recordLastData = recordLastData;
+                myLocalStorage.clearItem('recordLastData');
+                if(!this.fnJudgeHaveLastData){
+                    // ajax
+                }
+            },
+            fnJudgeHaveLastData:function(){
+                for(var key in this.recordLastData){
+                    if(Array.isArray(this.recordLastData[key])){
+                        if(this.recordLastData[key].length > 0){
+                            return true;
+                        }
+                    }else{
+                        if(this.recordLastData[key]){
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+            // 选择时间
+            handleChooseShortcatDate:function(e,i){
+                var tag = e.currentTarget;
+                if(!$(tag).hasClass('f-curr')){
+                    $(tag).addClass('f-curr').siblings().removeClass('f-curr');
+                }
+                if(i === 0){
+                    this.startDate = funcGetThisToday().startDate;
+                    this.endDate = funcGetThisToday().endDate;
+                }
+                else if(i === 1){
+                    this.startDate = funcGetThisWeek().startDate;
+                    this.endDate = funcGetThisWeek().endDate;
+                }
+                else if(i == 2) {
+                    this.startDate = funcGetThisMonth().startDate;
+                    this.endDate = funcGetThisMonth().endDate;
+                }
+                else{
+                    this.startDate = funcGetThisYear().startDate;
+                    this.endDate = funcGetThisYear().endDate;
+                }
+            },
+            // 清空
+            handleCleanData:function(){
+                this.startDate = '';
+                this.endDate = '';
+            },
+            // 确定
+            handleSureData:function(){
+                var _this = this;
+                myLocalStorage.setItem('recordLastData',JSON.stringify(_this.recordLastData))
+                api.sendEvent({
+                    name: param.origin,
+                    extra:{
+                        startDate:_this.startDate,
+                        endDate:_this.endDate,
+                    }
+                });
+                api.closeFrame();
+            },
+            handleCloseFilterPopup:function(){
+                var _this = this;
+                myLocalStorage.setItem('recordLastData',JSON.stringify(_this.recordLastData))
+                api.sendEvent({
+                    name: param.origin
+                });
+                api.closeFrame();
+            }
+
+        },
+        computed: {
+            currToday: function() {
+                if(this.startDate === funcGetThisToday().startDate && this.endDate === funcGetThisToday().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currWeek: function() {
+                if(this.startDate === funcGetThisWeek().startDate && this.endDate === funcGetThisWeek().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currMonth: function() {
+                if(this.startDate === funcGetThisMonth().startDate && this.endDate === funcGetThisMonth().endDate){
+                    return true;
+                }
+                return false;
+            },
+            currYear: function() {
+                if(this.startDate === funcGetThisYear().startDate && this.endDate === funcGetThisYear().endDate){
+                    return true;
+                }
+                return false;
+            }
+        }
+    })
+}
+</script>
+</html>

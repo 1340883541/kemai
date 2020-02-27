@@ -274,6 +274,20 @@ function wOpenCustomerMoreFrame(par){
         }
     })
 }
+// 打开跟进数据筛选框
+function wOpenFollowFilterFrame(par){
+    par = par || {};
+    wHrefJs.openFrame({
+        name:'filterFollowData',
+        path:'../components/filterpopup/filter_follow_data.html',
+        y:par.y,
+        h:par.h,
+        param:par.param,
+        animation:{
+            type:par.isMoveIn ? 'movein' : 'none'
+        }
+    })
+}
 // 打开更多筛选
 // 目前只包含 客户来源，客户状态，归属地这四种选择。
 function wOpenCustomerMore1Frame(par){

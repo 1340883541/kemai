@@ -218,7 +218,8 @@
                         attributionid:_this.currHome,
                         resourcetype:_this.currClassify,
                         pageNo: _this.pageNo,
-                        pageSize: 10
+                        pageSize: 10,
+                        pattern:1
                     }));
                     wApiAjax({
                         url: url,
@@ -236,7 +237,8 @@
                             attributionid:_this.currHome,
                             resourcetype:_this.currClassify,
                             pageNo: _this.pageNo,
-                            pageSize: 10
+                            pageSize: 10,
+                            pattern:1
                         },
                         success: function(res) {
                             setTimeout(function(){
