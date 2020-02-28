@@ -64,10 +64,10 @@
                 <div class="dis_flex_in">
                     <div class="back" onclick="wBackThisFunc()"></div>
                     <div class="text_in">跟进数据</div>
-                    <div class="screen_in">筛选</div>
+                    <div class="screen_in" onclick="hanldeFilterFollow()">筛选</div>
                 </div>
             </div>
-            <div class="back-box flex-wrap flex-between bock-b" id="back-box">
+            <div class="back-box flex-wrap flex-between bock-b" id="back-box" style="display:none;">
                 <div class="dis_flex_in">
                     <div class="back" onclick="wBackThisFunc()"></div>
                     <div class="header-txt">
@@ -166,6 +166,19 @@
 <script type="text/javascript" src="../../script/permission.js"></script>
 <script>
     var cusDetailV = null;
+    // 筛选客户
+    function hanldeFilterFollow(){
+        var wHei = $(window).height();
+        wOpenFollowFilterFrame({
+            y:0,
+            h:wHei,
+            param:{
+                origin:'followData',
+                startDate:'',
+                endDate:'',
+            }
+        });
+    }
     apiready = function() {
         $api.fixStatusBar($('#cd-header')[0]);
         $api.fixStatusBar($('#back-box')[0]);
