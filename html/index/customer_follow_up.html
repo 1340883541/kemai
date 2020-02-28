@@ -96,61 +96,73 @@
 
             <!-- 跟进动态 -->
             <div class="trends-box" v-if="stateType==1">
-                <div class="head-list-b" v-for="trends in trendsList">
-                    <div class="flex-in flex-in-b cd-trends-in">
-                        <div class="flex-in-b cd-in-ing">
-                            <div><img src="../../image/icon-gj-yg.png" alt=""></div>
-                            <div class="trends-l">
-                                <div class="name-trends" v-text="trends.empname"></div>
-                                <div class="pos-trends" v-text="trends.job">销售经理·姜萌</div>
+                <div v-if="trendsList && trendsList.length > 0">
+                    <div class="head-list-b" v-for="trends in trendsList">
+                        <div class="flex-in flex-in-b cd-trends-in">
+                            <div class="flex-in-b cd-in-ing">
+                                <div><img src="../../image/icon-gj-yg.png" alt=""></div>
+                                <div class="trends-l">
+                                    <div class="name-trends" v-text="trends.empname"></div>
+                                    <div class="pos-trends" v-text="trends.job">销售经理·姜萌</div>
+                                </div>
                             </div>
+                            <div class="addr-trends" v-text="trends.estate">成都/意向中期</div>
                         </div>
-                        <div class="addr-trends" v-text="trends.estate">成都/意向中期</div>
-                    </div>
-                    <div class="cd-remarks">
-                        <div class="remarks-text" v-text="trends.cusname">今天联系了客户，客户还是觉得价格有点超预算今天联系了客户，客户还是觉得价格有点超预算</div>
-                        <div class="remarks-times" v-text="trends.createtime">2018/09/19 14:15</div>
+                        <div class="cd-remarks">
+                            <div class="remarks-text" v-text="trends.cusname">今天联系了客户，客户还是觉得价格有点超预算今天联系了客户，客户还是觉得价格有点超预算</div>
+                            <div class="remarks-times" v-text="trends.createtime">2018/09/19 14:15</div>
+                        </div>
                     </div>
                 </div>
+                <!-- 空页面 -->
+                <empty-con :is-show="trendsList.length === 0" txt="暂无跟进动态信息"></empty-con>
             </div>
 
             <!-- 客户明细 -->
             <div class="customer-d-box" v-if="stateType==2">
-                <div class="customer-details-list" v-for="customertext in customerList">
-                    <div class="flex-in">
-                        <div class="flex-in-b customer-b-in">
-                            <!-- <div><img src="../../image/icon-gj-yg.png" alt=""></div> -->
-                            <div class="dog-circular" v-text="" :class=""></div>
-                            <div class="details-l">
-                                <div class="details-name" v-text='customertext.empname'>王晨晨</div>
-                                <div class="details-pos" v-text="customertext.estate">成都·意向中期</div>
+                <div  v-if="customerList && customerList.length > 0">
+                    <div class="customer-details-list" v-for="customertext in customerList">
+                        <div class="flex-in">
+                            <div class="flex-in-b customer-b-in">
+                                <!-- <div><img src="../../image/icon-gj-yg.png" alt=""></div> -->
+                                <div class="dog-circular" v-text="" :class=""></div>
+                                <div class="details-l">
+                                    <div class="details-name" v-text='customertext.empname'>王晨晨</div>
+                                    <div class="details-pos" v-text="customertext.estate">成都·意向中期</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="details-r">
-                            <div class="details-r-name" v-text="customertext.cusname">秦航</div>
-                            <div class="details-r-times" v-text="customertext.createtime">2018/09/19 14:15</div>
+                            <div class="details-r">
+                                <div class="details-r-name" v-text="customertext.cusname">秦航</div>
+                                <div class="details-r-times" v-text="customertext.createtime">2018/09/19 14:15</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <!-- 空页面 -->
+                <empty-con :is-show="customerList.length === 0" txt="暂无客户明细信息"></empty-con>
             </div>
 
             <!-- 状态分析 -->
             <div class="state-analysis-box" v-if="stateType==3" >
-                 <div class="state-analysis-list" v-for="analysis in analysisList">
-                     <div class="flex-in-b cd-analysis">
-                         <div><img src="../../image/icon-gj-yg.png" alt=""></div>
-                         <div class="analysis-l">
-                             <div class="analysis-number" v-cloak>{{analysis.total}}人</div>
-                             <div class="progress-bar"></div>
+                <div v-if="analysisList && analysisList.length > 0">
+                     <div class="state-analysis-list" v-for="analysis in analysisList">
+                         <div class="flex-in-b cd-analysis">
+                             <div><img src="../../image/icon-gj-yg.png" alt=""></div>
+                             <div class="analysis-l">
+                                 <div class="analysis-number" v-cloak>{{analysis.total}}人</div>
+                                 <div class="progress-bar" :style="'width:'+(analysis.total?analysis.total:0.1)+'%'"></div>
+                             </div>
                          </div>
                      </div>
                  </div>
+                 <!-- 空页面 -->
+                 <empty-con :is-show="analysisList.length === 0" txt="暂无状态分析信息"></empty-con>
             </div>
 
-            <!-- 来源分析 -->
-           <div class="source-analysis-box" v-if="stateType==4" v-for="source in sourceList">
+            <!-- 来源分析 v-for="source in sourceList"-->
+           <div class="source-analysis-box" v-if="stateType==4">
                 <div class="img-js"><img src="../../image/icon-jsz.png" alt=""></div>
-                <div class="text-js" v-text="source.name">建设中，敬请期待</div>
+                <div class="text-js">建设中，敬请期待</div>
            </div>
 
        </section>
@@ -297,7 +309,7 @@
                                         _this.analysisList = res.data ? res.data : [];
                                     }
                                     if(_this.stateType==4){
-                                        _this.sourceList = res.data ? res.data : [];
+                                        // _this.sourceList = res.data ? res.data : [];
                                     }
                                 }
                                 else{
@@ -312,7 +324,7 @@
                                         _this.analysisList = _this.analysisList.concat(res.data);
                                      }
                                      if(_this.stateType==4){
-                                       _this.sourceList = _this.sourceList.concat(res.data);
+                                    //    _this.sourceList = _this.sourceList.concat(res.data);
                                      }
                                     }
                                 }

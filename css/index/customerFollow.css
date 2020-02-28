@@ -274,9 +274,12 @@
     width:0.8rem;
 }
 .cd-remarks{
-    margin-top:0.38rem;
+    margin-top:0.18rem;
     margin-right: 0.3rem;
-    margin-left: 0.3rem;
+    /*margin-left: 0.3rem;*/
+    background: #F8F8FA;
+    padding:0.2rem 0.24rem;
+    border-radius: 4px;
 }
 .remarks-text{
     font-size:0.28rem;
